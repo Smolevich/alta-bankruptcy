@@ -58,7 +58,7 @@ export const LINKS: LinkCard[] = [
 		group: 'help',
 		title: { ru: 'Белград: DC Loža, продукты и вещи', en: 'Belgrade: DC Loža, food and goods', sr: 'Beograd: DC Loža, hrana i stvari' },
 		what: {
-			ru: 'Принимают и раздают продукты, детское питание, корм для животных, бытовую химию. Белград, Dalmatinska 84L (вход со стороны Ivankovačka), с 02.11 по 07.11.2026: пн и вт 11:00–00:00, ср 11:00–18:00, чт и пт 11:00–17:00, сб 11:00–15:00. Волонтёрам пишите в бот.',
+			ru: 'Принимают и раздают продукты, детское питание, корм для животных, бытовую химию. Белград, Dalmatinska 84L (вход со стороны Ivankovačka), с 02.11 по 07.11.2026: пн и вт 11:00–00:00, ср 11:00–18:00, чт и пт 11:00–17:00, сб 11:00–15:00. Хотите помочь волонтёром — пишите в бот.',
 			en: 'They accept and give out food, baby food, pet food and household items. Belgrade, Dalmatinska 84L (entrance from Ivankovačka), 02.11 to 07.11.2026: Mon and Tue 11:00–00:00, Wed 11:00–18:00, Thu and Fri 11:00–17:00, Sat 11:00–15:00. Volunteers should write to the bot.',
 			sr: 'Primaju i dele hranu, hranu za bebe, hranu za životinje i kućnu hemiju. Beograd, Dalmatinska 84L (ulaz sa strane Ivankovačke), od 02.11. do 07.11.2026: pon i uto 11:00–00:00, sre 11:00–18:00, čet i pet 11:00–17:00, sub 11:00–15:00. Volonteri pišu botu.',
 		},
@@ -70,12 +70,12 @@ export const LINKS: LinkCard[] = [
 	{
 		group: 'help',
 		title: {
-			ru: 'Нови-Сад: взаимопомощь для клиентов Алта-банка',
+			ru: 'Нови-Сад: взаимопомощь для клиентов ALTA',
 			en: 'Novi Sad: mutual aid for Alta bank clients',
 			sr: 'Novi Sad: uzajamna pomoć klijentima Alta banke',
 		},
 		what: {
-			ru: 'Сбор и передача продуктов, детского питания, корма и бытовой химии; деньги не собирают. Районы сбора: Ротквария и Центр, Петра Драпшина. Контакты организаторов, карты и список заведений, которым нужна поддержка, указаны в самом посте; канал «Гражданство Сербии» ручается за организаторов.',
+			ru: 'Собирают и передают продукты, детское питание, корм и бытовую химию. Деньги не собирают. Районы сбора: Ротквария и Центр, Петра Драпшина. Контакты организаторов, карты и список заведений, которым нужна поддержка, — в посте. За организаторов ручается канал «Гражданство Сербии».',
 			en: 'Collection and hand-over of food, baby food, pet food and household items; no money is collected. Collection areas: Rotkvarija and the Centre, Petra Drapšina. The organisers’ contacts, maps and the list of venues that need support are in the post itself; the “Гражданство Сербии” channel vouches for the organisers.',
 			sr: 'Prikupljanje i predaja hrane, hrane za bebe, hrane za životinje i kućne hemije; novac se ne prikuplja. Rejoni prikupljanja: Rotkvarija i Centar, Petra Drapšina. Kontakti organizatora, mape i spisak lokala kojima treba podrška nalaze se u samoj objavi; kanal „Гражданство Сербии“ jemči za organizatore.',
 		},
@@ -91,7 +91,7 @@ export const LINKS: LinkCard[] = [
 			sr: 'Tabela srpskih inicijativa za podršku ruskim biznisima',
 		},
 		what: {
-			ru: 'Google-таблица: бизнесы, которым нужна поддержка. В посте оговорено: нужно проверять, все ли бизнесы были связаны с ALTA.',
+			ru: 'Google-таблица бизнесов, которым нужна поддержка. В посте сказано: нужно проверять, все ли эти бизнесы действительно были связаны с ALTA.',
 			en: 'A Google Sheet of businesses that need support. The post notes that you should check whether every business was actually tied to ALTA.',
 			sr: 'Google tabela biznisa kojima je potrebna podrška. U objavi je naglašeno da treba proveriti da li su svi biznisi zaista bili vezani za ALTA banku.',
 		},
@@ -120,7 +120,7 @@ export const LINKS: LinkCard[] = [
 		group: 'official',
 		title: { ru: 'Ассоциация банков Сербии', en: 'Association of Serbian Banks', sr: 'Udruženje banaka Srbije' },
 		what: {
-			ru: 'В ассоциацию входят основные банки Сербии; вопросы об открытии счётов в других банках можно решать через неё (совет из чата). Сайт мы не смогли открыть автоматической проверкой.',
+			ru: 'Совет из чата: если не получается открыть счёт в другом банке, обращаться сюда — в ассоциацию входят основные банки Сербии. Наша автоматическая проверка сайт не открыла.',
 			en: 'The association includes the main banks in Serbia; questions about opening accounts at other banks can go through it (advice from the chat). We could not open the site in an automated check.',
 			sr: 'U udruženju su glavne banke u Srbiji; pitanja o otvaranju računa u drugim bankama mogu se uputiti preko njega (savet iz četa). Sajt nismo uspeli da otvorimo automatskom proverom.',
 		},
@@ -132,7 +132,7 @@ export const LINKS: LinkCard[] = [
 		group: 'tools',
 		title: { ru: 'Где открыть счёт для выплаты: статистика', en: 'Where to open an account for the payout: statistics', sr: 'Gde otvoriti račun za isplatu: statistika' },
 		what: {
-			ru: 'В каких банках вкладчики смогли открыть личный счёт и счёт ИП или бизнес-счёт.',
+			ru: 'В каких банках вкладчикам удалось открыть счёт: личный, ИП или бизнес.',
 			en: 'At which banks depositors managed to open a personal account and a sole-trader or business account.',
 			sr: 'U kojim bankama su štediše uspele da otvore lični račun i račun preduzetnika ili poslovni račun.',
 		},

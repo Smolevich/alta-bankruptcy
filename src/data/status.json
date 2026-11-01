@@ -8,7 +8,7 @@
       "sr": "Čeka se odluka Privrednog suda u Beogradu o otvaranju stečaja"
     },
     "note": {
-      "ru": "С решения суда идут все сроки: AOD объявит банк-плательщика не позже чем через 3 рабочих дня, выплаты до 50 000 € начнутся не позже чем через 7 рабочих дней. Решения суда пока нет.",
+      "ru": "Решения суда пока нет. От него считаются все сроки: не позже чем через 3 рабочих дня AOD назовёт банк-плательщик (банк, где будут выдавать деньги), не позже чем через 7 рабочих дней начнутся выплаты до 50 000 €.",
       "en": "All deadlines run from the court decision: AOD will announce the paying bank within 3 working days, and payouts of up to €50,000 start within 7 working days. There is no court decision yet.",
       "sr": "Svi rokovi teku od odluke suda: AOD će objaviti banku isplatioca najkasnije u roku od 3 radna dana, a isplata osiguranih depozita do 50.000 € počinje najkasnije u roku od 7 radnih dana. Odluke suda još nema."
     },
@@ -48,7 +48,7 @@
           "sr": "AOD objavljuje banku isplatioca"
         },
         "when": {
-          "ru": "не позже 3 раб. дней после суда",
+          "ru": "не позже 3 раб. дней после решения суда",
           "en": "within 3 working days of the court decision",
           "sr": "najkasnije 3 radna dana od odluke suda"
         }
@@ -61,7 +61,7 @@
           "sr": "Isplata osiguranog iznosa do 50.000 €"
         },
         "when": {
-          "ru": "не позже 7 раб. дней после суда",
+          "ru": "не позже 7 раб. дней после решения суда",
           "en": "within 7 working days of the court decision",
           "sr": "najkasnije 7 radnih dana od odluke suda"
         }
@@ -69,7 +69,7 @@
       {
         "n": 5,
         "title": {
-          "ru": "Подача требования сверх 50 000 €",
+          "ru": "Требование на сумму сверх 50 000 €",
           "en": "Filing the claim above €50,000",
           "sr": "Prijava potraživanja iznad 50.000 €"
         },
@@ -82,7 +82,7 @@
       {
         "n": 6,
         "title": {
-          "ru": "Проверка требований, список суда",
+          "ru": "Проверка требований и итоговый список кредиторов",
           "en": "Claims review and the court's final list",
           "sr": "Utvrđivanje potraživanja i konačna lista poverilaca"
         },
