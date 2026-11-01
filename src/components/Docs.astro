@@ -2,7 +2,8 @@
 // Карточки официальных документов: данные в src/data/documents.ts, текст страницы только статичный HTML.
 import { DOCS, SOURCE_LABEL } from '../data/documents';
 import { UI, type Lang } from '../i18n';
-import { opensInNewTab } from '../links';
+import PdfViewer from './PdfViewer.astro';
+import PdfViewerScript from './PdfViewerScript.astro';
 
 const { lang = 'ru' } = Astro.props as { lang?: Lang };
 const t = UI[lang];
@@ -34,40 +35,11 @@ const size = (b: number) =>
 							<span class="sr-only">({t.newTab})</span>
 						</a>
 					</span>
-					{d.file && (
-						<>
-							<button type="button" class="doc-preview" hidden data-open={`dlg-${d.file}`}>{t.docs.preview}</button>
-							<dialog class="pdf-dialog" id={`dlg-${d.file}`} aria-label={d.title[lang]}>
-								<header>
-									<strong>{d.title[lang]}</strong>
-									<a href={`/docs/${d.file}`} target="_blank" rel="noopener">{t.lbl.pdf}</a>
-									<button type="button" data-close>{t.docs.close}</button>
-								</header>
-								<object data-src={`/docs/${d.file}#view=FitH`} type="application/pdf">
-									<a href={`/docs/${d.file}`} target="_blank" rel="noopener">{t.lbl.pdf}</a>
-								</object>
-							</dialog>
-						</>
-					)}
+					{d.file && <PdfViewer id={`dlg-${d.file}`} title={d.title[lang]} src={`/docs/${d.file}`} lang={lang} />}
 				</article>
 			</li>
 		))
 	}
 </ul>
 
-<script is:inline>
-	// Без скриптов остаётся ссылка «Открыть PDF»; кнопка «Просмотр» появляется только когда скрипт работает.
-	document.querySelectorAll('[data-open]').forEach((btn) => {
-		const dlg = document.getElementById(btn.dataset.open);
-		if (!dlg || typeof dlg.showModal !== 'function') return;
-		const obj = dlg.querySelector('object');
-		btn.hidden = false;
-		btn.addEventListener('click', () => {
-			if (!obj.getAttribute('data')) obj.setAttribute('data', obj.dataset.src);
-			dlg.showModal();
-		});
-		dlg.querySelector('[data-close]').addEventListener('click', () => dlg.close());
-		dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
-		dlg.addEventListener('close', () => obj.removeAttribute('data'));
-	});
-</script>
+<PdfViewerScript />

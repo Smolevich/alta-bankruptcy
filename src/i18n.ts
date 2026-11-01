@@ -43,7 +43,7 @@ export const UI = {
 			share: 'Поделиться своим опытом',
 		},
 		docs: { preview: 'Просмотр', close: 'Закрыть', pages: 'стр.', source: 'Источник', period: 'Период', mb: 'МБ', label: 'Список документов' },
-		srcCards: { label: 'Первоисточники по Univerzal', date: 'Дата', type: 'Источник' },
+		srcCards: { label: 'Первоисточники по Univerzal', date: 'Дата', type: 'Источник', look: 'На что смотреть' },
 		newTab: 'откроется в новой вкладке',
 		flow: [
 			['/procedura/', 'Процедура и сроки', 'Семь стадий от отзыва лицензии до выплат'],
@@ -83,7 +83,7 @@ export const UI = {
 			share: 'Share your experience',
 		},
 		docs: { preview: 'Preview', close: 'Close', pages: 'pp.', source: 'Source', period: 'Period', mb: 'MB', label: 'List of documents' },
-		srcCards: { label: 'Primary sources on Univerzal', date: 'Date', type: 'Source' },
+		srcCards: { label: 'Primary sources on Univerzal', date: 'Date', type: 'Source', look: 'What to look at' },
 		newTab: 'opens in a new tab',
 		flow: [
 			['/procedura/', 'Procedure and timeline', 'Seven stages from licence revocation to payouts'],
@@ -123,7 +123,7 @@ export const UI = {
 			share: 'Podelite svoje iskustvo',
 		},
 		docs: { preview: 'Pregled', close: 'Zatvori', pages: 'str.', source: 'Izvor', period: 'Period', mb: 'MB', label: 'Spisak dokumenata' },
-		srcCards: { label: 'Izvori o Univerzal banci', date: 'Datum', type: 'Izvor' },
+		srcCards: { label: 'Izvori o Univerzal banci', date: 'Datum', type: 'Izvor', look: 'Na šta gledati' },
 		newTab: 'otvara se u novoj kartici',
 		flow: [
 			['/procedura/', 'Postupak i rokovi', 'Sedam faza od oduzimanja dozvole do isplata'],
