@@ -1,3 +1,2 @@
 // Ссылка на Instagram группы вкладчиков. Пусто — значок в шапке не показывается.
-// Когда ник выберут, записать сюда полный адрес, например https://www.instagram.com/<ник>/
-export const INSTAGRAM_URL = '';
+export const INSTAGRAM_URL = 'https://www.instagram.com/alta50kplus/';
