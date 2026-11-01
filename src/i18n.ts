@@ -47,6 +47,7 @@ export const UI = {
 		flow: [
 			['/procedura/', 'Процедура и сроки', 'Семь стадий от отзыва лицензии до выплат'],
 			['/trebovanie/', 'Требование сверх 50 000 €', 'Кто, куда и в какой срок подаёт'],
+			['/vypiski/', 'Что сохранить: выписки и документы', 'Какие документы и выписки сохранить и как выгрузить их из кабинета'],
 			['/bezopasnost/', 'Как не попасть на мошенников', 'Что делать, если обещают «ускорить выплату»', 'safe'],
 			['/novosti/', 'Новости', 'Сообщения AOD, Нацбанка и банка'],
 			['/kak-bylo/', 'Как было: Univerzal 2014', 'Что и когда получили вкладчики Univerzal banka'],
@@ -86,6 +87,7 @@ export const UI = {
 		flow: [
 			['/procedura/', 'Procedure and timeline', 'Seven stages from licence revocation to payouts'],
 			['/trebovanie/', 'Claim above €50,000', 'Who files, where and by when'],
+			['/vypiski/', 'What to save: statements and documents', 'Which documents and statements to keep and how to export them'],
 			['/bezopasnost/', 'Stay safe: avoid scams', 'What to do if someone promises to “speed up the payout”', 'safe'],
 			['/novosti/', 'News', 'Announcements from AOD, the National Bank and the bank'],
 			['/kak-bylo/', 'Past cases (Univerzal)', 'What depositors received in 2014'],
@@ -126,6 +128,7 @@ export const UI = {
 		flow: [
 			['/procedura/', 'Postupak i rokovi', 'Sedam faza od oduzimanja dozvole do isplata'],
 			['/trebovanie/', 'Potraživanje iznad 50.000 €', 'Ko, gde i do kada prijavljuje'],
+			['/vypiski/', 'Šta sačuvati: izvodi i dokumenta', 'Koja dokumenta i izvode sačuvati i kako ih izvesti iz bankarstva'],
 			['/bezopasnost/', 'Bezbednost: kako da izbegnete prevaru', 'Šta raditi ako neko obećava „bržu isplatu“', 'safe'],
 			['/novosti/', 'Vesti', 'Saopštenja AOD, NBS i banke'],
 			['/kak-bylo/', 'Kako je bilo (Univerzal)', 'Šta su štediše dobile 2014.'],
