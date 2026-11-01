@@ -1,8 +1,9 @@
 ---
-// Карточки первоисточников по Univerzal: данные в src/data/univerzal-sources.ts.
-import { UNIVERZAL_SOURCES } from '../data/univerzal-sources';
+// Карточки первоисточников по Univerzal: данные в src/data/univerzal-sources.ts, текст страницы статичный.
+import { LOOK, UNIVERZAL_SOURCES } from '../data/univerzal-sources';
 import { UI, type Lang } from '../i18n';
-import { opensInNewTab } from '../links';
+import PdfViewer from './PdfViewer.astro';
+import PdfViewerScript from './PdfViewerScript.astro';
 
 const { lang = 'ru' } = Astro.props as { lang?: Lang };
 const t = UI[lang];
@@ -10,25 +11,39 @@ const t = UI[lang];
 
 <ul class="docs not-content" aria-label={t.srcCards.label}>
 	{
-		UNIVERZAL_SOURCES.map((s) => (
-			<li>
-				<article class="doc">
-					<h3>{s.title[lang]}</h3>
-					<p>{s.main[lang]}</p>
-					<dl class="doc-meta">
-						<dt>{t.srcCards.date}</dt>
-						<dd>{s.date[lang]}</dd>
-						<dt>{t.srcCards.type}</dt>
-						<dd>
-							<span class="kind kind-official">{t.official}</span> {s.meta[lang]}
-						</dd>
-					</dl>
-					<a class="doc-go" href={s.url} target="_blank" rel="noopener">
-						{/\.pdf($|[?#])/i.test(s.url) ? t.lbl.pdf : t.lbl.site}
-						<span class="sr-only">({t.newTab})</span>
-					</a>
-				</article>
-			</li>
-		))
+		UNIVERZAL_SOURCES.map((s, i) => {
+			const look = LOOK[s.url];
+			return (
+				<li>
+					<article class="doc">
+						<h3>{s.title[lang]}</h3>
+						<p>{s.main[lang]}</p>
+						<dl class="doc-meta">
+							<dt>{t.srcCards.date}</dt>
+							<dd>{s.date[lang]}</dd>
+							<dt>{t.srcCards.type}</dt>
+							<dd>
+								<span class="kind kind-official">{t.official}</span> {s.meta[lang]}
+							</dd>
+						</dl>
+						{look && (
+							<div class="doc-look">
+								<strong>{t.srcCards.look}</strong>
+								<ul>{look.look[lang].map((x) => <li>{x}</li>)}</ul>
+							</div>
+						)}
+						<span class="doc-go">
+							<a href={`${s.url}${look ? `#page=${look.page}` : ''}`} target="_blank" rel="noopener">
+								{/\.pdf($|[?#])/i.test(s.url) ? t.lbl.pdf : t.lbl.site}
+								<span class="sr-only">({t.newTab})</span>
+							</a>
+						</span>
+						{look?.embed && <PdfViewer id={`src-${i}`} title={s.title[lang]} src={s.url} page={look.page} lang={lang} />}
+					</article>
+				</li>
+			);
+		})
 	}
 </ul>
+
+<PdfViewerScript />

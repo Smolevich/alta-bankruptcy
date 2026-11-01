@@ -1,0 +1,19 @@
+---
+// Один раз на странице: открытие панели, закрытие по Esc, кнопке и клику по фону.
+---
+
+<script is:inline>
+	document.querySelectorAll('[data-open]').forEach((btn) => {
+		const dlg = document.getElementById(btn.dataset.open);
+		if (!dlg || typeof dlg.showModal !== 'function') return;
+		const obj = dlg.querySelector('object');
+		btn.hidden = false;
+		btn.addEventListener('click', () => {
+			if (!obj.getAttribute('data')) obj.setAttribute('data', obj.dataset.src);
+			dlg.showModal();
+		});
+		dlg.querySelector('[data-close]').addEventListener('click', () => dlg.close());
+		dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+		dlg.addEventListener('close', () => obj.removeAttribute('data'));
+	});
+</script>
