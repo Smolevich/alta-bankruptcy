@@ -2,6 +2,7 @@
 // Источники и дата сверки под каждой страницей: читатель видит, на чём держится текст.
 import Default from '@astrojs/starlight/components/Footer.astro';
 import { LOCALE_TAG, UI, href, langOf } from '../i18n';
+import { opensInNewTab } from '../links';
 
 const lang = langOf(Astro.locals.starlightRoute.lang);
 const t = UI[lang];
@@ -24,7 +25,7 @@ const fmt = (d: Date) => d.toLocaleDateString(LOCALE_TAG[lang], { timeZone: 'UTC
 				{data.sources.map((s) => (
 					<li>
 						<span class={`kind kind-${s.kind}`}>{t[s.kind]}</span>
-						<a href={s.url} rel="noopener">{s.title}</a>
+						<a href={s.url} target={opensInNewTab(s.url) ? '_blank' : undefined} rel="noopener">{s.title}</a>
 						<time>{fmt(s.date)}</time>
 					</li>
 				))}

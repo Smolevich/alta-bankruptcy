@@ -170,3 +170,14 @@ html, body { overflow-x: clip; }
 .safe-strip { margin: -1rem 0 1.6rem; padding: 0.7rem 1rem; background: #fff8e1; border: 1px dashed var(--ink); border-radius: 3px; font-size: 0.95rem; }
 .safe-strip strong { margin-right: 0.3rem; }
 .safe-strip a { font-weight: 700; white-space: nowrap; }
+
+/* ---- Просмотр PDF и ссылки в новой вкладке ---- */
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.doc-go { display: flex; flex-wrap: wrap; gap: 0.2rem 1rem; }
+.doc-go a { color: var(--seal); }
+.doc-view { margin-top: 0.6rem; }
+.doc-view summary { cursor: pointer; font-weight: 700; font-size: 0.9rem; color: var(--seal); }
+.doc-view object { display: block; width: 100%; height: 80vh; margin-top: 0.5rem; border: 1px solid var(--line); background: #fff; }
+.docs li:has(details[open]) { grid-column: 1 / -1; }
+/* На телефоне встроенный просмотр показывает только первую страницу: оставляем кнопку «Открыть PDF». */
+@media (max-width: 640px) { .doc-view { display: none; } }

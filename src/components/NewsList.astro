@@ -27,7 +27,7 @@ const fmt = (d: Date) => d.toLocaleDateString(LOCALE_TAG[lang], { timeZone: 'UTC
 					{n.data.sources.map((s, i) => (
 						<>
 							{i > 0 && ' · '}
-							<a href={s.url} rel="noopener">{s.title}</a>
+							<a href={s.url} target="_blank" rel="noopener">{s.title}</a>
 						</>
 					))}
 				</p>
