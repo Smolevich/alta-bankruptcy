@@ -1,0 +1,34 @@
+---
+// Карточки ссылок одной группы; данные в src/data/links.ts.
+import { LINKS, type LinkCard } from '../data/links';
+import { UI, type Lang } from '../i18n';
+
+const { lang = 'ru', group } = Astro.props as { lang?: Lang; group: LinkCard['group'] };
+const t = UI[lang];
+const items = LINKS.filter((l) => l.group === group);
+---
+
+<ul class="docs not-content">
+	{
+		items.map((l) => (
+			<li>
+				<article class="doc">
+					<h3>{l.title[lang]}</h3>
+					<p>{l.what[lang]}</p>
+					{group !== 'tools' && (
+						<dl class="doc-meta">
+							<dt>{t.docs.source}</dt>
+							<dd>
+								<span class={`kind kind-${l.kind}`}>{l.kind === 'official' ? t.official : t.unverified}</span>
+							</dd>
+						</dl>
+					)}
+					<span class="doc-go">
+						<a href={l.url} rel="noopener">{l.label} →</a>
+						{l.extra && <> <a href={l.extra.url} rel="noopener">{l.extra.label[lang]} →</a></>}
+					</span>
+				</article>
+			</li>
+		))
+	}
+</ul>

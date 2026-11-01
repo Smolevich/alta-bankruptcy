@@ -47,12 +47,14 @@ export const UI = {
 		flow: [
 			['/procedura/', 'Процедура и сроки', 'Семь стадий от отзыва лицензии до выплат'],
 			['/trebovanie/', 'Требование сверх 50 000 €', 'Кто, куда и в какой срок подаёт'],
+			['/bezopasnost/', 'Безопасность: как не попасть на мошенников', 'Что делать, если обещают «ускорить выплату»', 'safe'],
 			['/novosti/', 'Новости', 'Сообщения AOD, Нацбанка и банка'],
 			['/kak-bylo/', 'Как было (Univerzal)', 'Что получили вкладчики в 2014 году'],
 			['/bank/', 'Банк', 'Владелец и руководство по реестрам'],
 			['/dokumenty/', 'Документы банка', 'Отчётность и отчёты аудитора, PDF из первоисточников'],
 			['/zakony/', 'Законы', 'Статьи, на которых стоят сроки'],
 			['/pomoch/', 'Как помочь', 'Исправить ошибку или добавить источник'],
+			['/ssylki/', 'Полезные ссылки и помощь', 'Чаты, помощь едой и вещами, официальные обращения'],
 		],
 	},
 	en: {
@@ -84,12 +86,14 @@ export const UI = {
 		flow: [
 			['/procedura/', 'Procedure and timeline', 'Seven stages from licence revocation to payouts'],
 			['/trebovanie/', 'Claim above €50,000', 'Who files, where and by when'],
+			['/bezopasnost/', 'Stay safe: avoid scams', 'What to do if someone promises to “speed up the payout”', 'safe'],
 			['/novosti/', 'News', 'Announcements from AOD, the National Bank and the bank'],
 			['/kak-bylo/', 'Past cases (Univerzal)', 'What depositors received in 2014'],
 			['/bank/', 'The bank', 'Owner and management from registries'],
 			['/dokumenty/', 'Bank documents', 'Statements and audit reports, PDFs from primary sources'],
 			['/zakony/', 'Laws', 'The articles behind the deadlines'],
 			['/pomoch/', 'How to help', 'Fix a mistake or add a source'],
+			['/ssylki/', 'Useful links and help', 'Chats, food and goods help, official contacts'],
 		],
 	},
 	sr: {
@@ -121,12 +125,14 @@ export const UI = {
 		flow: [
 			['/procedura/', 'Postupak i rokovi', 'Sedam faza od oduzimanja dozvole do isplata'],
 			['/trebovanie/', 'Potraživanje iznad 50.000 €', 'Ko, gde i do kada prijavljuje'],
+			['/bezopasnost/', 'Bezbednost: kako da izbegnete prevaru', 'Šta raditi ako neko obećava „bržu isplatu“', 'safe'],
 			['/novosti/', 'Vesti', 'Saopštenja AOD, NBS i banke'],
 			['/kak-bylo/', 'Kako je bilo (Univerzal)', 'Šta su štediše dobile 2014.'],
 			['/bank/', 'Banka', 'Vlasnik i rukovodstvo iz registara'],
 			['/dokumenty/', 'Dokumenta banke', 'Izveštaji i izveštaji revizora, PDF iz izvora'],
 			['/zakony/', 'Zakoni', 'Članovi na kojima stoje rokovi'],
 			['/pomoch/', 'Kako pomoći', 'Ispraviti grešku ili dodati izvor'],
+			['/ssylki/', 'Korisni linkovi i pomoć', 'Četovi, pomoć hranom i stvarima, zvanični kontakti'],
 		],
 	},
 } as const;

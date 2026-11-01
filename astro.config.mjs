@@ -20,6 +20,7 @@ export default defineConfig({
 			social: [
 				{ icon: 'github', label: 'GitHub', href: 'https://github.com/Smolevich/alta-bankruptcy' },
 				// Группа вкладчиков сама выберет ник: пока ссылки нет, значок скрыт.
+				{ icon: 'telegram', label: 'Telegram', href: 'https://t.me/Altadef50k' },
 				...(INSTAGRAM_URL ? [{ icon: 'instagram', label: 'Instagram', href: INSTAGRAM_URL }] : []),
 			],
 			defaultLocale: 'root',
@@ -43,12 +44,14 @@ export default defineConfig({
 				{ label: 'Сейчас', slug: 'index', translations: { en: 'Now', sr: 'Sada' } },
 				{ label: 'Процедура и сроки', slug: 'procedura', translations: { en: 'Procedure and timeline', sr: 'Postupak i rokovi' } },
 				{ label: 'Требование сверх 50 000 €', slug: 'trebovanie', translations: { en: 'Claim above €50,000', sr: 'Prijava potraživanja iznad 50.000 €' } },
+				{ label: 'Безопасность: как не попасть на мошенников', slug: 'bezopasnost', translations: { en: 'Stay safe: avoid scams', sr: 'Bezbednost: kako da izbegnete prevaru' } },
 				{ label: 'Новости', slug: 'novosti', translations: { en: 'News', sr: 'Vesti' } },
 				{ label: 'Как было: Univerzal 2014 и другие', slug: 'kak-bylo', translations: { en: 'Past cases: Univerzal 2014 and others', sr: 'Raniji slučajevi: Univerzal 2014 i drugi' } },
 				{ label: 'Банк: владелец и руководство', slug: 'bank', translations: { en: 'The bank: owner and management', sr: 'Banka: vlasnik i rukovodstvo' } },
 				{ label: 'Документы банка', slug: 'dokumenty', translations: { en: 'Bank documents', sr: 'Dokumenta banke' } },
 				{ label: 'Законы', slug: 'zakony', translations: { en: 'Laws', sr: 'Zakoni' } },
 				{ label: 'Как помочь и править', slug: 'pomoch', translations: { en: 'How to help and correct', sr: 'Kako pomoći i ispraviti' } },
+				{ label: 'Полезные ссылки и помощь', slug: 'ssylki', translations: { en: 'Useful links and help', sr: 'Korisni linkovi i pomoć' } },
 				// Страница отдаётся сервисом формы, не Starlight: обычная ссылка (валидатор её пропускает через exclude).
 				{ label: 'Где открывают счета', link: '/account/stats', translations: { en: 'Where accounts get opened', sr: 'Gde se otvaraju računi' } },
 			],
