@@ -77,11 +77,13 @@ html, body { overflow-x: clip; }
 }
 
 /* ---- Три шага ---- */
-.steps3 { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); margin: 1rem 0 2rem; }
-.steps3 > div { border-top: 4px solid var(--seal); background: #fffdf7; padding: 0.9rem 1rem 1rem; border-radius: 0 0 4px 4px; border-inline: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-.steps3 h3 { margin: 0 0 0.4rem; font-size: 1.1rem; }
-.steps3 p { margin: 0 0 0.5rem; font-size: 0.95rem; }
-.steps3 small { color: #5a5448; }
+.steps3 { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); align-items: stretch; margin: 1rem 0 2rem; }
+/* Starlight даёт каждому следующему блоку margin-top: из-за него плитки в ряду ехали вниз. */
+.steps3 > div { margin: 0 !important; display: flex; flex-direction: column; min-width: 0; border-top: 4px solid var(--seal); background: #fffdf7; padding: 0.9rem 1rem 1rem; border-radius: 0 0 4px 4px; border-inline: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.steps3 h3 { margin: 0 0 0.4rem !important; font-size: 1.1rem; }
+.steps3 p { margin: 0 0 0.5rem !important; font-size: 0.95rem; }
+.steps3 small { margin-top: auto; padding-top: 0.4rem; color: #5a5448; }
+.steps3 p:last-of-type { flex: 1 1 auto; }
 
 /* ---- Новости ---- */
 .news { list-style: none; padding: 0; margin: 1rem 0; display: grid; gap: 1rem; }
@@ -124,3 +126,29 @@ html, body { overflow-x: clip; }
 	.site-title { font-size: 1rem; line-height: 1.15; white-space: normal; }
 }
 .site-title { min-width: 0; }
+
+/* ---- Плитки-маршрут на главной ----
+   Сетка на 4 колонки, строка тянется по самой высокой плитке; «Открыть» прижато к низу.
+   Стрелка между соседями в строке; на телефоне колонка и стрелки вниз. */
+.flow { list-style: none; margin: 1.2rem 0 2rem; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.4rem 1.1rem; align-items: stretch; }
+.flow li { margin: 0; padding: 0; display: flex; position: relative; }
+.flow-tile { display: flex; flex-direction: column; flex: 1; min-width: 0; padding: 0.8rem 0.8rem 0.7rem; background: #fffdf7; border: 2px solid var(--ink); border-top: 5px solid var(--seal); border-radius: 4px; color: var(--ink); text-decoration: none; box-shadow: 4px 4px 0 var(--seal-soft); transition: transform 0.12s, box-shadow 0.12s; }
+.flow-tile:hover, .flow-tile:focus-visible { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--seal-soft); }
+.flow-n { display: grid; place-content: center; width: 1.7rem; height: 1.7rem; margin-bottom: 0.5rem; border-radius: 50%; background: var(--seal); color: #fff; font: 700 0.85rem/1 var(--sl-font-system); }
+.flow-title { font: 700 1rem/1.2 var(--serif); overflow-wrap: anywhere; hyphens: auto; }
+.flow-blurb { margin: 0.35rem 0 0.7rem; font-size: 0.85rem; line-height: 1.35; color: #5a5448; }
+.flow-go { margin-top: auto; font-size: 0.8rem; font-weight: 700; color: var(--seal); }
+.flow li:not(:last-child)::after { content: '→'; position: absolute; right: -1.05rem; top: 1.1rem; width: 1rem; text-align: center; font-weight: 700; color: var(--seal); }
+.flow li:nth-child(3)::after, .flow li:nth-child(7)::after { content: none; }
+.flow-acct { grid-column: span 2; }
+.flow-tile-acct { background: var(--seal-soft); border-top-color: var(--ink); }
+.flow-tile-acct .flow-n { background: var(--ink); }
+.flow-links { margin-top: auto; display: grid; gap: 0.3rem; font-size: 0.85rem; font-weight: 700; }
+.flow-links a { color: var(--seal); }
+@media (max-width: 640px) {
+	.flow { grid-template-columns: 1fr; gap: 1.5rem; }
+	.flow li:not(:last-child)::after { content: '↓'; right: auto; left: 1.4rem; top: auto; bottom: -1.45rem; }
+	.flow li:nth-child(3)::after, .flow li:nth-child(7)::after { content: '↓'; }
+	.flow li:last-child::after { content: none; }
+	.flow-acct { grid-column: auto; }
+}
