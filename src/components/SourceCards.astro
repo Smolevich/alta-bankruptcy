@@ -2,6 +2,7 @@
 // Карточки первоисточников по Univerzal: данные в src/data/univerzal-sources.ts.
 import { UNIVERZAL_SOURCES } from '../data/univerzal-sources';
 import { UI, type Lang } from '../i18n';
+import { opensInNewTab } from '../links';
 
 const { lang = 'ru' } = Astro.props as { lang?: Lang };
 const t = UI[lang];
@@ -22,7 +23,10 @@ const t = UI[lang];
 							<span class="kind kind-official">{t.official}</span> {s.meta[lang]}
 						</dd>
 					</dl>
-					<a class="doc-go" href={s.url} rel="noopener">{t.srcCards.open} →</a>
+					<a class="doc-go" href={s.url} target="_blank" rel="noopener">
+						{/\.pdf($|[?#])/i.test(s.url) ? t.lbl.pdf : t.lbl.site}
+						<span class="sr-only">({t.newTab})</span>
+					</a>
 				</article>
 			</li>
 		))

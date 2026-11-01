@@ -3,11 +3,14 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import starlightLinksValidator from 'starlight-links-validator';
 import { INSTAGRAM_URL } from './src/site.mjs';
+import { unified } from '@astrojs/markdown-remark';
+import rehypeNewTab from './src/rehype-new-tab.mjs';
 
 // Сайт живёт в корне alta.smolevich.com: статику отдаёт сервис alta-feedback
 // (см. docs/deploy.md), поэтому base не задаём.
 export default defineConfig({
 	site: 'https://alta.smolevich.com',
+	markdown: { processor: unified({ rehypePlugins: [rehypeNewTab] }) },
 	integrations: [
 		starlight({
 			title: { ru: 'Вкладчики ALTA: что дальше', en: "ALTA depositors: what's next", 'sr-Latn': 'Štediše ALTA banke: šta dalje' },

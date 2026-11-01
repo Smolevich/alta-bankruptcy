@@ -170,3 +170,19 @@ html, body { overflow-x: clip; }
 .safe-strip { margin: -1rem 0 1.6rem; padding: 0.7rem 1rem; background: #fff8e1; border: 1px dashed var(--ink); border-radius: 3px; font-size: 0.95rem; }
 .safe-strip strong { margin-right: 0.3rem; }
 .safe-strip a { font-weight: 700; white-space: nowrap; }
+
+/* ---- Просмотр PDF и ссылки в новой вкладке ---- */
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.doc-go { display: flex; flex-wrap: wrap; gap: 0.2rem 1rem; }
+.doc-go a { color: var(--seal); }
+.doc-preview { margin-top: 0.5rem; align-self: flex-start; padding: 0.2rem 0.8rem; font: 700 0.9rem var(--sl-font-system); color: var(--seal); background: #fffdf7; border: 1.5px solid var(--seal); border-radius: 3px; cursor: pointer; }
+.pdf-dialog { width: 96vw; height: 96vh; max-width: none; max-height: none; padding: 0; border: 2px solid var(--ink); border-radius: 4px; background: #fffdf7; color: var(--ink); overflow: hidden; }
+.pdf-dialog[open] { display: flex; flex-direction: column; }
+.pdf-dialog::backdrop { background: rgb(27 36 48 / 0.72); }
+.pdf-dialog header { display: flex; align-items: center; gap: 1rem; padding: 0.5rem 0.9rem; border-bottom: 1px solid var(--line); }
+.pdf-dialog header strong { flex: 1; font-family: var(--serif); overflow-wrap: anywhere; }
+.pdf-dialog header a { color: var(--seal); font-weight: 700; white-space: nowrap; }
+.pdf-dialog header button { padding: 0.25rem 0.9rem; font: 700 0.9rem var(--sl-font-system); color: #fff; background: var(--seal); border: 0; border-radius: 3px; cursor: pointer; }
+.pdf-dialog object { flex: 1; width: 100%; min-height: 0; background: #fff; }
+/* На узком экране встроенный просмотр неудобен (iOS показывает одну страницу): остаётся «Открыть PDF». */
+@media (max-width: 767px) { .doc-preview { display: none; } }

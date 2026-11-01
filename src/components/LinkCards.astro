@@ -2,10 +2,12 @@
 // Карточки ссылок одной группы; данные в src/data/links.ts.
 import { LINKS, type LinkCard } from '../data/links';
 import { UI, type Lang } from '../i18n';
+import { opensInNewTab } from '../links';
 
 const { lang = 'ru', group } = Astro.props as { lang?: Lang; group: LinkCard['group'] };
 const t = UI[lang];
 const items = LINKS.filter((l) => l.group === group);
+const caption = (url: string) => (opensInNewTab(url) ? t.lbl.site : t.lbl.inner);
 ---
 
 <ul class="docs not-content">
@@ -19,13 +21,21 @@ const items = LINKS.filter((l) => l.group === group);
 						<dl class="doc-meta">
 							<dt>{t.docs.source}</dt>
 							<dd>
-								<span class={`kind kind-${l.kind}`}>{l.kind === 'official' ? t.official : t.unverified}</span>
+								<span class={`kind kind-${l.kind}`}>{l.kind === 'official' ? t.official : t.unverified}</span> {l.label}
 							</dd>
 						</dl>
 					)}
 					<span class="doc-go">
-						<a href={l.url} rel="noopener">{l.label} →</a>
-						{l.extra && <> <a href={l.extra.url} rel="noopener">{l.extra.label[lang]} →</a></>}
+						<a href={l.url} target={opensInNewTab(l.url) ? '_blank' : undefined} rel="noopener">
+							{caption(l.url)}
+							{opensInNewTab(l.url) && <span class="sr-only">({t.newTab})</span>}
+						</a>
+						{l.extra && (
+							<a href={l.extra.url} target={opensInNewTab(l.extra.url) ? '_blank' : undefined} rel="noopener">
+								{l.extra.label[lang]}: {caption(l.extra.url)}
+								{opensInNewTab(l.extra.url) && <span class="sr-only">({t.newTab})</span>}
+							</a>
+						)}
 					</span>
 				</article>
 			</li>

@@ -2,6 +2,7 @@
 // Карточки официальных документов: данные в src/data/documents.ts, текст страницы только статичный HTML.
 import { DOCS, SOURCE_LABEL } from '../data/documents';
 import { UI, type Lang } from '../i18n';
+import { opensInNewTab } from '../links';
 
 const { lang = 'ru' } = Astro.props as { lang?: Lang };
 const t = UI[lang];
@@ -22,16 +23,51 @@ const size = (b: number) =>
 						<dt>{t.docs.source}</dt>
 						<dd>
 							<span class="kind kind-official">{t.official}</span>{' '}
-							<a href={d.sourceUrl} rel="noopener">{SOURCE_LABEL[d.source][lang]}</a>
+							<a href={d.sourceUrl} target="_blank" rel="noopener">{SOURCE_LABEL[d.source][lang]}</a>
 						</dd>
 						<dt>PDF</dt>
 						<dd>{d.pages} {t.docs.pages}, {size(d.bytes)}</dd>
 					</dl>
-					<a class="doc-go" href={d.file ? `/docs/${d.file}` : d.sourceUrl} rel={d.file ? undefined : 'noopener'}>
-						{d.file ? t.docs.open : t.docs.openSource} →
-					</a>
+					<span class="doc-go">
+						<a href={d.file ? `/docs/${d.file}` : d.sourceUrl} target="_blank" rel="noopener">
+							{d.file || /\.pdf($|[?#])/i.test(d.sourceUrl) ? t.lbl.pdf : t.lbl.site}
+							<span class="sr-only">({t.newTab})</span>
+						</a>
+					</span>
+					{d.file && (
+						<>
+							<button type="button" class="doc-preview" hidden data-open={`dlg-${d.file}`}>{t.docs.preview}</button>
+							<dialog class="pdf-dialog" id={`dlg-${d.file}`} aria-label={d.title[lang]}>
+								<header>
+									<strong>{d.title[lang]}</strong>
+									<a href={`/docs/${d.file}`} target="_blank" rel="noopener">{t.lbl.pdf}</a>
+									<button type="button" data-close>{t.docs.close}</button>
+								</header>
+								<object data-src={`/docs/${d.file}#view=FitH`} type="application/pdf">
+									<a href={`/docs/${d.file}`} target="_blank" rel="noopener">{t.lbl.pdf}</a>
+								</object>
+							</dialog>
+						</>
+					)}
 				</article>
 			</li>
 		))
 	}
 </ul>
+
+<script is:inline>
+	// Без скриптов остаётся ссылка «Открыть PDF»; кнопка «Просмотр» появляется только когда скрипт работает.
+	document.querySelectorAll('[data-open]').forEach((btn) => {
+		const dlg = document.getElementById(btn.dataset.open);
+		if (!dlg || typeof dlg.showModal !== 'function') return;
+		const obj = dlg.querySelector('object');
+		btn.hidden = false;
+		btn.addEventListener('click', () => {
+			if (!obj.getAttribute('data')) obj.setAttribute('data', obj.dataset.src);
+			dlg.showModal();
+		});
+		dlg.querySelector('[data-close]').addEventListener('click', () => dlg.close());
+		dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+		dlg.addEventListener('close', () => obj.removeAttribute('data'));
+	});
+</script>
