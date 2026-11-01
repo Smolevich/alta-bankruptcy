@@ -20,6 +20,8 @@ export default defineConfig({
 			head: [{ tag: 'meta', attrs: { name: 'msvalidate.01', content: 'F904AA02101BD3884A4A984CD73C8E57' } }],
 			// Счётчик Cloudflare Web Analytics; токен публичный. CSP разрешает его в alta-feedback (site.py).
 			head: [
+				{ tag: 'link', attrs: { rel: 'icon', href: '/favicon.ico', sizes: '32x32' } },
+				{ tag: 'link', attrs: { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' } },
 				{
 					tag: 'script',
 					attrs: {
