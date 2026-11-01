@@ -1,0 +1,13 @@
+---
+// Короткая пометка для ИП (предпринимателей). Отдельного раздела для ИП пока нет:
+// все места, где закон касается ИП, помечены этим компонентом. Убрать пометки —
+// удалить файл и импорты (`grep -rn ForIp src`).
+import { UI, type Lang } from '../i18n';
+
+const { lang = 'ru' } = Astro.props as { lang?: Lang };
+---
+
+<aside class="for-ip not-content" data-for-ip>
+	<strong>{UI[lang].forIp}</strong>
+	<slot />
+</aside>

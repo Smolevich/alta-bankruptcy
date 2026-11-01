@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://alta.smolevich.com/sitemap-index.xml

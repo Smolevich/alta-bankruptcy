@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      # У каждой страницы и новости есть ru, en и sr; источники и внешние ссылки в версиях совпадают.
+      - name: Translations are complete
+        run: npm run check:i18n
+
+      # Сборка падает, если у страницы или новости нет `sources`/`checked` (схема в
+      # src/content.config.ts) или если внутренняя ссылка или якорь ведёт в никуда
+      # (starlight-links-validator). Внешние сайты не проверяем: они могут лежать.
+      - name: Build (schema and internal links)
+        run: npm run build
+
+      - name: Site has the files the server relies on
+        run: |
+          test -s dist/index.html
+          test -s dist/en/index.html
+          test -s dist/sr/index.html
+          test -s dist/sitemap-index.xml
+          test -s dist/llms.txt
+          grep -q 'hreflang="sr-Latn"' dist/index.html

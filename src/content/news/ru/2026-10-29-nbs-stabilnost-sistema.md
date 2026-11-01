@@ -1,0 +1,9 @@
+---
+title: Нацбанк — «Stabilnost finansijskog sistema počiva na poverenju i odgovornosti»
+date: 2026-10-29
+publisher: nbs
+summary: >-
+  Общее заявление о надзоре и защите вкладчиков. ALTA в начале текста не названа.
+sources:
+  - { title: "Нацбанк", url: "https://www.nbs.rs/sr/scripts/showcontent/index.html?id=21840", kind: official, date: 2026-10-29 }
+---

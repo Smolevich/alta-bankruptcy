@@ -1,0 +1,130 @@
+[
+  {
+    "id": "current",
+    "stage": 2,
+    "headline": {
+      "ru": "Ждём решения суда об открытии банкротства",
+      "en": "Waiting for the court's decision to open bankruptcy",
+      "sr": "Čeka se odluka Privrednog suda u Beogradu o otvaranju stečaja"
+    },
+    "note": {
+      "ru": "С решения суда идут все сроки: AOD объявит банк-плательщика не позже чем через 3 рабочих дня, выплаты до 50 000 € начнутся не позже чем через 7 рабочих дней. Решения суда пока нет.",
+      "en": "All deadlines run from the court decision: AOD will announce the paying bank within 3 working days, and payouts of up to €50,000 start within 7 working days. There is no court decision yet.",
+      "sr": "Svi rokovi teku od odluke suda: AOD će objaviti banku isplatioca najkasnije u roku od 3 radna dana, a isplata osiguranih depozita do 50.000 € počinje najkasnije u roku od 7 radnih dana. Odluke suda još nema."
+    },
+    "checkedAt": "2026-11-01",
+    "stages": [
+      {
+        "n": 1,
+        "title": {
+          "ru": "Нацбанк отозвал лицензию",
+          "en": "The National Bank revoked the licence",
+          "sr": "Narodna banka Srbije oduzela je dozvolu za rad"
+        },
+        "when": {
+          "ru": "30.10.2026",
+          "en": "30.10.2026",
+          "sr": "30.10.2026"
+        }
+      },
+      {
+        "n": 2,
+        "title": {
+          "ru": "Ждём решения суда о банкротстве",
+          "en": "Waiting for the court's bankruptcy decision",
+          "sr": "Čeka se odluka Privrednog suda u Beogradu o otvaranju stečaja"
+        },
+        "when": {
+          "ru": "сейчас",
+          "en": "now",
+          "sr": "sada"
+        }
+      },
+      {
+        "n": 3,
+        "title": {
+          "ru": "AOD называет банк-плательщика",
+          "en": "AOD names the paying bank",
+          "sr": "AOD objavljuje banku isplatioca"
+        },
+        "when": {
+          "ru": "не позже 3 раб. дней после суда",
+          "en": "within 3 working days of the court decision",
+          "sr": "najkasnije 3 radna dana od odluke suda"
+        }
+      },
+      {
+        "n": 4,
+        "title": {
+          "ru": "Выплата до 50 000 €",
+          "en": "Payout of up to €50,000",
+          "sr": "Isplata osiguranog iznosa do 50.000 €"
+        },
+        "when": {
+          "ru": "не позже 7 раб. дней после суда",
+          "en": "within 7 working days of the court decision",
+          "sr": "najkasnije 7 radnih dana od odluke suda"
+        }
+      },
+      {
+        "n": 5,
+        "title": {
+          "ru": "Подача требования сверх 50 000 €",
+          "en": "Filing the claim above €50,000",
+          "sr": "Prijava potraživanja iznad 50.000 €"
+        },
+        "when": {
+          "ru": "30–90 дней, срок назначит суд",
+          "en": "30–90 days, set by the court",
+          "sr": "30–90 dana, rok određuje sud"
+        }
+      },
+      {
+        "n": 6,
+        "title": {
+          "ru": "Проверка требований, список суда",
+          "en": "Claims review and the court's final list",
+          "sr": "Utvrđivanje potraživanja i konačna lista poverilaca"
+        },
+        "when": {
+          "ru": "около 8–12 месяцев",
+          "en": "about 8–12 months",
+          "sr": "oko 8–12 meseci"
+        }
+      },
+      {
+        "n": 7,
+        "title": {
+          "ru": "Выплаты сверх лимита",
+          "en": "Payouts above the limit",
+          "sr": "Isplate iznad limita"
+        },
+        "when": {
+          "ru": "срока нет, годы",
+          "en": "no deadline, years",
+          "sr": "bez roka, godine"
+        }
+      }
+    ],
+    "sources": [
+      {
+        "title": "AOD: «Одузета дозвола за рад Алта банци»",
+        "url": "https://www.aod.rs/clan/vest/vest_forma/137",
+        "kind": "official",
+        "date": "2026-10-31"
+      },
+      {
+        "title": "Нацбанк: сообщение об отзыве лицензии",
+        "url": "https://www.nbs.rs/sr/scripts/showcontent/index.html?id=21849",
+        "kind": "official",
+        "date": "2026-10-30"
+      },
+      {
+        "title": "Закон о банкротстве и ликвидации банков, ст. 6",
+        "url": "https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2015/14/3/reg",
+        "kind": "official",
+        "date": "2026-11-01"
+      }
+    ]
+  }
+]

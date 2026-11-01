@@ -1,0 +1,34 @@
+---
+// Крупный блок «Сейчас»: текущая стадия и рельса из всех стадий.
+import { getEntry } from 'astro:content';
+import { LOCALE_TAG, UI, type Lang } from '../i18n';
+
+const { lang = 'ru' } = Astro.props as { lang?: Lang };
+const t = UI[lang];
+const status = (await getEntry('status', 'current'))!.data;
+const fmt = (d: Date) => d.toLocaleDateString(LOCALE_TAG[lang], { timeZone: 'UTC' });
+---
+
+<section class="status not-content" aria-labelledby="status-h">
+	<div class="status-stamp" aria-hidden="true">
+		<span class="status-n">{status.stage}</span>
+		<span class="status-of">{t.of} {status.stages.length}</span>
+	</div>
+	<div class="status-body">
+		<p class="status-label" id="status-h">{t.statusNow} {status.stage}</p>
+		<p class="status-headline">{status.headline[lang]}</p>
+		<p class="status-note">{status.note[lang]}</p>
+		<p class="status-checked">{t.checkedOn} {fmt(status.checkedAt)}. {t.statusUpdate}</p>
+	</div>
+	<ol class="rail" aria-label={t.allStages}>
+		{
+			status.stages.map((s) => (
+				<li class:list={[s.n < status.stage && 'done', s.n === status.stage && 'now']} aria-current={s.n === status.stage ? 'step' : undefined}>
+					<span class="rail-dot">{s.n < status.stage ? '✓' : s.n}</span>
+					<span class="rail-title">{s.title[lang]}</span>
+					<span class="rail-when">{s.when[lang]}</span>
+				</li>
+			))
+		}
+	</ol>
+</section>

@@ -1,0 +1,37 @@
+---
+import { getCollection } from 'astro:content';
+
+import { LOCALE_TAG, UI, type Lang } from '../i18n';
+
+const { limit, lang = 'ru' } = Astro.props as { limit?: number; lang?: Lang };
+const PUBLISHER = UI[lang].publisher;
+
+const all = (await getCollection('news', (n) => n.id.startsWith(`${lang}/`))).sort(
+	(a, b) => b.data.date.getTime() - a.data.date.getTime() || b.data.order - a.data.order,
+);
+const items = limit ? all.slice(0, limit) : all;
+const fmt = (d: Date) => d.toLocaleDateString(LOCALE_TAG[lang], { timeZone: 'UTC' });
+---
+
+<ol class="news not-content">
+	{
+		items.map((n) => (
+			<li>
+				<div class="news-meta">
+					<time datetime={n.data.date.toISOString().slice(0, 10)}>{fmt(n.data.date)}</time>
+					<span class={`pub pub-${n.data.publisher}`}>{PUBLISHER[n.data.publisher]}</span>
+				</div>
+				<h3>{n.data.title}</h3>
+				<p>{n.data.summary}</p>
+				<p class="news-src">
+					{n.data.sources.map((s, i) => (
+						<>
+							{i > 0 && ' · '}
+							<a href={s.url} rel="noopener">{s.title}</a>
+						</>
+					))}
+				</p>
+			</li>
+		))
+	}
+</ol>

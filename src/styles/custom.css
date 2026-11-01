@@ -1,0 +1,126 @@
+/* Тон: канцелярский реестр — бумага, чернила, одна «печать» цвета бордо.
+   Шрифты системные: сайт не ходит на чужие хосты (CSP, приватность читателей). */
+:root {
+	--serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Charter, Georgia, serif;
+	--paper: #f6f2e8;
+	--ink: #1b2430;
+	--seal: #9b2c22;
+	--seal-soft: #f3dcd7;
+	--ok: #2d6a4f;
+	--line: #d9d2c0;
+	--sl-font-system: ui-sans-serif, 'Helvetica Neue', 'Segoe UI', Roboto, sans-serif;
+}
+:root[data-theme='light'] {
+	--sl-color-bg: var(--paper);
+	--sl-color-bg-nav: #fbf8f0;
+	--sl-color-bg-sidebar: #fbf8f0;
+	--sl-color-hairline: var(--line);
+	--sl-color-hairline-light: var(--line);
+	--sl-color-text: var(--ink);
+	--sl-color-text-accent: var(--seal);
+	--sl-color-accent: var(--seal);
+	--sl-color-accent-high: #6f1d16;
+	--sl-color-accent-low: var(--seal-soft);
+	--sl-color-white: #111820;
+	--sl-color-black: #fffdf7;
+}
+h1, h2, h3, .site-title { font-family: var(--serif); letter-spacing: -0.01em; }
+.sl-markdown-content h2 { font-weight: 700; }
+/* Ничто не должно давать горизонтальную прокрутку на телефоне. */
+html, body { overflow-x: clip; }
+.sl-markdown-content table { display: block; overflow-x: auto; }
+.sl-markdown-content pre, .sl-markdown-content code { overflow-wrap: anywhere; }
+
+/* ---- Блок «Сейчас» ---- */
+.status {
+	position: relative;
+	display: grid;
+	grid-template-columns: auto 1fr;
+	gap: 1rem 1.5rem;
+	padding: 1.4rem 1.4rem 1.2rem;
+	margin: 1.2rem 0 2rem;
+	background: #fffdf7;
+	border: 2px solid var(--ink);
+	border-radius: 4px;
+	box-shadow: 6px 6px 0 var(--seal-soft);
+}
+.status-stamp {
+	display: grid;
+	place-content: center;
+	width: 6.2rem;
+	height: 6.2rem;
+	border: 3px double var(--seal);
+	border-radius: 50%;
+	color: var(--seal);
+	text-align: center;
+	transform: rotate(-6deg);
+	line-height: 1;
+}
+.status-n { font: 700 3.2rem/1 var(--serif); }
+.status-of { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; }
+.status-label { margin: 0; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--seal); font-weight: 700; }
+.status-headline { margin: 0.2rem 0 0.5rem; font: 700 clamp(1.5rem, 4.5vw, 2.2rem)/1.15 var(--serif); }
+.status-note { margin: 0 0 0.4rem; }
+.status-checked { margin: 0; font-size: 0.85rem; color: #5a5448; }
+.rail { grid-column: 1 / -1; list-style: none; margin: 0.6rem 0 0; padding: 0; display: grid; gap: 0.35rem; counter-reset: none; }
+.rail li { display: grid; grid-template-columns: 1.7rem 1fr; column-gap: 0.6rem; align-items: baseline; padding: 0.15rem 0; margin: 0; opacity: 0.6; }
+.rail li.now { opacity: 1; font-weight: 700; }
+.rail li.done { opacity: 0.85; }
+.rail-dot { grid-row: span 2; display: grid; place-content: center; width: 1.5rem; height: 1.5rem; border-radius: 50%; border: 1.5px solid var(--ink); font-size: 0.75rem; }
+.now .rail-dot { background: var(--seal); border-color: var(--seal); color: #fff; }
+.done .rail-dot { background: var(--ok); border-color: var(--ok); color: #fff; }
+.rail-when { font-size: 0.8rem; font-weight: 400; color: #5a5448; }
+@media (max-width: 520px) {
+	.status { grid-template-columns: 1fr; padding: 1rem; box-shadow: 4px 4px 0 var(--seal-soft); }
+	.status-stamp { width: 4.6rem; height: 4.6rem; }
+	.status-n { font-size: 2.3rem; }
+}
+
+/* ---- Три шага ---- */
+.steps3 { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); margin: 1rem 0 2rem; }
+.steps3 > div { border-top: 4px solid var(--seal); background: #fffdf7; padding: 0.9rem 1rem 1rem; border-radius: 0 0 4px 4px; border-inline: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.steps3 h3 { margin: 0 0 0.4rem; font-size: 1.1rem; }
+.steps3 p { margin: 0 0 0.5rem; font-size: 0.95rem; }
+.steps3 small { color: #5a5448; }
+
+/* ---- Новости ---- */
+.news { list-style: none; padding: 0; margin: 1rem 0; display: grid; gap: 1rem; }
+.news li { margin: 0; padding: 0.9rem 1rem; background: #fffdf7; border: 1px solid var(--line); border-left: 4px solid var(--ink); border-radius: 3px; }
+.news h3 { margin: 0.3rem 0; font-size: 1.1rem; }
+.news p { margin: 0.3rem 0; font-size: 0.95rem; }
+.news-meta { display: flex; gap: 0.6rem; align-items: center; font-size: 0.85rem; }
+.news-src { font-size: 0.85rem !important; color: #5a5448; overflow-wrap: anywhere; }
+.pub { padding: 0.05rem 0.5rem; border-radius: 99px; background: var(--ink); color: #fff; font-size: 0.75rem; }
+
+/* ---- Пометка для ИП ---- */
+.for-ip { margin: 1rem 0; padding: 0.6rem 0.9rem; border: 1px dashed var(--ink); background: #fff8e1; border-radius: 3px; font-size: 0.95rem; }
+.for-ip strong { display: inline-block; margin-right: 0.4rem; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.08em; }
+.for-ip p { display: inline; margin: 0; }
+
+/* ---- FAQ ---- */
+.faq details { border-bottom: 1px solid var(--line); padding: 0.6rem 0; }
+.faq summary { cursor: pointer; font-weight: 700; }
+.faq p { margin: 0.5rem 0 0; }
+
+/* ---- Источники под страницей ---- */
+.sources { margin-top: 3rem; padding: 1rem; border-top: 3px double var(--ink); font-size: 0.9rem; }
+.sources h2 { font-size: 1rem; margin: 0 0 0.5rem; }
+.sources h2 small { margin-left: 0.6rem; font: 400 0.8rem var(--sl-font-system); color: #5a5448; }
+.sources ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.35rem; }
+.sources li { display: grid; grid-template-columns: auto 1fr auto; gap: 0.5rem; align-items: baseline; margin: 0; }
+.sources a { overflow-wrap: anywhere; }
+.sources time { color: #5a5448; font-size: 0.8rem; white-space: nowrap; }
+.kind { font-size: 0.7rem; padding: 0.05rem 0.4rem; border-radius: 3px; border: 1px solid; white-space: nowrap; }
+.kind-official { color: var(--ok); }
+.kind-reliable_media { color: #7a5a00; }
+.kind-unverified { color: var(--seal); }
+@media (max-width: 520px) {
+	.sources li { grid-template-columns: 1fr auto; }
+	.sources .kind { grid-column: 1 / -1; justify-self: start; }
+}
+
+/* Длинное название сайта не должно обрезаться в шапке на телефоне. */
+@media (max-width: 520px) {
+	.site-title { font-size: 1rem; line-height: 1.15; white-space: normal; }
+}
+.site-title { min-width: 0; }

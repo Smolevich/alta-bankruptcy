@@ -1,0 +1,38 @@
+---
+// Источники и дата сверки под каждой страницей: читатель видит, на чём держится текст.
+import Default from '@astrojs/starlight/components/Footer.astro';
+import { LOCALE_TAG, UI, href, langOf } from '../i18n';
+
+const lang = langOf(Astro.locals.starlightRoute.lang);
+const t = UI[lang];
+
+const data = Astro.locals.starlightRoute.entry.data as {
+	sources?: { title: string; url: string; kind: 'official' | 'reliable_media' | 'unverified'; date: Date }[];
+	checked?: Date;
+};
+const fmt = (d: Date) => d.toLocaleDateString(LOCALE_TAG[lang], { timeZone: 'UTC' });
+---
+
+{
+	data.sources && (
+		<aside class="sources not-content" aria-label={t.sources}>
+			<h2>
+				{t.sources}
+				{data.checked && <small>{t.checked} {fmt(data.checked)}</small>}
+			</h2>
+			<ul>
+				{data.sources.map((s) => (
+					<li>
+						<span class={`kind kind-${s.kind}`}>{t[s.kind]}</span>
+						<a href={s.url} rel="noopener">{s.title}</a>
+						<time>{fmt(s.date)}</time>
+					</li>
+				))}
+			</ul>
+			<p>
+				{t.footerHelp} <a href={href(lang, '/pomoch/')}>{t.footerHelpLink}</a>. {t.footerNote}
+			</p>
+		</aside>
+	)
+}
+<Default><slot /></Default>

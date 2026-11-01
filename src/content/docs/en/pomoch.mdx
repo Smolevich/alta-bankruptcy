@@ -1,0 +1,38 @@
+---
+title: "How to help and correct the site"
+description: "How to fix a mistake or add a news item on the site: edit through GitHub or with Claude and Codex, the rule 'no source, no edit', and levels of source reliability."
+checked: 2026-11-01
+sources:
+  - { title: "Site repository, rules for edits (CONTRIBUTING.md)", url: "https://github.com/Smolevich/alta-bankruptcy/blob/main/CONTRIBUTING.md", kind: official, date: 2026-11-01 }
+---
+
+The site is open: the text lives on [GitHub](https://github.com/Smolevich/alta-bankruptcy) and anyone can suggest an edit. There is one main rule: **no source, no edit.**
+
+## The rule
+
+Every figure, deadline and statement on the site has a source. If you know there is a mistake somewhere but have no source, report it in an [issue](https://github.com/Smolevich/alta-bankruptcy/issues/new): the edit will be made once a source appears.
+
+## Levels of source reliability
+
+- **Official source**: a law, an announcement from AOD, the National Bank or a court, a document of the bank itself. Accepted immediately.
+- **Reliable media**: a publication that links to a document or gives names and dates. Accepted as a clarification and marked on the page; it is better to find the primary source instead.
+- **Unverified**: a chat, a rumour, a retelling without a link. It does not reach the pages.
+
+There is a "For sole traders" note: these are temporary short remarks. There is no separate section for sole traders yet.
+
+## How to correct
+
+1. **Through the GitHub site.** Every page has an "Edit page" link. A web editor opens; make the edit, add the source to the page header (`sources`) and press "Propose changes". Fill in the template in the description: what changes, the primary source, a link.
+2. **With Claude or Codex.** Clone the repository and ask the assistant to make the edit; the repository has an `AGENTS.md` with the rules. The same source is required, and a person still reviews the result.
+
+## Three languages
+
+The site is in Russian, English and Serbian. If you fix a fact in one language, fix it in the same PR in the others. If you cannot, add the note "translation lags" to the PR description: the build check will not let a page be lost, but it will not carry the meaning of your edit across for you.
+
+## A news item
+
+A news item is one file in `src/content/news/ru/` (and the same in `en/` and `sr/`). Use any neighbouring file as a model: date, publisher (`aod`, `nbs`, `bank`, `court`), a short summary and a link to the announcement. Without a link to the primary source the site will not build.
+
+## Reporting an opened account
+
+This is not a site edit: use the [anonymous form](/account) and the [statistics from the answers](/account/stats).

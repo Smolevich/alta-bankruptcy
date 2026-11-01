@@ -1,0 +1,98 @@
+name: Deploy to Hetzner
+
+# Сайт отдаёт сервис alta-feedback (alta.smolevich.com) из папки /var/www/alta-bankruptcy:
+# CI собирает статику и подменяет папку целиком. Сервис не перезапускается. См. docs/deploy.md.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'public/**'
+      - 'scripts/**'
+      - 'astro.config.mjs'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/deploy.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-alta-bankruptcy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Preflight and build
+        run: |
+          npm ci
+          npm run check:i18n
+          npm run build
+
+      - name: Connect to Tailscale
+        uses: tailscale/github-action@v2
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:gha-runner
+
+      - name: Copy build to server
+        uses: appleboy/scp-action@v1.0.0
+        with:
+          host: ${{ secrets.VDS_HOST }}
+          port: ${{ secrets.VDS_PORT }}
+          username: ${{ secrets.VDS_USER }}
+          key: ${{ secrets.VDS_SSH_KEY }}
+          passphrase: ${{ secrets.VDS_SSH_PASSPHRASE }}
+          source: dist/**
+          target: /tmp/deploy-alta-bankruptcy
+          overwrite: true
+
+      - name: Swap the site folder
+        uses: appleboy/ssh-action@v1.2.5
+        with:
+          host: ${{ secrets.VDS_HOST }}
+          port: ${{ secrets.VDS_PORT }}
+          username: ${{ secrets.VDS_USER }}
+          key: ${{ secrets.VDS_SSH_KEY }}
+          passphrase: ${{ secrets.VDS_SSH_PASSPHRASE }}
+          script: |
+            set -e
+            WEB=/var/www/alta-bankruptcy
+            STAGE=/tmp/deploy-alta-bankruptcy
+
+            sudo mkdir -p /var/www
+            sudo rm -rf "$WEB.new" "$WEB.old"
+            sudo cp -a "$STAGE/dist" "$WEB.new"
+            rm -rf "$STAGE"
+            # Root umask на хосте иногда оставляет 700, а сервис читает от своего пользователя.
+            sudo chown -R root:root "$WEB.new"
+            sudo find "$WEB.new" -type d -exec chmod 755 {} +
+            sudo find "$WEB.new" -type f -exec chmod 644 {} +
+
+            [ -d "$WEB" ] && sudo mv "$WEB" "$WEB.old"
+            sudo mv "$WEB.new" "$WEB"
+
+            # Проверка через сервис на петле. Если «/» отдаёт не справочник (например, сервис
+            # ещё без раздачи статики), возвращаем прежнюю папку и валим деплой.
+            ok=1
+            curl -fsS http://127.0.0.1:8101/ | grep -q 'hreflang="sr-Latn"' || ok=0
+            curl -fsS http://127.0.0.1:8101/en/ | grep -q '<html lang="en"' || ok=0
+            curl -fsS http://127.0.0.1:8101/sr/ | grep -q 'lang="sr-Latn"' || ok=0
+            curl -fsS -o /dev/null http://127.0.0.1:8101/account || ok=0
+            curl -fsS -o /dev/null http://127.0.0.1:8101/account/stats || ok=0
+            if [ "$ok" != 1 ]; then
+              echo "ERROR: проверка после подмены не прошла, возвращаю прежнюю папку" >&2
+              sudo rm -rf "$WEB"
+              [ -d "$WEB.old" ] && sudo mv "$WEB.old" "$WEB"
+              exit 1
+            fi
+            sudo rm -rf "$WEB.old"
+            echo "site deployed: ${{ github.sha }}"

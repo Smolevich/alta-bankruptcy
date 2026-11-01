@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.astro/
+.env
+.env.*
+*.key
+*.pem
+*.session
+*.db
+.DS_Store

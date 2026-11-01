@@ -1,0 +1,38 @@
+---
+title: "Kako pomoći i ispraviti sajt"
+description: "Kako ispraviti grešku ili dodati vest na sajtu: izmena preko GitHub-a ili uz Claude i Codex, pravilo „nema izvora, nema izmene“ i nivoi pouzdanosti izvora."
+checked: 2026-11-01
+sources:
+  - { title: "Repozitorijum sajta, pravila izmena (CONTRIBUTING.md)", url: "https://github.com/Smolevich/alta-bankruptcy/blob/main/CONTRIBUTING.md", kind: official, date: 2026-11-01 }
+---
+
+Sajt je otvoren: tekst se nalazi na [GitHub-u](https://github.com/Smolevich/alta-bankruptcy) i svako može predložiti izmenu. Glavno pravilo je jedno: **nema izvora, nema izmene.**
+
+## Pravilo
+
+Svaki podatak, rok i tvrdnja na sajtu imaju izvor. Ako znate da negde postoji greška, a nemate izvor, prijavite to kroz [issue](https://github.com/Smolevich/alta-bankruptcy/issues/new): izmena će biti uneta kada se izvor pojavi.
+
+## Nivoi pouzdanosti izvora
+
+- **Zvanični izvor**: zakon, saopštenje AOD, Narodne banke Srbije ili suda, dokument same banke. Prihvata se odmah.
+- **Pouzdani mediji**: tekst koji sadrži vezu ka dokumentu ili imena i datume. Prihvata se kao dopuna i označava se na stranici; umesto medija bolje je pronaći prvobitni izvor.
+- **Nepotvrđeno**: čet, glasina, prepričavanje bez veze. Ne dospeva na stranice.
+
+Postoji beleška „Za preduzetnike“: to su privremene kratke napomene. Zasebnog odeljka za preduzetnike za sada nema.
+
+## Kako ispraviti
+
+1. **Preko sajta GitHub.** Na svakoj stranici postoji veza „Izmeni stranicu“. Otvara se veb editor; unesite izmenu, dodajte izvor u zaglavlje stranice (`sources`) i pritisnite „Propose changes“. U opisu popunite šablon: šta se menja, prvobitni izvor, veza.
+2. **Uz Claude ili Codex.** Klonirajte repozitorijum i zamolite asistenta da unese izmenu; u repozitorijumu postoji `AGENTS.md` sa pravilima. Potreban je isti izvor, a rezultat ipak proverava čovek.
+
+## Tri jezika
+
+Sajt je na ruskom, engleskom i srpskom. Ako ispravite činjenicu na jednom jeziku, ispravite je u istom PR-u i na ostalima. Ako ne možete, dodajte u opis PR-a napomenu „prevod kasni“: provera izgradnje neće dozvoliti da se stranica izgubi, ali neće umesto vas preneti smisao izmene.
+
+## Vest
+
+Vest je jedna datoteka u `src/content/news/ru/` (i ista u `en/` i `sr/`). Uzmite bilo koju susednu datoteku kao uzor: datum, izdavač (`aod`, `nbs`, `bank`, `court`), kratak sadržaj i veza ka saopštenju. Bez veze ka prvobitnom izvoru sajt se neće izgraditi.
+
+## Prijava otvorenog računa
+
+To nije izmena sajta: koristite [anonimni obrazac](/account) i [statistiku odgovora](/account/stats).
