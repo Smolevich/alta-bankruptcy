@@ -1,0 +1,37 @@
+---
+// Плитки разделов как маршрут: порядок совпадает с боковым меню и «Далее» внизу страниц.
+import { UI, href, type Lang } from '../i18n';
+
+const { lang = 'ru' } = Astro.props as { lang?: Lang };
+const t = UI[lang];
+---
+
+<ol class="flow not-content" aria-label={t.flowLabel}>
+	{
+		t.flow.map(([path, title, blurb], i) => (
+			<>
+			{i === 2 && (
+				<li class="flow-acct">
+					<div class="flow-tile flow-tile-acct">
+						<span class="flow-n" aria-hidden="true">€</span>
+						<span class="flow-title">{t.acct.title}</span>
+						<span class="flow-blurb">{t.acct.blurb}</span>
+						<span class="flow-links">
+							<a href="/account/stats">{t.acct.stats} →</a>
+							<a href="/account">{t.acct.share} →</a>
+						</span>
+					</div>
+				</li>
+			)}
+			<li>
+				<a class="flow-tile" href={href(lang, path)} data-n={i + 1}>
+					<span class="flow-n" aria-hidden="true">{i + 1}</span>
+					<span class="flow-title">{title}</span>
+					<span class="flow-blurb">{blurb}</span>
+					<span class="flow-go">{t.flowOpen} →</span>
+				</a>
+			</li>
+			</>
+		))
+	}
+</ol>

@@ -28,7 +28,8 @@ export default defineConfig({
 				en: { label: 'English', lang: 'en' },
 				sr: { label: 'Srpski', lang: 'sr-Latn' },
 			},
-			pagination: false,
+			// «Назад/Далее» внизу страницы идут в порядке бокового меню, как плитки на главной.
+			pagination: true,
 			customCss: ['./src/styles/custom.css'],
 			components: {
 				Footer: './src/components/Footer.astro',
@@ -40,13 +41,15 @@ export default defineConfig({
 				starlightLinksValidator({ errorOnRelativeLinks: false, exclude: ['/account', '/account/**'] })],
 			sidebar: [
 				{ label: 'Сейчас', slug: 'index', translations: { en: 'Now', sr: 'Sada' } },
-				{ label: 'Новости', slug: 'novosti', translations: { en: 'News', sr: 'Vesti' } },
 				{ label: 'Процедура и сроки', slug: 'procedura', translations: { en: 'Procedure and timeline', sr: 'Postupak i rokovi' } },
 				{ label: 'Требование сверх 50 000 €', slug: 'trebovanie', translations: { en: 'Claim above €50,000', sr: 'Prijava potraživanja iznad 50.000 €' } },
+				{ label: 'Новости', slug: 'novosti', translations: { en: 'News', sr: 'Vesti' } },
 				{ label: 'Как было: Univerzal 2014 и другие', slug: 'kak-bylo', translations: { en: 'Past cases: Univerzal 2014 and others', sr: 'Raniji slučajevi: Univerzal 2014 i drugi' } },
 				{ label: 'Банк: владелец и руководство', slug: 'bank', translations: { en: 'The bank: owner and management', sr: 'Banka: vlasnik i rukovodstvo' } },
 				{ label: 'Законы', slug: 'zakony', translations: { en: 'Laws', sr: 'Zakoni' } },
 				{ label: 'Как помочь и править', slug: 'pomoch', translations: { en: 'How to help and correct', sr: 'Kako pomoći i ispraviti' } },
+				// Страница отдаётся сервисом формы, не Starlight: обычная ссылка (валидатор её пропускает через exclude).
+				{ label: 'Где открывают счета', link: '/account/stats', translations: { en: 'Where accounts get opened', sr: 'Gde se otvaraju računi' } },
 			],
 		}),
 	],
