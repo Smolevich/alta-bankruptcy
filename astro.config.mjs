@@ -60,6 +60,7 @@ export default defineConfig({
 				{ label: 'Сейчас', slug: 'index', translations: { en: 'Now', sr: 'Sada' } },
 				{ label: 'Процедура и сроки', slug: 'procedura', translations: { en: 'Procedure and timeline', sr: 'Postupak i rokovi' } },
 				{ label: 'Требование сверх 50 000 €', slug: 'trebovanie', translations: { en: 'Claim above €50,000', sr: 'Prijava potraživanja iznad 50.000 €' } },
+				{ label: 'Что сохранить: выписки и документы', slug: 'vypiski', translations: { en: 'What to save: statements and documents', sr: 'Šta sačuvati: izvodi i dokumenta' } },
 				{ label: 'Как не попасть на мошенников', slug: 'bezopasnost', translations: { en: 'Stay safe: avoid scams', sr: 'Bezbednost: kako da izbegnete prevaru' } },
 				{ label: 'Новости', slug: 'novosti', translations: { en: 'News', sr: 'Vesti' } },
 				{ label: 'Как было: Univerzal 2014 и другие', slug: 'kak-bylo', translations: { en: 'Past cases: Univerzal 2014 and others', sr: 'Raniji slučajevi: Univerzal 2014 i drugi' } },
