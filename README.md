@@ -12,7 +12,7 @@ npm run dev      # local site
 npm run check    # translations check + build (schema and internal links)
 ```
 
-Texts: CC BY 4.0 (`LICENSE-CONTENT.md`), code: MIT (`LICENSE`). Rules for edits: `CONTRIBUTING.md`.
+Texts and code: MIT (`LICENSE`). Rules for edits: `CONTRIBUTING.md`.
 Not legal advice.
 
 ---
@@ -23,7 +23,7 @@ Not legal advice.
 (Univerzal banka, 2014), официальные новости и законы. У каждой цифры есть источник. Языки: русский
 (основной), английский, сербский. Сайт: https://alta.smolevich.com.
 
-Тексты: CC BY 4.0, код: MIT. Как править — в [CONTRIBUTING.md](CONTRIBUTING.md). Это не юридическая
+Тексты и код: MIT. Как править — в [CONTRIBUTING.md](CONTRIBUTING.md). Это не юридическая
 консультация.
 
 ## Как устроено
