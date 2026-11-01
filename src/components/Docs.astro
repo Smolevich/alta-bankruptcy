@@ -35,15 +35,39 @@ const size = (b: number) =>
 						</a>
 					</span>
 					{d.file && (
-						<details class="doc-view">
-							<summary>{t.docs.preview}</summary>
-							<object data={`/docs/${d.file}#view=FitH&pagemode=none`} type="application/pdf" width="100%" height="800">
-								<a href={`/docs/${d.file}`} target="_blank" rel="noopener">{t.lbl.pdf}</a>
-							</object>
-						</details>
+						<>
+							<button type="button" class="doc-preview" hidden data-open={`dlg-${d.file}`}>{t.docs.preview}</button>
+							<dialog class="pdf-dialog" id={`dlg-${d.file}`} aria-label={d.title[lang]}>
+								<header>
+									<strong>{d.title[lang]}</strong>
+									<a href={`/docs/${d.file}`} target="_blank" rel="noopener">{t.lbl.pdf}</a>
+									<button type="button" data-close>{t.docs.close}</button>
+								</header>
+								<object data-src={`/docs/${d.file}#view=FitH`} type="application/pdf">
+									<a href={`/docs/${d.file}`} target="_blank" rel="noopener">{t.lbl.pdf}</a>
+								</object>
+							</dialog>
+						</>
 					)}
 				</article>
 			</li>
 		))
 	}
 </ul>
+
+<script is:inline>
+	// Без скриптов остаётся ссылка «Открыть PDF»; кнопка «Просмотр» появляется только когда скрипт работает.
+	document.querySelectorAll('[data-open]').forEach((btn) => {
+		const dlg = document.getElementById(btn.dataset.open);
+		if (!dlg || typeof dlg.showModal !== 'function') return;
+		const obj = dlg.querySelector('object');
+		btn.hidden = false;
+		btn.addEventListener('click', () => {
+			if (!obj.getAttribute('data')) obj.setAttribute('data', obj.dataset.src);
+			dlg.showModal();
+		});
+		dlg.querySelector('[data-close]').addEventListener('click', () => dlg.close());
+		dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+		dlg.addEventListener('close', () => obj.removeAttribute('data'));
+	});
+</script>
