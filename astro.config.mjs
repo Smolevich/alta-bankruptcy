@@ -18,6 +18,17 @@ export default defineConfig({
 				'Справочник для вкладчиков банка ALTA (Сербия), у которых на счетах больше 50 000 €: стадия процедуры, сроки, требование в банкротстве, официальные новости.',
 			// Подтверждение владения для Bing Webmaster Tools: тег должен оставаться, иначе подтверждение слетит.
 			head: [{ tag: 'meta', attrs: { name: 'msvalidate.01', content: 'F904AA02101BD3884A4A984CD73C8E57' } }],
+			// Счётчик Cloudflare Web Analytics; токен публичный. CSP разрешает его в alta-feedback (site.py).
+			head: [
+				{
+					tag: 'script',
+					attrs: {
+						type: 'module',
+						src: 'https://static.cloudflareinsights.com/beacon.min.js',
+						'data-cf-beacon': '{"token": "fe16933a65524594b31524da4c01f99c"}',
+					},
+				},
+			],
 			// Правка в два клика через веб-редактор GitHub, без клона репозитория.
 			editLink: { baseUrl: 'https://github.com/Smolevich/alta-bankruptcy/edit/main/' },
 			social: [
