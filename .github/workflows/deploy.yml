@@ -96,3 +96,17 @@ jobs:
             fi
             sudo rm -rf "$WEB.old"
             echo "site deployed: ${{ github.sha }}"
+
+      # IndexNow: сообщает Bing/Yandex о страницах сразу после выкладки. Ключ публичный по
+      # стандарту (файл лежит в public/). Не валим деплой, если сервис недоступен.
+      - name: Ping IndexNow
+        continue-on-error: true
+        run: |
+          KEY=4fb80e9f68dc8206575fdc20784d9e0f
+          URLS=$(curl -fsS https://alta.smolevich.com/sitemap-0.xml \
+            | grep -o '<loc>[^<]*' | sed 's|<loc>||' \
+            | python3 -c 'import sys,json; print(json.dumps([l.strip() for l in sys.stdin if l.strip()]))')
+          curl -fsS -X POST https://api.indexnow.org/IndexNow \
+            -H "Content-Type: application/json; charset=utf-8" \
+            -d "{\"host\":\"alta.smolevich.com\",\"key\":\"$KEY\",\"keyLocation\":\"https://alta.smolevich.com/$KEY.txt\",\"urlList\":$URLS}" \
+            -w '\nIndexNow HTTP %{http_code}\n'
