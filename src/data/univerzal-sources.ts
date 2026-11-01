@@ -139,15 +139,105 @@ export const UNIVERZAL_SOURCES: Source[] = [
 	},
 	{
 		title: {
+			ru: 'Квартальный отчёт AOD по Univerzal, III кв. 2020',
+			en: 'AOD quarterly report on Univerzal, Q3 2020',
+			sr: 'Kvartalni izveštaj AOD o Univerzal banci, III kvartal 2020.',
+		},
+		date: { ru: 'период 01.07–30.09.2020', en: 'period 01.07–30.09.2020', sr: 'period 01.07–30.09.2020.' },
+		main: {
+			ru: 'I очередь: выплачено за квартал 591,3 млн динаров (таблица «исплаћено» по очередям).',
+			en: 'Rank I: RSD 591.3 m paid in the quarter (the “paid” column of the table by rank).',
+			sr: 'I isplatni red: za kvartal isplaćeno 591,3 mil. dinara (kolona „isplaćeno“ u tabeli po redovima).',
+		},
+		url: 'https://www.aod.rs/uploads/dokumenti/kvartalniizvestaj/192_kvartalni_izvestaj.pdf',
+		meta: { ru: 'PDF', en: 'PDF', sr: 'PDF' },
+	},
+	{
+		title: {
+			ru: 'Квартальный отчёт AOD по Univerzal, IV кв. 2020',
+			en: 'AOD quarterly report on Univerzal, Q4 2020',
+			sr: 'Kvartalni izveštaj AOD o Univerzal banci, IV kvartal 2020.',
+		},
+		date: { ru: 'период 01.10–31.12.2020', en: 'period 01.10–31.12.2020', sr: 'period 01.10–31.12.2020.' },
+		main: {
+			ru: 'I очередь: выплачено за квартал 359,3 млн динаров (таблица «исплаћено» по очередям).',
+			en: 'Rank I: RSD 359.3 m paid in the quarter (the “paid” column of the table by rank).',
+			sr: 'I isplatni red: za kvartal isplaćeno 359,3 mil. dinara (kolona „isplaćeno“ u tabeli po redovima).',
+		},
+		url: 'https://www.aod.rs/uploads/dokumenti/kvartalniizvestaj/277_kvartalni_izvestaj.pdf',
+		meta: { ru: 'PDF', en: 'PDF', sr: 'PDF' },
+	},
+	{
+		title: {
+			ru: 'Квартальный отчёт AOD по Univerzal, I кв. 2021',
+			en: 'AOD quarterly report on Univerzal, Q1 2021',
+			sr: 'Kvartalni izveštaj AOD o Univerzal banci, I kvartal 2021.',
+		},
+		date: { ru: 'период 01.01–31.03.2021', en: 'period 01.01–31.03.2021', sr: 'period 01.01–31.03.2021.' },
+		main: {
+			ru: 'I очередь: выплачено за квартал 45,1 млн динаров (таблица «исплаћено» по очередям).',
+			en: 'Rank I: RSD 45.1 m paid in the quarter (the “paid” column of the table by rank).',
+			sr: 'I isplatni red: za kvartal isplaćeno 45,1 mil. dinara (kolona „isplaćeno“ u tabeli po redovima).',
+		},
+		url: 'https://www.aod.rs/uploads/dokumenti/kvartalniizvestaj/309_kvartalni_izvestaj.pdf',
+		meta: { ru: 'PDF', en: 'PDF', sr: 'PDF' },
+	},
+	{
+		title: {
+			ru: 'Квартальный отчёт AOD по Univerzal, II кв. 2021',
+			en: 'AOD quarterly report on Univerzal, Q2 2021',
+			sr: 'Kvartalni izveštaj AOD o Univerzal banci, II kvartal 2021.',
+		},
+		date: { ru: 'период 01.04–30.06.2021', en: 'period 01.04–30.06.2021', sr: 'period 01.04–30.06.2021.' },
+		main: {
+			ru: 'I очередь: выплачено за квартал 849,8 млн динаров (таблица «исплаћено» по очередям).',
+			en: 'Rank I: RSD 849.8 m paid in the quarter (the “paid” column of the table by rank).',
+			sr: 'I isplatni red: za kvartal isplaćeno 849,8 mil. dinara (kolona „isplaćeno“ u tabeli po redovima).',
+		},
+		url: 'https://www.aod.rs/uploads/dokumenti/kvartalniizvestaj/332_kvartalni_izvestaj.pdf',
+		meta: { ru: 'PDF', en: 'PDF', sr: 'PDF' },
+	},
+	{
+		title: {
+			ru: 'Квартальный отчёт AOD по Univerzal, III кв. 2021',
+			en: 'AOD quarterly report on Univerzal, Q3 2021',
+			sr: 'Kvartalni izveštaj AOD o Univerzal banci, III kvartal 2021.',
+		},
+		date: { ru: 'период 01.07–30.09.2021', en: 'period 01.07–30.09.2021', sr: 'period 01.07–30.09.2021.' },
+		main: {
+			ru: 'I очередь: выплачено за квартал 158,9 млн динаров (таблица «исплаћено» по очередям).',
+			en: 'Rank I: RSD 158.9 m paid in the quarter (the “paid” column of the table by rank).',
+			sr: 'I isplatni red: za kvartal isplaćeno 158,9 mil. dinara (kolona „isplaćeno“ u tabeli po redovima).',
+		},
+		url: 'https://www.aod.rs/uploads/dokumenti/kvartalniizvestaj/346_kvartalni_izvestaj.pdf',
+		meta: { ru: 'PDF', en: 'PDF', sr: 'PDF' },
+	},
+	{
+		title: {
+			ru: 'Квартальный отчёт AOD по Univerzal, IV кв. 2021',
+			en: 'AOD quarterly report on Univerzal, Q4 2021',
+			sr: 'Kvartalni izveštaj AOD o Univerzal banci, IV kvartal 2021.',
+		},
+		date: { ru: 'период 01.10–31.12.2021', en: 'period 01.10–31.12.2021', sr: 'period 01.10–31.12.2021.' },
+		main: {
+			ru: 'I очередь: выплачено за квартал 4,8 млн динаров (таблица «исплаћено» по очередям).',
+			en: 'Rank I: RSD 4.8 m paid in the quarter (the “paid” column of the table by rank).',
+			sr: 'I isplatni red: za kvartal isplaćeno 4,8 mil. dinara (kolona „isplaćeno“ u tabeli po redovima).',
+		},
+		url: 'https://www.aod.rs/uploads/dokumenti/kvartalniizvestaj/377_kvartalni_izvestaj.pdf',
+		meta: { ru: 'PDF', en: 'PDF', sr: 'PDF' },
+	},
+	{
+		title: {
 			ru: 'Квартальный отчёт AOD по Univerzal banka, II квартал 2026',
 			en: 'AOD quarterly report on Univerzal banka, Q2 2026',
 			sr: 'Kvartalni izveštaj AOD o Univerzal banci, II kvartal 2026.',
 		},
 		date: same('30.06.2026'),
 		main: {
-			ru: 'Таблица по очередям: остаток на начало, изменение, выплата и остаток на конец квартала.',
-			en: 'A table by rank: opening balance, change, payout and closing balance for the quarter.',
-			sr: 'Tabela po isplatnim redovima: početno stanje, promena, isplata i stanje na kraju kvartala.',
+			ru: 'Таблица по очередям: остаток на начало, изменение, выплата и остаток на конец квартала. По I очереди остаток 72,8 млн динаров.',
+			en: 'A table by rank: opening balance, change, payout and closing balance for the quarter. Rank I balance: RSD 72.8 m.',
+			sr: 'Tabela po isplatnim redovima: početno stanje, promena, isplata i stanje na kraju kvartala. Saldo I reda: 72,8 mil. dinara.',
 		},
 		url: 'https://www.aod.rs/uploads/dokumenti/kvartalniizvestaj/Univerzal%20banka_II%20kvartal%202026.pdf',
 		meta: { ru: 'PDF, 0,3 МБ', en: 'PDF, 0.3 MB', sr: 'PDF, 0,3 MB' },
