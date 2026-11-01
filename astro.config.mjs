@@ -13,6 +13,8 @@ export default defineConfig({
 			title: { ru: 'Вкладчики ALTA: что дальше', en: "ALTA depositors: what's next", 'sr-Latn': 'Štediše ALTA banke: šta dalje' },
 			description:
 				'Справочник для вкладчиков банка ALTA (Сербия), у которых на счетах больше 50 000 €: стадия процедуры, сроки, требование в банкротстве, официальные новости.',
+			// Подтверждение владения для Bing Webmaster Tools: тег должен оставаться, иначе подтверждение слетит.
+			head: [{ tag: 'meta', attrs: { name: 'msvalidate.01', content: 'F904AA02101BD3884A4A984CD73C8E57' } }],
 			// Правка в два клика через веб-редактор GitHub, без клона репозитория.
 			editLink: { baseUrl: 'https://github.com/Smolevich/alta-bankruptcy/edit/main/' },
 			social: [
