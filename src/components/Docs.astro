@@ -1,0 +1,37 @@
+---
+// Карточки официальных документов: данные в src/data/documents.ts, текст страницы только статичный HTML.
+import { DOCS, SOURCE_LABEL } from '../data/documents';
+import { UI, type Lang } from '../i18n';
+
+const { lang = 'ru' } = Astro.props as { lang?: Lang };
+const t = UI[lang];
+const size = (b: number) =>
+	`${(b / 1048576).toLocaleString(lang === 'en' ? 'en-GB' : 'ru-RU', { maximumFractionDigits: b < 1048576 ? 2 : 1 })} ${t.docs.mb}`;
+---
+
+<ul class="docs not-content" aria-label={t.docs.label}>
+	{
+		DOCS.map((d) => (
+			<li>
+				<article class="doc">
+					<h3>{d.title[lang]}</h3>
+					<p>{d.what[lang]}</p>
+					<dl class="doc-meta">
+						<dt>{t.docs.period}</dt>
+						<dd>{d.period[lang]}</dd>
+						<dt>{t.docs.source}</dt>
+						<dd>
+							<span class="kind kind-official">{t.official}</span>{' '}
+							<a href={d.sourceUrl} rel="noopener">{SOURCE_LABEL[d.source][lang]}</a>
+						</dd>
+						<dt>PDF</dt>
+						<dd>{d.pages} {t.docs.pages}, {size(d.bytes)}</dd>
+					</dl>
+					<a class="doc-go" href={d.file ? `/docs/${d.file}` : d.sourceUrl} rel={d.file ? undefined : 'noopener'}>
+						{d.file ? t.docs.open : t.docs.openSource} →
+					</a>
+				</article>
+			</li>
+		))
+	}
+</ul>
