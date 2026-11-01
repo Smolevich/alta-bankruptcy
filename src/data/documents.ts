@@ -50,12 +50,12 @@ export const DOCS: Doc[] = [
 	},
 	{
 		title: {
-			ru: 'Пояснения к отчётности 2025 (Напомене)',
+			ru: 'Пояснения к отчётности 2025 (Napomene)',
 			en: 'Notes to the 2025 statements (Napomene)',
 			sr: 'Napomene uz izveštaje za 2025.',
 		},
 		what: {
-			ru: 'Вклады по типам клиентов — с. 94; кредиты связанным лицам — примечание 32, с. 102.',
+			ru: 'Вклады по типам клиентов — стр. 94; кредиты связанным лицам — примечание 32, стр. 102.',
 			en: 'Deposits by client type on p. 94; loans to related parties in note 32, p. 102.',
 			sr: 'Depoziti po vrstama klijenata na str. 94; krediti povezanim licima u napomeni 32, str. 102.',
 		},
@@ -155,7 +155,7 @@ export const DOCS: Doc[] = [
 			sr: 'Objavljivanje podataka i informacija za I polugodište 2026.',
 		},
 		what: {
-			ru: 'Последнее раскрытие банка: капитал, LCR, NSFR.',
+			ru: 'Последнее раскрытие банка: капитал и нормативы ликвидности (LCR, NSFR).',
 			en: 'The bank’s latest disclosure: capital, LCR, NSFR.',
 			sr: 'Poslednje objavljivanje banke: kapital, LCR, NSFR.',
 		},
@@ -225,7 +225,7 @@ export const DOCS: Doc[] = [
 			sr: 'Obaveštenje AOD o isplati za Univerzal banku',
 		},
 		what: {
-			ru: 'Как AOD объявила выплату до 50 000 € в 2014 году, две страницы.',
+			ru: 'Объявление 2014 года о выплате до 50 000 €, две страницы.',
 			en: 'How AOD announced the payout of up to €50,000 in 2014, two pages.',
 			sr: 'Kako je AOD objavila isplatu do 50.000 € 2014, dve strane.',
 		},

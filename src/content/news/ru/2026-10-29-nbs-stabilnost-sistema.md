@@ -1,5 +1,5 @@
 ---
-title: Нацбанк — «Stabilnost finansijskog sistema počiva na poverenju i odgovornosti»
+title: "Нацбанк: «Стабильность финансовой системы держится на доверии и ответственности»"
 date: 2026-10-29
 publisher: nbs
 summary: >-

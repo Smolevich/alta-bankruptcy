@@ -128,7 +128,7 @@ export const UNIVERZAL_SOURCES: Source[] = [
 			en: 'Call to creditors to send payment details',
 			sr: 'Poziv poveriocima za dostavljanje instrukcija za uplatu',
 		},
-		date: { ru: 'к первой выплате, 2020 (на дату решения 18.08.2020)', en: 'for the first payout, 2020 (cites the 18.08.2020 decision)', sr: 'uz prvu isplatu, 2020. (poziva se na rešenje od 18.08.2020.)' },
+		date: { ru: 'к первой выплате, 2020 (ссылается на решение от 18.08.2020)', en: 'for the first payout, 2020 (cites the 18.08.2020 decision)', sr: 'uz prvu isplatu, 2020. (poziva se na rešenje od 18.08.2020.)' },
 		main: {
 			ru: 'Что прислать: физлицу — копию удостоверения личности, номер счёта, телефон; фирме и ИП — выписку из реестра, номер счёта; наследникам — документы о правопреемстве.',
 			en: 'What to send: an individual, a copy of the ID card, account number and phone; a company or sole trader, the registry extract and account number; heirs, documents proving succession.',
@@ -145,7 +145,7 @@ export const UNIVERZAL_SOURCES: Source[] = [
 		},
 		date: { ru: 'период 01.07–30.09.2020', en: 'period 01.07–30.09.2020', sr: 'period 01.07–30.09.2020.' },
 		main: {
-			ru: 'I очередь: выплачено за квартал 591,3 млн динаров (таблица «исплаћено» по очередям).',
+			ru: 'I очередь: выплачено за квартал 591,3 млн динаров (столбец «исплаћено», то есть «выплачено», в таблице по очередям).',
 			en: 'Rank I: RSD 591.3 m paid in the quarter (the “paid” column of the table by rank).',
 			sr: 'I isplatni red: za kvartal isplaćeno 591,3 mil. dinara (kolona „isplaćeno“ u tabeli po redovima).',
 		},
@@ -246,7 +246,7 @@ export const UNIVERZAL_SOURCES: Source[] = [
 		title: { ru: 'Список всех квартальных отчётов AOD', en: 'List of all AOD quarterly reports', sr: 'Spisak svih kvartalnih izveštaja AOD' },
 		date: { ru: 'страница обновляется', en: 'page is updated', sr: 'stranica se ažurira' },
 		main: {
-			ru: 'Отчёты по всем банкам в банкротстве; нужный — по Univerzal banka.',
+			ru: 'Отчёты по всем банкам в банкротстве, ищите Univerzal banka.',
 			en: 'Reports for all banks in bankruptcy; pick the one for Univerzal banka.',
 			sr: 'Izveštaji za sve banke u stečaju; izaberite onaj za Univerzal banku.',
 		},
@@ -268,7 +268,7 @@ export const UNIVERZAL_SOURCES: Source[] = [
 		title: { ru: 'Дело Univerzal на сайте AOD', en: 'The Univerzal case on the AOD website', sr: 'Predmet Univerzal banke na sajtu AOD' },
 		date: { ru: 'страница обновляется', en: 'page is updated', sr: 'stranica se ažurira' },
 		main: {
-			ru: 'Процедуры в работе: сведения управляющего о ходе банкротства.',
+			ru: 'Раздел «Процедуры в работе»: что управляющий сообщает о ходе банкротства.',
 			en: 'Procedures in progress: the administrator’s information on the bankruptcy.',
 			sr: 'Postupci u toku: podaci stečajnog upravnika o toku stečaja.',
 		},
@@ -277,7 +277,7 @@ export const UNIVERZAL_SOURCES: Source[] = [
 	},
 	{
 		title: {
-			ru: 'Дело в суде: Привредни суд у Београду, 1 Ст 19/2014',
+			ru: 'Дело в суде: Хозяйственный суд Белграда (Привредни суд у Београду), 1 Ст 19/2014',
 			en: 'The court case: Commercial Court in Belgrade, 1 St 19/2014',
 			sr: 'Sudski predmet: Privredni sud u Beogradu, 1 St 19/2014',
 		},
@@ -319,13 +319,19 @@ const WHO: Record<Lang, string> = {
 	sr: 'Ko je ko: fizička lica imaju ime, grad i adresu bez „МБ“ i „ПИБ“; pravna lica imaju oblik (ДОО, АД, ЈКП) i „МБ: …, ПИБ: …“. Preduzetnici nisu označeni: mogu se prepoznati samo posredno, po imenu i prezimenu sa „ПИБ“ bez „МБ“ (retko se javlja „СЗР“, samostalna zanatska radnja). Imena u tabeli su stvarni ljudi. Latinicom „МБ“ i „ПИБ“ glase MB i PIB.',
 };
 
+const EXAMPLE: Record<Lang, string> = {
+	ru: 'Что есть что, на реальной строке без имени (требование № 1 первой очереди, физлицо из Белграда). «Признанная сумма» — сколько банк должен человеку сверх страховки: 2 127 615,15 дин. (около 18 000 €), в каждом из трёх документов. «Процент» — какую часть всего долга платят в этот раз: он считается от всего долга, а не от остатка. «Сумма к выплате» = долг × процент. 2 127 615 × 50 % = 1 063 807 (решение суда 18.08.2020); × 40 % = 851 046 (07.04.2021); × 10 % = 212 761 (15.06.2021); итого 100 %, в динарах и без процентов за годы ожидания. Как вернуть 1000 € в три приёма: 500, 400 и 100. Сколько всего было на счёте, из списка не видно: страховую часть AOD выплатил отдельно, в списке только то, что шло через банкротство.',
+	en: 'What is what, on a real row without the name (claim no. 1 of rank I, an individual from Belgrade). The recognised amount is how much the bank owes the person above the insurance: RSD 2,127,615.15 (about €18,000), the same in all three documents. The percentage is the part of the whole debt paid this time: it is counted from the whole debt, not from what is left. The amount to be paid = debt × percentage. 2,127,615 × 50% = 1,063,807 (court decision of 18.08.2020); × 40% = 851,046 (07.04.2021); × 10% = 212,761 (15.06.2021); in total 100%, in dinars and without interest for the years of waiting. Like repaying €1,000 in three instalments: 500, 400 and 100. The list does not show how much was in the account in total: AOD paid the insured part separately, the list shows only what went through the bankruptcy.',
+	sr: 'Šta je šta, na stvarnom redu bez imena (potraživanje br. 1 prvog reda, fizičko lice iz Beograda). Utvrđeno potraživanje je koliko banka duguje čoveku iznad osiguranja: 2.127.615,15 din. (oko 18.000 €), isto u sva tri dokumenta. Procenat je deo celog duga koji se isplaćuje ovog puta: računa se od celog duga, a ne od ostatka. Iznos za isplatu = dug × procenat. 2.127.615 × 50 % = 1.063.807 (rešenje suda od 18.08.2020); × 40 % = 851.046 (07.04.2021); × 10 % = 212.761 (15.06.2021); ukupno 100 %, u dinarima i bez kamate za godine čekanja. Kao kad se 1.000 € vraća u tri rate: 500, 400 i 100. Iz spiska se ne vidi koliko je ukupno bilo na računu: osigurani deo AOD je isplatio odvojeno, u spisku je samo ono što je išlo kroz stečaj.',
+};
+
 const draft = (page: number, total: number, pct: string, extra?: Record<Lang, string>): Look => ({
 	page,
 	embed: true,
 	look: {
-		ru: [`Стр. ${page}: фраза о проценте («проценат намирења … би износио ${pct}») и начало таблицы «Листа стечајних поверилаца I исплатног реда» (Lista stečajnih poverilaca I isplatnog reda). Итоговая строка «УКУПНО» (Ukupno) — на стр. ${total}. Файлы бывают в кириллице и в латинице.`, COLUMNS.ru, WHO.ru, ...(extra ? [extra.ru] : [])],
-		en: [`Page ${page}: the sentence on the percentage (“проценат намирења … би износио ${pct}”) and the start of the table “Листа стечајних поверилаца I исплатног реда” (Lista stečajnih poverilaca I isplatnog reda). The “УКУПНО” (Ukupno) total line is on page ${total}. Files come in either Cyrillic or Latin script.`, COLUMNS.en, WHO.en, ...(extra ? [extra.en] : [])],
-		sr: [`Str. ${page}: rečenica o procentu („проценат намирења … би износио ${pct}“) i početak tabele „Листа стечајних поверилаца I исплатног реда“ (Lista stečajnih poverilaca I isplatnog reda). Ukupan zbir „УКУПНО“ (Ukupno) je na str. ${total}. Fajlovi su na ćirilici ili latinici.`, COLUMNS.sr, WHO.sr, ...(extra ? [extra.sr] : [])],
+		ru: [`Стр. ${page}: фраза о проценте («проценат намирења … би износио ${pct}») и начало таблицы «Листа стечајних поверилаца I исплатног реда» (Lista stečajnih poverilaca I isplatnog reda). Итоговая строка «УКУПНО» (Ukupno) — на стр. ${total}. Файлы бывают в кириллице и в латинице.`, COLUMNS.ru, EXAMPLE.ru, WHO.ru, ...(extra ? [extra.ru] : [])],
+		en: [`Page ${page}: the sentence on the percentage (“проценат намирења … би износио ${pct}”) and the start of the table “Листа стечајних поверилаца I исплатног реда” (Lista stečajnih poverilaca I isplatnog reda). The “УКУПНО” (Ukupno) total line is on page ${total}. Files come in either Cyrillic or Latin script.`, COLUMNS.en, EXAMPLE.en, WHO.en, ...(extra ? [extra.en] : [])],
+		sr: [`Str. ${page}: rečenica o procentu („проценат намирења … би износио ${pct}“) i početak tabele „Листа стечајних поверилаца I исплатног реда“ (Lista stečajnih poverilaca I isplatnog reda). Ukupan zbir „УКУПНО“ (Ukupno) je na str. ${total}. Fajlovi su na ćirilici ili latinici.`, COLUMNS.sr, EXAMPLE.sr, WHO.sr, ...(extra ? [extra.sr] : [])],
 	},
 });
 

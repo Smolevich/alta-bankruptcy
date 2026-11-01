@@ -15,24 +15,24 @@ Svaki podatak, rok i tvrdnja na sajtu imaju izvor. Ako znate da negde postoji gr
 ## Nivoi pouzdanosti izvora
 
 - **Zvanični izvor**: zakon, saopštenje AOD, Narodne banke Srbije ili suda, dokument same banke. Prihvata se odmah.
-- **Pouzdani mediji**: tekst koji sadrži vezu ka dokumentu ili imena i datume. Prihvata se kao dopuna i označava se na stranici; umesto medija bolje je pronaći prvobitni izvor.
+- **Pouzdani mediji**: tekst koji sadrži vezu ka dokumentu ili imena i datume. Prihvata se kao dopuna i označava se na stranici; umesto medija bolje je pronaći izvorni dokument.
 - **Nepotvrđeno**: čet, glasina, prepričavanje bez veze. Ne dospeva na stranice.
 
 Postoji beleška „Za preduzetnike“: to su privremene kratke napomene. Zasebnog odeljka za preduzetnike za sada nema.
 
 ## Kako ispraviti
 
-1. **Preko sajta GitHub.** Na svakoj stranici postoji veza „Izmeni stranicu“. Otvara se veb editor; unesite izmenu, dodajte izvor u zaglavlje stranice (`sources`) i pritisnite „Propose changes“. U opisu popunite šablon: šta se menja, prvobitni izvor, veza.
+1. **Preko sajta GitHub.** Na svakoj stranici postoji veza „Izmeni stranicu“. Otvara se veb editor; unesite izmenu, dodajte izvor u zaglavlje stranice (`sources`) i pritisnite „Propose changes“. U opisu popunite šablon: šta se menja, izvorni dokument, veza.
 2. **Uz Claude ili Codex.** Klonirajte repozitorijum i zamolite asistenta da unese izmenu; u repozitorijumu postoji `AGENTS.md` sa pravilima. Potreban je isti izvor, a rezultat ipak proverava čovek.
 
 ## Tri jezika
 
-Sajt je na ruskom, engleskom i srpskom. Ako ispravite činjenicu na jednom jeziku, ispravite je u istom PR-u i na ostalima. Ako ne možete, dodajte u opis PR-a napomenu „prevod kasni“: provera izgradnje neće dozvoliti da se stranica izgubi, ali neće umesto vas preneti smisao izmene.
+Sajt je na ruskom, engleskom i srpskom. Ako ispravite činjenicu na jednom jeziku, ispravite je u istom PR-u i na ostalima. Ako ne možete, dodajte u opis PR-a napomenu „prevod kasni“: automatska provera (build) neće dozvoliti da stranica nestane, ali smisao izmene neće preneti umesto vas.
 
 ## Vest
 
-Vest je jedna datoteka u `src/content/news/ru/` (i ista u `en/` i `sr/`). Uzmite bilo koju susednu datoteku kao uzor: datum, izdavač (`aod`, `nbs`, `bank`, `court`), kratak sadržaj i veza ka saopštenju. Bez veze ka prvobitnom izvoru sajt se neće izgraditi.
+Vest je jedna datoteka u `src/content/news/ru/` (i ista u `en/` i `sr/`). Uzmite bilo koju susednu datoteku kao uzor: datum, izdavač (`aod`, `nbs`, `bank`, `court`), kratak sadržaj i veza ka saopštenju. Bez veze ka izvornom dokumentu sajt se neće izgraditi.
 
-## Prijava otvorenog računa
+## Gde ste otvorili račun
 
 To nije izmena sajta: koristite [anonimni obrazac](/account) i [statistiku odgovora](/account/stats).
