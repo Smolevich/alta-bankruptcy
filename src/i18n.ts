@@ -43,6 +43,7 @@ export const UI = {
 			share: 'Поделиться своим опытом',
 		},
 		docs: { pages: 'стр.', source: 'Источник', open: 'Открыть PDF', openSource: 'Открыть на сайте банка', period: 'Период', mb: 'МБ', label: 'Список документов' },
+		srcCards: { label: 'Первоисточники по Univerzal', date: 'Дата', type: 'Источник', open: 'Открыть' },
 		flow: [
 			['/procedura/', 'Процедура и сроки', 'Семь стадий от отзыва лицензии до выплат'],
 			['/trebovanie/', 'Требование сверх 50 000 €', 'Кто, куда и в какой срок подаёт'],
@@ -79,6 +80,7 @@ export const UI = {
 			share: 'Share your experience',
 		},
 		docs: { pages: 'pp.', source: 'Source', open: 'Open PDF', openSource: 'Open on the bank’s website', period: 'Period', mb: 'MB', label: 'List of documents' },
+		srcCards: { label: 'Primary sources on Univerzal', date: 'Date', type: 'Source', open: 'Open' },
 		flow: [
 			['/procedura/', 'Procedure and timeline', 'Seven stages from licence revocation to payouts'],
 			['/trebovanie/', 'Claim above €50,000', 'Who files, where and by when'],
@@ -115,6 +117,7 @@ export const UI = {
 			share: 'Podelite svoje iskustvo',
 		},
 		docs: { pages: 'str.', source: 'Izvor', open: 'Otvori PDF', openSource: 'Otvori na sajtu banke', period: 'Period', mb: 'MB', label: 'Spisak dokumenata' },
+		srcCards: { label: 'Izvori o Univerzal banci', date: 'Datum', type: 'Izvor', open: 'Otvori' },
 		flow: [
 			['/procedura/', 'Postupak i rokovi', 'Sedam faza od oduzimanja dozvole do isplata'],
 			['/trebovanie/', 'Potraživanje iznad 50.000 €', 'Ko, gde i do kada prijavljuje'],

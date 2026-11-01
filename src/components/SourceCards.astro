@@ -1,0 +1,30 @@
+---
+// Карточки первоисточников по Univerzal: данные в src/data/univerzal-sources.ts.
+import { UNIVERZAL_SOURCES } from '../data/univerzal-sources';
+import { UI, type Lang } from '../i18n';
+
+const { lang = 'ru' } = Astro.props as { lang?: Lang };
+const t = UI[lang];
+---
+
+<ul class="docs not-content" aria-label={t.srcCards.label}>
+	{
+		UNIVERZAL_SOURCES.map((s) => (
+			<li>
+				<article class="doc">
+					<h3>{s.title[lang]}</h3>
+					<p>{s.main[lang]}</p>
+					<dl class="doc-meta">
+						<dt>{t.srcCards.date}</dt>
+						<dd>{s.date[lang]}</dd>
+						<dt>{t.srcCards.type}</dt>
+						<dd>
+							<span class="kind kind-official">{t.official}</span> {s.meta[lang]}
+						</dd>
+					</dl>
+					<a class="doc-go" href={s.url} rel="noopener">{t.srcCards.open} →</a>
+				</article>
+			</li>
+		))
+	}
+</ul>
