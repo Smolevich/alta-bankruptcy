@@ -192,3 +192,15 @@ html, body { overflow-x: clip; }
 .doc-look strong { display: block; margin-bottom: 0.2rem; color: var(--seal); }
 .doc-look ul { margin: 0; padding-left: 1.1rem; }
 .doc-look li { margin: 0 0 0.25rem; }
+
+/* ---- Скриншоты в инструкциях (Shot.astro) и совет «сохраните сейчас» ---- */
+.shot { margin: 0.8rem 0 1.4rem; max-width: 34rem; }
+.shot-narrow { max-width: 14rem; }
+.shot a { display: block; }
+.shot img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 6px; }
+.shot figcaption { margin-top: 0.4rem; font-size: 0.9rem; color: #4a4538; }
+.shot-hint { color: #7a7364; font-size: 0.8rem; }
+.save-tip { margin: 1rem 0 1.5rem; padding: 0.8rem 1rem; border: 2px solid var(--seal); background: var(--seal-soft); border-radius: 4px; }
+.save-tip strong { display: block; margin-bottom: 0.3rem; color: var(--seal); }
+.save-tip p { margin: 0.3rem 0 0; }
+.shot-row { display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-start; }

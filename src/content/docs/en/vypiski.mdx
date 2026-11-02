@@ -10,6 +10,13 @@ sources:
   - { title: "ALTA website: web banking login (companies and sole traders)", url: "https://online.altabanka.rs/Corporate", kind: official, date: 2026-11-01 }
 ---
 
+import Shot from '../../../components/Shot.astro';
+
+<aside class="save-tip not-content">
+<strong>If web banking still opens, save now</strong>
+<p>All statements in PDF, plus screenshots of the home page, deposits and balances with a visible date (a clock in the frame). If you can, take the screenshots and get the statements: that would be great. Screenshot steps are below; sole traders have a separate block at the end.</p>
+</aside>
+
 **The ALTA web banking may stop working at any moment. Save your statements now.** You will need them if the paying bank's calculation does not match and for a claim above €50,000. The steps below come from depositors' experience and may go out of date: the bank's servers sometimes respond and sometimes do not.
 
 The payout is calculated from the balance on the day the court opens bankruptcy, with interest up to that day ([Law on Deposit Insurance, art. 16 para. 1](https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2015/14/2/reg)). So you need both the contracts and the balances with dates.
@@ -29,9 +36,15 @@ The payout is calculated from the balance on the day the court opens bankruptcy,
 
 1. Find your login (“Korisničko ime”). In the ALTA mobile app: profile (person icon), the “My data” tab, the “Username” field. Do not confuse it with “User's Full Name” (a name with a space): the login is “Username”.
 2. Get the code without logging in to the app: the “Token” tab at the bottom, “OTP Authorization”. An 8-digit one-time code appears and is valid for 10 minutes.
+   <Shot lang="en" name="mtoken-otp" alt="ALTA app, Token tab: the OTP Authorization item is outlined" w={416} h={900} narrow>The ALTA app, no login needed. At the bottom open the “Token” tab and tap “OTP Authorization” (outlined).</Shot>
+   <Shot lang="en" name="mtoken-code" alt="OTP authorization window with a one-time code, the code itself is covered" w={450} h={974} narrow>An 8-digit code appears (covered in the screenshot) with a 10-minute timer. You type this code on the website instead of a password.</Shot>
 3. Open [online.altabanka.rs/Retail](https://online.altabanka.rs/Retail). Enter your login, and in the password field (“mToken”) the code from step 2, then press “Prijavi se”.
+   <Shot lang="en" name="login" alt="ALTA web banking login page: login and mToken fields and the Prijavi se button" w={560} h={350}>The login page. Your login (“Korisničko ime”) in the first field, the code (“mToken”) in the second, then “Prijavi se”. The fields and the button are outlined; what was typed is covered.</Shot>
 4. On the left “Računi”, “Izvodi po računu”. Choose the account at the top (dinar and foreign-currency separately). In “Po datumu” set the period and save the “PDF”. About 6 months are returned at a time, so export in pieces.
-5. A section may answer “Dogodila se nepoznata greška”: wait a minute and open it again. A PDF sometimes lands in “Downloads” without a download window.
+   <Shot lang="en" name="izvodi" alt="Izvodi po računu section: period, PDF and XLS buttons, list of statements" w={560} h={238}>“Računi”, “Izvodi po računu”. Outlined: the period (“Od dana”, “Do dana”) with the red arrow, the “PDF” and “XLS” buttons for the whole period, and “PDF” on a single statement. Account numbers and dates are covered.</Shot>
+5. On the left “Depoziti”: open each deposit and take a screenshot of the whole “Detalji depozita” page (batch number, amount, rate, balance), with the date visible.
+   <Shot lang="en" name="depoziti" alt="Depoziti section, Detalji depozita page with the deposit details" w={560} h={238}>“Depoziti” in the left menu (outlined), then “Detalji depozita”. Batch number, amount, rate and balance are covered.</Shot>
+6. A section may answer “Dogodila se nepoznata greška”: wait a minute and open it again. A PDF sometimes lands in “Downloads” without a download window.
 
 If you have no access: look for ALTA emails in your mailbox (statements go to the e-mail registered at the bank), save the bank's SMS messages about balances and paper receipts. Bank support: +381 11 22 05 500, info@altabanka.rs (may not answer now).
 
@@ -45,6 +58,20 @@ Web banking for sole traders and companies is different, and many have no web ac
 
 - The web login for companies and sole traders [online.altabanka.rs/Corporate](https://online.altabanka.rs/Corporate): it was enabled at a branch. Easy to check: look for a personal/business profile switch in the app.
 - The ALTA OfficeBanking program with the “eBanking” card and a reader: after logging in press “Synchronise” (“Синхронизовать”) at once, or it shows balances as of your last login. If synchronisation does not go through, save at least a screenshot of the screen with your accounts.
+
+### Sole-trader web banking (depositors' experience)
+
+Below are screenshots from depositors who had sole-trader access. This is individual people's experience, not a bank instruction: it is not confirmed that login and export still work after the licence was revoked. If you have access, take screenshots and get the statements: that would be great.
+
+**Web banking for companies and sole traders: [online.altabanka.rs/Corporate](https://online.altabanka.rs/Corporate).** It was enabled at a branch, so many do not have it, while some depositors did. If you have it, do the same as for personal web banking: the code from the app (business profile), log in, statements for each account.
+
+**The OfficeBanking program and card-reader login.** You need a Windows computer: put the “eBanking” card into the USB reader, open ALTA OfficeBanking and enter the card PIN.
+
+<Shot lang="en" name="ip-card" alt="ALTA eBanking card with a chip and a USB smart-card reader" w={560} h={746} narrow>The “eBanking” card (a certificate, not a payment card) and the reader. The number on the card is covered: do not publish it.</Shot>
+<Shot lang="en" name="ip-officebanking" alt="ALTA OfficeBanking: list of accounts, the Synchronise button outlined" w={560} h={420}>After logging in press “Синхронизовать” (Synchronise, outlined) at once: otherwise balances are shown as of the last login, here 24.02.2025. Account numbers and amounts are covered.</Shot>
+<Shot lang="en" name="ip-vypiski" alt="OfficeBanking: All statements on the left, list of statements by date on the right, Export button" w={560} h={420}>On the left “Все выписки” (All statements), on the right a list by date (87 here). Select rows and press “Экспортировать” (Export, outlined): the statements are saved as a file. Account numbers and amounts are covered.</Shot>
+
+It is not confirmed that login and synchronisation work after the licence was revoked. If it does not go through, save at least a screenshot of the screen with your accounts.
 
 Your accountant may have had access too: ask them to export statements as well. Save the same as for personal accounts: statements for each account, October transactions, balances, loans and unexecuted payments.
 
