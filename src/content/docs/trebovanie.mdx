@@ -1,7 +1,7 @@
 ---
 title: "Требование сверх 50 000 € в банкротстве ALTA"
 description: "Кто подаёт требование сверх 50 000 €, куда, в какой срок (30–90 дней, назначает суд), что подготовить и в какой очереди вкладчики получают деньги."
-checked: 2026-11-01
+checked: 2026-11-02
 sources:
   - { title: "Закон о банкротстве и ликвидации банков, ст. 7, 17, 19, 20", url: "https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2015/14/3/reg", kind: official, date: 2026-11-01 }
   - { title: "Закон о страховании вкладов, ст. 2, 3, 16, 17, 18", url: "https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2015/14/2/reg", kind: official, date: 2026-11-01 }
@@ -9,9 +9,13 @@ sources:
   - { title: "AOD: процедура выплаты застрахованных вкладов (04.11.2015)", url: "https://www.aod.rs/uploads/dokumenti/osigdepoz/pravniokvir/cir/16_pravniokvir.pdf", kind: official, date: 2015-11-04 }
   - { title: "AOD: объявление о выплате по Univerzal banka, 03.02.2014 (веб-архив)", url: "https://web.archive.org/web/20140308161705/http://www.aod.rs/pdf/2014-02-03-saopstenje.pdf", kind: official, date: 2014-02-03 }
   - { title: "AOD: квартальный отчёт по Univerzal banka, II кв. 2026", url: "https://www.aod.rs/uploads/dokumenti/kvartalniizvestaj/Univerzal%20banka_II%20kvartal%202026.pdf", kind: official, date: 2026-06-30 }
+  - { title: "Письмо AOD вкладчику, 02.11.2026 10:54 (скриншот)", url: "https://alta.smolevich.com/img/aod/aod-odgovor-1-ru.webp", kind: official, date: 2026-11-02 }
+  - { title: "Письмо AOD вкладчику, 02.11.2026 13:47 (скриншот)", url: "https://alta.smolevich.com/img/aod/aod-odgovor-2-ru.webp", kind: official, date: 2026-11-02 }
+  - { title: "Закон о хозяйственных обществах, ст. 83", url: "https://www.paragraf.rs/propisi/zakon_o_privrednim_drustvima.html", kind: official, date: 2026-11-02 }
 ---
 
 import ForIp from '../../components/ForIp.astro';
+import Shot from '../../components/Shot.astro';
 import Faq from '../../components/Faq.astro';
 
 До 50 000 € выплатит AOD, через суд для этого ничего делать не нужно: за выплатой обращаются в банк-плательщик, который AOD назовёт. Всё, что на ваших счетах и вкладах в ALTA больше этой суммы, нужно заявить в суд как **требование** — письменно попросить суд признать, что банк должен вам эту сумму. Каждый кредитор подаёт его сам: за вас этого никто не сделает, коллективный иск или петиция не нужны ([ст. 7 закона о банкротстве банков](https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2015/14/3/reg), [ст. 111 закона о банкротстве](https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2009/104/25/reg)).
@@ -25,7 +29,7 @@ import Faq from '../../components/Faq.astro';
 Вклады людей и фирм, связанных с самим банком, не застрахованы. Если вклад был залогом по кредиту в ALTA, застрахована только разница между вкладом и долгом (ст. 2 и 16 ч. 2 того же закона). Вклады крупных компаний и госорганов не застрахованы вовсе.
 
 <ForIp>
-ИП застрахован так же, до 50 000 €, а сверх лимита стоит в первой очереди наравне с физлицами. По процедуре AOD вклады физлица складывают по JMBG (личному номеру), а вклады ИП — по ПИБ (налоговому номеру). Значит, личный счёт и счёт ИП считаются отдельно, у каждого свой лимит 50 000 € ([процедура AOD, 2015](https://www.aod.rs/uploads/dokumenti/osigdepoz/pravniokvir/cir/16_pravniokvir.pdf)). Как это применят к ALTA, подтвердит AOD.
+ИП застрахован так же, до 50 000 €, а сверх лимита стоит в первой очереди наравне с физлицами. По процедуре AOD вклады физлица складывают по JMBG (личному номеру), а вклады ИП — по ПИБ (налоговому номеру). Значит, личный счёт и счёт ИП считаются отдельно, у каждого свой лимит 50 000 € ([процедура AOD, 2015](https://www.aod.rs/uploads/dokumenti/osigdepoz/pravniokvir/cir/16_pravniokvir.pdf)). AOD подтвердил это письменно 02.11.2026, см. [«Письменные ответы AOD»](#aod-otvety).
 </ForIp>
 
 ## Куда
@@ -57,6 +61,21 @@ import Faq from '../../components/Faq.astro';
 - Если деньги получает не владелец счёта: доверенность, заверенная судом или общиной; наследникам — решение о наследстве (процедура AOD, разд. VIII).
 
 Для сравнения: при выплате по Univerzal в 2014 году просили документ, удостоверяющий личность, и документ, подтверждающий требование, с копией (договор вклада или счёта, сберкнижка, карточка счёта, решение о наследстве). Для ALTA список может быть другим ([объявление AOD, 2014](https://web.archive.org/web/20140308161705/http://www.aod.rs/pdf/2014-02-03-saopstenje.pdf)).
+
+<span id="aod-otvety"></span>
+
+## Письменные ответы AOD о выплате до 50 000 €
+
+Вкладчик ALTA, у которого есть деньги и как у физлица, и как у ИП (предузетника), 31.10.2026 письменно спросил AOD, как посчитают и как выплатят страховку. AOD ответил 02.11.2026 с адреса depozit@aod.rs. Ниже — что из этого следует и скриншоты писем: вопрос вкладчика, ответ AOD выделен. Личные данные закрашены.
+
+1. **Лимит 50 000 € — отдельно для физлица и для того же человека как ИП.** Личные счета и счета ИП не складывают: у каждого свой лимит. Ответ AOD со ссылкой на [ст. 2 Закона о страховании вкладов](https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2015/14/2/reg): «limit osiguranja depozita od 50.000 evra primenjuje se zasebno na fizičko lice i na isto to lice registrovano kao preduzetnik. Isplata fizičkih lica vrši se u gotovini ili prenosom na drugi račun deponenta a pravnih lica prenosom na drugi račun.» По закону ИП и есть физлицо, которое ведёт деятельность ([Закон о хозяйственных обществах, ст. 83](https://www.paragraf.rs/propisi/zakon_o_privrednim_drustvima.html)), поэтому ответ AOD важен.
+2. **Как платят.** Физлицам — наличными или переводом на другой счёт. ИП, микро-, малым и средним фирмам — только переводом, на счёт, который укажет вкладчик ([процедура AOD, разд. VIII п. 31](https://www.aod.rs/uploads/dokumenti/osigdepoz/pravniokvir/cir/16_pravniokvir.pdf)): «Исплата осигураног износа депоненту предузетнику, микро, малом и средњем правном лицу врши се безготовински - преносом на рачун који одреди депонент».
+3. **Перевод — только на счёт в банке в Сербии.** Физлицу-иностранцу перевести страховку за границу нельзя: AOD ответил «prenos na račun u banci u Srbiji odnosno isplata u gotovini». Для ИП: «prenos na račun u banci u Srbiji».
+4. **Личный счёт или счёт ИП?** На какой именно счёт в Сербии переводить деньги ИП — на счёт ИП или на личный, — AOD пока не уточнил. Вопрос задан, ответ добавим сюда.
+
+<Shot lang="ru" dir="aod" name="aod-odgovor-1-ru" alt="Письмо AOD из Gmail от 2 ноября 2026, 10:54: ответ о раздельном лимите для физлица и ИП, ниже цитата вопроса вкладчика" w={760} h={701}>Письмо AOD с адреса depozit@aod.rs, 2 ноября 2026, 10:54. Жёлтым — ответ AOD, синим — вопрос вкладчика. Имя, почта и данные ИП закрашены.</Shot>
+
+<Shot lang="ru" dir="aod" name="aod-odgovor-2-ru" alt="Письмо AOD из Gmail от 2 ноября 2026, 13:47: ответы вписаны в цитату вопросов о переводе за границу для физлица и ИП" w={760} h={718}>Письмо AOD, 2 ноября 2026, 13:47. Ответы AOD вписаны прямо в цитату вопроса, строки «Odgovor» (выделены жёлтым); вопросы — синим.</Shot>
 
 ## Очереди: кто получает деньги первым
 

@@ -1,10 +1,11 @@
 ---
-// Скриншот из кабинета ALTA: уменьшенная картинка с подписью, клик открывает полный размер.
-// Файлы в public/img/vypiski/<name>.webp и <name>-thumb.webp; личное на них закрашено плашками.
+// Скриншот (кабинет ALTA, письма AOD): уменьшенная картинка с подписью, клик открывает полный размер.
+// Файлы в public/img/<dir>/<name>.webp и <name>-thumb.webp; личное на них закрашено плашками.
 import type { Lang } from '../i18n';
 
-const { name, alt, w, h, lang = 'ru', narrow = false } = Astro.props as {
+const { name, alt, w, h, lang = 'ru', narrow = false, dir = 'vypiski' } = Astro.props as {
 	name: string;
+	dir?: string;
 	alt: string;
 	w: number;
 	h: number;
@@ -15,8 +16,8 @@ const hint = { ru: 'Нажмите, чтобы увеличить', en: 'Click t
 ---
 
 <figure class:list={['shot', 'not-content', { 'shot-narrow': narrow }]}>
-	<a href={`/img/vypiski/${name}.webp`} target="_blank" rel="noopener" title={hint}>
-		<img src={`/img/vypiski/${name}-thumb.webp`} alt={alt} width={w} height={h} loading="lazy" />
+	<a href={`/img/${dir}/${name}.webp`} target="_blank" rel="noopener" title={hint}>
+		<img src={`/img/${dir}/${name}-thumb.webp`} alt={alt} width={w} height={h} loading="lazy" />
 	</a>
 	<figcaption><slot /> <span class="shot-hint">{hint}.</span></figcaption>
 </figure>
