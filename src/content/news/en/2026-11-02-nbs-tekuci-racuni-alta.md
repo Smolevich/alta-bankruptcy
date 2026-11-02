@@ -1,9 +1,9 @@
 ---
-title: "National Bank: for Alta banka client accounts and the bankruptcy, turn to the Deposit Insurance Agency"
+title: "National Bank revokes ALTA GROUP DOO BEOGRAD licence; payment-service users' funds protected"
 date: 2026-11-02
 publisher: nbs
 summary: >-
-  The National Bank explains that the Deposit Insurance Agency (AOD) handles the Alta banka bankruptcy and the bank's funds and obligations; individuals and businesses should contact AOD directly about their rights. To act as trustee, AOD must first be appointed by the court, and only then gets access to the bank's data. AOD will publish the conditions, places and deadlines for paying insured deposits within three working days of the court decision opening bankruptcy. Key sentence (Serbian original): "U roku od tri radna dana od donošenja rešenja Privrednog suda u Beogradu o otvaranju stečajnog postupka nad bankom". Also, the National Bank revoked the licence of ALTA GROUP DOO BEOGRAD (electronic money institution) as a consequence of the bank's revocation; payment-service users' funds are protected and operations will be carried out.
+  At its 2 November session the National Bank revoked the licence of ALTA GROUP DOO BEOGRAD (an electronic money institution), automatically following the revocation of the bank's licence. It says payment-service users' funds are protected and that obligations on payment orders received, card payments at merchants and to e-money holders will be carried out. In a separate notice the National Bank confirmed the payout procedure AOD described on 31 October (see the AOD item of 31 October): AOD will publish the conditions, places and deadlines "U roku od tri radna dana od donošenja rešenja Privrednog suda u Beogradu o otvaranju stečajnog postupka nad bankom"; individuals and businesses should ask AOD.
 sources:
   - { title: "National Bank: notice on Alta banka client current accounts (Serbian)", url: "https://www.nbs.rs/sr/scripts/showcontent/index.html?id=21859", kind: official, date: 2026-11-02 }
   - { title: "National Bank: licence revoked from ALTA GROUP DOO BEOGRAD (Serbian)", url: "https://www.nbs.rs/sr/scripts/showcontent/index.html?id=21858", kind: official, date: 2026-11-02 }
