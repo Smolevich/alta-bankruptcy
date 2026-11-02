@@ -1,7 +1,7 @@
-# Ревью владельца обязательно там, где правка меняет деплой, его секреты или сборку сайта;
+# Ревью владельца (Стаса или Ивана) обязательно там, где правка меняет деплой, его секреты или сборку сайта;
 # контент в src/ ведут мейнтейнеры сами.
-/.github/ @Smolevich
-/package.json @Smolevich
-/package-lock.json @Smolevich
-/astro.config.mjs @Smolevich
-/scripts/ @Smolevich
+/.github/ @Smolevich @ivankoriakovskii
+/package.json @Smolevich @ivankoriakovskii
+/package-lock.json @Smolevich @ivankoriakovskii
+/astro.config.mjs @Smolevich @ivankoriakovskii
+/scripts/ @Smolevich @ivankoriakovskii
