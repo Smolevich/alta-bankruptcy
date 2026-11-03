@@ -28,7 +28,7 @@
    `deploy-backend.yml`: каждый деплой снимает копию живой базы в `/opt/alta-bankruptcy/preview-data`
    (архив AOD — ссылкой), и писать сервис может только туда — живую базу ему закрывает systemd
    (`ReadWritePaths` из drop-in `data.conf`). Два процесса в одну базу не пишут.
-2. Переключение: свежий бэкап базы → `DATA_MODE: live` (сервис на `/opt/alta-feedback/data`) →
+2. Переключение (сделано 03.11.2026): свежий бэкап базы → `DATA_MODE: live` (сервис на `/opt/alta-feedback/data`) →
    ingress туннеля `alta.smolevich.com` с `8101` на `8102`. Старый сервис остаётся запущенным на
    той же базе без трафика: всё, что запишет новый, видно и ему.
 3. Через сутки, после подтверждения Стаса, — финальный шаг ниже.
@@ -43,11 +43,12 @@
 
 ```bash
 git -C ~/pet-projects/infra fetch -q origin && \
-git -C ~/pet-projects/infra show <коммит infra до переключения>:fleet/hardening/cloudflared/config.yml \
-  | ssh bot-server 'cat > /etc/cloudflared/config.yml && systemctl restart cloudflared'
+git -C ~/pet-projects/infra show ea66818:fleet/hardening/cloudflared/config.yml \
+  | ssh -o ClearAllForwardings=yes bot-server 'cat > /etc/cloudflared/config.yml && systemctl restart cloudflared'
 ```
 
-Конкретный коммит записан в PR переключения. После отката — revert PR переключения в `infra`,
+`ea66818` — последний коммит `infra` до переключения (Smolevich/infra#82, 03.11.2026 07:59 UTC).
+После отката — revert Smolevich/infra#82,
 чтобы эталон снова совпал с сервером. Данные не теряются: оба сервиса работают с одной базой.
 
 Откат кода сайта или бэкенда — revert в `main` (или ручной запуск воркфлоу на нужном коммите).
