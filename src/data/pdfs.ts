@@ -1,11 +1,11 @@
 // Каждый PDF-источник открывается в просмотре на сайте (PdfDialog), рядом ссылка на оригинал.
-// CSP сайта (alta-feedback, site.py) пускает во встроенный просмотр только свой домен,
+// CSP сайта (backend, site.py) пускает во встроенный просмотр только свой домен,
 // поэтому PDF с других сайтов показываем из своей копии: мелкие лежат в public/docs,
-// документы AOD — в архиве alta-feedback (/docs/aod/<name>, список в aod-archive.json).
-import AOD_ARCHIVE from './aod-archive.json';
+// документы AOD — в архиве бэкенда (/docs/aod/<name>). Список один на сайт и сервер.
+import AOD_ARCHIVE from '../../backend/src/alta_feedback/data/aod_archive.json';
 import { DOCS } from './documents';
 
-/** Копия PDF с сайта AOD. Тот же файл — src/alta_feedback/data/aod_archive.json в alta-feedback. */
+/** Копия PDF с сайта AOD (запись backend/src/alta_feedback/data/aod_archive.json). */
 export type ArchivedPdf = {
 	name: string;
 	url: string;

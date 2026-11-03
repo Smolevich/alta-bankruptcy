@@ -1,5 +1,0 @@
-# Ревью владельца обязательно там, где правка меняет деплой, его секреты или юнит сервиса.
-/.github/ @Smolevich
-/deploy/ @Smolevich
-/pyproject.toml @Smolevich
-/uv.lock @Smolevich

@@ -64,8 +64,8 @@ two. No cookies and no requests to third-party services.
 
 ## Want to fix or add something
 
-Open a [pull request](https://github.com/Smolevich/alta-feedback/pulls) — I will review
-it. Bugs and ideas go to [issues](https://github.com/Smolevich/alta-feedback/issues).
+Open a [pull request](https://github.com/Smolevich/alta-bankruptcy/pulls) — I will review
+it. Bugs and ideas go to [issues](https://github.com/Smolevich/alta-bankruptcy/issues).
 Corrections to the write-up itself are easiest to send through the form on the site.
 
 ## Running locally

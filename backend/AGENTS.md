@@ -1,6 +1,10 @@
-# alta-feedback — notes for agents
+# backend (alta-feedback) — notes for agents
 
 `CLAUDE.md` is a symlink to this file: one source for Claude Code and Codex.
+
+The service that serves alta.smolevich.com: the site built from the repository root plus the
+forms below. It came from `Smolevich/alta-feedback` with its history; run every command
+below from `backend/`.
 
 Feedback forms for a public write-up about the Serbian bank ALTA: corrections to the
 write-up (`/`) and anonymous "where did you open an account" reports (`/account`, stats at

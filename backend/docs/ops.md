@@ -86,7 +86,7 @@ package, not in `data/`: `data/` is the database directory and the deploy copies
 The write-up shows PDFs from www.aod.rs (quarterly bankruptcy reports, the AOD monograph, legal
 framework) from our own copy, so they stay readable if AOD takes them down. The list is
 `src/alta_feedback/data/aod_archive.json` (`name`, original `url`, `public`, `sha256`, `bytes`,
-`fetched`); the same list lives in alta-bankruptcy `src/data/aod-archive.json` — change both.
+`fetched`); the site build (`src/data/pdfs.ts` at the repository root) reads the same file.
 
 - On the server: `/opt/alta-feedback/data/aod/` — `public/` is served at `/docs/aod/<name>` (ETag,
   Range, one day of cache); `private/` holds documents with lists of private creditors (AOD's
@@ -102,9 +102,12 @@ framework) from our own copy, so they stay readable if AOD takes them down. The 
   refreshes the previous one otherwise; the nightly `hetzner-offsite-backup` copies it to R2
   (encrypted), and the weekly backup check verifies it.
 - The site keeps showing the copy from the manifest. To switch to a newer version, replace the file
-  in the manifest of both repositories (new `sha256`/`bytes`/`fetched`).
+  in the manifest (new `sha256`/`bytes`/`fetched`).
 
 ## Deploy
+
+Until the move from `Smolevich/alta-feedback` is finished, the running service is still deployed
+by that repository; the plan and the switch are in `docs/deploy.md` at the repository root.
 
 GitHub Actions `deploy.yml` on push to `main` (and manually): tests and lint → copy to the
 server over Tailscale → `uv sync` → restart the systemd unit → check `/healthz` and the

@@ -8,6 +8,7 @@ on:
     paths:
       - 'src/**'
       - 'public/**'
+      - 'backend/src/alta_feedback/data/aod_archive.json'
       - 'scripts/**'
       - 'astro.config.mjs'
       - 'package.json'
