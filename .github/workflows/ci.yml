@@ -41,6 +41,8 @@ jobs:
           test -s dist/sitemap-index.xml
           test -s dist/llms.txt
           grep -q 'hreflang="sr-Latn"' dist/index.html
+          # Второй ключ head в конфиге Starlight молча затирал первый, и тег Bing пропадал.
+          grep -q 'name="msvalidate.01"' dist/index.html
 
   # Сервис сайта (backend/): тесты, линтер и тест поиска в фильтрах статистики.
   backend:
