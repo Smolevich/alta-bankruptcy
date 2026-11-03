@@ -1,5 +1,5 @@
-// Официальные документы ALTA. Файлы в public/docs лежат у нас, чтобы остались, если банк снимет их со своего сайта.
-// Два больших отчёта аудитора (12 и 18 МБ) не храним: ссылка ведёт на сайт банка.
+// Официальные документы ALTA. Файлы в public/docs лежат у нас, чтобы остались, если банк снимет их со своего сайта,
+// и чтобы открывались в просмотре на сайте: CSP пускает во встроенный просмотр только свой домен.
 import type { Lang } from '../i18n';
 
 type Text = Record<Lang, string>;
@@ -10,8 +10,8 @@ export type Doc = {
 	period: Text;
 	source: 'apr' | 'bank' | 'aod';
 	sourceUrl: string;
-	/** Имя файла в public/docs; без него PDF открывается по sourceUrl. */
-	file?: string;
+	/** Имя копии в public/docs. */
+	file: string;
 	bytes: number;
 	pages: number;
 };
@@ -191,13 +191,14 @@ export const DOCS: Doc[] = [
 			sr: 'Polugodišnji izveštaj sa revizijom',
 		},
 		what: {
-			ru: 'Вклады по типам клиентов — с. 103. Файл большой, открывается на сайте банка.',
-			en: 'Deposits by client type on p. 103. A large file, opens on the bank’s website.',
-			sr: 'Depoziti po vrstama klijenata na str. 103. Veliki fajl, otvara se na sajtu banke.',
+			ru: 'Вклады по типам клиентов — с. 103.',
+			en: 'Deposits by client type on p. 103.',
+			sr: 'Depoziti po vrstama klijenata na str. 103.',
 		},
 		period: { ru: 'на 30.06.2025', en: 'at 30.06.2025', sr: 'na dan 30.06.2025.' },
 		source: 'bank',
 		sourceUrl: `${BANK}/2025/10/Alta-banka_Izvestaj-revizora_30062025_Final-potpisan.pdf`,
+		file: 'alta-2025-h1-izvestaj-revizora.pdf',
 		bytes: 12182269,
 		pages: 239,
 	},
@@ -208,13 +209,14 @@ export const DOCS: Doc[] = [
 			sr: 'Godišnji izveštaj 2024 sa izveštajem revizora',
 		},
 		what: {
-			ru: 'Для сравнения с 2025 годом. Файл большой, открывается на сайте банка.',
-			en: 'For comparison with 2025. A large file, opens on the bank’s website.',
-			sr: 'Za poređenje sa 2025. Veliki fajl, otvara se na sajtu banke.',
+			ru: 'Для сравнения с 2025 годом.',
+			en: 'For comparison with 2025.',
+			sr: 'Za poređenje sa 2025.',
 		},
 		period: { ru: '2024 год', en: 'Year 2024', sr: 'Godina 2024' },
 		source: 'bank',
 		sourceUrl: `${BANK}/2025/04/Alta-banka_Izvestaj-revizora_2024_Final-potpisan.pdf`,
+		file: 'alta-2024-izvestaj-revizora.pdf',
 		bytes: 18243955,
 		pages: 240,
 	},

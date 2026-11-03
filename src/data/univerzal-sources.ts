@@ -305,7 +305,7 @@ export const UNIVERZAL_SOURCES: Source[] = [
 
 // «На что смотреть»: страница и пункты по самим PDF (pdftotext/OCR). Подсветки внутри PDF нет, только указатели.
 // Имена и адреса из списков кредиторов сюда не попадают: описан только шаблон строки.
-type Look = { page: number; look: Record<Lang, string[]>; embed: boolean };
+type Look = { page: number; look: Record<Lang, string[]> };
 
 const COLUMNS: Record<Lang, string> = {
 	ru: 'Колонки таблицы: «Утврђено потраживање» (Utvrđeno potraživanje) — признанная сумма; «Проценат намирења» (Procenat namirenja) — доля, которую платят этим распределением; «Износ за исплату» (Iznos za isplatu) — сколько получает кредитор, в динарах.',
@@ -327,7 +327,6 @@ const EXAMPLE: Record<Lang, string> = {
 
 const draft = (page: number, total: number, pct: string, extra?: Record<Lang, string>): Look => ({
 	page,
-	embed: true,
 	look: {
 		ru: [`Стр. ${page}: фраза о проценте («проценат намирења … би износио ${pct}») и начало таблицы «Листа стечајних поверилаца I исплатног реда» (Lista stečajnih poverilaca I isplatnog reda). Итоговая строка «УКУПНО» (Ukupno) — на стр. ${total}. Файлы бывают в кириллице и в латинице.`, COLUMNS.ru, EXAMPLE.ru, WHO.ru, ...(extra ? [extra.ru] : [])],
 		en: [`Page ${page}: the sentence on the percentage (“проценат намирења … би износио ${pct}”) and the start of the table “Листа стечајних поверилаца I исплатног реда” (Lista stečajnih poverilaca I isplatnog reda). The “УКУПНО” (Ukupno) total line is on page ${total}. Files come in either Cyrillic or Latin script.`, COLUMNS.en, EXAMPLE.en, WHO.en, ...(extra ? [extra.en] : [])],
@@ -337,7 +336,6 @@ const draft = (page: number, total: number, pct: string, extra?: Record<Lang, st
 
 const scan = (pct: string): Look => ({
 	page: 1,
-	embed: true,
 	look: {
 		ru: ['Стр. 1: решение суда: дата, состояние средств и сумма распределения. Файл — скан, текст из него не копируется.', `Со стр. 2: таблица кредиторов IV очереди, в ней процент ${pct}. Колонки те же: признанная сумма, процент, сумма к выплате.`, 'Имена в таблице — реальные люди и фирмы; нам нужны только колонки с суммами и процентами.'],
 		en: ['Page 1: the court decision: date, the funds available and the amount distributed. The file is a scan, its text cannot be copied.', `From page 2: the table of rank IV creditors with the percentage ${pct}. Same columns: recognised amount, percentage, amount to be paid.`, 'The names in the table are real people and companies; only the columns with amounts and percentages matter here.'],
@@ -347,7 +345,6 @@ const scan = (pct: string): Look => ({
 
 const quarter = (page: number, note?: Record<Lang, string>): Look => ({
 	page,
-	embed: true,
 	look: {
 		ru: [`Стр. ${page}: таблица «3г Готовински одливи – утврђена потраживања поверилаца према стечајном дужнику» (в файле она может быть латиницей: «3g Gotovinski odlivi …») и в ней строка «I исплатни ред» (I isplatni red). Таблица может начинаться ниже середины страницы, листайте вниз.`, 'Колонки: потраживания на начало периода; повышение по итогам заседаний и начисления процентов; «Исплаћена потраживања у извештајном периоду или смањење по основу окончаних парничних поступака»; остаток на конец периода.', 'Третья колонка смешивает выплаты и уменьшения по оконченным судебным делам. Для I очереди в 2020–2021 годах это в основном выплаты по распределениям.', ...(note ? [note.ru] : [])],
 		en: [`Page ${page}: the table “3г Готовински одливи – утврђена потраживања поверилаца према стечајном дужнику” (in the file it may be in Latin script: “3g Gotovinski odlivi …”) and in it the “I исплатни ред” (I isplatni red) row. The table may start low on the page, so scroll down.`, 'Columns: claims at the start of the period; increase from hearings and interest accrual; “Исплаћена потраживања у извештајном периоду или смањење по основу окончаних парничних поступака”; balance at the end of the period.', 'The third column mixes payouts with reductions from concluded lawsuits. For rank I in 2020–2021 it is mostly payouts from the distributions.', ...(note ? [note.en] : [])],
@@ -370,7 +367,6 @@ export const LOOK: Record<string, Look> = {
 	[`${BASE}/oglas/212_1_oglas.pdf`]: scan('0,69 %'),
 	[`${BASE}/oglas/161_1_oglas.pdf`]: {
 		page: 5,
-		embed: true,
 		look: {
 			ru: ['Стр. 5: пункт III — шестое распределение: IV очередь, 2,30 %, 150,1 млн динаров. Это предложение управляющего, а не решение суда.', 'Стр. 6–68: таблица кредиторов IV очереди; итоговая сумма — на стр. 68. Колонки те же: признанная сумма, процент, сумма к выплате.', WHO.ru],
 			en: ['Page 5: point III, the sixth distribution: rank IV, 2.30%, RSD 150.1 m. This is the administrator’s proposal, not a court decision.', 'Pages 6 to 68: the table of rank IV creditors; the total is on page 68. Same columns: recognised amount, percentage, amount to be paid.', WHO.en],
@@ -379,7 +375,6 @@ export const LOOK: Record<string, Look> = {
 	},
 	[`${BASE}/oglas/19_1_oglas.pdf`]: {
 		page: 1,
-		embed: true,
 		look: {
 			ru: ['Одна страница: что прислать кредитору, чтобы получить выплату.', 'Физлицо: копия удостоверения личности, номер счёта, телефон. Фирма и ИП: выписка из реестра, номер счёта. Наследники: документы о правопреемстве.', 'Внизу — адрес и контакты, куда присылать реквизиты (в письменной форме).'],
 			en: ['One page: what a creditor must send in order to be paid.', 'An individual: a copy of the ID card, account number, phone. A company or sole trader: the registry extract, account number. Heirs: documents proving succession.', 'At the bottom: the address and contacts for sending the details (in writing).'],

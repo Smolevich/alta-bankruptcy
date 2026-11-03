@@ -1,0 +1,52 @@
+---
+// Один просмотр PDF на страницу: его открывает любой элемент с data-pdf (кнопка «Просмотр» в карточках,
+// ссылка на PDF в тексте и в источниках). Без скрипта ссылки ведут на оригинал, кнопки скрыты.
+import { UI, type Lang } from '../i18n';
+
+const { lang = 'ru' } = Astro.props as { lang?: Lang };
+const t = UI[lang];
+---
+
+<dialog class="pdf-dialog" id="pdf-view">
+	<header>
+		<strong></strong>
+		<a href="" target="_blank" rel="noopener">{t.docs.original}<span class="sr-only"> ({t.newTab})</span></a>
+		<button type="button" data-close>{t.docs.close}</button>
+	</header>
+	<object type="application/pdf"></object>
+</dialog>
+
+<script is:inline>
+	(() => {
+		const dlg = document.getElementById('pdf-view');
+		if (!dlg || typeof dlg.showModal !== 'function') return;
+		const title = dlg.querySelector('strong');
+		const orig = dlg.querySelector('header a');
+		// На узком экране встроенный просмотр неудобен (iOS показывает одну страницу): PDF открывается вкладкой.
+		const wide = matchMedia('(min-width: 768px)');
+		document.querySelectorAll('button[data-pdf][hidden]').forEach((b) => { b.hidden = false; });
+
+		const show = (el) => {
+			const src = el.dataset.pdf;
+			const obj = dlg.querySelector('object');
+			title.textContent = el.dataset.title || el.textContent.trim();
+			orig.href = el.dataset.orig || el.href;
+			// <object> не перечитывает data на открытом элементе, поэтому каждый раз новый.
+			const fresh = obj.cloneNode(false);
+			fresh.data = `${src}${src.includes('#') ? '&' : '#'}view=FitH`;
+			obj.replaceWith(fresh);
+			dlg.showModal();
+		};
+
+		document.addEventListener('click', (e) => {
+			const el = e.target.closest('[data-pdf]');
+			if (!el || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+			e.preventDefault();
+			if (wide.matches) show(el);
+			else window.open(el.dataset.pdf, '_blank', 'noopener');
+		});
+		dlg.querySelector('[data-close]').addEventListener('click', () => dlg.close());
+		dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+		dlg.addEventListener('close', () => dlg.querySelector('object').removeAttribute('data'));
+	})();
+</script>

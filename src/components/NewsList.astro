@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 
+import { viewerSrc } from '../data/pdfs';
 import { LOCALE_TAG, UI, type Lang } from '../i18n';
 
 const { limit, lang = 'ru' } = Astro.props as { limit?: number; lang?: Lang };
@@ -27,7 +28,7 @@ const fmt = (d: Date) => d.toLocaleDateString(LOCALE_TAG[lang], { timeZone: 'UTC
 					{n.data.sources.map((s, i) => (
 						<>
 							{i > 0 && ' · '}
-							<a href={s.url} target="_blank" rel="noopener">{s.title}</a>
+							<a href={s.url} target="_blank" rel="noopener" data-pdf={viewerSrc(s.url)}>{s.title}</a>
 						</>
 					))}
 				</p>

@@ -41,7 +41,7 @@ export const UI = {
 			stats: 'Статистика по банкам',
 			share: 'Поделиться своим опытом',
 		},
-		docs: { preview: 'Просмотр', close: 'Закрыть', pages: 'стр.', source: 'Источник', period: 'Период', mb: 'МБ', label: 'Список документов' },
+		docs: { preview: 'Просмотр', close: 'Закрыть', original: 'Оригинал', pages: 'стр.', source: 'Источник', period: 'Период', mb: 'МБ', label: 'Список документов' },
 		srcCards: { label: 'Первоисточники по Univerzal', date: 'Дата', type: 'Источник', look: 'На что смотреть' },
 		newTab: 'откроется в новой вкладке',
 		flow: [
@@ -81,7 +81,7 @@ export const UI = {
 			stats: 'Statistics by bank',
 			share: 'Share your experience',
 		},
-		docs: { preview: 'Preview', close: 'Close', pages: 'pp.', source: 'Source', period: 'Period', mb: 'MB', label: 'List of documents' },
+		docs: { preview: 'Preview', close: 'Close', original: 'Original', pages: 'pp.', source: 'Source', period: 'Period', mb: 'MB', label: 'List of documents' },
 		srcCards: { label: 'Primary sources on Univerzal', date: 'Date', type: 'Source', look: 'What to look at' },
 		newTab: 'opens in a new tab',
 		flow: [
@@ -122,7 +122,7 @@ export const UI = {
 			stats: 'Statistika po bankama',
 			share: 'Podelite svoje iskustvo',
 		},
-		docs: { preview: 'Pregled', close: 'Zatvori', pages: 'str.', source: 'Izvor', period: 'Period', mb: 'MB', label: 'Spisak dokumenata' },
+		docs: { preview: 'Pregled', close: 'Zatvori', original: 'Original', pages: 'str.', source: 'Izvor', period: 'Period', mb: 'MB', label: 'Spisak dokumenata' },
 		srcCards: { label: 'Izvori o Univerzal banci', date: 'Datum', type: 'Izvor', look: 'Na šta gledati' },
 		newTab: 'otvara se u novoj kartici',
 		flow: [

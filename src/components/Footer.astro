@@ -3,6 +3,8 @@
 import Default from '@astrojs/starlight/components/Footer.astro';
 import { LOCALE_TAG, UI, href, langOf } from '../i18n';
 import { opensInNewTab } from '../links';
+import { viewerSrc } from '../data/pdfs';
+import PdfDialog from './PdfDialog.astro';
 
 const lang = langOf(Astro.locals.starlightRoute.lang);
 const t = UI[lang];
@@ -25,7 +27,7 @@ const fmt = (d: Date) => d.toLocaleDateString(LOCALE_TAG[lang], { timeZone: 'UTC
 				{data.sources.map((s) => (
 					<li>
 						<span class={`kind kind-${s.kind}`}>{t[s.kind]}</span>
-						<a href={s.url} target={opensInNewTab(s.url) ? '_blank' : undefined} rel="noopener">{s.title}</a>
+						<a href={s.url} target={opensInNewTab(s.url) ? '_blank' : undefined} rel="noopener" data-pdf={viewerSrc(s.url)}>{s.title}</a>
 						<time>{fmt(s.date)}</time>
 					</li>
 				))}
@@ -36,4 +38,5 @@ const fmt = (d: Date) => d.toLocaleDateString(LOCALE_TAG[lang], { timeZone: 'UTC
 		</aside>
 	)
 }
+<PdfDialog lang={lang} />
 <Default><slot /></Default>

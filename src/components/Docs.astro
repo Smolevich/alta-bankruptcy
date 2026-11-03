@@ -2,8 +2,6 @@
 // Карточки официальных документов: данные в src/data/documents.ts, текст страницы только статичный HTML.
 import { DOCS, SOURCE_LABEL } from '../data/documents';
 import { UI, type Lang } from '../i18n';
-import PdfViewer from './PdfViewer.astro';
-import PdfViewerScript from './PdfViewerScript.astro';
 
 const { lang = 'ru' } = Astro.props as { lang?: Lang };
 const t = UI[lang];
@@ -30,16 +28,17 @@ const size = (b: number) =>
 						<dd>{d.pages} {t.docs.pages}, {size(d.bytes)}</dd>
 					</dl>
 					<span class="doc-go">
-						<a href={d.file ? `/docs/${d.file}` : d.sourceUrl} target="_blank" rel="noopener">
-							{d.file || /\.pdf($|[?#])/i.test(d.sourceUrl) ? t.lbl.pdf : t.lbl.site}
+						<a href={`/docs/${d.file}`} target="_blank" rel="noopener">
+							{t.lbl.pdf}
 							<span class="sr-only">({t.newTab})</span>
 						</a>
 					</span>
-					{d.file && <PdfViewer id={`dlg-${d.file}`} title={d.title[lang]} src={`/docs/${d.file}`} lang={lang} />}
+					<button type="button" class="doc-preview" hidden data-pdf={`/docs/${d.file}`} data-title={d.title[lang]} data-orig={d.sourceUrl}>
+						{t.docs.preview}
+					</button>
 				</article>
 			</li>
 		))
 	}
 </ul>
 
-<PdfViewerScript />
