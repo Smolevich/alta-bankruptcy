@@ -1,0 +1,394 @@
+{% extends "base.html" %}
+{% block title %}Где открывают счета{% endblock %}
+{% block head %}
+<style>
+  main.stats-main { padding: 12px 12px 32px; }
+  .stats-card { padding: 16px 14px; }
+  .stats-card h1 { font-size: 20px; margin: 0 0 4px; }
+  .stats-card .lead { font-size: 14px; margin: 0 0 12px; line-height: 1.4; }
+  .stats-card h2 { font-size: 16px; margin: 22px 0 8px; }
+  .stats-card a { color: var(--accent); }
+  .cta { display: inline-block; font-weight: 600; text-decoration: none; }
+  .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .tile { border: 1px solid var(--line); border-radius: 10px; padding: 8px; text-align: center; }
+  .tile b { display: block; font-size: 22px; line-height: 1.1; }
+  .tile span { font-size: 12px; color: var(--muted); }
+  .tile.opened b { color: var(--ok); }
+  .tile.refused b { color: var(--danger); }
+  .legend { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 12px; color: var(--muted); margin-top: 8px; }
+  .dot { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 4px; }
+  .c-opened { background: var(--ok); }
+  .c-refused { background: var(--danger); }
+  .c-pending { background: #b9b6ad; }
+  .group { padding: 8px 0; border-top: 1px solid var(--line); }
+  .group:first-of-type { border-top: 0; }
+  .group-head { display: flex; justify-content: space-between; gap: 8px; font-size: 15px; }
+  .group-head b { font-weight: 600; overflow-wrap: anywhere; }
+  .group-head span { color: var(--muted); white-space: nowrap; font-size: 13px; }
+  .bar { display: flex; height: 8px; border-radius: 4px; overflow: hidden; background: #eceae4; margin: 6px 0 4px; }
+  .bar i { display: block; height: 100%; }
+  .group-note { font-size: 12px; color: var(--muted); }
+  .branches { margin: 6px 0 2px; padding: 4px 0 0 10px; border-left: 2px solid var(--line); }
+  .branches-title { font-size: 12px; color: var(--muted); margin-bottom: 2px; }
+  .branch { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; padding: 3px 0; }
+  .branch b { font-weight: 500; overflow-wrap: anywhere; }
+  .branch span { flex: none; color: var(--muted); white-space: nowrap; }
+  .branch i { font-style: normal; }
+  .branch .ok { color: var(--ok); }
+  .branch .no { color: var(--danger); }
+  .doc { display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; font-size: 14px; padding: 5px 0; }
+  .doc .bar { grid-column: 1 / -1; margin: 2px 0 0; }
+  .doc .bar i { background: var(--accent); }
+  .doc span { color: var(--muted); font-size: 13px; }
+  .entries { display: grid; gap: 8px; }
+  .entry { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; font-size: 14px; }
+  .entry-head { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+  .entry-head b { overflow-wrap: anywhere; }
+  .badge { flex: none; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 999px; color: #fff; }
+  .badge.opened { background: var(--ok); }
+  .badge.refused { background: var(--danger); }
+  .badge.pending { background: #8b887f; }
+  .entry-meta { color: var(--muted); font-size: 13px; margin-top: 2px; }
+  .entry-docs { margin-top: 4px; font-size: 13px; }
+  .entry-comment { margin: 6px 0 0; overflow-wrap: anywhere; }
+  .empty { text-align: center; color: var(--muted); padding: 24px 0 8px; }
+  .nbs { margin-top: 26px; border-top: 1px solid var(--line); padding-top: 12px; font-size: 14px; }
+  .nbs summary { cursor: pointer; }
+  .nbs > summary { font-size: 16px; font-weight: 600; color: var(--accent); }
+  .nbs > summary span { display: block; font-size: 13px; font-weight: 400; color: var(--muted); margin-top: 2px; }
+  .nbs-lead { color: var(--muted); font-size: 13px; margin: 8px 0 4px; line-height: 1.4; }
+  .nbs-help { font-size: 13px; margin: 0 0 8px; }
+  .nbs-help summary { color: var(--accent); }
+  .nbs-help dl { margin: 4px 0 0; }
+  .nbs-help dt { font-weight: 600; margin-top: 4px; }
+  .nbs-help dd { margin: 0; color: var(--muted); }
+  .nbs-cols, .nbs-bank > summary { display: grid; grid-template-columns: 1fr 5.2em 3.6em; gap: 8px; align-items: baseline; }
+  .nbs-cols { font-size: 12px; color: var(--muted); padding: 10px 0 4px; }
+  .nbs-cols span + span, .nbs-num { text-align: right; }
+  .nbs-caption { font-size: 12px; color: var(--muted); margin: 10px 0 0; }
+  .nbs-bank { border-top: 1px solid var(--line); }
+  .nbs-bank > summary { list-style: none; padding: 7px 0; }
+  .nbs-bank > summary::-webkit-details-marker { display: none; }
+  .nbs-name { overflow-wrap: anywhere; }
+  .nbs-name::before { content: "▸"; display: inline-block; width: 1em; color: var(--muted); font-size: 12px; }
+  .nbs-bank[open] .nbs-name::before { content: "▾"; }
+  .nbs-name i { font-style: normal; color: var(--muted); }
+  .nbs-name small { display: block; padding-left: 1em; font-size: 12px; color: var(--danger); }
+  .nbs-num { white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .nbs-more { margin: 0 0 8px 1em; font-size: 13px; }
+  .nbs-more div { display: flex; justify-content: space-between; gap: 8px; padding: 2px 0; }
+  .nbs-more dt { color: var(--muted); }
+  .nbs-more dd { margin: 0; white-space: nowrap; }
+  .nbs-more a, .nbs-source a { color: var(--accent); }
+  .nbs-source { font-size: 12px; color: var(--muted); margin: 10px 0 0; }
+  /* Та же схема, что у справочника на Starlight (alta-bankruptcy, src/styles/custom.css):
+     бумага, чернила, бордо; шрифты системные — CSP не пускает чужие. */
+  :root {
+    --serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Charter, Georgia, serif;
+    --bg: #f6f2e8; --surface: #fffdf7; --nav: #fbf8f0; --ink: #1b2430; --muted: #5a5448;
+    --line: #d9d2c0; --accent: #9b2c22; --accent-ink: #ffffff; --seal-soft: #f3dcd7;
+    --danger: #9b2c22; --danger-bg: #f3dcd7; --ok: #2d6a4f;
+  }
+  html, body { overflow-x: clip; }
+  body { font: 16px/1.75 ui-sans-serif, 'Helvetica Neue', 'Segoe UI', Roboto, sans-serif; }
+  .site-header {
+    position: sticky; top: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; height: 56px; padding: 0 16px; background: var(--nav); border-bottom: 1px solid var(--line);
+  }
+  .site-title { min-width: 0; font: 600 16px/1.15 var(--serif); color: var(--accent); text-decoration: none; }
+  .site-nav { display: flex; gap: 16px; font-size: 14px; white-space: nowrap; }
+  .site-nav a { color: var(--ink); text-decoration: none; font-weight: 600; }
+  .site-nav a:hover, .site-title:hover { text-decoration: underline; }
+  .site-nav .wide { display: none; }
+  main.stats-main { max-width: 752px; padding: 0 16px 40px; }
+  .stats-card { padding: 0; background: none; border: 0; }
+  .page-title { padding: 28px 0 18px; margin: 0 0 20px; border-bottom: 1px solid var(--line); }
+  .stats-card h1 { font: 600 30px/1.15 var(--serif); letter-spacing: -0.01em; margin: 0 0 10px; }
+  .stats-card h2 { font: 700 21px/1.25 var(--serif); letter-spacing: -0.01em; margin: 30px 0 10px; }
+  .stats-card .lead { font-size: 15px; line-height: 1.6; color: var(--muted); margin: 0 0 12px; }
+  .cta {
+    display: inline-block; padding: 8px 16px; border-radius: 4px; background: var(--accent);
+    color: var(--accent-ink) !important; font-weight: 700; text-decoration: none; line-height: 1.4;
+  }
+  .tile { background: var(--surface); border-radius: 4px; }
+  .tile b { font-family: var(--serif); font-size: 26px; }
+  .tile.refused b { color: var(--accent); }
+  .group-head b { font-weight: 700; }
+  .bar { background: #ebe5d6; }
+  .badge { border-radius: 99px; }
+  .badge.pending { background: var(--ink); }
+  .entry { background: var(--surface); border-radius: 3px; border-left: 4px solid var(--ink); line-height: 1.5; }
+  .entry.opened { border-left-color: var(--ok); }
+  .entry.refused { border-left-color: var(--accent); }
+  .filters {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 10px; margin: 0 0 4px; padding: 16px 14px;
+    background: var(--surface); border: 2px solid var(--ink); border-radius: 4px; box-shadow: 4px 4px 0 var(--seal-soft);
+  }
+  .field { grid-column: 1 / -1; min-width: 0; }
+  .field:has(input[type=date]) { grid-column: auto; }
+  .field label {
+    display: block; margin: 0 0 6px; font-size: 12px; font-weight: 700; line-height: 1.3;
+    letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted);
+  }
+  /* Общий вид поля; select и date без скрипта выглядят так же, только со стрелкой браузера внутри. */
+  .filters select, .filters input[type=date], .combo-input, .date {
+    display: block; width: 100%; min-width: 0; max-width: 100%; margin: 0; height: 46px;
+    font: inherit; font-size: 16px; font-weight: 400; line-height: 1.2; color: var(--ink); background: #fff;
+    border: 1px solid #c9bfa8; border-radius: 4px; padding: 0 12px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .filters select {
+    -webkit-appearance: none; appearance: none; padding-right: 36px;
+    background-image: linear-gradient(45deg, transparent 50%, var(--ink) 50%), linear-gradient(135deg, var(--ink) 50%, transparent 50%);
+    background-position: calc(100% - 19px) 52%, calc(100% - 14px) 52%; background-size: 5px 5px; background-repeat: no-repeat;
+  }
+  .filters input[type=date] { -webkit-appearance: none; appearance: none; }
+  .filters select:hover, .combo-input:hover, .date:hover { border-color: var(--ink); }
+  .filters select:focus, .filters input[type=date]:focus, .combo-input:focus, .date:focus-within {
+    outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--seal-soft);
+  }
+  .filters select[hidden] { display: none; }
+  .field { scroll-margin-top: 68px; }
+  .combo { position: relative; }
+  .combo-input { padding-right: 44px; text-overflow: ellipsis; }
+  .combo-input::placeholder { color: var(--ink); opacity: 1; }
+  .combo.chosen .combo-input { font-weight: 700; }
+  .combo::after {
+    content: ""; position: absolute; right: 17px; top: 50%; width: 7px; height: 7px; margin-top: -6px;
+    border: solid var(--ink); border-width: 0 2px 2px 0; transform: rotate(45deg); pointer-events: none;
+    transition: transform 0.15s, margin-top 0.15s;
+  }
+  .combo.open::after { transform: rotate(-135deg); margin-top: -1px; }
+  .combo.chosen::after { display: none; }
+  .filters .combo-clear, .filters .date-clear {
+    position: absolute; z-index: 2; right: 3px; top: 50%; transform: translateY(-50%);
+    display: flex; align-items: center; justify-content: center; width: 40px; min-height: 0; height: 40px;
+    margin: 0; padding: 0; border: 0; border-radius: 3px; background: none; color: var(--muted); cursor: pointer;
+  }
+  .filters .combo-clear[hidden], .filters .date-clear[hidden] { display: none; }
+  .combo-clear::before, .date-clear::before { content: "×"; font-size: 24px; line-height: 1; }
+  .filters .combo-clear:hover, .filters .date-clear:hover { color: var(--accent); background: var(--seal-soft); filter: none; }
+  .combo-list {
+    position: absolute; z-index: 5; top: calc(100% + 6px); left: 0; min-width: 100%; width: max-content;
+    max-width: min(420px, calc(100vw - 32px)); max-height: 340px; margin: 0; padding: 4px; list-style: none;
+    overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
+    background: var(--surface); border: 2px solid var(--ink); border-radius: 4px; box-shadow: 4px 4px 0 var(--seal-soft);
+  }
+  .combo-list[hidden] { display: none; }
+  .combo-list.up { top: auto; bottom: calc(100% + 6px); }
+  .combo-list.end { left: auto; right: 0; }
+  .combo-option {
+    position: relative; display: flex; align-items: center; min-height: 46px; padding: 8px 12px 8px 34px;
+    border-radius: 3px; font-size: 16px; line-height: 1.3; cursor: pointer; overflow-wrap: anywhere;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .combo-option.all { color: var(--muted); }
+  .combo-option[aria-selected=true] { font-weight: 700; }
+  .combo-option[aria-selected=true]::before {
+    content: ""; position: absolute; left: 13px; top: 50%; width: 5px; height: 10px; margin-top: -7px;
+    border: solid var(--accent); border-width: 0 2px 2px 0; transform: rotate(45deg);
+  }
+  .combo-option.active, .combo-option:hover { background: #f1e9d6; }
+  .combo-option mark { background: none; color: var(--accent); font-weight: 700; }
+  .combo-empty { padding: 12px; font-size: 14px; color: var(--muted); }
+  .date { position: relative; display: flex; align-items: center; gap: 10px; padding-right: 44px; cursor: pointer; }
+  .date-icon { display: flex; flex: none; color: var(--accent); }
+  .date-face { flex: 1; min-width: 0; white-space: nowrap; font-variant-numeric: tabular-nums; color: #8f8573; }
+  .date.chosen .date-face { color: var(--ink); font-weight: 700; }
+  .filters .date-native {
+    position: absolute; z-index: 1; inset: 0; width: 100%; height: 100%; margin: 0; padding: 0;
+    border: 0; opacity: 0; cursor: pointer; font-size: 16px; box-shadow: none;
+  }
+  .date-native::-webkit-calendar-picker-indicator { position: absolute; inset: 0; width: auto; height: auto; cursor: pointer; }
+  .filter-actions { grid-column: 1 / -1; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 2px; }
+  .filter-actions button {
+    width: auto; flex: 1 1 auto; margin: 0; min-height: 46px; padding: 0 22px; border-radius: 4px;
+    font-size: 16px; font-weight: 700;
+  }
+  .reset {
+    flex: none; display: inline-flex; align-items: center; min-height: 46px; padding: 0 16px;
+    border: 1.5px solid var(--accent); border-radius: 4px; color: var(--accent); background: var(--surface);
+    font-weight: 700; text-decoration: none;
+  }
+  .filter-note { margin: 12px 0 0; padding: 8px 12px; font-size: 14px; line-height: 1.5; background: #fff8e1; border: 1px dashed var(--ink); border-radius: 3px; }
+  .filter-note b { font-weight: 700; }
+  .shown { font-size: 13px; color: var(--muted); margin: -4px 0 10px; }
+  .pager { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+  .pager a {
+    flex: 1 1 auto; display: inline-flex; justify-content: center; align-items: center; min-height: 44px;
+    padding: 0 14px; border-radius: 4px; font-weight: 700; text-decoration: none;
+  }
+  .pager .more { background: var(--accent); color: var(--accent-ink); }
+  .pager .start { flex: 0 1 auto; border: 1.5px solid var(--accent); color: var(--accent); background: var(--surface); }
+  .foot { margin-top: 24px; }
+  @media (min-width: 720px) {
+    .site-header { padding: 0 24px; }
+    .site-title { font-size: 22px; }
+    .site-nav .wide { display: inline; }
+    main.stats-main { padding: 0 24px 56px; }
+    .card.stats-card { padding: 0; }
+    .page-title { padding: 40px 0 24px; }
+    .stats-card h1 { font-size: 35px; }
+    .filters { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px 12px; padding: 18px; align-items: end; }
+    .field, .field:has(input[type=date]) { grid-column: span 2; }
+    .filters select, .filters input[type=date], .combo-input, .date { height: 44px; font-size: 15px; }
+    .combo-option { min-height: 38px; font-size: 15px; }
+    .filter-actions { grid-column: span 2; flex-wrap: nowrap; margin: 0; }
+    .filter-actions button { min-height: 44px; padding: 0 14px; }
+    .reset { min-height: 44px; padding: 0 12px; }
+  }
+</style>
+{% endblock %}
+{% block main_class %}stats-main{% endblock %}
+{% block header %}
+<header class="site-header">
+  <a class="site-title" href="/">Вкладчики ALTA: что дальше</a>
+  <nav class="site-nav" aria-label="Справочник"><a class="wide" href="/novosti/">Новости</a><a href="/">Справочник</a></nav>
+</header>
+{% endblock %}
+{% macro source(row) -%}
+<a href="{{ row.source_url }}" rel="noopener noreferrer">NBS</a>
+{%- for url in row.also %} <a href="{{ url }}" rel="noopener noreferrer" title="ещё один отчёт NBS, из которого посчитано число">{{ loop.index + 1 }}</a>{% endfor %}
+{%- endmacro %}
+{% macro nbs_bank(bank) -%}
+<details class="nbs-bank">
+  <summary><span class="nbs-name"><i>{{ bank.rank }}.</i> {{ bank.name }}{% if bank.defunct %}<small>для сравнения: до краха</small>{% endif %}</span><span class="nbs-num">{% if bank.size %}{{ bank.size.amount }}{% endif %}</span><span class="nbs-num">{% if bank.share %}{{ bank.share.text }}{% endif %}</span></summary>
+  <dl class="nbs-more">
+    {%- for row in bank.details %}
+    <div><dt>{{ row.label }}</dt><dd><b>{{ row.text }}</b> · {{ source(row) }}</dd></div>
+    {%- endfor %}
+    {%- if bank.size or bank.share %}
+    <div><dt>Активы и доля рынка</dt><dd>
+      {%- if bank.size %}{{ source(bank.size) }}{% endif %}
+      {%- if bank.share and (not bank.size or bank.share.source_url != bank.size.source_url) %} {{ source(bank.share) }}{% endif %}</dd></div>
+    {%- endif %}
+  </dl>
+</details>
+{%- endmacro %}
+{% macro group(tally, show_types=True) -%}
+<div class="group">
+  <div class="group-head"><b>{{ tally.name }}</b><span>{{ tally.total }} {{ answers(tally.total) }}</span></div>
+  <div class="bar" role="img" aria-label="открыли {{ tally.results.opened }}, отказали {{ tally.results.refused }}, в процессе {{ tally.results.pending }}">
+    <i class="c-opened" style="width: {{ tally.share('opened') }}%"></i><i class="c-refused" style="width: {{ tally.share('refused') }}%"></i><i class="c-pending" style="width: {{ tally.share('pending') }}%"></i>
+  </div>
+  <div class="group-note">открыли {{ tally.results.opened }} · отказали {{ tally.results.refused }} · в процессе {{ tally.results.pending }}
+    {%- if show_types %} · личный {{ tally.types.personal }}, ИП {{ tally.types.entrepreneur }}{% endif %}</div>
+  {%- if tally.branches %}
+  <div class="branches">
+    <div class="branches-title">По отделениям (отделение видно, если о нём минимум два ответа)</div>
+    {%- for branch in tally.branches %}
+    <div class="branch"><b>{{ branch.name }}</b><span><i class="ok">открыли {{ branch.results.opened }}</i> · <i class="no">отказали {{ branch.results.refused }}</i>{% if branch.results.pending %} · в процессе {{ branch.results.pending }}{% endif %}</span></div>
+    {%- endfor %}
+  </div>
+  {%- endif %}
+</div>
+{%- endmacro %}
+{% macro answers(n) -%}
+{%- if n % 10 == 1 and n % 100 != 11 %}ответ{% elif n % 10 in [2, 3, 4] and n % 100 not in [12, 13, 14] %}ответа{% else %}ответов{% endif -%}
+{%- endmacro %}
+{% block content %}
+<div class="card stats-card">
+  <div class="page-title">
+  <h1>Где открывают счета после ALTA</h1>
+  <p class="lead">Ответы вкладчиков, которые мы проверили. Это опыт людей, а не правила банков: в другом отделении может быть иначе.</p>
+  <a class="cta" href="/account">+ Добавить свой ответ</a>
+  </div>
+
+  {% if not has_any %}
+  <p class="empty">Пока нет проверенных ответов. Будьте первым — это займёт полминуты.</p>
+  {% else %}
+  <form class="filters" method="get" action="/account/stats">
+    <div class="field field-bank"><label for="f-bank">Банк</label>
+      <select id="f-bank" name="bank"><option value="">Все банки</option>
+        {%- for code, name in banks.items() %}<option value="{{ code }}"{% if filter.bank == code %} selected{% endif %}>{{ name }}</option>{% endfor %}</select></div>
+    <div class="field"><label for="f-city">Город</label>
+      <select id="f-city" name="city"><option value="">Все города</option>
+        {%- for code, name in cities.items() %}<option value="{{ code }}"{% if filter.city == code %} selected{% endif %}>{{ name }}</option>{% endfor %}</select></div>
+    <div class="field"><label for="f-result">Чем закончилось</label>
+      <select id="f-result" name="result"><option value="">Всё</option>
+        {%- for code, name in results.items() %}<option value="{{ code }}"{% if filter.result == code %} selected{% endif %}>{{ name }}</option>{% endfor %}</select></div>
+    <div class="field"><label for="f-from">Визит с</label><input type="date" id="f-from" name="from" value="{{ filter.date_from or '' }}"></div>
+    <div class="field"><label for="f-to">Визит по</label><input type="date" id="f-to" name="to" value="{{ filter.date_to or '' }}"></div>
+    <div class="filter-actions"><button type="submit">Показать</button>{% if filter.active %}<a class="reset" href="/account/stats">Сбросить</a>{% endif %}</div>
+  </form>
+  {% if filter.active %}
+  <p class="filter-note">Все цифры ниже — <b>с учётом фильтра</b>{% if filter.bank %} · {{ banks[filter.bank] }}{% endif %}{% if filter.city %} · {{ cities[filter.city] }}{% endif %}{% if filter.result %} · {{ results[filter.result] }}{% endif %}{% if filter.date_from %} · с {{ filter.date_from.split('-') | reverse | join('.') }}{% endif %}{% if filter.date_to %} · по {{ filter.date_to.split('-') | reverse | join('.') }}{% endif %}</p>
+  {% endif %}
+
+  {% if not stats.total %}
+  <p class="empty">По этому фильтру ответов нет. <a href="/account/stats">Сбросить фильтр</a></p>
+  {% else %}
+  <h2>{% if filter.active %}По фильтру{% else %}Всего{% endif %} {{ stats.total }} {{ answers(stats.total) }}</h2>
+  <div class="tiles">
+    <div class="tile opened"><b>{{ stats.results.opened }}</b><span>открыли</span></div>
+    <div class="tile refused"><b>{{ stats.results.refused }}</b><span>отказали</span></div>
+    <div class="tile"><b>{{ stats.results.pending }}</b><span>в процессе</span></div>
+  </div>
+  <div class="legend"><span><i class="dot c-opened"></i>открыли</span><span><i class="dot c-refused"></i>отказали</span><span><i class="dot c-pending"></i>в процессе</span></div>
+
+  <h2>По банкам</h2>
+  {% for tally in stats.banks %}{{ group(tally) }}{% endfor %}
+
+  <h2>По городам</h2>
+  {% for tally in stats.cities %}{{ group(tally) }}{% endfor %}
+
+  <h2>По статусу в Сербии</h2>
+  {% for tally in stats.residencies %}{{ group(tally) }}{% endfor %}
+
+  {% if stats.documents %}
+  <h2>Какие документы просили</h2>
+  {% for doc in stats.documents %}
+  <div class="doc"><b>{{ doc.name }}</b><span>{{ doc.count }} из {{ stats.total }}</span>
+    <div class="bar"><i style="width: {{ doc.percent }}%"></i></div></div>
+  {% endfor %}
+  {% endif %}
+
+  <h2 id="answers">{% if filter.active %}Ответы по фильтру{% else %}Все ответы{% endif %}</h2>
+  {% if entries %}
+  <p class="shown">Показаны {{ first }}–{{ last }} из {{ stats.total }}, свежие визиты сверху</p>
+  {% else %}
+  <p class="shown">Дальше ответов нет.</p>
+  {% endif %}
+  <div class="entries">
+    {% for item in entries %}
+    <article class="entry {{ item.result }}" data-id="{{ item.id }}">
+      <div class="entry-head"><b>{{ item.bank }}</b><span class="badge {{ item.result }}">{{ item.result_label }}</span></div>
+      <div class="entry-meta">{{ item.city }}{% if item.branch %} · {{ item.branch }}{% endif %} · {{ item.account_type }}{% if item.residency %} · {{ item.residency }}{% endif %} · {{ item.visit_date }}</div>
+      {% if item.documents %}<div class="entry-docs">Просили: {{ item.documents | join(", ") }}</div>{% endif %}
+      {% if item.comment %}<p class="entry-comment">{{ item.comment }}</p>{% endif %}
+    </article>
+    {% endfor %}
+  </div>
+  {% if next_url or start_url %}
+  <nav class="pager" aria-label="Страницы ответов">
+    {%- if next_url %}<a class="more" href="{{ next_url }}">Показать ещё {{ [page_size, stats.total - last] | min }}</a>{% endif %}
+    {%- if start_url %}<a class="start" href="{{ start_url }}">↑ В начало</a>{% endif %}
+  </nav>
+  {% endif %}
+  {% endif %}
+  {% endif %}
+  <details class="nbs" id="nbs">
+    <summary>Официальные цифры Нацбанка по банкам<span>на {{ nbs.day }}, по квартальным отчётам банков</span></summary>
+    <p class="nbs-lead">Место — по размеру среди {{ nbs.bank_count }} банков Сербии. Нажмите на банк, чтобы увидеть остальные цифры и ссылки на отчёты. Это цифры, а не оценка надёжности.</p>
+    <details class="nbs-help">
+      <summary>Что значат цифры</summary>
+      <dl>
+        {%- for metric in metrics %}
+        <dt>{{ metric.label }}</dt><dd>{{ metric.explain }}</dd>
+        {%- endfor %}
+      </dl>
+    </details>
+    <div class="nbs-cols"><span>Место · банк</span><span>Активы, млрд RSD</span><span>Доля рынка</span></div>
+    {%- if nbs_reported %}
+    <div class="nbs-caption">Банки из ответов</div>
+    {%- for bank in nbs_reported %}{{ nbs_bank(bank) }}{% endfor %}
+    {%- if nbs_others %}<div class="nbs-caption">Другие крупные банки</div>{% endif %}
+    {%- endif %}
+    {%- for bank in nbs_others %}{{ nbs_bank(bank) }}{% endfor %}
+    <p class="nbs-source">Источник: <a href="{{ nbs_source }}" rel="noopener noreferrer">квартальные отчёты банков в Народном банке Сербии</a></p>
+  </details>
+  <a class="back" href="{{ return_url }}">← к странице про ALTA</a>
+</div>
+<p class="foot">Без рекламы и трекеров.</p>
+<script src="/static/filters.js" defer></script>
+{% endblock %}
