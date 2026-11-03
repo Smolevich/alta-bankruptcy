@@ -5,14 +5,14 @@
     "headline": {
       "ru": "Ждём решения суда об открытии банкротства",
       "en": "Waiting for the court's decision to open bankruptcy",
-      "sr": "Čeka se odluka Privrednog suda u Beogradu o otvaranju stečaja"
+      "sr": "Čeka se odluka suda o stečaju"
     },
     "note": {
-      "ru": "Решения суда пока нет. От него считаются все сроки: не позже чем через 3 рабочих дня AOD назовёт банк-плательщик (банк, где будут выдавать деньги), не позже чем через 7 рабочих дней начнутся выплаты до 50 000 €.",
-      "en": "All deadlines run from the court decision: AOD will announce the paying bank within 3 working days, and payouts of up to €50,000 start within 7 working days. There is no court decision yet.",
-      "sr": "Svi rokovi teku od odluke suda: AOD će objaviti banku isplatioca najkasnije u roku od 3 radna dana, a isplata osiguranih depozita do 50.000 € počinje najkasnije u roku od 7 radnih dana. Odluke suda još nema."
+      "ru": "На 03.11.2026 решения Хозяйственного суда Белграда нет. От него считаются все сроки: не позже чем через 3 рабочих дня AOD назовёт банк-плательщик (банк, где будут выдавать деньги), не позже чем через 7 рабочих дней начнутся выплаты до 50 000 €.",
+      "en": "As of 03.11.2026 the Commercial Court in Belgrade has not decided yet. All deadlines run from its decision: within 3 working days AOD names the paying bank (the bank where the money will be paid out), and payouts of up to €50,000 start within 7 working days.",
+      "sr": "Na dan 03.11.2026. Privredni sud u Beogradu još nije doneo odluku. Od nje teku svi rokovi: najkasnije za 3 radna dana AOD objavljuje banku isplatioca (banku u kojoj će se isplaćivati novac), a isplata osiguranih depozita do 50.000 € počinje najkasnije za 7 radnih dana."
     },
-    "checkedAt": "2026-11-01",
+    "checkedAt": "2026-11-03",
     "stages": [
       {
         "n": 1,
@@ -32,7 +32,7 @@
         "title": {
           "ru": "Ждём решения суда о банкротстве",
           "en": "Waiting for the court's bankruptcy decision",
-          "sr": "Čeka se odluka Privrednog suda u Beogradu o otvaranju stečaja"
+          "sr": "Čeka se odluka suda o stečaju"
         },
         "when": {
           "ru": "сейчас",
