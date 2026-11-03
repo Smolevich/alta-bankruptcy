@@ -5,7 +5,10 @@ checked: 2026-11-03
 sources:
   - { title: "Закон о банкротстве и ликвидации банков, ст. 7, 17, 19, 20", url: "https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2015/14/3/reg", kind: official, date: 2026-11-01 }
   - { title: "Закон о страховании вкладов, ст. 2, 3, 16, 17, 18", url: "https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2015/14/2/reg", kind: official, date: 2026-11-01 }
-  - { title: "Закон о банкротстве, ст. 16, 54, 111", url: "https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2009/104/25/reg", kind: official, date: 2026-11-01 }
+  - { title: "Закон о банкротстве, ст. 16, 54, 70, 71, 82, 83, 111", url: "https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2009/104/25/reg", kind: official, date: 2026-11-01 }
+  - { title: "«Службени гласник»: что публикуют, подписка", url: "https://www.slglasnik.com/sluzbena-glasila/sluzbeni-glasnik", kind: official, date: 2026-11-03 }
+  - { title: "Службени гласник: страница «Гласника» с объявлением по Univerzal banka, 07.02.2014 (веб-архив)", url: "https://web.archive.org/web/20160830214352/http://aod.rs/pdf/2014-02-10-sluzbeni-glasnik-univerzal-banka.pdf", kind: official, date: 2014-02-07 }
+  - { title: "AOD: инструкция, как подать требование по Univerzal banka, 06.02.2014 (веб-архив)", url: "https://web.archive.org/web/20160831012046/http://aod.rs/pdf/2014-02-06-uputstvo-za-podnosenje-prijave-potrazivanja.pdf", kind: official, date: 2014-02-06 }
   - { title: "AOD: процедура выплаты застрахованных вкладов (04.11.2015)", url: "https://www.aod.rs/uploads/dokumenti/osigdepoz/pravniokvir/cir/16_pravniokvir.pdf", kind: official, date: 2015-11-04 }
   - { title: "AOD: объявление о выплате по Univerzal banka, 03.02.2014 (веб-архив)", url: "https://web.archive.org/web/20140308161705/http://www.aod.rs/pdf/2014-02-03-saopstenje.pdf", kind: official, date: 2014-02-03 }
   - { title: "AOD: квартальный отчёт по Univerzal banka, II кв. 2026", url: "https://www.aod.rs/uploads/dokumenti/kvartalniizvestaj/Univerzal%20banka_II%20kvartal%202026.pdf", kind: official, date: 2026-06-30 }
@@ -42,6 +45,30 @@ import Faq from '../../components/Faq.astro';
 ## В какой срок
 
 Срок суд указывает в решении об открытии банкротства: **от 30 до 90 дней** со дня публикации объявления в «Службени гласник» (официальный вестник Сербии), а не со дня отзыва лицензии ([ст. 7](https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2015/14/3/reg)). Подавать нужно, не дожидаясь страховой выплаты. У Univerzal суд дал 60 дней.
+
+<span id="glasnik"></span>
+
+## «Службени гласник» и объявление о банкротстве
+
+**Что это.** «Службени гласник Републике Србије» (Službeni glasnik RS) — официальный вестник Сербии. В его части с объявлениями (огласни део) публикуют объявления органов, судов и фирм ([Службени гласник](https://www.slglasnik.com/sluzbena-glasila/sluzbeni-glasnik)).
+
+**Где выходит объявление об открытии банкротства.** Суд обязан вывесить его на своей доске объявлений и на электронной доске, напечатать в одной крупной ежедневной газете и опубликовать в «Службени гласник» ([закон о банкротстве, ст. 71 ч. 3](https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2009/104/25/reg)). Для банков этот закон действует во всём, что не сказано иначе в законе о банкротстве банков ([ст. 22](https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2015/14/3/reg)).
+
+**Что в нём.** Всё, что есть в решении суда ([ст. 71 ч. 4](https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2009/104/25/reg)): суд; название, номер и адрес банка; кто управляющий (для ALTA — AOD); призыв к кредиторам подать требования и срок; призыв к должникам банка платить; дата, время и место заседания по проверке требований; день, когда объявление вывешено на доске суда ([ст. 70](https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2009/104/25/reg)).
+
+**Почему это важно.** Срок подачи требования сверх 50 000 € считается со дня публикации в «Службени гласник», а не со дня решения суда. Срок — от 30 до 90 дней, точное число дней суд пишет в решении ([закон о банкротстве банков, ст. 7](https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2015/14/3/reg)). Опоздали: подать ещё можно, но не позже 120 дней с публикации и только заплатив аванс за дополнительное заседание суда; позже требование отбросят ([закон о банкротстве, ст. 111 ч. 5 и 8](https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2009/104/25/reg)).
+
+**Как это было у Univerzal banka.** Суд открыл банкротство 03.02.2014, объявление вышло в «Службени гласник» № 14 от 07.02.2014, срок подачи был 60 дней ([страница «Гласника», веб-архив](https://web.archive.org/web/20160830214352/http://aod.rs/pdf/2014-02-10-sluzbeni-glasnik-univerzal-banka.pdf)). Через три дня после решения суда AOD выложил на своём сайте инструкцию, как подать требование ([инструкция AOD](https://web.archive.org/web/20160831012046/http://aod.rs/pdf/2014-02-06-uputstvo-za-podnosenje-prijave-potrazivanja.pdf)).
+
+**Где смотреть.**
+
+1. **Доска суда — бесплатно.** Откройте [электронную доску Хозяйственного суда Белграда](http://www.bg.pr.sud.rs/index.php?prf=con&id=56): раздел «Rešenje o pokretanju stečajnog postupka (otvaranju)». В строке дела — номер, даты, участники («Lica») и ссылка «Preuzmite» (скачать).
+2. **Сайт AOD — бесплатно.** Следите за новостями на [aod.rs](https://www.aod.rs/): AOD — управляющий в банкротстве ALTA.
+3. **«Службени гласник» — платно.** Электронное издание доступно только по платной подписке ([условия и цены](https://www.slglasnik.com/sluzbena-glasila/sluzbeni-glasnik)). Если подписки нет, смотрите доску суда и aod.rs.
+
+**Когда объявление вышло.** Найдите в нём число дней на подачу и отсчитайте их от даты номера «Гласника». Подайте письменное требование (Prijava potraživanja) в Хозяйственный суд Белграда ([ст. 111 ч. 1](https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2009/104/25/reg)); что в нём написать — ниже, в «Что подготовить».
+
+**Сейчас, 03.11.2026.** По порталу судов объявление об открытии банкротства суд отправил 03.11 ([как проверить дело](/)). Публикацию в «Службени гласник» в открытом доступе мы пока не нашли. Следим и обновим эту страницу.
 
 ## Что подготовить
 
