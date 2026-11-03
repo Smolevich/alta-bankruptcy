@@ -131,6 +131,10 @@ html, body { overflow-x: clip; }
 .faq details { border-bottom: 1px solid var(--line); padding: 0.6rem 0; }
 .faq summary { cursor: pointer; font-weight: 700; }
 .faq p { margin: 0.5rem 0 0; }
+.faq p.faq-more { font-size: 0.9rem; overflow-wrap: anywhere; }
+.faq-open summary { list-style: none; cursor: default; pointer-events: none; }
+.faq-open summary::-webkit-details-marker { display: none; }
+.faq-all { margin-top: 0.75rem; font-weight: 700; }
 
 /* ---- Источники под страницей ---- */
 .sources { margin-top: 3rem; padding: 1rem; border-top: 3px double var(--ink); font-size: 0.9rem; }

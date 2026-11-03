@@ -58,6 +58,7 @@ export default defineConfig({
 				starlightLinksValidator({ errorOnRelativeLinks: false, exclude: ['/account', '/account/**'] })],
 			sidebar: [
 				{ label: 'Сейчас', slug: 'index', translations: { en: 'Now', sr: 'Sada' } },
+				{ label: 'Частые вопросы', slug: 'voprosy', translations: { en: 'FAQ', sr: 'Česta pitanja' } },
 				{ label: 'Процедура и сроки', slug: 'procedura', translations: { en: 'Procedure and timeline', sr: 'Postupak i rokovi' } },
 				{ label: 'Требование сверх 50 000 €', slug: 'trebovanie', translations: { en: 'Claim above €50,000', sr: 'Prijava potraživanja iznad 50.000 €' } },
 				{ label: 'Что сохранить: выписки и документы', slug: 'vypiski', translations: { en: 'What to save: statements and documents', sr: 'Šta sačuvati: izvodi i dokumenta' } },
