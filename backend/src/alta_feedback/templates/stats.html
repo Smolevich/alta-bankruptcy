@@ -81,6 +81,29 @@
   .nbs-more dd { margin: 0; white-space: nowrap; }
   .nbs-more a, .nbs-source a { color: var(--accent); }
   .nbs-source { font-size: 12px; color: var(--muted); margin: 10px 0 0; }
+  .forms { margin-top: 26px; border-top: 1px solid var(--line); padding-top: 4px; }
+  .forms-lead { color: var(--muted); font-size: 14px; line-height: 1.5; margin: 0 0 8px; }
+  .forms-bank { border-top: 1px solid var(--line); scroll-margin-top: 68px; }
+  .forms-bank > summary { cursor: pointer; padding: 9px 0; font-weight: 700; color: var(--accent); }
+  .forms-bank > summary span { font-weight: 400; color: var(--muted); font-size: 13px; }
+  .forms-list { list-style: none; margin: 0 0 10px; padding: 0; display: grid; gap: 8px; }
+  .forms-list li { font-size: 14px; line-height: 1.45; overflow-wrap: anywhere; }
+  .forms-list a { font-weight: 600; }
+  .forms-meta { color: var(--muted); font-size: 13px; }
+  .forms-meta a { font-weight: 400; }
+  .forms-note { background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--ink); border-radius: 3px; padding: 10px 12px; margin: 0 0 12px; font-size: 14px; line-height: 1.5; }
+  .forms-note h3 { font-size: 15px; margin: 0 0 6px; }
+  .forms-note p { margin: 8px 0 2px; font-weight: 600; }
+  .forms-note ul { margin: 0; padding-left: 20px; }
+  .forms-note .forms-source { font-weight: 400; color: var(--muted); font-size: 13px; }
+  .forms-link { display: inline-block; margin-top: 4px; font-size: 13px; }
+  .pdf-dialog { width: min(1100px, 96vw); height: 92vh; padding: 0; border: 1px solid var(--line); border-radius: 4px; background: var(--surface); }
+  .pdf-dialog::backdrop { background: rgba(27, 36, 48, 0.55); }
+  .pdf-dialog header { display: flex; gap: 12px; align-items: center; padding: 8px 12px; border-bottom: 1px solid var(--line); font-size: 14px; }
+  .pdf-dialog strong { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pdf-dialog header a { color: var(--accent); white-space: nowrap; }
+  .pdf-dialog button { width: auto; margin: 0; min-height: 36px; padding: 0 14px; }
+  .pdf-dialog object { display: block; width: 100%; height: calc(100% - 54px); }
   /* Та же схема, что у справочника на Starlight (alta-bankruptcy, src/styles/custom.css):
      бумага, чернила, бордо; шрифты системные — CSP не пускает чужие. */
   :root {
@@ -265,7 +288,7 @@
   </dl>
 </details>
 {%- endmacro %}
-{% macro group(tally, show_types=True) -%}
+{% macro group(tally, show_types=True, forms_code=None) -%}
 <div class="group">
   <div class="group-head"><b>{{ tally.name }}</b><span>{{ tally.total }} {{ answers(tally.total) }}</span></div>
   <div class="bar" role="img" aria-label="открыли {{ tally.results.opened }}, отказали {{ tally.results.refused }}, в процессе {{ tally.results.pending }}">
@@ -280,6 +303,9 @@
     <div class="branch"><b>{{ branch.name }}</b><span><i class="ok">открыли {{ branch.results.opened }}</i> · <i class="no">отказали {{ branch.results.refused }}</i>{% if branch.results.pending %} · в процессе {{ branch.results.pending }}{% endif %}</span></div>
     {%- endfor %}
   </div>
+  {%- endif %}
+  {%- if forms_code %}
+  <a class="forms-link" href="#forms-{{ forms_code }}">Бланки и что спрашивают ↓</a>
   {%- endif %}
 </div>
 {%- endmacro %}
@@ -327,7 +353,7 @@
   <div class="legend"><span><i class="dot c-opened"></i>открыли</span><span><i class="dot c-refused"></i>отказали</span><span><i class="dot c-pending"></i>в процессе</span></div>
 
   <h2>По банкам</h2>
-  {% for tally in stats.banks %}{{ group(tally) }}{% endfor %}
+  {% for tally in stats.banks %}{{ group(tally, forms_code=forms_codes.get(tally.name)) }}{% endfor %}
 
   <h2>По городам</h2>
   {% for tally in stats.cities %}{{ group(tally) }}{% endfor %}
@@ -367,6 +393,36 @@
   {% endif %}
   {% endif %}
   {% endif %}
+  {% if bank_forms %}
+  <section class="forms" id="forms">
+    <h2>Бланки и что спрашивают</h2>
+    <p class="forms-lead">Пустые бланки на открытие счёта: можно заполнить дома и прийти с готовыми. Официальные — копии с сайта банка. Бланки от вкладчиков — то, что выдали в отделении; банк может поменять их без предупреждения.</p>
+    {%- for bank in bank_forms %}
+    <details class="forms-bank" id="forms-{{ bank.code }}"{% if filter.bank %} open{% endif %}>
+      <summary>{{ bank.name }} <span>· {% if bank.forms %}бланков: {{ bank.forms | length }}{% endif %}{% if bank.forms and bank.notes %}, {% endif %}{% if bank.notes %}что спрашивают{% endif %}</span></summary>
+      {%- for note in bank.notes %}
+      <div class="forms-note">
+        <h3>{{ note.title }}</h3>
+        {%- for section in note.sections %}
+        <p>{{ section.title }}</p>
+        <ul>{% for item in section.items %}<li>{{ item }}</li>{% endfor %}</ul>
+        {%- endfor %}
+        <p class="forms-source">{{ note.source }}</p>
+      </div>
+      {%- endfor %}
+      {%- if bank.forms %}
+      <ul class="forms-list">
+        {%- for form in bank.forms %}
+        <li><a href="{{ form.url }}" data-pdf="{{ form.url }}"{% if form.official %} data-orig="{{ form.source_url }}"{% endif %}>{{ form.title }}</a>
+          <div class="forms-meta">{{ form.original }} · кому: {{ form.who }} · {{ form.origin }} · {{ form.pages }} стр.
+            {%- if form.official %} · <a href="{{ form.source_url }}" rel="noopener noreferrer">оригинал на сайте банка{% if form.source_url.endswith('.doc') %} (Word){% endif %}</a>{% endif %}</div></li>
+        {%- endfor %}
+      </ul>
+      {%- endif %}
+    </details>
+    {%- endfor %}
+  </section>
+  {% endif %}
   <details class="nbs" id="nbs">
     <summary>Официальные цифры Нацбанка по банкам<span>на {{ nbs.day }}, по квартальным отчётам банков</span></summary>
     <p class="nbs-lead">Место — по размеру среди {{ nbs.bank_count }} банков Сербии. Нажмите на банк, чтобы увидеть остальные цифры и ссылки на отчёты. Это цифры, а не оценка надёжности.</p>
@@ -390,5 +446,10 @@
   <a class="back" href="{{ return_url }}">← к странице про ALTA</a>
 </div>
 <p class="foot">Без рекламы и трекеров.</p>
+<dialog class="pdf-dialog" id="pdf-view">
+  <header><strong></strong><a href="" target="_blank" rel="noopener">Оригинал на сайте банка</a><button type="button" data-close>Закрыть</button></header>
+  <object type="application/pdf"></object>
+</dialog>
 <script src="/static/filters.js" defer></script>
+<script src="/static/pdfview.js" defer></script>
 {% endblock %}

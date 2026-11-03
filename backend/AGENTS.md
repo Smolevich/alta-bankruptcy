@@ -21,7 +21,10 @@ and pages are in Russian; issues and PRs may be in English, Serbian or Russian.
   stats page, reported banks first (`data/nbs_banks.json`,
   quarter 2026Q2, computed from each bank's NBS balance sheet and income statement; a figure
   without an https `source_url` is not rendered); `aod_archive.py` our copy of the AOD PDFs the
-  write-up links to (`data/aod_archive.json`, served at `/docs/aod/<name>`, checked daily).
+  write-up links to (`data/aod_archive.json`, served at `/docs/aod/<name>`, checked daily);
+  `bank_forms.py` blank account-opening forms per bank and what the bank asks, a block below the
+  answers on the stats page (`data/bank_forms.json`; the PDFs are the site's `public/docs/banks`,
+  metadata stripped; an official form needs an https `source_url`).
 
 ```bash
 uv sync
@@ -47,7 +50,8 @@ The database goes to `$DATA_DIR/feedback.db` (default `data/`).
 - **No third-party scripts, fonts or trackers.** CSP is `default-src 'none'`; only
   `/account` adds `script-src 'self'` and `connect-src 'self'` (fresh PoW challenge), and
   `/account/stats` adds only `script-src 'self'` (`static/filters.js`: search lists and date fields;
-  without JS the filters stay plain `<select>`/`<input type=date>`). Its pure search logic is tested
+  without JS the filters stay plain `<select>`/`<input type=date>`; `static/pdfview.js`: the PDF
+  viewer) and `object-src`/`frame-src 'self'` for the bank forms in that viewer. Its pure search logic is tested
   with `node --test tests/js/filters.test.js`.
 - **A test for every behaviour and a regression test for every bug**; pytest tests
   behaviour, not implementation.
