@@ -39,7 +39,7 @@ export const UI = {
 		lbl: { pdf: 'Открыть PDF', site: 'Открыть на сайте', inner: 'Открыть →' },
 		acct: {
 			title: 'Где открыть счёт для выплаты',
-			blurb: 'Когда AOD объявит банк-плательщика и порядок выплат, деньги нужно будет куда-то перевести. Вкладчики делятся, в каких банках получилось открыть личный счёт, счёт ИП или фирмы.',
+			blurb: 'Когда AOD объявит дату выплат и отделения банка-плательщика, деньги нужно будет куда-то перевести. Вкладчики делятся, в каких банках получилось открыть личный счёт, счёт ИП или фирмы.',
 			stats: 'Статистика по банкам',
 			share: 'Поделиться своим опытом',
 		},
@@ -81,7 +81,7 @@ export const UI = {
 		lbl: { pdf: 'Open PDF', site: 'Open website', inner: 'Open →' },
 		acct: {
 			title: 'Where to open an account for the payout',
-			blurb: 'Once AOD names the paying bank and the payout procedure, you will need an account to move the money to. Depositors share which banks let them open a personal account and a sole-trader or business account.',
+			blurb: 'Once AOD announces the payout date and the branches of the paying bank, you will need an account to move the money to. Depositors share which banks let them open a personal account and a sole-trader or business account.',
 			stats: 'Statistics by bank',
 			share: 'Share your experience',
 		},
@@ -124,7 +124,7 @@ export const UI = {
 		lbl: { pdf: 'Otvori PDF', site: 'Otvori sajt', inner: 'Otvori →' },
 		acct: {
 			title: 'Gde otvoriti račun za isplatu',
-			blurb: 'Kada AOD objavi banku isplatioca i postupak isplate, novac ćete morati negde da prebacite. Štediše dele u kojim bankama su uspele da otvore lični račun i račun preduzetnika ili poslovni račun.',
+			blurb: 'Kada AOD objavi datum isplate i ekspoziture banke isplatioca, novac ćete morati negde da prebacite. Štediše dele u kojim bankama su uspele da otvore lični račun i račun preduzetnika ili poslovni račun.',
 			stats: 'Statistika po bankama',
 			share: 'Podelite svoje iskustvo',
 		},
