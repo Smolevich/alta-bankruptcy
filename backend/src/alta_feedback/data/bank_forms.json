@@ -1,0 +1,291 @@
+{
+  "checked": "2026-11-03",
+  "banks": {
+    "unicredit": {
+      "forms": [
+        {
+          "file": "unicredit-upitnik-pravna-lica.pdf",
+          "title": "Анкета для фирмы",
+          "original": "Upitnik — Domaća pravna lica",
+          "who": ["company"],
+          "origin": "depositor",
+          "received": "2026-11-03",
+          "pages": 3
+        },
+        {
+          "file": "unicredit-upitnik-preduzetnici.pdf",
+          "title": "Анкета для ИП и фирмы (скан)",
+          "original": "Upitnik — Domaća pravna lica/preduzetnici",
+          "who": ["entrepreneur", "company"],
+          "origin": "depositor",
+          "received": "2026-11-02",
+          "pages": 2
+        },
+        {
+          "file": "unicredit-sajt-zahtev-rezidenti.pdf",
+          "title": "Заявление на открытие счёта",
+          "original": "Zahtev za otvaranje računa rezidenata",
+          "who": ["entrepreneur", "company"],
+          "origin": "official",
+          "source_url": "https://www.unicreditbank.rs/content/dam/cee2020-pws-rs/Download%20list/corporate/account/Zahtev%20za%20otvarane%20ra%C4%8Duna%20rezidenata.doc",
+          "pages": 4
+        },
+        {
+          "file": "unicredit-sajt-karton-potpisa.pdf",
+          "title": "Карточка образцов подписей",
+          "original": "Karton deponovanih potpisa rezidenata",
+          "who": ["entrepreneur", "company"],
+          "origin": "official",
+          "source_url": "https://www.unicreditbank.rs/content/dam/cee2020-pws-rs/Download%20list/corporate/account/Karton%20deponovanih%20potpisa%20rezidenata.doc",
+          "pages": 1
+        }
+      ],
+      "notes": [
+        {
+          "title": "Граждане России и Беларуси, личный счёт (резиденты Сербии)",
+          "source": "По внутренней инструкции UniCredit, сфотографированной вкладчиком 03.11.2026 в отделении на Bulevar kralja Aleksandra 142i.",
+          "sections": [
+            {
+              "title": "Два обязательных вопроса — ответ от руки, своими словами",
+              "items": [
+                "Зачем вы открываете счёт в банке.",
+                "Есть ли у вас счёт в другом банке в Сербии или за границей."
+              ]
+            },
+            {
+              "title": "Обязательные документы",
+              "items": [
+                "Действующее разрешение на временное или постоянное пребывание (privremeni или stalni boravak) или виза D.",
+                "Банк проверяет, что разрешение или виза D действует дольше года, — это подтверждение, что вы живёте в Сербии больше года.",
+                "Действующий паспорт.",
+                "Лична карта за странце — не нужна, если есть документы выше."
+              ]
+            },
+            {
+              "title": "Документ о том, зачем вы в Сербии (один из)",
+              "items": [
+                "Трудовой договор или другое подтверждение работы — главное основание.",
+                "Справка об учёбе.",
+                "Документ о собственности на недвижимость.",
+                "Другой документ, который подтверждает законную цель пребывания."
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "postanska": {
+      "forms": [
+        {
+          "file": "postanska-komplet-preduzetnik-din.pdf",
+          "title": "Комплект бланков для ИП, счёт в динарах (скан)",
+          "original": "Zahtev za otvaranje računa pravnih lica i preduzetnika i prilozi — DIN",
+          "who": ["entrepreneur"],
+          "origin": "depositor",
+          "received": "2026-11-02",
+          "pages": 22
+        },
+        {
+          "file": "postanska-komplet-preduzetnik-eur.pdf",
+          "title": "Комплект бланков для ИП, счёт в евро (скан)",
+          "original": "Zahtev za otvaranje računa pravnih lica i preduzetnika i prilozi — EUR",
+          "who": ["entrepreneur"],
+          "origin": "depositor",
+          "received": "2026-11-02",
+          "pages": 24
+        },
+        {
+          "file": "postanska-sajt-501-zahtev.pdf",
+          "title": "Заявление на открытие счёта",
+          "original": "501 Zahtev za otvaranje računa pravnih lica i preduzetnika",
+          "who": ["entrepreneur", "company"],
+          "origin": "official",
+          "source_url": "https://www.posted.co.rs/obrasci/privreda/501_Zahtev_otvaranje_racuna.pdf",
+          "pages": 2
+        },
+        {
+          "file": "postanska-sajt-507-karton-potpisa.pdf",
+          "title": "Карточка образцов подписей",
+          "original": "507 Karton deponovanih potpisa",
+          "who": ["entrepreneur", "company"],
+          "origin": "official",
+          "source_url": "https://www.posted.co.rs/obrasci/privreda/507_Karton_deponovanih_potpisa.pdf",
+          "pages": 1
+        },
+        {
+          "file": "postanska-sajt-trp-507-karton-srp-eng.pdf",
+          "title": "Карточка образцов подписей, на сербском и английском",
+          "original": "TRP-507 Karton deponovanih potpisa (srp-eng)",
+          "who": ["entrepreneur", "company"],
+          "origin": "official",
+          "source_url": "https://www.posted.co.rs/obrasci/privreda/nerezidenti/TRP-507-Karton-deponovanih-potpisa-srp-eng.pdf",
+          "pages": 1
+        },
+        {
+          "file": "postanska-sajt-513-lica-za-izvode.pdf",
+          "title": "Кто будет забирать выписки и приносить платёжки",
+          "original": "513 Podaci o licima koja će podizati izvode",
+          "who": ["entrepreneur", "company"],
+          "origin": "official",
+          "source_url": "https://www.posted.co.rs/obrasci/privreda/513-Podaci-o-licima-koja-ce-podizati-izvode.pdf",
+          "pages": 1
+        },
+        {
+          "file": "postanska-sajt-trp-571-izjava-preduzetnik.pdf",
+          "title": "Расписка ИП в получении договора до подписания",
+          "original": "TRP-571 Izjava o preuzimanju nacrta okvirnog ugovora — preduzetnici",
+          "who": ["entrepreneur"],
+          "origin": "official",
+          "source_url": "https://www.posted.co.rs/obrasci/privreda/TRP-571-Izjava-o-preuzimanju-nacrta-okvirnog-ugovora-preduzetnici.pdf",
+          "pages": 1
+        }
+      ],
+      "notes": []
+    },
+    "procredit": {
+      "forms": [
+        {
+          "file": "procredit-zahtev-pravna-lica.pdf",
+          "title": "Заявление на открытие счёта, бизнес-карты и интернет-банка",
+          "original": "2.8 Zahtev za otvaranje rezidentnog računa",
+          "who": ["entrepreneur", "company"],
+          "origin": "depositor",
+          "received": "2026-11-02",
+          "pages": 4
+        },
+        {
+          "file": "procredit-karton-potpisa-pravna-lica.pdf",
+          "title": "Карточка образцов подписей",
+          "original": "2.8 Karton deponovanih potpisa",
+          "who": ["entrepreneur", "company"],
+          "origin": "depositor",
+          "received": "2026-11-02",
+          "pages": 2
+        },
+        {
+          "file": "procredit-izjava-funkcioner.pdf",
+          "title": "Заявление: является ли владелец публичным должностным лицом",
+          "original": "1.2 Izjava o statusu funkcionera za stvarnog vlasnika",
+          "who": ["entrepreneur", "company"],
+          "origin": "depositor",
+          "received": "2026-11-02",
+          "pages": 2
+        },
+        {
+          "file": "procredit-izjava-poreklo-sredstava.pdf",
+          "title": "Заявление о происхождении денег и структуре владения",
+          "original": "1.2 Izjava o poreklu sredstava, vlasničkoj i upravljačkoj strukturi — pravno lice",
+          "who": ["company"],
+          "origin": "depositor",
+          "received": "2026-11-02",
+          "pages": 1
+        },
+        {
+          "file": "procredit-uputstvo-pravna-lica.pdf",
+          "title": "Инструкция банка: как заполнить бланки",
+          "original": "2.2 Uputstvo za popunjavanje dokumentacije za otvaranje računa pravnog lica",
+          "who": ["entrepreneur", "company"],
+          "origin": "depositor",
+          "received": "2026-11-02",
+          "pages": 2
+        },
+        {
+          "file": "procredit-pismo-dobrodoslice.pdf",
+          "title": "Памятка нового клиента: куда писать и звонить",
+          "original": "2.2 Pismo dobrodošlice",
+          "who": ["entrepreneur", "company"],
+          "origin": "depositor",
+          "received": "2026-11-02",
+          "pages": 2
+        },
+        {
+          "file": "procredit-sajt-spisak-dokumentacije.pdf",
+          "title": "Список документов для открытия счёта",
+          "original": "Spisak neophodne dokumentacije za otvaranje računa — rezidenti",
+          "who": ["entrepreneur", "company"],
+          "origin": "official",
+          "source_url": "https://www.procreditbank.rs/sites/default/files/files/Spisak-neophodne-dokumentacije-za-otvaranje-racuna-rezidenti.pdf",
+          "pages": 3
+        },
+        {
+          "file": "procredit-sajt-zahtev-rezidenti.pdf",
+          "title": "Заявление на открытие счёта",
+          "original": "Zahtev za otvaranje računa — rezidenti",
+          "who": ["entrepreneur", "company"],
+          "origin": "official",
+          "source_url": "https://www.procreditbank.rs/sites/default/files/files/Zahtev-za-otvaranje-racuna-rezidenti.pdf",
+          "pages": 4
+        },
+        {
+          "file": "procredit-sajt-karton-potpisa.pdf",
+          "title": "Карточка образцов подписей",
+          "original": "Karton deponovanih potpisa",
+          "who": ["entrepreneur", "company"],
+          "origin": "official",
+          "source_url": "https://www.procreditbank.rs/sites/default/files/files/Karton-deponovanih-potpisa_0.pdf",
+          "pages": 2
+        },
+        {
+          "file": "procredit-sajt-izjava-zakonskog-zastupnika.pdf",
+          "title": "Заявление законного представителя",
+          "original": "Izjava zakonskog zastupnika",
+          "who": ["entrepreneur", "company"],
+          "origin": "official",
+          "source_url": "https://www.procreditbank.rs/sites/default/files/files/Izjava-zakonskog-zastupnika.PDF",
+          "pages": 2
+        }
+      ],
+      "notes": []
+    },
+    "adriatic": {
+      "forms": [
+        {
+          "file": "adriatic-kyc-upitnik-pravna-lica.pdf",
+          "title": "KYC-анкета для ИП и фирмы",
+          "original": "KYC upitnik za pravna lica",
+          "who": ["entrepreneur", "company"],
+          "origin": "depositor",
+          "received": "2026-11-02",
+          "pages": 10
+        },
+        {
+          "file": "adriatic-sajt-preliminarni-kyc.pdf",
+          "title": "Предварительная KYC-анкета",
+          "original": "Preliminarni KYC upitnik / Preliminary KYC questionnaire",
+          "who": ["entrepreneur", "company"],
+          "origin": "official",
+          "source_url": "https://www.adriaticbank.rs/pdf/Dokumenti/Preliminary-KYC-upitnik-questionnaire.pdf",
+          "pages": 7
+        },
+        {
+          "file": "adriatic-sajt-form8054-zahtev.pdf",
+          "title": "Заявление на открытие счёта",
+          "original": "Form8054 Zahtev za otvaranje računa pravnih lica i preduzetnika",
+          "who": ["entrepreneur", "company"],
+          "origin": "official",
+          "source_url": "https://www.adriaticbank.rs/pdf/Dokumenti/Form8054.pdf",
+          "pages": 7
+        },
+        {
+          "file": "adriatic-sajt-form8077-dokumentacija.pdf",
+          "title": "Список документов для открытия счёта",
+          "original": "Form8077 Dokumentacija za otvaranje računa pravnih lica i preduzetnika rezidenata",
+          "who": ["entrepreneur", "company"],
+          "origin": "official",
+          "source_url": "https://www.adriaticbank.rs/pdf/Dokumenti/Form8077_SR_REZIDENTI.pdf",
+          "pages": 8
+        },
+        {
+          "file": "adriatic-sajt-karton-potpisa.pdf",
+          "title": "Карточка образцов подписей",
+          "original": "Karton deponovanih potpisa",
+          "who": ["entrepreneur", "company"],
+          "origin": "official",
+          "source_url": "https://www.adriaticbank.rs/pdf/Dokumenti/Karton_deponovanih_potpisa.pdf",
+          "pages": 1
+        }
+      ],
+      "notes": []
+    }
+  }
+}

@@ -38,6 +38,7 @@ from alta_feedback.accounts import (
     parse_account_form,
 )
 from alta_feedback.aod_archive import archive_root, load_manifest
+from alta_feedback.bank_forms import catalog, codes_by_name, for_page
 from alta_feedback.branches import BRANCH_MAX, NOT_SURE, branch_options, city_key, directory
 from alta_feedback.nbs import ASSETS, METRICS, SOURCE_URL, snapshot
 from alta_feedback.pow import CHALLENGE_TTL, Challenge, create_challenge, derive_key, verify_payload
@@ -82,7 +83,7 @@ ADMIN_PAGE_MAX = 500
 PUBLIC_ACCOUNTS_MAX = 2000
 LOCAL_TZ = ZoneInfo("Europe/Belgrade")
 STATIC_DIR = Path(__file__).parent / "static"
-SCRIPTS = frozenset({"branch.js", "combo.js", "filters.js", "pow.js", "voice.js"})
+SCRIPTS = frozenset({"branch.js", "combo.js", "filters.js", "pdfview.js", "pow.js", "voice.js"})
 # Перебор запускает отметка «Я не робот»; среднее число попыток — половина, на Mac ~0,4 с, на телефоне 1–3 с.
 POW_MAX_NUMBER = 200_000
 POW_FAILED = "Не прошла проверка от ботов. Подождите пару секунд и отправьте ещё раз."
@@ -114,10 +115,12 @@ ACCOUNT_PAGE_HEADERS = {
     "Permissions-Policy": "microphone=(self)",
 }
 
-# Сводке нужен только свой скрипт фильтров: списки с поиском и поля дат; в сеть он не ходит.
+# Сводке нужны свои скрипты (фильтры и просмотр PDF; в сеть они не ходят) и встроенный просмотр
+# бланков банков со своего адреса: Chrome показывает PDF в <object> как фрейм, поэтому нужны и object-src,
+# и frame-src; сам PDF разрешает показывать себя только своим страницам.
 STATS_PAGE_HEADERS = {
     "Content-Security-Policy": SECURITY_HEADERS["Content-Security-Policy"].replace(
-        f"script-src {CF_SCRIPT};", f"script-src 'self' {CF_SCRIPT};"
+        f"script-src {CF_SCRIPT};", f"script-src 'self' {CF_SCRIPT}; object-src 'self'; frame-src 'self';"
     ),
 }
 
@@ -355,6 +358,7 @@ async def account_stats_page(request: Request) -> HTMLResponse:
     has_any = bool(stats.total or store.public_accounts(limit=1))
     nbs = snapshot()
     reported, others = nbs.listing([tally.name for tally in stats.banks])
+    forms = catalog()
     return render(
         "stats.html", headers=STATS_PAGE_HEADERS, stats=stats, results=RESULTS, nbs=nbs,
         metrics=(ASSETS, *METRICS),
@@ -363,6 +367,7 @@ async def account_stats_page(request: Request) -> HTMLResponse:
         entries=answer_cards(page.items, counts), first=first, last=first + len(page.items) - 1,
         next_url=stats_url(answer_filter, page.next_cursor) if page.next_cursor else None,
         start_url=stats_url(answer_filter) if before else None, page_size=PAGE_SIZE,
+        bank_forms=for_page(forms, answer_filter.bank), forms_codes=codes_by_name(forms),
     )
 
 

@@ -248,10 +248,17 @@ def test_stats_page_allows_own_filter_script(client):
     assert csp_directives(csp)["script-src"] == "'self' https://static.cloudflareinsights.com"
 
 
-def test_stats_page_csp_is_strict_apart_from_own_script(client):
+def test_stats_page_csp_is_strict_apart_from_own_script_and_pdf_view(client):
     stats = csp_directives(client.get("/account/stats").headers["content-security-policy"])
     strict = csp_directives(client.get("/spasibo").headers["content-security-policy"])
-    assert {**stats, "script-src": None} == {**strict, "script-src": None}
+    loosened = {"script-src": None, "object-src": None, "frame-src": None}
+    assert {**stats, **loosened} == {**strict, **loosened}
+
+
+def test_stats_page_embeds_pdf_only_from_own_site(client):
+    csp = client.get("/account/stats").headers["content-security-policy"]
+    directives = csp_directives(csp)
+    assert (directives["object-src"], directives["frame-src"]) == ("'self'", "'self'")
 
 
 def test_stats_page_loads_filter_script(client):
