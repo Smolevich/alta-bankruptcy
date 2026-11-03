@@ -1,0 +1,23 @@
+[Unit]
+Description=ALTA site and forms (alta.smolevich.com), deployed from alta-bankruptcy
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/alta-bankruptcy
+# ADMIN_TOKEN, IP_SALT и DATA_DIR кладёт деплой из Vault; схему SQLite процесс заводит сам.
+# Куда сервису можно писать (ReadWritePaths), задаёт деплой в drop-in data.conf: до переключения
+# трафика это копия базы, и живую базу старого сервиса он изменить не может.
+# --no-access-log: в строках доступа был бы IP посетителя, а IP мы не храним.
+EnvironmentFile=/opt/alta-bankruptcy/.env
+ExecStart=/opt/alta-bankruptcy/.venv/bin/python -m uvicorn --factory alta_feedback.main:create_app --host 127.0.0.1 --port 8102 --no-server-header --no-access-log --proxy-headers --forwarded-allow-ips 127.0.0.1
+Restart=on-failure
+RestartSec=5
+# ProtectHome не ставим: python venv — ссылка на интерпретатор uv в /root/.local.
+NoNewPrivileges=yes
+ProtectSystem=strict
+PrivateTmp=yes
+
+[Install]
+WantedBy=multi-user.target

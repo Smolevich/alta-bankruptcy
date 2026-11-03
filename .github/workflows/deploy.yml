@@ -1,6 +1,6 @@
 name: Deploy to Hetzner
 
-# Сайт отдаёт сервис alta-feedback (alta.smolevich.com) из папки /var/www/alta-bankruptcy:
+# Сайт отдаёт сервис из backend/ (alta.smolevich.com) из папки /var/www/alta-bankruptcy:
 # CI собирает статику и подменяет папку целиком. Сервис не перезапускается. См. docs/deploy.md.
 on:
   push:

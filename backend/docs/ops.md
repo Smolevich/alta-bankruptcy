@@ -106,17 +106,13 @@ framework) from our own copy, so they stay readable if AOD takes them down. The 
 
 ## Deploy
 
-Until the move from `Smolevich/alta-feedback` is finished, the running service is still deployed
-by that repository; the plan and the switch are in `docs/deploy.md` at the repository root.
+`.github/workflows/deploy-backend.yml` at the repository root, on push to `main` that touches
+`backend/` (and manually): tests and lint → copy to the server over Tailscale → `uv sync` → restart
+`alta-bankruptcy.service` (`127.0.0.1:8102`) → check `/healthz` and the pages. The deploy reads
+`ADMIN_TOKEN` and `IP_SALT` from Vault (AppRole; paths in the repository variables `VAULT_*`) and
+writes them to `.env` next to the app; if the read fails, the previous values are kept.
+The move from `Smolevich/alta-feedback`, the traffic switch and the rollback are in `docs/deploy.md`
+at the repository root.
 
-GitHub Actions `deploy.yml` on push to `main` (and manually): tests and lint → copy to the
-server over Tailscale → `uv sync` → restart the systemd unit → check `/healthz` and the
-pages. The deploy reads `ADMIN_TOKEN` and `IP_SALT` from Vault and writes them to `.env`
-next to the app; if the read fails, the previous values are kept.
-
-- Repository secrets: `TS_OAUTH_CLIENT_ID`, `TS_OAUTH_SECRET`, `VDS_HOST`, `VDS_PORT`,
-  `VDS_USER`, `VDS_SSH_KEY`, `VDS_SSH_PASSPHRASE`.
-- Repository variables: `VAULT_ROLE_ID_FILE`, `VAULT_SECRET_ID_FILE` (AppRole files on the
-  server), `VAULT_ADMIN_TOKEN_PATH`, `VAULT_IP_SALT_PATH` (secret paths in Vault).
 - **Do not change the salt without a reason:** every IP hash changes with it and the rate
   limit resets.
