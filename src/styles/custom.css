@@ -70,10 +70,26 @@ html, body { overflow-x: clip; }
 .now .rail-dot { background: var(--seal); border-color: var(--seal); color: #fff; }
 .done .rail-dot { background: var(--ok); border-color: var(--ok); color: #fff; }
 .rail-when { font-size: 0.8rem; font-weight: 400; color: #5a5448; }
+.rail-more { display: none; }
 @media (max-width: 520px) {
-	.status { grid-template-columns: 1fr; padding: 1rem; box-shadow: 4px 4px 0 var(--seal-soft); }
-	.status-stamp { width: 4.6rem; height: 4.6rem; }
-	.status-n { font-size: 2.3rem; }
+	.status { grid-template-columns: auto 1fr; gap: 0.4rem 0.8rem; padding: 0.8rem; margin: 0.6rem 0 1.2rem; box-shadow: 4px 4px 0 var(--seal-soft); }
+	.status-stamp { width: 3.4rem; height: 3.4rem; border-width: 2px; }
+	.status-n { font-size: 1.6rem; }
+	.status-of { font-size: 0.6rem; }
+	.status-headline { font-size: 1.25rem; margin-bottom: 0.3rem; }
+	.status-note { font-size: 0.86rem; line-height: 1.38; }
+	.status-checked { font-size: 0.78rem; }
+	.status-body { display: contents; }
+	.status-label, .status-headline { grid-column: 2; }
+	.status-stamp { grid-row: span 2; align-self: center; }
+	.status-note, .status-checked { grid-column: 1 / -1; }
+	.rail, .status-update { display: none; }
+	.sl-heading-wrapper:has(+ .steps3) { margin-top: 1rem !important; }
+	.sl-heading-wrapper:has(+ .steps3) h2 { font-size: 1.45rem; }
+	h1#_top { font-size: 1.8rem; }
+	.steps3 { margin-top: 0.6rem; }
+	.rail-more { display: inline; font-weight: 700; color: var(--seal); white-space: nowrap; }
+	.steps3 h3 { font-size: 1.05rem; }
 }
 
 /* ---- Три шага ---- */
@@ -84,6 +100,11 @@ html, body { overflow-x: clip; }
 .steps3 p { margin: 0 0 0.5rem !important; font-size: 0.95rem; }
 .steps3 small { margin-top: auto; padding-top: 0.4rem; color: #5a5448; }
 .steps3 p:last-of-type { flex: 1 1 auto; }
+.steps3 ul { margin: 0 0 0.5rem !important; padding-left: 1.1rem; font-size: 0.95rem; }
+.steps3 li { margin: 0.1rem 0 !important; }
+.steps3 .today { color: var(--seal); }
+.example { margin: 0 0 2rem; padding: 0.8rem 1rem; border-left: 4px solid var(--ink); background: #fffdf7; }
+.example p, .example ul { margin: 0.3rem 0 !important; }
 
 /* ---- Новости ---- */
 .news { list-style: none; padding: 0; margin: 1rem 0; display: grid; gap: 1rem; }
@@ -127,9 +148,9 @@ html, body { overflow-x: clip; }
 }
 .site-title { min-width: 0; }
 
-/* ---- Плитки-маршрут на главной ----
-   Сетка на 4 колонки, строка тянется по самой высокой плитке; «Открыть» прижато к низу.
-   Стрелка между соседями в строке; на телефоне колонка и стрелки вниз. */
+/* ---- Плитки разделов на главной ----
+   Три шага маршрута со стрелками, ниже остальные разделы сеткой на 4 колонки без стрелок;
+   «Открыть» прижато к низу, на телефоне одна колонка. */
 .flow { list-style: none; margin: 1.2rem 0 2rem; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.4rem 1.1rem; align-items: stretch; }
 .flow li { margin: 0; padding: 0; display: flex; position: relative; }
 .flow-tile { display: flex; flex-direction: column; flex: 1; min-width: 0; padding: 0.8rem 0.8rem 0.7rem; background: #fffdf7; border: 2px solid var(--ink); border-top: 5px solid var(--seal); border-radius: 4px; color: var(--ink); text-decoration: none; box-shadow: 4px 4px 0 var(--seal-soft); transition: transform 0.12s, box-shadow 0.12s; }
@@ -138,9 +159,10 @@ html, body { overflow-x: clip; }
 .flow-title { font: 700 1rem/1.2 var(--serif); overflow-wrap: anywhere; hyphens: auto; }
 .flow-blurb { margin: 0.35rem 0 0.7rem; font-size: 0.85rem; line-height: 1.35; color: #5a5448; }
 .flow-go { margin-top: auto; font-size: 0.8rem; font-weight: 700; color: var(--seal); }
-.flow li:not(:last-child)::after { content: '→'; position: absolute; right: -1.05rem; top: 1.1rem; width: 1rem; text-align: center; font-weight: 700; color: var(--seal); }
-.flow li:nth-child(4)::after, .flow li:nth-child(7)::after, .flow li:nth-child(11)::after { content: none; }
-@media (min-width: 641px) { .flow li:last-child { grid-column: 1 / -1; } }
+.flow-route { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-bottom: 1.4rem; }
+.flow-route li:not(:last-child)::after { content: '→'; position: absolute; right: -1.05rem; top: 1.1rem; width: 1rem; text-align: center; font-weight: 700; color: var(--seal); }
+.flow-all .flow-tile { border-top-width: 2px; box-shadow: none; }
+.flow-all .flow-tile-safe { border-top-width: 5px; }
 .flow-acct { grid-column: span 2; }
 .flow-tile-safe { background: #fff8e1; border-top-color: var(--ink); }
 .flow-tile-safe .flow-n { background: var(--ink); }
@@ -149,10 +171,9 @@ html, body { overflow-x: clip; }
 .flow-links { margin-top: auto; display: grid; gap: 0.3rem; font-size: 0.85rem; font-weight: 700; }
 .flow-links a { color: var(--seal); }
 @media (max-width: 640px) {
-	.flow { grid-template-columns: 1fr; gap: 1.5rem; }
-	.flow li:not(:last-child)::after { content: '↓'; right: auto; left: 1.4rem; top: auto; bottom: -1.45rem; }
-	.flow li:nth-child(4)::after, .flow li:nth-child(7)::after, .flow li:nth-child(11)::after { content: '↓'; }
-	.flow li:last-child::after { content: none; }
+	.flow, .flow-route { grid-template-columns: 1fr; gap: 1.5rem; }
+	.flow-all { gap: 0.8rem; }
+	.flow-route li:not(:last-child)::after { content: '↓'; right: auto; left: 1.4rem; top: auto; bottom: -1.45rem; }
 	.flow-acct { grid-column: auto; }
 }
 
@@ -168,7 +189,7 @@ html, body { overflow-x: clip; }
 .doc-go { margin-top: auto; font-weight: 700; font-size: 0.9rem; }
 
 /* ---- Плашка «осторожно» на главной и предупреждение на страницах ---- */
-.safe-strip { margin: -1rem 0 1.6rem; padding: 0.7rem 1rem; background: #fff8e1; border: 1px dashed var(--ink); border-radius: 3px; font-size: 0.95rem; }
+.safe-strip { margin: 0 0 1.6rem; padding: 0.7rem 1rem; background: #fff8e1; border: 1px dashed var(--ink); border-radius: 3px; font-size: 0.95rem; }
 .safe-strip strong { margin-right: 0.3rem; }
 .safe-strip a { font-weight: 700; white-space: nowrap; }
 
@@ -204,3 +225,6 @@ html, body { overflow-x: clip; }
 .save-tip strong { display: block; margin-bottom: 0.3rem; color: var(--seal); }
 .save-tip p { margin: 0.3rem 0 0; }
 .shot-row { display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-start; }
+
+/* ---- «Не юридическая консультация» сверху страниц с правовыми сроками ---- */
+.legal-note { display: block; margin: 0 0 1.2rem; padding: 0.5rem 0.8rem; border-left: 3px solid var(--ink); background: #fffdf7; font-size: 0.88rem; color: #3d4652; }
