@@ -18,6 +18,8 @@ sources:
   - { title: "Serbian courts portal: commercial court case progress", url: "https://tpson.portal.sud.rs/tpprvs/", kind: official, date: 2026-11-03 }
   - { title: "AOD: Univerzal banka quarterly report, Q2 2026", url: "https://www.aod.rs/uploads/dokumenti/kvartalniizvestaj/Univerzal%20banka_II%20kvartal%202026.pdf", kind: official, date: 2026-06-30 }
   - { title: "AOD, Univerzal banka: call to creditors to send payment details", url: "https://www.aod.rs/uploads/dokumenti/oglas/19_1_oglas.pdf", kind: official, date: 2020-08-31 }
+  - { title: "AOD: questions and answers on deposit insurance", url: "https://www.aod.rs/clan/osigdepoz/pitanja_odgovori", kind: official, date: 2026-11-03 }
+  - { title: "AOD: questions and answers on bankruptcy and liquidation", url: "https://www.aod.rs/clan/stecajlikv/pitanja_odgovori", kind: official, date: 2026-11-03 }
 ---
 
 import Status from '../../../components/Status.astro';
@@ -29,6 +31,18 @@ import Shot from '../../../components/Shot.astro';
 <Status lang="en" />
 
 For ALTA depositors with more than €50,000: AOD repays up to €50,000; the rest comes back only through the bank's bankruptcy, on a claim you file yourself.
+
+## Most asked right now
+
+<Faq open items={[
+  { id: "sud-seychas", q: "Can I file my claim with the court yet?", a: "No, it is too early: file after the bankruptcy notice is published in the Official Gazette (Službeni glasnik). The deadline is 30 to 90 days from publication; the exact number of days will be in the notice (art. 7 of the Law on Bankruptcy and Liquidation of Banks). There is nothing to do right now.", more: [["Where to find the notice", "/en/trebovanie/#glasnik"], ["Law, art. 7", "https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2015/14/3/reg"]] },
+  { id: "postanska", q: "Should I rush to Poštanska now?", a: "No. By 6 November AOD will announce the payout start date and the branches of the paying bank. Payouts start no later than 7 working days after the court decision, and you can collect the money for 3 years (art. 16 of the Law on Deposit Insurance).", more: [["AOD announcement, 03.11", "https://www.aod.rs/clan/vest/vest_forma/139"], ["Law on Deposit Insurance", "https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2015/14/2/reg"]] },
+  { id: "ip", q: "Personal account and sole-trader account: one limit or two?", a: "Two: the €50,000 limit applies separately to the individual and to the same person as a sole trader. AOD confirmed this in writing on 02.11.2026. Sole traders and micro, small and medium-sized companies are paid only by transfer to an account (AOD procedure, section VIII).", more: [["AOD letters", "/en/trebovanie/#aod-otvety"]] },
+  { id: "zayavlenie-50", q: "Do I need to file an application anywhere to get up to €50,000?", a: "Not with the court. At a branch of the paying bank, staff show you how your amount was calculated and print the payout request; you sign it if you agree. If you disagree with the amount or the currency, you file a complaint (AOD, questions and answers).", more: [["AOD: questions and answers", "https://www.aod.rs/clan/osigdepoz/pitanja_odgovori"]] },
+  { id: "advokat", q: "Do I need a lawyer?", a: "The law does not require one: a creditor can draft the claim alone, in free form (AOD). A lawyer can help with the Serbian text and the interest calculation, but this does not change your rank or payout share: everyone in the first rank gets the same share (art. 20 of the Law on Bankruptcy and Liquidation of Banks).", more: [["AOD: questions and answers", "https://www.aod.rs/clan/stecajlikv/pitanja_odgovori"], ["Stay safe: avoid scams", "/en/bezopasnost/"]] },
+]} />
+
+<p class="faq-all"><a href="/en/voprosy/">All frequently asked questions: sole traders, currency, power of attorney, loans, safe boxes →</a></p>
 
 ## What happens after the court decision
 
@@ -132,15 +146,6 @@ Why the licence was revoked, in the National Bank's words: the bank's financial 
 <NewsList limit={1} lang="en" />
 
 All announcements from AOD, the National Bank and the bank's website are on the [News](/en/novosti/) page.
-
-## Frequently asked questions
-
-<Faq items={[
-  { q: 'How much will AOD repay and how much is left?', a: 'AOD pays up to €50,000 per depositor. The amount is counted across all your accounts and deposits at ALTA together, with interest up to the day bankruptcy is opened. Anything above that you claim in the bank\'s bankruptcy.' },
-  { q: 'When must I file the claim for the amount above €50,000?', a: 'The deadline is in the court decision of 03.11.2026 opening bankruptcy: by law 30 to 90 days from publication of the notice in the Official Gazette (art. 7 of the Law on Bankruptcy and Liquidation of Banks). You do not need to wait for the insurance payout.' },
-  { q: 'Where do private depositors stand in the payment order for the amount above €50,000?', a: 'First. Private individuals, sole traders and micro, small and medium-sized companies share the first rank and are paid in proportion to their claims (art. 20 of the Law on Bankruptcy and Liquidation of Banks).' },
-  { q: 'How quickly will money above €50,000 be returned?', a: 'The law sets no deadline: money is paid as the bank\'s assets are sold. At Univerzal banka (2014) the first 50% of recognised first-rank claims were paid after 6 years 7 months (09.2020); ALTA\'s timeline and percentages may differ.' },
-]} />
 
 ## Up to €50,000: AOD pays
 

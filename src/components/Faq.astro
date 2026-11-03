@@ -1,9 +1,21 @@
 ---
 // Вопросы видны на странице и дублируются в JSON-LD: разметка совпадает с текстом.
-interface Props {
-	items: { q: string; a: string }[];
+// `more` — ссылки «подробнее/источник» под ответом; в JSON-LD не попадают, ответ там без них.
+// Пропсы не проходят через rehype-new-tab, поэтому новая вкладка и просмотр PDF — здесь.
+import { opensInNewTab } from '../links';
+import { viewerSrc } from '../data/pdfs';
+
+interface Item {
+	q: string;
+	a: string;
+	id?: string;
+	more?: [label: string, href: string][];
 }
-const { items } = Astro.props;
+interface Props {
+	items: Item[];
+	open?: boolean;
+}
+const { items, open = false } = Astro.props;
 const ld = {
 	'@context': 'https://schema.org',
 	'@type': 'FAQPage',
@@ -15,12 +27,28 @@ const ld = {
 };
 ---
 
-<div class="faq not-content">
+<div class:list={['faq not-content', open && 'faq-open']}>
 	{
 		items.map((i) => (
-			<details>
+			<details id={i.id} open={open}>
 				<summary>{i.q}</summary>
 				<p>{i.a}</p>
+				{i.more && (
+					<p class="faq-more">
+						{i.more.map(([label, url], n) => (
+							<>
+								{n > 0 && ' · '}
+								{opensInNewTab(url) ? (
+									<a href={url} target="_blank" rel="noopener" data-pdf={viewerSrc(url) ?? undefined}>
+										{label}
+									</a>
+								) : (
+									<a href={url}>{label}</a>
+								)}
+							</>
+						))}
+					</p>
+				)}
 			</details>
 		))
 	}
