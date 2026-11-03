@@ -132,11 +132,11 @@ jobs:
           # Проверка через сервис на петле. Если «/» отдаёт не справочник (например, сервис
           # ещё без раздачи статики), возвращаем прежнюю папку и валим деплой.
           ok=1
-          curl -fsS http://127.0.0.1:8101/ | grep -q 'hreflang="sr-Latn"' || ok=0
-          curl -fsS http://127.0.0.1:8101/en/ | grep -q '<html lang="en"' || ok=0
-          curl -fsS http://127.0.0.1:8101/sr/ | grep -q 'lang="sr-Latn"' || ok=0
-          curl -fsS -o /dev/null http://127.0.0.1:8101/account || ok=0
-          curl -fsS -o /dev/null http://127.0.0.1:8101/account/stats || ok=0
+          curl -fsS http://127.0.0.1:8102/ | grep -q 'hreflang="sr-Latn"' || ok=0
+          curl -fsS http://127.0.0.1:8102/en/ | grep -q '<html lang="en"' || ok=0
+          curl -fsS http://127.0.0.1:8102/sr/ | grep -q 'lang="sr-Latn"' || ok=0
+          curl -fsS -o /dev/null http://127.0.0.1:8102/account || ok=0
+          curl -fsS -o /dev/null http://127.0.0.1:8102/account/stats || ok=0
           if [ "$ok" != 1 ]; then
             echo "ERROR: проверка после подмены не прошла, возвращаю прежнюю папку" >&2
             sudo rm -rf "$WEB"
