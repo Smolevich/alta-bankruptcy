@@ -8,6 +8,8 @@ sources:
   - { title: "NBS: saopštenje o oduzimanju dozvole", url: "https://www.nbs.rs/sr/scripts/showcontent/index.html?id=21849", kind: official, date: 2026-10-30 }
   - { title: "Zakon o stečaju i likvidaciji banaka i društava za osiguranje, čl. 7 i 20", url: "https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2015/14/3/reg", kind: official, date: 2026-11-01 }
   - { title: "Zakon o osiguranju depozita, čl. 16", url: "https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2015/14/2/reg", kind: official, date: 2026-11-01 }
+  - { title: "AOD: kvartalni izveštaj o Univerzal banci, II kvartal 2026", url: "https://www.aod.rs/uploads/dokumenti/kvartalniizvestaj/Univerzal%20banka_II%20kvartal%202026.pdf", kind: official, date: 2026-06-30 }
+  - { title: "AOD, Univerzal banka: poziv poveriocima za dostavljanje instrukcija", url: "https://www.aod.rs/uploads/dokumenti/oglas/19_1_oglas.pdf", kind: official, date: 2020-08-31 }
 ---
 
 import Status from '../../../components/Status.astro';
@@ -17,22 +19,22 @@ import Faq from '../../../components/Faq.astro';
 
 <Status lang="sr" />
 
-<p class="safe-strip not-content"><strong>Oprez, prevaranti.</strong> Ne šaljite pasoš ni podatke o računu onima koji obećavaju bržu isplatu ili otkup potraživanja. Zvanična obaveštenja objavljuju AOD (aod.rs), Narodna banka Srbije (nbs.rs) i Privredni sud u Beogradu; oglas o otvaranju stečaja objavljuje se u „Službenom glasniku“. <a href="/sr/bezopasnost/">Kako da izbegnete prevaru →</a></p>
-
-Narodna banka Srbije oduzela je ALTA banci dozvolu za rad 30.10.2026. Agencija za osiguranje depozita (AOD) isplaćuje do 50.000 € po štediši. Sve iznad toga naplaćuje se u stečaju banke: to traje dugo, a potraživanje morate prijaviti sami. Ovaj sajt je za one koji u ALTA banci imaju više od 50.000 €.
-
-<Flow lang="sr" />
+Sajt je za štediše ALTA banke koji u banci imaju više od 50.000 €: do 50.000 € isplaćuje AOD, ostatak se naplaćuje samo u stečaju banke, a potraživanje morate prijaviti sami.
 
 ## Tri koraka ako imate više od 50.000 €
 
 <div class="steps3">
 <div>
 
-### 1. Šta da uradite sada
+### 1. <span class="today">Danas: sačuvajte izvode i snimke ekrana iz veb-bankarstva ALTA banke dok se još otvara</span>
 
-Sačuvajte sve što dokazuje iznos: ugovore o računu i depozitu, brojeve računa, izvode sa stanjem, pasoš. Pratite [aod.rs](https://www.aod.rs/): obaveštenje će se pojaviti najkasnije u roku od 3 radna dana od odluke suda. Pre tog obaveštenja ništa ne treba podnositi. Šta tačno sačuvati i kako izvesti izvode: [Šta sačuvati](/sr/vypiski/).
+- izvode u PDF-u za svaki račun;
+- snimak početne strane bankarstva („Početna“) sa vidljivim datumom;
+- ugovore o računu i depozitu.
 
-<small>Više: [šta pripremiti](/sr/trebovanie/)</small>
+Za sada ništa ne treba podnositi.
+
+<small>Kako ih izvesti: [Šta sačuvati](/sr/vypiski/)</small>
 
 </div>
 <div>
@@ -48,12 +50,27 @@ Prijava potraživanja za iznos iznad 50.000 € podnosi se pismeno sudu koji vod
 
 ### 3. Šta očekivati
 
-Koliko banka duguje štedišama iznad limita biće jasno otprilike 8 do 12 meseci nakon otvaranja stečaja. Roka za isplatu nema: novac se isplaćuje kako se prodaje imovina banke. Kod Univerzal banke (2014) prva isplata iznad limita stigla je posle 6 godina i 7 meseci (09.2020); to služi samo za poređenje, kod ALTA banke rokovi mogu biti drugačiji.
+Koliko banka duguje štedišama iznad limita biće jasno otprilike 8 do 12 meseci nakon otvaranja stečaja. Roka za isplatu nema: novac se isplaćuje kako se prodaje imovina banke. Kod Univerzal banke (2014) prva isplata iznad limita stigla je posle 6 godina i 7 meseci (09.2020). Kada počnu isplate iznad limita, dostavite AOD podatke o svom računu: kod Univerzal banke bez toga novac nije prebacivan.
 
 <small>Više: [kako je bilo kod Univerzal banke](/sr/kak-bylo/)</small>
 
 </div>
 </div>
+
+<div class="example">
+
+**Primer: u ALTA banci imate 140.000 €.** Ovo je primer, a ne prognoza.
+
+- **50.000 €** isplaćuje AOD; za to ništa ne podnosite sudu.
+- **90.000 €** prijavljujete sudu kao potraživanje, u roku od 30 do 90 dana koji određuje sud. Novac stiže kako se prodaje imovina banke. Kod Univerzal banke sud je prvom isplatnom redu rasporedio 50 %, 40 % i 10 % posle 6 godina i 7 meseci, 7 godina i 2 meseca i 7 godina i 4 meseca, bez kamate za godine čekanja.
+
+</div>
+
+Ako imate manje od 50.000 €, sve isplaćuje AOD: sudu ništa ne podnosite, pratite obaveštenja na [aod.rs](https://www.aod.rs/).
+
+Zašto je oduzeta dozvola, rečima Narodne banke Srbije: finansijsko stanje banke „znatno se pogoršalo“, pa su ugroženi interesi deponenata ([ceo citat](/sr/bank/#why)).
+
+<p class="safe-strip not-content"><strong>Oprez, prevaranti.</strong> Ne šaljite pasoš ni podatke o računu onima koji obećavaju bržu isplatu ili otkup potraživanja. Zvanična obaveštenja objavljuju AOD (aod.rs), Narodna banka Srbije (nbs.rs) i Privredni sud u Beogradu; oglas o otvaranju stečaja objavljuje se u „Službenom glasniku“. <a href="/sr/bezopasnost/">Kako da izbegnete prevaru →</a></p>
 
 ## Poslednja zvanična vest
 
@@ -67,7 +84,7 @@ Sva saopštenja AOD, NBS i sajta banke nalaze se na stranici [Vesti](/sr/novosti
   { q: 'Koliko isplaćuje AOD i šta ostaje?', a: 'AOD isplaćuje do 50.000 € po štediši. Iznos se računa po svim računima i depozitima u ALTA banci zajedno, sa kamatom do dana otvaranja stečaja. Ono što je iznad toga štediša prijavljuje kao potraživanje u stečaju banke.' },
   { q: 'Kada treba prijaviti potraživanje za iznos iznad 50.000 €?', a: 'Rok određuje sud: od 30 do 90 dana od objavljivanja oglasa u „Službenom glasniku“ (član 7 Zakona o stečaju i likvidaciji banaka i društava za osiguranje). Ne treba čekati isplatu osiguranog iznosa.' },
   { q: 'U koji isplatni red spada iznos fizičkih lica iznad 50.000 €?', a: 'U prvi. Fizička lica, preduzetnici i mikro, mala i srednja pravna lica nalaze se u prvom isplatnom redu ravnopravno i namiruju se srazmerno visini potraživanja (član 20 Zakona o stečaju i likvidaciji banaka i društava za osiguranje).' },
-  { q: 'Koliko brzo se vraća novac iznad 50.000 €?', a: 'Zakonom rok nije određen: novac se isplaćuje kako se prodaje imovina banke. Kod Univerzal banke (2014) prvih 50 % utvrđenih potraživanja prvog isplatnog reda isplaćeno je posle 6 godina i 7 meseci (09.2020); to služi samo za poređenje, kod ALTA banke rokovi i procenti mogu biti drugačiji.' },
+  { q: 'Koliko brzo se vraća novac iznad 50.000 €?', a: 'Zakonom rok nije određen: novac se isplaćuje kako se prodaje imovina banke. Kod Univerzal banke (2014) prvih 50 % utvrđenih potraživanja prvog isplatnog reda isplaćeno je posle 6 godina i 7 meseci (09.2020); kod ALTA banke rokovi i procenti mogu biti drugačiji.' },
 ]} />
 
 ## Do 50.000 €: isplaćuje AOD
@@ -75,3 +92,7 @@ Sva saopštenja AOD, NBS i sajta banke nalaze se na stranici [Vesti](/sr/novosti
 Ovaj deo isplaćuje državni fond za osiguranje depozita i ništa se ne podnosi sudu: uslove, banku isplatioca i rokove objaviće AOD. Pogledajte [zvanično saopštenje AOD](https://www.aod.rs/clan/vest/vest_forma/137) i [pitanja i odgovore AOD](https://www.aod.rs/clan/osigdepoz/pitanja_odgovori).
 
 Uspeli ste da otvorite račun u drugoj banci? Javite u kojoj preko [anonimnog obrasca](/account), a odgovore drugih vidite u [statistici](/account/stats).
+
+## Svi odeljci
+
+<Flow lang="sr" />
