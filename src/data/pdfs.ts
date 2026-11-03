@@ -1,9 +1,22 @@
 // Каждый PDF-источник открывается в просмотре на сайте (PdfDialog), рядом ссылка на оригинал.
-// CSP сайта (alta-feedback, site.py) пускает во встроенный просмотр только свой домен и www.aod.rs,
-// поэтому PDF с других сайтов показываем из копии в public/docs.
+// CSP сайта (alta-feedback, site.py) пускает во встроенный просмотр только свой домен,
+// поэтому PDF с других сайтов показываем из своей копии: мелкие лежат в public/docs,
+// документы AOD — в архиве alta-feedback (/docs/aod/<name>, список в aod-archive.json).
+import AOD_ARCHIVE from './aod-archive.json';
 import { DOCS } from './documents';
 
-const EMBED_ORIGINS = ['https://www.aod.rs/'];
+/** Копия PDF с сайта AOD. Тот же файл — src/alta_feedback/data/aod_archive.json в alta-feedback. */
+export type ArchivedPdf = {
+	name: string;
+	url: string;
+	/** false — в документе имена частных лиц: копия только в закрытом архиве, на сайте внешняя ссылка. */
+	public: boolean;
+	sha256: string;
+	bytes: number;
+	fetched: string;
+};
+
+const ARCHIVE = AOD_ARCHIVE as ArchivedPdf[];
 
 const EXTRA_COPIES: Record<string, string> = {
 	'https://www.nbs.rs/export/sites/NBS_site/documents/propisi/zakoni/kpb_banke_preuzimanje.pdf':
@@ -13,14 +26,13 @@ const EXTRA_COPIES: Record<string, string> = {
 };
 
 const LOCAL_COPY: Record<string, string> = {
-	...Object.fromEntries(DOCS.map((d) => [d.sourceUrl, d.file])),
-	...EXTRA_COPIES,
+	...Object.fromEntries(DOCS.map((d) => [d.sourceUrl, `/docs/${d.file}`])),
+	...Object.fromEntries(Object.entries(EXTRA_COPIES).map(([url, file]) => [url, `/docs/${file}`])),
+	...Object.fromEntries(ARCHIVE.filter((a) => a.public).map((a) => [a.url, `/docs/aod/${a.name}`])),
 };
 
-/** В документе имена частных лиц: копию не храним, остаётся только внешняя ссылка. */
-export const NO_COPY = new Set([
-	'https://web.archive.org/web/20160830214352/http://aod.rs/pdf/2014-02-10-sluzbeni-glasnik-univerzal-banka.pdf',
-]);
+/** В документе имена частных лиц: копию не показываем, остаётся только внешняя ссылка. */
+export const NO_COPY = new Set(ARCHIVE.filter((a) => !a.public).map((a) => a.url));
 
 export const isPdf = (url: string) => /\.pdf($|[?#])/i.test(url);
 
@@ -29,11 +41,11 @@ export function viewerSrc(url: string): string | null {
 	if (!isPdf(url)) return null;
 	const [base, hash] = url.split('#');
 	const tail = hash ? `#${hash}` : '';
-	if (LOCAL_COPY[base]) return `/docs/${LOCAL_COPY[base]}${tail}`;
-	if (base.startsWith('/docs/') || EMBED_ORIGINS.some((o) => base.startsWith(o))) return url;
+	if (LOCAL_COPY[base]) return `${LOCAL_COPY[base]}${tail}`;
+	if (base.startsWith('/docs/')) return url;
 	if (NO_COPY.has(base)) return null;
 	throw new Error(
-		`PDF ${url} cannot be shown on the site: put a copy in public/docs and map it in src/data/pdfs.ts, ` +
-			'or add it to NO_COPY if it contains names of private persons.',
+		`PDF ${url} cannot be shown on the site: put a copy in public/docs (or the AOD archive in alta-feedback) ` +
+			'and map it in src/data/pdfs.ts, or mark it non-public if it contains names of private persons.',
 	);
 }
