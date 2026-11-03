@@ -74,9 +74,9 @@
           "sr": "Prijava potraživanja iznad 50.000 €"
         },
         "when": {
-          "ru": "30–90 дней, срок назначит суд",
-          "en": "30–90 days, set by the court",
-          "sr": "30–90 dana, rok određuje sud"
+          "ru": "90 дней со дня публикации в «Службени гласник» (публикации ещё нет)",
+          "en": "90 days from publication in the Official Gazette (not published yet)",
+          "sr": "90 dana od objavljivanja u „Službenom glasniku“ (još nije objavljeno)"
         }
       },
       {
