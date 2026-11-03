@@ -27,11 +27,13 @@ npm run check        # translations check + build (schema, internal links)
   figures, who owns media outlets, chats, depositor verification, Telegram forms, media
   accusations against people. The bank page uses registries only.
 - **PDFs open in the on-site viewer from our own copy** (`src/data/pdfs.ts`; the build fails on a
-  PDF without one): small files in `public/docs`, AOD documents in the alta-feedback archive
-  (`/docs/aod/<name>`, list in `src/data/aod-archive.json` — the same file as alta-feedback
-  `src/alta_feedback/data/aod_archive.json`, change both). A document naming private persons is
+  PDF without one): small files in `public/docs`, AOD documents in the backend archive
+  (`/docs/aod/<name>`, one list for the site and the server:
+  `backend/src/alta_feedback/data/aod_archive.json`). A document naming private persons is
   `public: false` and stays an external link. The link text still points to the original.
 - Light theme only; no third-party scripts, fonts or trackers (the server sends a strict CSP).
 - Instagram link of the depositors' group: `INSTAGRAM_URL` in `src/site.mjs` (empty = hidden).
 - News: one file per item and language in `src/content/news/<lang>/`.
 - Deploy only through CI (`docs/deploy.md`); no secrets or server addresses in the repository.
+- `backend/` is the Python service that serves the whole site (forms, stats, admin, AOD archive,
+  CSP); it has its own `backend/AGENTS.md`. Tests: `cd backend && uv run pytest -q`.

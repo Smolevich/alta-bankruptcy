@@ -6,7 +6,7 @@ import { INSTAGRAM_URL } from './src/site.mjs';
 import { unified } from '@astrojs/markdown-remark';
 import rehypeNewTab from './src/rehype-new-tab.mjs';
 
-// Сайт живёт в корне alta.smolevich.com: статику отдаёт сервис alta-feedback
+// Сайт живёт в корне alta.smolevich.com: статику отдаёт сервис из backend/
 // (см. docs/deploy.md), поэтому base не задаём.
 export default defineConfig({
 	site: 'https://alta.smolevich.com',
@@ -16,12 +16,12 @@ export default defineConfig({
 			title: { ru: 'Вкладчики ALTA: что дальше', en: "ALTA depositors: what's next", 'sr-Latn': 'Štediše ALTA banke: šta dalje' },
 			description:
 				'Справочник для вкладчиков банка ALTA (Сербия), у которых на счетах больше 50 000 €: стадия процедуры, сроки, требование в банкротстве, официальные новости.',
-			// Подтверждение владения для Bing Webmaster Tools: тег должен оставаться, иначе подтверждение слетит.
-			head: [{ tag: 'meta', attrs: { name: 'msvalidate.01', content: 'F904AA02101BD3884A4A984CD73C8E57' } }],
-			// Счётчик Cloudflare Web Analytics; токен публичный. CSP разрешает его в alta-feedback (site.py).
 			head: [
+				// Подтверждение владения для Bing Webmaster Tools: без тега подтверждение слетит.
+				{ tag: 'meta', attrs: { name: 'msvalidate.01', content: 'F904AA02101BD3884A4A984CD73C8E57' } },
 				{ tag: 'link', attrs: { rel: 'icon', href: '/favicon.ico', sizes: '32x32' } },
 				{ tag: 'link', attrs: { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' } },
+				// Счётчик Cloudflare Web Analytics; токен публичный. CSP разрешает его в backend (site.py).
 				{
 					tag: 'script',
 					attrs: {
@@ -54,7 +54,7 @@ export default defineConfig({
 				ThemeProvider: './src/components/ThemeProvider.astro',
 				ThemeSelect: './src/components/Empty.astro',
 			},
-			plugins: [// /account живёт в другом сервисе (alta-feedback), в этой сборке его страниц нет.
+			plugins: [// /account отдаёт сервис из backend/, в сборке Astro его страниц нет.
 				starlightLinksValidator({ errorOnRelativeLinks: false, exclude: ['/account', '/account/**'] })],
 			sidebar: [
 				{ label: 'Сейчас', slug: 'index', translations: { en: 'Now', sr: 'Sada' } },
