@@ -1,9 +1,8 @@
 ---
 // Карточки первоисточников по Univerzal: данные в src/data/univerzal-sources.ts, текст страницы статичный.
+import { isPdf, viewerSrc } from '../data/pdfs';
 import { LOOK, UNIVERZAL_SOURCES } from '../data/univerzal-sources';
 import { UI, type Lang } from '../i18n';
-import PdfViewer from './PdfViewer.astro';
-import PdfViewerScript from './PdfViewerScript.astro';
 
 const { lang = 'ru' } = Astro.props as { lang?: Lang };
 const t = UI[lang];
@@ -11,8 +10,10 @@ const t = UI[lang];
 
 <ul class="docs not-content" aria-label={t.srcCards.label}>
 	{
-		UNIVERZAL_SOURCES.map((s, i) => {
+		UNIVERZAL_SOURCES.map((s) => {
 			const look = LOOK[s.url];
+			const at = look ? `#page=${look.page}` : '';
+			const view = viewerSrc(s.url);
 			return (
 				<li>
 					<article class="doc">
@@ -33,12 +34,16 @@ const t = UI[lang];
 							</div>
 						)}
 						<span class="doc-go">
-							<a href={`${s.url}${look ? `#page=${look.page}` : ''}`} target="_blank" rel="noopener">
-								{/\.pdf($|[?#])/i.test(s.url) ? t.lbl.pdf : t.lbl.site}
+							<a href={`${s.url}${at}`} target="_blank" rel="noopener">
+								{isPdf(s.url) ? t.lbl.pdf : t.lbl.site}
 								<span class="sr-only">({t.newTab})</span>
 							</a>
 						</span>
-						{look?.embed && <PdfViewer id={`src-${i}`} title={s.title[lang]} src={s.url} page={look.page} lang={lang} />}
+						{view && (
+							<button type="button" class="doc-preview" hidden data-pdf={`${view}${at}`} data-title={s.title[lang]} data-orig={`${s.url}${at}`}>
+								{t.docs.preview}
+							</button>
+						)}
 					</article>
 				</li>
 			);
@@ -46,4 +51,3 @@ const t = UI[lang];
 	}
 </ul>
 
-<PdfViewerScript />
