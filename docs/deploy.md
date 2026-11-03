@@ -1,31 +1,67 @@
 # Деплой
 
-> Идёт переезд: код сервиса alta-feedback перенесён в `backend/` (с историей), но пока его
-> по-прежнему выкатывает репозиторий `Smolevich/alta-feedback`. Новый деплой бэкенда отсюда и
-> переключение трафика — следующими шагами, тогда этот файл перепишется.
+`alta.smolevich.com` целиком отдаёт сервис из `backend/` (Starlette): собранный здесь справочник
+на «/» со строгим CSP, формы `/` (правки) и `/account`, `/account/stats`, `/api`, `/admin`,
+архив PDF AOD на `/docs/aod/<name>`. Трафик приходит через туннель Cloudflare `telegram-bot`
+(ingress в репо `infra`, `fleet/hardening/cloudflared/config.yml`) на `127.0.0.1:<порт>`.
 
-Сайт отдаёт сервис [alta-feedback](https://github.com/Smolevich/alta-feedback) (тот же
-`alta.smolevich.com`, туннель Cloudflare уже ведёт весь хост в него). Здесь собирается статика, там
-она раздаётся с «/»: формы `/account`, `/account/stats`, `/api`, `/admin` не затрагиваются.
+Два воркфлоу, оба только из `main`, секреты — в environment `production`:
 
-```
-push в main → GitHub Actions: check:i18n + build → tailscale → scp dist → ssh:
-  /var/www/alta-bankruptcy.new → подмена папки /var/www/alta-bankruptcy → проверка через 127.0.0.1:8101
-```
+| Воркфлоу | Что | Когда |
+|---|---|---|
+| `deploy.yml` | `check:i18n` + сборка Astro → подмена папки `/var/www/alta-bankruptcy` → проверка через сервис | `src/`, `public/`, конфиг сборки, манифест AOD |
+| `deploy-backend.yml` | тесты бэкенда → `/opt/alta-bankruptcy` → `uv sync` → `.env` из Vault → рестарт `alta-bankruptcy.service` (`127.0.0.1:8102`) → проверка | `backend/` |
 
-- Сервис не перезапускается: он читает папку при каждом запросе.
-- Проверка после подмены: `/` и `/en/`, `/sr/` отдают справочник, `/account` и `/account/stats` живы.
-  Не прошла — прежняя папка возвращается, деплой красный.
-- Порядок первого выката: сначала PR в alta-feedback (раздача «/»), потом деплой этого репо.
-  Если сделать наоборот, проверка не пройдёт, а сайт останется как был.
+- Справочник сервис читает с диска на каждый запрос: деплой сайта бэкенд не перезапускает.
+- Секреты приложения (`ADMIN_TOKEN`, `IP_SALT`) деплой читает из Vault по AppRole; пути — в
+  переменных репозитория `VAULT_*`. Секреты деплоя — `TS_OAUTH_*`, `VDS_*` (значения — по
+  `docs/hetzner-ci-deploy-standard.md` в pet-projects).
+- Бэкап базы: `feedback.db` входит в ночной бэкап ботов (`infra`, `bots_backup.py`, 04:15 UTC → R2).
 
-## Секреты и переменные
+## Переезд из alta-feedback (ноябрь 2026)
 
-Секреты репозитория (значения — по `docs/hetzner-ci-deploy-standard.md`, те же, что у alta-feedback):
-`TS_OAUTH_CLIENT_ID`, `TS_OAUTH_SECRET`, `VDS_HOST`, `VDS_PORT`, `VDS_USER`, `VDS_SSH_KEY`,
-`VDS_SSH_PASSPHRASE`. Секретов приложения нет.
+Раньше бэкенд жил в репо `Smolevich/alta-feedback` и выкатывался им как `alta-feedback.service`
+на `127.0.0.1:8101` из `/opt/alta-feedback`. Его код перенесён сюда с историей (тег
+`alta-feedback-history`). Переезд идёт по шагам, чтобы сайт ни разу не лёг:
+
+1. Новый сервис `alta-bankruptcy.service` на `8102` рядом со старым. `DATA_MODE: preview` в
+   `deploy-backend.yml`: каждый деплой снимает копию живой базы в `/opt/alta-bankruptcy/preview-data`
+   (архив AOD — ссылкой), и писать сервис может только туда — живую базу ему закрывает systemd
+   (`ReadWritePaths` из drop-in `data.conf`). Два процесса в одну базу не пишут.
+2. Переключение: свежий бэкап базы → `DATA_MODE: live` (сервис на `/opt/alta-feedback/data`) →
+   ingress туннеля `alta.smolevich.com` с `8101` на `8102`. Старый сервис остаётся запущенным на
+   той же базе без трафика: всё, что запишет новый, видно и ему.
+3. Через сутки, после подтверждения Стаса, — финальный шаг ниже.
+
+Таймер проверки архива `alta-aod-check` до финального шага остаётся за старым репо
+(`/opt/alta-feedback`), чтобы два репо не выкатывали один юнит.
 
 ## Откат
 
-Запустить workflow «Deploy to Hetzner» вручную на предыдущем коммите (`workflow_dispatch`) или
-сделать revert в main.
+Пока старый сервис запущен, откат трафика — вернуть ingress на `8101` и перезапустить туннель
+(одна команда с мака, конфиг берётся из `infra` на коммите до переключения):
+
+```bash
+git -C ~/pet-projects/infra fetch -q origin && \
+git -C ~/pet-projects/infra show <коммит infra до переключения>:fleet/hardening/cloudflared/config.yml \
+  | ssh bot-server 'cat > /etc/cloudflared/config.yml && systemctl restart cloudflared'
+```
+
+Конкретный коммит записан в PR переключения. После отката — revert PR переключения в `infra`,
+чтобы эталон снова совпал с сервером. Данные не теряются: оба сервиса работают с одной базой.
+
+Откат кода сайта или бэкенда — revert в `main` (или ручной запуск воркфлоу на нужном коммите).
+
+## Финальный шаг: выключить старый и заархивировать
+
+Только после подтверждения Стаса, когда новый сервис отработал сутки:
+
+1. Перенести таймер проверки архива сюда: `backend/deploy/alta-aod-check.{service,timer}` на
+   `/opt/alta-bankruptcy` (venv и код отсюда), установка в `deploy-backend.yml`.
+2. `systemctl disable --now alta-feedback.service` на сервере (скриптом из воркфлоу, не руками),
+   удалить его юнит; `/opt/alta-feedback/data` не трогать — там живая база и архив AOD
+   (переезд данных в `/opt/alta-bankruptcy/data` — отдельным шагом с бэкапом).
+3. Убрать порт `8101` из проверки в `deploy.yml`, обновить `infra` (`docs/server-facts.md`,
+   `fleet/hardening/cloudflared.md`).
+4. Заархивировать `Smolevich/alta-feedback` (README — ссылка сюда), снять у него environment
+   `production` и переменные `VAULT_*`.

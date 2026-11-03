@@ -1,0 +1,244 @@
+name: Deploy backend to Hetzner
+
+# Сервис из backend/ (формы, статистика, админка, архив AOD, раздача собранного сайта со строгим CSP).
+# Юнит alta-bankruptcy.service на 127.0.0.1:8102; трафик на него переключает туннель. См. docs/deploy.md.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/src/**'
+      - 'backend/tests/**'
+      - 'backend/deploy/**'
+      - 'backend/pyproject.toml'
+      - 'backend/uv.lock'
+      - 'backend/.python-version'
+      - '.github/workflows/deploy-backend.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-alta-backend
+  cancel-in-progress: false
+
+env:
+  UV_VERSION: "0.8.11"
+  # preview — сервис работает на копии базы, которую снимает каждый деплой, и не может писать в живую;
+  # live — на живой базе /opt/alta-feedback/data. live ставится вместе с переключением трафика.
+  DATA_MODE: preview
+
+jobs:
+  # Код репозитория (uv sync, тесты) исполняется только здесь, где секретов нет: иначе правка
+  # с правом записи могла бы вытащить ключи из памяти раннера.
+  preflight:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.vars.outputs.version }}
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Get version
+        id: vars
+        run: echo "version=$(date +'%Y-%m-%d')-$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          version: ${{ env.UV_VERSION }}
+
+      - name: Preflight
+        run: |
+          uv sync --frozen
+          uv run --frozen ruff check src tests
+          uv run --frozen pytest -q
+          node --test tests/js/filters.test.js
+
+  # Секреты деплоя лежат в environment production, который пускает только main: workflow
+  # из чужой ветки их не получит, а в main попадают только через PR с ревью CODEOWNERS.
+  deploy:
+    needs: preflight
+    environment: production
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Connect to Tailscale
+        uses: tailscale/github-action@064b10558093f38325e838ddea35486bdc6b1d5c # v4.4.0
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:gha-runner
+
+      # Хост сверяется с known_hosts из секрета: подменённый сервер не получит ни код, ни
+      # подпись ключа. HostKeyAlias отвязывает проверку от того, IP или имя лежит в VDS_HOST.
+      - name: Set up SSH
+        env:
+          SSH_KEY: ${{ secrets.VDS_SSH_KEY }}
+          SSH_PASSPHRASE: ${{ secrets.VDS_SSH_PASSPHRASE }}
+          KNOWN_HOSTS: ${{ secrets.VDS_KNOWN_HOSTS }}
+          VDS_HOST: ${{ secrets.VDS_HOST }}
+          VDS_PORT: ${{ secrets.VDS_PORT }}
+          VDS_USER: ${{ secrets.VDS_USER }}
+        run: |
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          cat > ~/.ssh/config <<EOF
+          Host vds
+            HostName $VDS_HOST
+            Port $VDS_PORT
+            User $VDS_USER
+            HostKeyAlias vds
+            StrictHostKeyChecking yes
+            UserKnownHostsFile ~/.ssh/known_hosts
+            BatchMode yes
+          EOF
+          eval "$(ssh-agent -s)" > /dev/null
+          echo "SSH_AUTH_SOCK=$SSH_AUTH_SOCK" >> "$GITHUB_ENV"
+          echo "SSH_AGENT_PID=$SSH_AGENT_PID" >> "$GITHUB_ENV"
+          askpass="$RUNNER_TEMP/askpass"
+          cat > "$askpass" <<'EOF'
+          #!/bin/sh
+          printf '%s\n' "$SSH_PASSPHRASE"
+          EOF
+          chmod 700 "$askpass"
+          printf '%s\n' "$SSH_KEY" | SSH_ASKPASS="$askpass" SSH_ASKPASS_REQUIRE=force DISPLAY=none ssh-add -q -
+          rm -f "$askpass"
+
+      - name: Copy files to server
+        working-directory: backend
+        run: |
+          ssh vds 'rm -rf /tmp/deploy-alta-backend && mkdir -p /tmp/deploy-alta-backend'
+          rsync -aR --exclude __pycache__ src deploy pyproject.toml uv.lock .python-version \
+            vds:/tmp/deploy-alta-backend/
+
+      - name: Install and restart
+        run: |
+          ssh vds 'bash -s' <<'REMOTE'
+          set -e
+          APP_DIR=/opt/alta-bankruptcy
+          STAGE=/tmp/deploy-alta-backend
+          UNIT=alta-bankruptcy
+          LIVE_DATA=/opt/alta-feedback/data
+          PREVIEW_DATA=$APP_DIR/preview-data
+          DATA_MODE="${{ env.DATA_MODE }}"
+          PORT=8102
+
+          sudo mkdir -p "$APP_DIR"
+          sudo chmod 750 "$APP_DIR"
+          sudo rsync -a --delete --chown=root:root "$STAGE/src/" "$APP_DIR/src/"
+          sudo cp "$STAGE/pyproject.toml" "$STAGE/uv.lock" "$STAGE/.python-version" "$APP_DIR/"
+          sudo install -m 0644 "$STAGE/deploy/$UNIT.service" "/etc/systemd/system/$UNIT.service"
+          rm -rf "$STAGE"
+
+          cd "$APP_DIR"
+          UV_VERSION="${{ env.UV_VERSION }}"
+          if [ "$(uv --version 2>/dev/null | awk '{print $2}')" != "$UV_VERSION" ]; then
+            curl -LsSf "https://astral.sh/uv/$UV_VERSION/install.sh" \
+              | sudo env UV_INSTALL_DIR=/usr/local/bin sh
+          fi
+          sudo uv sync --frozen --no-dev
+
+          # preview: свежая копия живой базы (онлайн-бэкап SQLite, безопасен при записи) и архив AOD
+          # ссылкой. Сервис пишет только в копию; тестовые записи пропадают со следующим деплоем.
+          case "$DATA_MODE" in
+            preview)
+              sudo install -d -m 700 "$PREVIEW_DATA"
+              sudo rm -f "$PREVIEW_DATA/feedback.db.new"
+              sudo sqlite3 -readonly "$LIVE_DATA/feedback.db" ".backup '$PREVIEW_DATA/feedback.db.new'"
+              sudo mv -f "$PREVIEW_DATA/feedback.db.new" "$PREVIEW_DATA/feedback.db"
+              sudo ln -sfn "$LIVE_DATA/aod" "$PREVIEW_DATA/aod"
+              DATA_DIR=$PREVIEW_DATA
+              ;;
+            live) DATA_DIR=$LIVE_DATA ;;
+            *) echo "ERROR: неизвестный DATA_MODE=$DATA_MODE" >&2; exit 1 ;;
+          esac
+          sudo install -d -m 755 "/etc/systemd/system/$UNIT.service.d"
+          printf '[Service]\nReadWritePaths=%s\n' "$DATA_DIR" \
+            | sudo tee "/etc/systemd/system/$UNIT.service.d/data.conf" > /dev/null
+
+          # Вход в Vault по AppRole: role_id и secret_id лежат файлами на сервере, не секретом
+          # репо. Пути — в переменных репозитория. Тело логина через stdin, токен отзывается
+          # сразу после чтения.
+          export VAULT_ADDR=http://127.0.0.1:8200
+          ROLE_ID_FILE="${{ vars.VAULT_ROLE_ID_FILE }}"
+          SECRET_ID_FILE="${{ vars.VAULT_SECRET_ID_FILE }}"
+          ADMIN_TOKEN_PATH="${{ vars.VAULT_ADMIN_TOKEN_PATH }}"
+          IP_SALT_PATH="${{ vars.VAULT_IP_SALT_PATH }}"
+          if [ ! -r "$ROLE_ID_FILE" ] || [ ! -r "$SECRET_ID_FILE" ]; then
+            echo "ERROR: нет файлов AppRole (переменные VAULT_ROLE_ID_FILE / VAULT_SECRET_ID_FILE)" >&2
+            exit 1
+          fi
+          VAULT_TOKEN=$(jq -n --rawfile r "$ROLE_ID_FILE" --rawfile s "$SECRET_ID_FILE" \
+              '{role_id: ($r | rtrimstr("\n")), secret_id: ($s | rtrimstr("\n"))}' \
+            | VAULT_TOKEN= vault write -field=token auth/approle/login - 2>/dev/null || true)
+          ADMIN_TOKEN=""
+          IP_SALT=""
+          if [ -n "$VAULT_TOKEN" ]; then
+            ADMIN_TOKEN=$(VAULT_TOKEN=$VAULT_TOKEN vault kv get -field=token "$ADMIN_TOKEN_PATH" 2>/dev/null || true)
+            IP_SALT=$(VAULT_TOKEN=$VAULT_TOKEN vault kv get -field=salt "$IP_SALT_PATH" 2>/dev/null || true)
+            VAULT_TOKEN=$VAULT_TOKEN vault token revoke -self >/dev/null 2>&1 \
+              || echo "::warning::vault token revoke -self не прошёл — токен истечёт сам через 15 минут"
+          else
+            echo "::warning::вход AppRole не прошёл — Vault недоступен или role_id/secret_id неверны"
+          fi
+          unset VAULT_TOKEN
+          # Не прочитали — берём прежнее значение (своё, иначе старого сервиса): смена соли
+          # обнулила бы лимит по IP, а пустой токен молча закрыл бы админку.
+          prev() {
+            for f in "$APP_DIR/.env" /opt/alta-feedback/.env; do
+              v=$(sudo sed -n "s/^$1=//p" "$f" 2>/dev/null | head -1 || true)
+              [ -n "$v" ] && { printf '%s' "$v"; return 0; }
+            done
+            return 0
+          }
+          [ -n "$ADMIN_TOKEN" ] || { ADMIN_TOKEN=$(prev ADMIN_TOKEN); echo "::warning::admin_token из прежнего .env"; }
+          [ -n "$IP_SALT" ] || { IP_SALT=$(prev IP_SALT); echo "::warning::ip_salt из прежнего .env"; }
+          if [ -z "$IP_SALT" ]; then
+            echo "ERROR: нет соли IP ни в Vault, ни в прежнем .env" >&2
+            exit 1
+          fi
+
+          TMP_ENV=$(sudo mktemp "$APP_DIR/.env.XXXXXX")
+          sudo chmod 600 "$TMP_ENV"
+          cat << EOF | sudo tee "$TMP_ENV" > /dev/null
+          DATA_DIR=$DATA_DIR
+          ADMIN_TOKEN=$ADMIN_TOKEN
+          IP_SALT=$IP_SALT
+          APP_VERSION=${{ needs.preflight.outputs.version }}
+          EOF
+          sudo mv -f "$TMP_ENV" "$APP_DIR/.env"
+
+          sudo systemctl daemon-reload
+          sudo systemctl enable "$UNIT"
+          sudo systemctl restart "$UNIT"
+
+          # Type=simple: active ещё до того, как uvicorn займёт сокет — ждём ответ.
+          for _ in $(seq 1 30); do
+            curl -fsS -o /dev/null "http://127.0.0.1:$PORT/healthz" && break
+            sleep 1
+          done
+          if ! curl -fsS -o /dev/null "http://127.0.0.1:$PORT/healthz"; then
+            sudo systemctl status "$UNIT" --no-pager | tail -20 >&2
+            sudo journalctl -u "$UNIT" --since "2 min ago" --no-pager | tail -40 >&2
+            exit 1
+          fi
+          curl -fsS "http://127.0.0.1:$PORT/" | grep -q 'hreflang="sr-Latn"'
+          curl -fsS -o /dev/null -w 'form %{http_code}\n' "http://127.0.0.1:$PORT/?s=a1"
+          curl -fsS -o /dev/null -w 'account form %{http_code}\n' "http://127.0.0.1:$PORT/account"
+          curl -fsS -o /dev/null -w 'account stats %{http_code}\n' "http://127.0.0.1:$PORT/account/stats"
+          code=$(curl -sS -o /dev/null -w '%{http_code}' "http://127.0.0.1:$PORT/admin/suggestions")
+          echo "admin without token $code"
+          [ "$code" = 401 ]
+          echo "backend deployed: ${{ github.sha }} (data: $DATA_MODE)"
+          REMOTE
+
+      - name: Stop ssh-agent
+        if: always()
+        run: ssh-agent -k > /dev/null 2>&1 || true
