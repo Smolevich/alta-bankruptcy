@@ -1,16 +1,16 @@
 [
   {
     "id": "current",
-    "stage": 2,
+    "stage": 4,
     "headline": {
-      "ru": "Ждём решения суда об открытии банкротства",
-      "en": "Waiting for the court's decision to open bankruptcy",
-      "sr": "Čeka se odluka suda o stečaju"
+      "ru": "Суд открыл банкротство, банк-плательщик назван — ждём дату выплат",
+      "en": "Bankruptcy opened, paying bank named: waiting for the payout date",
+      "sr": "Stečaj otvoren, banka isplatilac određena: čeka se datum isplate"
     },
     "note": {
-      "ru": "На 03.11.2026 решения Хозяйственного суда Белграда нет. От него считаются все сроки: не позже чем через 3 рабочих дня AOD назовёт банк-плательщик (банк, где будут выдавать деньги), не позже чем через 7 рабочих дней начнутся выплаты до 50 000 €.",
-      "en": "As of 03.11.2026 the Commercial Court in Belgrade has not decided. All deadlines run from its decision: within 3 working days AOD names the paying bank (where the money will be paid out); payouts of up to €50,000 start within 7 working days.",
-      "sr": "Na dan 03.11.2026. Privredni sud u Beogradu još nije doneo odluku. Od nje teku svi rokovi: najkasnije za 3 radna dana AOD objavljuje banku isplatioca (banku u kojoj će se isplaćivati novac), a isplata osiguranih depozita do 50.000 € počinje najkasnije za 7 radnih dana."
+      "ru": "03.11.2026 Хозяйственный суд Белграда открыл банкротство ALTA banka, управляющим стало AOD. Банк-плательщик (банк, где будут выдавать деньги) — Banka Poštanska štedionica. До 6 ноября AOD объявит дату начала выплат и отделения, где будут платить; начать выплату до 50 000 € оно обязано в течение 7 рабочих дней. Забрать деньги можно в течение 3 лет.",
+      "en": "On 03.11.2026 the Commercial Court in Belgrade opened bankruptcy of ALTA banka and AOD became administrator. The paying bank (where the money will be paid out) is Banka Poštanska štedionica. By 6 November AOD will announce the date payouts start and the branches that will pay; it must start paying up to €50,000 within 7 working days. You can collect the money within 3 years.",
+      "sr": "Privredni sud u Beogradu je 03.11.2026. otvorio stečaj nad Alta bankom, a AOD je postala stečajni upravnik. Banka isplatilac (banka u kojoj će se isplaćivati novac) je Banka Poštanska štedionica. Do 6. novembra AOD će objaviti datum početka isplate i ekspoziture u kojima će se isplaćivati; isplatu do 50.000 € mora da započne u roku od 7 radnih dana. Novac se može preuzeti u roku od 3 godine."
     },
     "checkedAt": "2026-11-03",
     "stages": [
@@ -30,40 +30,40 @@
       {
         "n": 2,
         "title": {
-          "ru": "Ждём решения суда о банкротстве",
-          "en": "Waiting for the court's bankruptcy decision",
-          "sr": "Čeka se odluka suda o stečaju"
+          "ru": "Суд открыл банкротство",
+          "en": "The court opened bankruptcy",
+          "sr": "Sud otvorio stečaj"
         },
         "when": {
-          "ru": "сейчас",
-          "en": "now",
-          "sr": "sada"
+          "ru": "03.11.2026",
+          "en": "03.11.2026",
+          "sr": "03.11.2026"
         }
       },
       {
         "n": 3,
         "title": {
-          "ru": "AOD называет банк-плательщика",
-          "en": "AOD names the paying bank",
-          "sr": "AOD objavljuje banku isplatioca"
+          "ru": "AOD назвал банк-плательщика: Poštanska štedionica",
+          "en": "AOD named the paying bank: Poštanska štedionica",
+          "sr": "AOD odredila banku isplatioca: Poštanska štedionica"
         },
         "when": {
-          "ru": "не позже 3 раб. дней после решения суда",
-          "en": "within 3 working days of the court decision",
-          "sr": "najkasnije 3 radna dana od odluke suda"
+          "ru": "03.11.2026",
+          "en": "03.11.2026",
+          "sr": "03.11.2026"
         }
       },
       {
         "n": 4,
         "title": {
-          "ru": "Выплата до 50 000 €",
-          "en": "Payout of up to €50,000",
-          "sr": "Isplata osiguranog iznosa do 50.000 €"
+          "ru": "Выплата до 50 000 €: AOD до 6.11 объявит дату и отделения",
+          "en": "Payout of up to €50,000: AOD announces date and branches by 6.11",
+          "sr": "Isplata do 50.000 €: AOD do 6.11. objavljuje datum i ekspoziture"
         },
         "when": {
-          "ru": "не позже 7 раб. дней после решения суда",
-          "en": "within 7 working days of the court decision",
-          "sr": "najkasnije 7 radnih dana od odluke suda"
+          "ru": "начать — в течение 7 раб. дней после решения суда",
+          "en": "must start within 7 working days of the court decision",
+          "sr": "početak najkasnije 7 radnih dana od odluke suda"
         }
       },
       {
@@ -107,6 +107,12 @@
       }
     ],
     "sources": [
+      {
+        "title": "AOD: «Привредни суд у Београду донео решење о покретању стечајног поступка над Алта банком»",
+        "url": "https://www.aod.rs/clan/vest/vest_forma/139",
+        "kind": "official",
+        "date": "2026-11-03"
+      },
       {
         "title": "AOD: «Одузета дозвола за рад Алта банци»",
         "url": "https://www.aod.rs/clan/vest/vest_forma/137",
