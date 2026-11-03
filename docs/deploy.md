@@ -10,7 +10,7 @@
 | Воркфлоу | Что | Когда |
 |---|---|---|
 | `deploy.yml` | `check:i18n` + сборка Astro → подмена папки `/var/www/alta-bankruptcy` → проверка через сервис | `src/`, `public/`, конфиг сборки, манифест AOD |
-| `deploy-backend.yml` | тесты бэкенда → `/opt/alta-bankruptcy` → `uv sync` → `.env` из Vault → рестарт `alta-bankruptcy.service` (`127.0.0.1:8102`) → проверка | `backend/` |
+| `deploy-backend.yml` | тесты бэкенда → `/opt/alta-bankruptcy` → `uv sync` → `.env` из Vault → рестарт `alta-bankruptcy.service` (`127.0.0.1:8102`) и таймера `alta-aod-check` → проверка | `backend/` |
 
 - Справочник сервис читает с диска на каждый запрос: деплой сайта бэкенд не перезапускает.
 - Секреты приложения (`ADMIN_TOKEN`, `IP_SALT`) деплой читает из Vault по AppRole; пути — в
@@ -33,8 +33,9 @@
    той же базе без трафика: всё, что запишет новый, видно и ему.
 3. Через сутки, после подтверждения Стаса, — финальный шаг ниже.
 
-Таймер проверки архива `alta-aod-check` до финального шага остаётся за старым репо
-(`/opt/alta-feedback`), чтобы два репо не выкатывали один юнит.
+Таймер проверки архива `alta-aod-check` (03:20 UTC) выкатывает этот репо: код и venv из
+`/opt/alta-bankruptcy`, архив — в живой базе `/opt/alta-feedback/data/aod`. Репо `alta-feedback`
+заархивирован 03.11.2026 и больше ничего на сервер не катит.
 
 ## Откат
 
@@ -57,12 +58,11 @@ git -C ~/pet-projects/infra show ea66818:fleet/hardening/cloudflared/config.yml 
 
 Только после подтверждения Стаса, когда новый сервис отработал сутки:
 
-1. Перенести таймер проверки архива сюда: `backend/deploy/alta-aod-check.{service,timer}` на
-   `/opt/alta-bankruptcy` (venv и код отсюда), установка в `deploy-backend.yml`.
+1. ~~Перенести таймер проверки архива сюда~~ — сделано 03.11.2026.
 2. `systemctl disable --now alta-feedback.service` на сервере (скриптом из воркфлоу, не руками),
    удалить его юнит; `/opt/alta-feedback/data` не трогать — там живая база и архив AOD
    (переезд данных в `/opt/alta-bankruptcy/data` — отдельным шагом с бэкапом).
 3. Убрать порт `8101` из проверки в `deploy.yml`, обновить `infra` (`docs/server-facts.md`,
    `fleet/hardening/cloudflared.md`).
-4. Заархивировать `Smolevich/alta-feedback` (README — ссылка сюда), снять у него environment
-   `production` и переменные `VAULT_*`.
+4. ~~Заархивировать `Smolevich/alta-feedback`~~ — сделано 03.11.2026; его environment `production`
+   и переменные `VAULT_*` ничего не делают (Actions у архива не запускаются).

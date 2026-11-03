@@ -1,7 +1,7 @@
 name: Deploy backend to Hetzner
 
 # Сервис из backend/ (формы, статистика, админка, архив AOD, раздача собранного сайта со строгим CSP).
-# Юнит alta-bankruptcy.service на 127.0.0.1:8102; трафик на него переключает туннель. См. docs/deploy.md.
+# Юнит alta-bankruptcy.service на 127.0.0.1:8102 и таймер проверки архива AOD alta-aod-check. См. docs/deploy.md.
 on:
   push:
     branches: [main]
@@ -134,7 +134,9 @@ jobs:
           sudo chmod 750 "$APP_DIR"
           sudo rsync -a --delete --chown=root:root "$STAGE/src/" "$APP_DIR/src/"
           sudo cp "$STAGE/pyproject.toml" "$STAGE/uv.lock" "$STAGE/.python-version" "$APP_DIR/"
-          sudo install -m 0644 "$STAGE/deploy/$UNIT.service" "/etc/systemd/system/$UNIT.service"
+          for unit in "$UNIT.service" alta-aod-check.service alta-aod-check.timer; do
+            sudo install -m 0644 "$STAGE/deploy/$unit" "/etc/systemd/system/$unit"
+          done
           rm -rf "$STAGE"
 
           cd "$APP_DIR"
@@ -218,6 +220,7 @@ jobs:
           sudo systemctl daemon-reload
           sudo systemctl enable "$UNIT"
           sudo systemctl restart "$UNIT"
+          sudo systemctl enable --now alta-aod-check.timer
 
           # Type=simple: active ещё до того, как uvicorn займёт сокет — ждём ответ.
           for _ in $(seq 1 30); do
@@ -236,6 +239,8 @@ jobs:
           code=$(curl -sS -o /dev/null -w '%{http_code}' "http://127.0.0.1:$PORT/admin/suggestions")
           echo "admin without token $code"
           [ "$code" = 401 ]
+          systemctl is-active --quiet alta-aod-check.timer
+          systemctl show -p ExecStart alta-aod-check.service | grep -q /opt/alta-bankruptcy/
           echo "backend deployed: ${{ github.sha }} (data: $DATA_MODE)"
           REMOTE
 
