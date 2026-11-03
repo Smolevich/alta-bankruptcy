@@ -23,6 +23,10 @@ const EXTRA_COPIES: Record<string, string> = {
 		'nbs-2012-zakon-preuzimanje-banaka.pdf',
 	'https://web.archive.org/web/20161116045606/http://aod.rs/pdf/godisnji_finansijski_izvestaj_za_2013.pdf':
 		'aod-2013-godisnji-finansijski-izvestaj.pdf',
+	'https://web.archive.org/web/20160831012046/http://aod.rs/pdf/2014-02-06-uputstvo-za-podnosenje-prijave-potrazivanja.pdf':
+		'aod-2014-02-06-uputstvo-prijava-potrazivanja.pdf',
+	'https://web.archive.org/web/20160830213118/http://aod.rs/pdf/2014-02-06-obavestenje-o-nacinu-izmirivanja.pdf':
+		'aod-2014-02-06-obavestenje-izmirivanje-obaveza.pdf',
 };
 
 const LOCAL_COPY: Record<string, string> = {

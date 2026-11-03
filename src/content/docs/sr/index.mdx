@@ -6,8 +6,15 @@ checked: 2026-11-03
 sources:
   - { title: "AOD: „Oduzeta dozvola za rad Alta banci“", url: "https://www.aod.rs/clan/vest/vest_forma/137", kind: official, date: 2026-10-31 }
   - { title: "NBS: saopštenje o oduzimanju dozvole", url: "https://www.nbs.rs/sr/scripts/showcontent/index.html?id=21849", kind: official, date: 2026-10-30 }
-  - { title: "Zakon o stečaju i likvidaciji banaka i društava za osiguranje, čl. 7 i 20", url: "https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2015/14/3/reg", kind: official, date: 2026-11-01 }
-  - { title: "Zakon o osiguranju depozita, čl. 16", url: "https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2015/14/2/reg", kind: official, date: 2026-11-01 }
+  - { title: "AOD: otvoren stečaj, banka isplatilac Poštanska štedionica", url: "https://www.aod.rs/clan/vest/vest_forma/139", kind: official, date: 2026-11-03 }
+  - { title: "Zakon o stečaju i likvidaciji banaka i društava za osiguranje, čl. 7, 8, 9, 16, 17, 19, 20, 22", url: "https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2015/14/3/reg", kind: official, date: 2026-11-01 }
+  - { title: "Zakon o osiguranju depozita, čl. 16 i 17", url: "https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2015/14/2/reg", kind: official, date: 2026-11-01 }
+  - { title: "Zakon o stečaju, čl. 101", url: "https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2009/104/25/reg", kind: official, date: 2026-11-03 }
+  - { title: "AOD: Procedura isplate osiguranih depozita (04.11.2015)", url: "https://www.aod.rs/uploads/dokumenti/osigdepoz/pravniokvir/cir/16_pravniokvir.pdf", kind: official, date: 2015-11-04 }
+  - { title: "AOD: Uputstvo za podnošenje prijave potraživanja, Univerzal banka, 06.02.2014 (veb-arhiva)", url: "https://web.archive.org/web/20160831012046/http://aod.rs/pdf/2014-02-06-uputstvo-za-podnosenje-prijave-potrazivanja.pdf", kind: official, date: 2014-02-06 }
+  - { title: "AOD: Obaveštenje o načinu izmirivanja dospelih obaveza, Univerzal banka, 06.02.2014 (veb-arhiva)", url: "https://web.archive.org/web/20160830213118/http://aod.rs/pdf/2014-02-06-obavestenje-o-nacinu-izmirivanja.pdf", kind: official, date: 2014-02-06 }
+  - { title: "Privredni sud u Beogradu: elektronska oglasna tabla", url: "http://www.bg.pr.sud.rs/index.php?prf=con&id=56", kind: official, date: 2026-11-03 }
+  - { title: "Portal sudova Srbije: tok predmeta privrednih sudova", url: "https://tpson.portal.sud.rs/tpprvs/", kind: official, date: 2026-11-03 }
   - { title: "AOD: kvartalni izveštaj o Univerzal banci, II kvartal 2026", url: "https://www.aod.rs/uploads/dokumenti/kvartalniizvestaj/Univerzal%20banka_II%20kvartal%202026.pdf", kind: official, date: 2026-06-30 }
   - { title: "AOD, Univerzal banka: poziv poveriocima za dostavljanje instrukcija", url: "https://www.aod.rs/uploads/dokumenti/oglas/19_1_oglas.pdf", kind: official, date: 2020-08-31 }
 ---
@@ -16,10 +23,53 @@ import Status from '../../../components/Status.astro';
 import NewsList from '../../../components/NewsList.astro';
 import Flow from '../../../components/Flow.astro';
 import Faq from '../../../components/Faq.astro';
+import Shot from '../../../components/Shot.astro';
 
 <Status lang="sr" />
 
 Sajt je za štediše ALTA banke koji u banci imaju više od 50.000 €: do 50.000 € isplaćuje AOD, ostatak se naplaćuje samo u stečaju banke, a potraživanje morate prijaviti sami.
+
+## Šta sledi posle rešenja suda
+
+Sud je 03.11.2026. otvorio stečaj nad Alta bankom. Dalje, po zakonu i po tome kako je AOD postupala sa Univerzal bankom 2014. godine:
+
+<div class="next-steps">
+
+1. **Do 6.11: obaveštenje AOD o isplati.** U roku od 3 radna dana od rešenja suda AOD mora da objavi datum početka isplate i mesta isplate ([Zakon o osiguranju depozita, čl. 16 st. 8](https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2015/14/2/reg)). Banka isplatilac je već poznata: Banka Poštanska štedionica ([AOD, 03.11](https://www.aod.rs/clan/vest/vest_forma/139)). Pratite [aod.rs](https://www.aod.rs/).
+2. **Do 50.000 €: u ekspozituri Poštanske, rok 3 godine.** Isplata počinje najkasnije 7 radnih dana od rešenja suda, a novac se može podići u roku od 3 godine (čl. 16 st. 8–9). Dinarski ulozi isplaćuju se u dinarima, devizni u evrima (čl. 17). Ponesite ličnu kartu (strancu: pasoš) i ispravu Alta banke o depozitu: ugovor, štednu knjižicu ili karticu računa ([Procedura AOD, odeljak VIII](https://www.aod.rs/uploads/dokumenti/osigdepoz/pravniokvir/cir/16_pravniokvir.pdf)). Preduzetnicima i firmama isplata ide samo prenosom na račun u Srbiji. Ako se ne slažete sa iznosom, pišite AOD (čl. 17 st. 3).
+3. **Iznad 50.000 €: prijava potraživanja sudu, 30–90 dana.** Tačan rok je u rešenju suda i teče od objavljivanja u „Službenom glasniku“ ([Zakon o stečaju i likvidaciji banaka, čl. 7](https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2015/14/3/reg)). Prijava se podnosi pismeno Privrednom sudu u Beogradu, Masarikova 2 ([sajt suda](http://www.bg.pr.sud.rs/)). AOD je 2014. objasnila šta prijava sadrži: ugovor, iznos, koliko je već isplatila banka isplatilac, kamatu, valutu depozita, račun za isplatu, JMBG ([uputstvo AOD, 2014](https://web.archive.org/web/20160831012046/http://aod.rs/pdf/2014-02-06-uputstvo-za-podnosenje-prijave-potrazivanja.pdf)). Više: [„Prijava potraživanja“](/sr/trebovanie/).
+4. **Kredit u Alta banci: nastavite da plaćate; sef: po obaveštenju AOD.** Potraživanja banke prema klijentima ulaze u stečajnu masu koju naplaćuje stečajni upravnik ([Zakon o stečaju, čl. 101](https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2009/104/25/reg)). AOD je 2014, tri dana posle rešenja suda, objavila račun za uplate po kreditima Univerzal banke i kako vlasnici sefova preuzimaju stvari ([obaveštenje AOD, 2014](https://web.archive.org/web/20160830213118/http://aod.rs/pdf/2014-02-06-obavestenje-o-nacinu-izmirivanja.pdf)). Za Alta banku podatke i postupak objaviće AOD.
+5. **Prvi meseci: popis imovine i ispitivanje potraživanja.** U roku od 60 dana AOD vrši popis imovine banke, a zatim kvartalno objavljuje izveštaj na aod.rs (čl. 16). AOD utvrđuje potraživanja do 6 meseci od isteka roka za prijavu, a najkasnije 60 dana posle toga održava se ispitno ročište sa konačnom listom (čl. 17). Odbor poverilaca ima 5 članova koje bira stečajni sudija na predlog AOD, vodeći računa o visini potraživanja; skupštine poverilaca u stečaju banke nema (čl. 8 i 22).
+6. **Isplate iznad 50.000 €: po isplatnim redovima, bez roka.** Prvo AOD naplaćuje isplaćene osigurane iznose i troškove postupka, zatim se isplaćuje prvi isplatni red: fizička lica, preduzetnici, mikro, mala i srednja pravna lica, svi u istom procentu (čl. 19–20). Kod Univerzal banke prva isplata stigla je posle 6 godina i 7 meseci. Više: [„Procedura“](/sr/procedura/).
+
+</div>
+
+<div class="court-case">
+
+**Kako sami da proverite predmet u sudu.** Broj predmeta Ст 275/2026 (St 275/2026) štedišama je u Privrednom sudu u Beogradu saopšten telefonom 03.11. Na portalu je to stečajni predmet: primljen 02.11, rešenje o otvaranju i oglas 03.11, što se poklapa sa datumima za Alta banku. Ali portal ne prikazuje naziv dužnika, pa to zvanično još nismo potvrdili — potvrdićemo kada se rešenje sa nazivom banke pojavi na elektronskoj oglasnoj tabli suda ili u „Službenom glasniku“.
+
+1. Otvorite portal [„Ток предмета привредних судова“](https://tpson.portal.sud.rs/tpprvs/) (Tok predmeta privrednih sudova). Gore levo možete prebaciti „Ћирилица | Latinica“.
+2. „Суд“ (Sud) → БЕОГРАД.
+3. „Уписник“ (Upisnik) → Ст (St, stečaj).
+4. „Број предмета“ (Broj predmeta) → 275.
+5. „Година“ (Godina) → 2026, pa kliknite u drugo polje, inače se godina briše.
+6. Ispod polja je slika sa zbirom, na primer „389 + 96“: izračunajte i upišite rezultat u polje ispod slike.
+7. Kliknite „Претрага“ (Pretraga).
+
+<Shot lang="sr" dir="sud" name="portal-st-275-2026" alt="Portal sudova Srbije, tok predmeta Ст 275/2026 Privrednog suda u Beogradu: popunjena polja pretrage i kartica predmeta sa rešenjem o otvaranju stečaja 03.11.2026" w={760} h={322}>Portal „Ток предмета привредних судова“, predmet Ст 275/2026, 03.11.2026.</Shot>
+
+Šta portal prikazuje za ovaj broj: „Број предмета: Ст 275/2026“, „Датум пријема: 02/11/2026“, „Основ спора: ПРЕДЛОГ ЗА ПОКРЕТАЊЕ СТЕЧАЈНОГ ПОСТУПКА“. U tabeli „Радња“:
+
+- 02/11/2026 — „Дана 02/11/2026 примљен је предмет Ст-275/2026“.
+- 03/11/2026 — „РЕШЕЊЕ О ПОКРЕТАЊУ СТЕЧАЈНОГ ПОСТУПКА (ОТВАРАЊУ) … датум експедовања: 03/11/2026“.
+- 03/11/2026 — „ДОПИС-ОСТАЛО … ОГЛАС О ОТВАРАЊУ СТЕЧАЈНОГ ПОСТУПКА“. Oglas se očekuje u „Službenom glasniku“; od njegovog objavljivanja teče rok za prijavu potraživanja.
+
+„Статус: НИЈЕ РЕШЕН“ znači da predmet još traje, a ne da sud ništa nije odlučio. Nove radnje suda pojaviće se u istoj tabeli.
+
+
+Samo rešenje sa nazivom banke sud objavljuje na [elektronskoj oglasnoj tabli](http://www.bg.pr.sud.rs/index.php?prf=con&id=56) (odeljak „Rešenje o pokretanju stečajnog postupka (otvaranju)“, u redu predmeta „Preuzmite“) i u „Službenom glasniku“. Pravne posledice stečaja nastupaju danom isticanja oglasa na oglasnoj tabli ([čl. 9](https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2015/14/3/reg)).
+
+</div>
 
 ## Tri koraka ako imate više od 50.000 €
 
@@ -41,7 +91,7 @@ Za sada ništa ne treba podnositi.
 
 ### 2. Kada podneti prijavu
 
-Prijava potraživanja za iznos iznad 50.000 € podnosi se pismeno sudu koji vodi stečaj. Rok određuje sud: od 30 do 90 dana od objavljivanja oglasa u „Službenom glasniku“. Ne čekajte isplatu osiguranog iznosa: rok za prijavu teče nezavisno od nje.
+Prijava potraživanja za iznos iznad 50.000 € podnosi se pismeno sudu koji vodi stečaj. Rok je određen u rešenju suda o otvaranju stečaja od 03.11.2026: po zakonu od 30 do 90 dana od objavljivanja oglasa u „Službenom glasniku“. Ne čekajte isplatu osiguranog iznosa: rok za prijavu teče nezavisno od nje.
 
 <small>Više: [prijava potraživanja iznad 50.000 €](/sr/trebovanie/)</small>
 
@@ -82,7 +132,7 @@ Sva saopštenja AOD, NBS i sajta banke nalaze se na stranici [Vesti](/sr/novosti
 
 <Faq items={[
   { q: 'Koliko isplaćuje AOD i šta ostaje?', a: 'AOD isplaćuje do 50.000 € po štediši. Iznos se računa po svim računima i depozitima u ALTA banci zajedno, sa kamatom do dana otvaranja stečaja. Ono što je iznad toga štediša prijavljuje kao potraživanje u stečaju banke.' },
-  { q: 'Kada treba prijaviti potraživanje za iznos iznad 50.000 €?', a: 'Rok određuje sud: od 30 do 90 dana od objavljivanja oglasa u „Službenom glasniku“ (član 7 Zakona o stečaju i likvidaciji banaka i društava za osiguranje). Ne treba čekati isplatu osiguranog iznosa.' },
+  { q: 'Kada treba prijaviti potraživanje za iznos iznad 50.000 €?', a: 'Rok je u rešenju suda o otvaranju stečaja od 03.11.2026: po zakonu od 30 do 90 dana od objavljivanja oglasa u „Službenom glasniku“ (član 7 Zakona o stečaju i likvidaciji banaka i društava za osiguranje). Ne treba čekati isplatu osiguranog iznosa.' },
   { q: 'U koji isplatni red spada iznos fizičkih lica iznad 50.000 €?', a: 'U prvi. Fizička lica, preduzetnici i mikro, mala i srednja pravna lica nalaze se u prvom isplatnom redu ravnopravno i namiruju se srazmerno visini potraživanja (član 20 Zakona o stečaju i likvidaciji banaka i društava za osiguranje).' },
   { q: 'Koliko brzo se vraća novac iznad 50.000 €?', a: 'Zakonom rok nije određen: novac se isplaćuje kako se prodaje imovina banke. Kod Univerzal banke (2014) prvih 50 % utvrđenih potraživanja prvog isplatnog reda isplaćeno je posle 6 godina i 7 meseci (09.2020); kod ALTA banke rokovi i procenti mogu biti drugačiji.' },
 ]} />
