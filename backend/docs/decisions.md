@@ -43,3 +43,7 @@
 - **The IP hash and browser name live 30 days.** The rate limit needs an hour; the rest is
   headroom to sort out a spam wave. After that the fields are wiped on the next
   submission of either form.
+- **Material proposals are a service page, not a Starlight page.** The list changes with every
+  status, so it is rendered by the service on each request, like `/account/stats`; Astro never sees
+  it, which also keeps it out of the sitemap. Text, link and sources are public in the list (the
+  form says so); the author's name or contact is private, like the correction form's `contact`.

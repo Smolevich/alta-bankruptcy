@@ -23,6 +23,7 @@ from starlette.responses import (
 )
 from starlette.routing import Mount, Route
 
+from alta_feedback import proposals
 from alta_feedback.accounts import (
     ACCOUNT_STATUSES,
     ACCOUNT_TYPES,
@@ -75,6 +76,9 @@ from alta_feedback.validate import (
 )
 
 BODY_MAX = 16_384
+# Текст предложения до 20 000 знаков: кириллица в urlencoded — до 6 байт на знак, плюс источники.
+PROPOSAL_BODY_MAX = 262_144
+PROPOSALS_SHOWN = 300
 RATE_LIMIT = 5
 RATE_WINDOW = timedelta(hours=1)
 # Сколько держим хэш IP и браузер: лимиту хватает часа, остальное — чтобы разобрать волну спама.
@@ -83,7 +87,9 @@ ADMIN_PAGE_MAX = 500
 PUBLIC_ACCOUNTS_MAX = 2000
 LOCAL_TZ = ZoneInfo("Europe/Belgrade")
 STATIC_DIR = Path(__file__).parent / "static"
-SCRIPTS = frozenset({"branch.js", "combo.js", "filters.js", "pdfview.js", "pow.js", "voice.js"})
+SCRIPTS = frozenset({
+    "branch.js", "combo.js", "filters.js", "pdfview.js", "pow.js", "proposals-admin.js", "voice.js",
+})
 # Перебор запускает отметка «Я не робот»; среднее число попыток — половина, на Mac ~0,4 с, на телефоне 1–3 с.
 POW_MAX_NUMBER = 200_000
 POW_FAILED = "Не прошла проверка от ботов. Подождите пару секунд и отправьте ещё раз."
@@ -124,6 +130,17 @@ STATS_PAGE_HEADERS = {
     ),
 }
 
+# Страница предложений — служебная для рабочей группы: в поиск не попадает и ссылкам вес не передаёт.
+NOINDEX = {"X-Robots-Tag": "noindex, nofollow"}
+# Админке нужен свой скрипт и запросы к /admin/proposals со своего адреса; токен живёт в sessionStorage.
+PROPOSALS_ADMIN_HEADERS = {
+    **NOINDEX,
+    "Content-Security-Policy": (
+        "default-src 'none'; script-src 'self'; connect-src 'self'; style-src 'unsafe-inline'; "
+        "img-src 'self' data:; form-action 'none'; frame-ancestors 'none'; base-uri 'none'"
+    ),
+}
+
 templates = Environment(
     loader=PackageLoader("alta_feedback", "templates"),
     autoescape=select_autoescape(["html"]),
@@ -133,13 +150,17 @@ templates = Environment(
 class SecurityHeaders(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next) -> Response:
         declared = request.headers.get("content-length", "0")
-        if declared.isdigit() and int(declared) > BODY_MAX:
+        if declared.isdigit() and int(declared) > body_limit(request.url.path):
             response: Response = PlainTextResponse("Слишком большой запрос", status_code=413)
         else:
             response = await call_next(request)
         for name, value in SECURITY_HEADERS.items():
             response.headers.setdefault(name, value)
         return response
+
+
+def body_limit(path: str) -> int:
+    return PROPOSAL_BODY_MAX if path in PROPOSAL_PATHS else BODY_MAX
 
 
 def client_ip(request: Request) -> str:
@@ -392,6 +413,116 @@ async def public_accounts(request: Request) -> JSONResponse:
     return JSONResponse(body)
 
 
+PROPOSAL_PATHS = frozenset(proposals.page_path(lang) for lang in proposals.LANGS)
+
+
+def proposals_page(
+    request: Request, lang: str, values: dict, errors: list[str], status_code: int = 200
+) -> HTMLResponse:
+    sent = request.query_params.get("sent", "")
+    return render(
+        "proposals.html", status_code=status_code, headers=NOINDEX, t=proposals.TEXTS[lang],
+        html_lang=proposals.TEXTS[lang]["html_lang"], lang=lang, action=proposals.page_path(lang),
+        home=proposals.site_home(lang), targets=proposals.TARGETS, values=values, errors=errors,
+        sent=int(sent) if sent.isdigit() else None,
+        items=request.app.state.store.public_proposals(PROPOSALS_SHOWN),
+        title_max=proposals.TITLE_MAX, body_max=proposals.TEXT_MAX, url_max=proposals.URL_MAX,
+        contact_max=proposals.CONTACT_MAX, sources_max=proposals.SOURCES_MAX,
+    )
+
+
+def proposals_view(lang: str) -> Callable[[Request], Awaitable[HTMLResponse]]:
+    async def handler(request: Request) -> HTMLResponse:
+        return proposals_page(request, lang, {}, [])
+
+    return handler
+
+
+def proposals_submit(lang: str) -> Callable[[Request], Awaitable[Response]]:
+    async def handler(request: Request) -> Response:
+        form = {key: str(value) for key, value in (await request.form()).items()}
+        path = proposals.page_path(lang)
+        if is_bot(form):
+            return RedirectResponse(path, status_code=303)
+        proposal, errors = proposals.parse_proposal(form, lang)
+        if errors:
+            return proposals_page(request, lang, form, errors, status_code=400)
+        store: Store = request.app.state.store
+        now = datetime.now(UTC)
+        ip_hash = ip_hash_of(request)
+        if store.recent_from(ip_hash, now, RATE_WINDOW, table="proposals") >= RATE_LIMIT:
+            text = proposals.TEXTS[lang]
+            return render(
+                "limit.html", status_code=429, headers=NOINDEX, html_lang=text["html_lang"],
+                limit_title=text["limit_title"], limit_text=text["limit"],
+                return_url=path, back=text["back"],
+            )
+        item_id = store.add_proposal(proposal, ip_hash, request.headers.get("user-agent", "")[:UA_MAX], now)
+        store.forget_old_traces(now - TRACE_TTL)
+        return RedirectResponse(f"{path}?sent={item_id}#p{item_id}", status_code=303)
+
+    return handler
+
+
+def to_slash(path: str) -> Callable[[Request], Awaitable[Response]]:
+    async def handler(request: Request) -> Response:
+        return RedirectResponse(path, status_code=308)
+
+    return handler
+
+
+async def proposals_admin_page(request: Request) -> HTMLResponse:
+    """Оболочка без данных: предложения скрипт берёт из /admin/proposals с токеном из поля."""
+    return render(
+        "proposals_admin.html", headers=PROPOSALS_ADMIN_HEADERS, t=proposals.TEXTS["ru"],
+        statuses=proposals.STATUSES, targets=proposals.TARGETS, url_max=proposals.URL_MAX,
+        comment_max=proposals.COMMENT_MAX,
+    )
+
+
+async def admin_update_proposal(request: Request) -> JSONResponse:
+    if not authorized(request):
+        return JSONResponse({"error": "unauthorized"}, status_code=401)
+    try:
+        body = await request.json()
+    except ValueError:
+        body = None
+    changes, error = proposals.parse_editor_update(body)
+    if error:
+        return JSONResponse({"error": error}, status_code=400)
+    item_id = int(request.path_params["id"])
+    if not request.app.state.store.update_proposal(item_id, changes, datetime.now(UTC)):
+        return JSONResponse({"error": "not found"}, status_code=404)
+    return JSONResponse({"id": item_id, **changes})
+
+
+async def admin_delete_proposal(request: Request) -> JSONResponse:
+    if not authorized(request):
+        return JSONResponse({"error": "unauthorized"}, status_code=401)
+    item_id = int(request.path_params["id"])
+    if not request.app.state.store.delete_proposal(item_id):
+        return JSONResponse({"error": "not found"}, status_code=404)
+    return JSONResponse({"id": item_id, "deleted": True})
+
+
+def proposal_routes() -> list[Route]:
+    routes: list[Route] = []
+    for lang in proposals.LANGS:
+        path = proposals.page_path(lang)
+        routes += [
+            Route(path, proposals_view(lang), methods=["GET"]),
+            Route(path, proposals_submit(lang), methods=["POST"]),
+            Route(path.rstrip("/"), to_slash(path), methods=["GET"]),
+        ]
+    return routes + [
+        Route("/predlozheniya/admin/", proposals_admin_page, methods=["GET"]),
+        Route("/predlozheniya/admin", to_slash("/predlozheniya/admin/"), methods=["GET"]),
+        Route("/admin/proposals", admin_list("proposals", frozenset(proposals.STATUSES)), methods=["GET"]),
+        Route("/admin/proposals/{id:int}", admin_update_proposal, methods=["POST"]),
+        Route("/admin/proposals/{id:int}", admin_delete_proposal, methods=["DELETE"]),
+    ]
+
+
 async def static_script(request: Request) -> Response:
     name = request.path_params["name"]
     if name not in SCRIPTS:
@@ -439,6 +570,7 @@ def create_app(
                 "/admin/accounts/{id:int}/status",
                 admin_set_status("accounts", ACCOUNT_STATUSES), methods=["POST"],
             ),
+            *proposal_routes(),
             Mount("/docs/aod", app=ArchiveFiles(aod_public, load_manifest()), name="aod"),
             # Последним: всё, чего нет среди маршрутов выше, ищем в собранном справочнике.
             Mount("/", app=SiteFiles(site), name="site"),

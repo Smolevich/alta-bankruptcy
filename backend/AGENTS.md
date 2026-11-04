@@ -22,7 +22,9 @@ and pages are in Russian; issues and PRs may be in English, Serbian or Russian.
   quarter 2026Q2, computed from each bank's NBS balance sheet and income statement; a figure
   without an https `source_url` is not rendered); `aod_archive.py` our copy of the AOD PDFs the
   write-up links to (`data/aod_archive.json`, served at `/docs/aod/<name>`, checked daily);
-  `bank_forms.py` blank account-opening forms per bank and what the bank asks, a block below the
+  `proposals.py` material proposals from the working group at `/predlozheniya/` (ru/en/sr,
+  noindex, public list without the author's contact) and their admin page
+  `/predlozheniya/admin/` (`static/proposals-admin.js`, token in `sessionStorage`); `bank_forms.py` blank account-opening forms per bank and what the bank asks, a block below the
   answers on the stats page (`data/bank_forms.json`; the PDFs are the site's `public/docs/banks`,
   metadata stripped; an official form needs an https `source_url`).
 

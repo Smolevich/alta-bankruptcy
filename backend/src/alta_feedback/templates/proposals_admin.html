@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}Предложения — админка{% endblock %}
+{% block robots %}noindex, nofollow{% endblock %}
+{% block beacon %}{% endblock %}
+{% block head %}
+<style>
+  main.adm-main { max-width: 1100px; padding: 16px 12px 40px; }
+  .adm-main a { color: var(--accent); overflow-wrap: anywhere; }
+  .bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; margin: 0 0 12px; }
+  .bar h1 { margin: 0; }
+  .count { font-size: 14px; color: var(--muted); }
+  .count b { color: var(--accent); font-size: 16px; }
+  .login { display: flex; gap: 8px; flex-wrap: wrap; }
+  .login input { flex: 1 1 220px; }
+  button { width: auto; margin: 0; min-height: 40px; padding: 0 16px; font-size: 15px; }
+  button.ghost { background: transparent; color: var(--accent); border: 1px solid var(--line); }
+  select { font: inherit; font-size: 15px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 10px; background: #fff; color: var(--ink); }
+  .tools { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .msg { font-size: 14px; margin: 8px 0; }
+  .msg.err { color: var(--danger); }
+  .rows { display: grid; gap: 10px; }
+  .row { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; display: grid; gap: 10px; font-size: 14px; }
+  .row.is-new { border-left: 4px solid var(--accent); }
+  .row h3 { margin: 0; font-size: 15px; overflow-wrap: anywhere; }
+  .meta { color: var(--muted); font-size: 13px; margin-top: 2px; }
+  .contact { margin-top: 4px; overflow-wrap: anywhere; }
+  .contact span { color: var(--muted); }
+  details { margin-top: 6px; }
+  summary { cursor: pointer; color: var(--accent); font-weight: 600; }
+  .body { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 360px; overflow: auto; margin: 6px 0 0; }
+  .src { margin: 6px 0 0; padding-left: 18px; overflow-wrap: anywhere; }
+  .edit { display: grid; gap: 6px; }
+  .edit label { margin: 0; font-size: 13px; font-weight: 600; }
+  .edit input, .edit textarea, .edit select { display: block; width: 100%; margin-top: 3px; padding: 8px 10px; font-size: 15px; font-weight: 400; }
+  .edit textarea { min-height: 64px; }
+  .save { display: flex; gap: 10px; align-items: center; }
+  .saved { font-size: 13px; color: var(--ok); }
+  .saved.err { color: var(--danger); }
+  [hidden] { display: none !important; }
+  @media (min-width: 900px) {
+    .row { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 18px; }
+  }
+</style>
+{% endblock %}
+{% block main_class %}adm-main{% endblock %}
+{% block content %}
+<div class="bar">
+  <h1>Предложения</h1>
+  <span class="count" id="count" hidden>новых: <b id="new-count">0</b> · всего: <span id="total">0</span></span>
+</div>
+
+<form class="card login" id="login">
+  <label for="token" style="flex-basis: 100%; margin: 0">Админ-токен<span class="hint">Хранится только в этой вкладке и уходит в заголовке запроса</span></label>
+  <input type="password" id="token" autocomplete="off" required>
+  <button type="submit">Войти</button>
+</form>
+
+<div id="panel" hidden>
+  <div class="bar">
+    <div class="tools">
+      <label for="filter" style="margin: 0">Статус</label>
+      <select id="filter">
+        <option value="">все</option>
+        {% for code in statuses %}<option value="{{ code }}">{{ t.statuses.get(code, "спам (скрыто)") }}</option>{% endfor %}
+      </select>
+      <button type="button" class="ghost" id="reload">Обновить</button>
+    </div>
+    <button type="button" class="ghost" id="logout">Выйти</button>
+  </div>
+  <div class="rows" id="rows"></div>
+</div>
+<p class="msg" id="msg" role="status"></p>
+
+<template id="row-tpl">
+  <article class="row">
+    <div>
+      <h3 data-f="title"></h3>
+      <div class="meta" data-f="meta"></div>
+      <div class="contact"><span>Контакт:</span> <span data-f="contact"></span></div>
+      <details>
+        <summary>Текст и источники</summary>
+        <div class="body" data-f="text"></div>
+        <p data-f="doc" style="margin: 6px 0 0"></p>
+        <ul class="src" data-f="sources"></ul>
+      </details>
+    </div>
+    <form class="edit">
+      <label>Статус
+        <select name="status">
+          {% for code in statuses %}<option value="{{ code }}">{{ t.statuses.get(code, "спам (скрыто)") }}</option>{% endfor %}
+        </select>
+      </label>
+      <label>Ссылка на правки<input type="text" name="review_url" inputmode="url" maxlength="{{ url_max }}" placeholder="https://…"></label>
+      <label>Ссылка на публикацию<input type="text" name="published_url" inputmode="url" maxlength="{{ url_max }}" placeholder="https://…"></label>
+      <label>Комментарий редактора<textarea name="comment" maxlength="{{ comment_max }}"></textarea></label>
+      <div class="save"><button type="submit">Сохранить</button><span class="saved" data-f="saved"></span></div>
+    </form>
+  </article>
+</template>
+<script type="application/json" id="labels">{{ {"targets": t.targets} | tojson }}</script>
+<script src="/static/proposals-admin.js"></script>
+{% endblock %}

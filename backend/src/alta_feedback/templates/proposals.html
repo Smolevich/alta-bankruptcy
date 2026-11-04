@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% block title %}{{ t.title }}{% endblock %}
+{% block robots %}noindex, nofollow{% endblock %}
+{% block head %}
+<style>
+  main.prop-main { max-width: 640px; }
+  .prop-main a { color: var(--accent); overflow-wrap: anywhere; }
+  .steps { list-style: none; counter-reset: step; margin: 0 0 12px; padding: 0; display: grid; gap: 8px; }
+  .steps li { counter-increment: step; display: grid; grid-template-columns: 26px 1fr; gap: 10px; font-size: 15px; line-height: 1.4; }
+  .steps li::before {
+    content: counter(step); width: 26px; height: 26px; border-radius: 50%; background: var(--accent);
+    color: var(--accent-ink); font-weight: 700; font-size: 14px; display: grid; place-items: center;
+  }
+  .rules { font-size: 14px; color: var(--muted); background: #f1efe9; border-radius: 10px; padding: 9px 12px; margin: 0 0 4px; }
+  .sent { background: #e8f3ec; color: var(--ok); border-radius: 10px; padding: 10px 12px; margin: 0 0 14px; font-weight: 600; }
+  fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+  legend { font-weight: 600; font-size: 15px; margin: 18px 0 6px; padding: 0; }
+  .choice { display: flex; flex-wrap: wrap; gap: 6px; }
+  .choice label { margin: 0; font-weight: 500; display: flex; align-items: center; gap: 6px; border: 1px solid var(--line); border-radius: 999px; padding: 7px 12px; cursor: pointer; }
+  .choice input { margin: 0; accent-color: var(--accent); }
+  .note { font-size: 13px; color: var(--muted); margin: 14px 0 0; }
+  textarea.short { min-height: 84px; }
+  h2 { font-size: 18px; margin: 28px 0 10px; }
+  .items { display: grid; gap: 8px; }
+  .item { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; font-size: 14px; scroll-margin-top: 12px; }
+  .item:target { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(31, 95, 139, .15); }
+  .item-head { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
+  .item-head b { font-size: 15px; overflow-wrap: anywhere; }
+  .pill { flex: none; font-size: 12px; font-weight: 600; padding: 2px 9px; border-radius: 999px; background: #e9e7e1; color: var(--ink); white-space: nowrap; }
+  .pill.in_review { background: #fdf1d8; color: #7a5200; }
+  .pill.needs_changes { background: #fde6d8; color: #8a3a0c; }
+  .pill.approved { background: #e3eef7; color: var(--accent); }
+  .pill.published { background: #e3f1e7; color: var(--ok); }
+  .pill.rejected { background: var(--danger-bg); color: var(--danger); }
+  .meta { color: var(--muted); font-size: 13px; margin-top: 2px; }
+  .links { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 6px; font-weight: 600; }
+  .editor { margin: 6px 0 0; padding: 6px 10px; border-left: 3px solid var(--line); overflow-wrap: anywhere; }
+  .editor span { color: var(--muted); }
+  details { margin-top: 6px; }
+  summary { cursor: pointer; color: var(--accent); font-weight: 600; }
+  .body { white-space: pre-wrap; overflow-wrap: anywhere; margin: 6px 0 0; max-height: 420px; overflow: auto; }
+  .src { margin: 6px 0 0; padding-left: 18px; overflow-wrap: anywhere; }
+  .empty { color: var(--muted); text-align: center; padding: 16px 0; }
+</style>
+{% endblock %}
+{% block main_class %}prop-main{% endblock %}
+{% block content %}
+<div class="card">
+  <h1>{{ t.title }}</h1>
+  <p class="lead">{{ t.lead }}</p>
+  {% if sent %}<p class="sent" role="status">{{ t.sent.format(sent) }}</p>{% endif %}
+  <ol class="steps" aria-label="{{ t.how_title }}">
+    {% for step in t.how %}<li>{{ step }}</li>{% endfor %}
+  </ol>
+  <p class="rules">{{ t.rules }}</p>
+
+  {% if errors %}
+  <div class="errors" role="alert" style="margin-top: 14px">{% for e in errors %}<p>{{ e }}</p>{% endfor %}</div>
+  {% endif %}
+  <form method="post" action="{{ action }}">
+    <label for="title">{{ t.f_title }}</label>
+    <input type="text" id="title" name="title" maxlength="{{ title_max }}" required value="{{ values.title or '' }}">
+
+    <label for="text">{{ t.f_text }}<span class="hint">{{ t.f_text_hint.format("{:,}".format(body_max).replace(",", " ")) }}</span></label>
+    <textarea id="text" name="text" maxlength="{{ body_max }}">{{ values.text or '' }}</textarea>
+
+    <label for="doc_url">{{ t.f_doc_url }}<span class="hint">{{ t.f_doc_url_hint }}</span></label>
+    <input type="text" id="doc_url" name="doc_url" maxlength="{{ url_max }}" inputmode="url" placeholder="https://…" value="{{ values.doc_url or '' }}">
+
+    <label for="sources">{{ t.f_sources }}<span class="hint">{{ t.f_sources_hint }}</span></label>
+    <textarea class="short" id="sources" name="sources" required>{{ values.sources or '' }}</textarea>
+
+    <fieldset>
+      <legend>{{ t.f_target }}</legend>
+      <div class="choice">
+        {% for code in targets %}
+        <label><input type="radio" name="target" value="{{ code }}" required{% if values.target == code %} checked{% endif %}> {{ t.targets[code] }}</label>
+        {% endfor %}
+      </div>
+    </fieldset>
+
+    <label for="contact">{{ t.f_contact }}<span class="hint">{{ t.f_contact_hint }}</span></label>
+    <input type="text" id="contact" name="contact" maxlength="{{ contact_max }}" autocomplete="off" value="{{ values.contact or '' }}">
+
+    <div class="trap" aria-hidden="true">
+      <label for="website">{{ t.trap }}</label>
+      <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+    </div>
+
+    <p class="note">{{ t.public_note }}</p>
+    <button type="submit">{{ t.submit }}</button>
+  </form>
+</div>
+
+<h2 id="list">{{ t.list_title }}</h2>
+{% if items %}
+<div class="items">
+  {% for item in items %}
+  <article class="item" id="p{{ item.id }}">
+    <div class="item-head">
+      <b>{{ item.title }}</b>
+      <span class="pill {{ item.status }}">{{ t.statuses[item.status] }}</span>
+    </div>
+    <div class="meta">№{{ item.id }} · {{ item.created_at[8:10] }}.{{ item.created_at[5:7] }}.{{ item.created_at[:4] }} · {{ t.targets[item.target] }}</div>
+    {% if item.review_url or item.published_url %}
+    <div class="links">
+      {% if item.review_url %}<a href="{{ item.review_url }}" rel="noopener nofollow" target="_blank">{{ t.review }} ↗</a>{% endif %}
+      {% if item.published_url %}<a href="{{ item.published_url }}" rel="noopener nofollow" target="_blank">{{ t.published }} ↗</a>{% endif %}
+    </div>
+    {% endif %}
+    {% if item.comment %}<p class="editor"><span>{{ t.comment }}:</span> {{ item.comment }}</p>{% endif %}
+    <details>
+      <summary>{{ t.show_text }}</summary>
+      {% if item.text %}<div class="body">{{ item.text }}</div>{% endif %}
+      {% if item.doc_url %}<p style="margin: 6px 0 0">{{ t.doc }}: <a href="{{ item.doc_url }}" rel="noopener nofollow" target="_blank">{{ item.doc_url }}</a></p>{% endif %}
+      <p style="margin: 8px 0 0; font-weight: 600">{{ t.sources }}</p>
+      <ul class="src">
+        {% for source in item.sources %}
+        <li>{% if source.startswith("http://") or source.startswith("https://") %}<a href="{{ source }}" rel="noopener nofollow" target="_blank">{{ source }}</a>{% else %}{{ source }}{% endif %}</li>
+        {% endfor %}
+      </ul>
+    </details>
+  </article>
+  {% endfor %}
+</div>
+{% else %}
+<p class="empty">{{ t.empty }}</p>
+{% endif %}
+<a class="back" href="{{ home }}">{{ t.back }}</a>
+{% endblock %}
