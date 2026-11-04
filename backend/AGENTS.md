@@ -27,6 +27,10 @@ and pages are in Russian; issues and PRs may be in English, Serbian or Russian.
   `/predlozheniya/admin/` (`static/proposals-admin.js`, token in `sessionStorage`); `bank_forms.py` blank account-opening forms per bank and what the bank asks, a block below the
   answers on the stats page (`data/bank_forms.json`; the PDFs are the site's `public/docs/banks`,
   metadata stripped; an official form needs an https `source_url`).
+  `cases.py` the «Что просили в вашем случае» block on the stats page: filter by account
+  (personal / ИП / both at once — «both» counts in both) and residence permit; documents per bank
+  counted in distinct people (IP hash, never rendered), opened-vs-refused split, official rules and
+  collapsed chat criteria without numbers from `data/bank_criteria.json` (official rules need https).
 
 ```bash
 uv sync

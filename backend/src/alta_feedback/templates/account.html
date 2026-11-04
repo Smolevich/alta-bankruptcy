@@ -112,7 +112,7 @@
 {% block main_class %}acc-main{% endblock %}
 {% block content %}
 {% set result_short = {"opened": "Открыли", "refused": "Отказали", "pending": "В процессе"} %}
-{% set type_short = {"personal": "Личный", "entrepreneur": "ИП"} %}
+{% set type_short = {"personal": "Личный", "entrepreneur": "ИП", "both": "Оба сразу"} %}
 <div class="card acc-card">
   <h1>Где вам открыли счёт</h1>
   <p class="lead">Анонимно, полминуты. Проверенные ответы попадут в <a href="/account/stats">общую статистику</a>.</p>
@@ -164,20 +164,20 @@
       </div>
     </div>
 
-    <div class="row2">
-      <div class="field">
-        <span class="lbl" id="type-lbl">Счёт</span>
-        <div class="seg" role="radiogroup" aria-labelledby="type-lbl">
-          {%- for code in account_types %}
-          <label><input type="radio" name="account_type" value="{{ code }}"{% if loop.first %} required{% endif %}
-            {%- if values.account_type == code %} checked{% endif %}><span>{{ type_short[code] }}</span></label>
-          {%- endfor %}
-        </div>
+    <div class="field">
+      <span class="lbl" id="type-lbl">Счёт</span>
+      <div class="seg" role="radiogroup" aria-labelledby="type-lbl">
+        {%- for code in account_types %}
+        <label><input type="radio" name="account_type" value="{{ code }}"{% if loop.first %} required{% endif %}
+          {%- if values.account_type == code %} checked{% endif %}><span>{{ type_short[code] }}</span></label>
+        {%- endfor %}
       </div>
-      <div class="field">
-        <label class="lbl" for="visit_date">Дата визита</label>
-        <input type="date" id="visit_date" name="visit_date" value="{{ values.visit_date or "" }}" required>
-      </div>
+      <p class="warn">«Оба сразу» — подавали на личный счёт и на счёт ИП в один визит.</p>
+    </div>
+
+    <div class="field">
+      <label class="lbl" for="visit_date">Дата визита</label>
+      <input type="date" id="visit_date" name="visit_date" value="{{ values.visit_date or "" }}" required>
     </div>
 
     <div class="field">

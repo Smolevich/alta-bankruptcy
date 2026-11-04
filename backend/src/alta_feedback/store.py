@@ -251,17 +251,21 @@ class Store:
         answer_filter: AnswerFilter | None = None,
         before: tuple[str, int] | None = None,
         limit: int | None = None,
+        with_person: bool = False,
     ) -> list[dict]:
         """Только принятые отчёты и только публичные поля, свежие визиты сверху.
 
         before — (visit_date, id) последней показанной записи: следующая страница идёт строго после неё.
+        with_person — добавить хэш IP как `person`, чтобы сводка считала людей, а не ответы;
+        наружу его не отдавать.
         """
         clauses, args = public_conditions(answer_filter or AnswerFilter())
         if before:
             clauses.append("(visit_date < ? OR (visit_date = ? AND id < ?))")
             args += [before[0], before[0], before[1]]
+        columns = [*PUBLIC_ACCOUNT_COLUMNS, *(["ip_hash AS person"] if with_person else [])]
         query = (
-            f"SELECT {', '.join(PUBLIC_ACCOUNT_COLUMNS)} FROM accounts WHERE {' AND '.join(clauses)}"
+            f"SELECT {', '.join(columns)} FROM accounts WHERE {' AND '.join(clauses)}"
             " ORDER BY visit_date DESC, id DESC"
         )
         if limit is not None:

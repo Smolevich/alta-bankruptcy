@@ -27,6 +27,10 @@ class Tally:
     def total(self) -> int:
         return sum(self.results.values())
 
+    def with_type(self, code: str) -> int:
+        """Ответов с этим счётом: «оба сразу» входят и в личные, и в ИП."""
+        return self.types[code] + self.types["both"]
+
     def share(self, result: str) -> int:
         """Доля результата в процентах — ширина полоски."""
         return round(100 * self.results[result] / self.total) if self.total else 0

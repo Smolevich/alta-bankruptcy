@@ -38,7 +38,8 @@ A list response is `{"count": N, "items": [...]}`, ascending by `id`, up to 500 
 - Correction: `{id, created_at, section_id, section_title, text, source, contact, ip_hash,
   user_agent_short, status}`. `contact` is never published — the form promises that.
 - Report: `{id, created_at, bank, city, account_type, result, visit_date, residency,
-  documents, comment, ip_hash, user_agent_short, status, branch}`. `branch` is `null` for
+  documents, comment, ip_hash, user_agent_short, status, branch}`. `account_type` is `personal`, `entrepreneur`
+  or `both` (applied for both in one visit; the stats count it as personal and as ИП). `branch` is `null` for
   reports sent before the field existed and when the person left it empty or chose
   «Не помню / не важно».
 
