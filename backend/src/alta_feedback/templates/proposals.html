@@ -11,8 +11,8 @@
     content: counter(step); width: 26px; height: 26px; border-radius: 50%; background: var(--accent);
     color: var(--accent-ink); font-weight: 700; font-size: 14px; display: grid; place-items: center;
   }
-  .rules { font-size: 14px; color: var(--muted); background: #f1efe9; border-radius: 10px; padding: 9px 12px; margin: 0 0 4px; }
-  .sent { background: #e8f3ec; color: var(--ok); border-radius: 10px; padding: 10px 12px; margin: 0 0 14px; font-weight: 600; }
+  .rules { font-size: 14px; color: var(--muted); background: var(--nav); border-radius: 4px; padding: 9px 12px; margin: 0 0 4px; }
+  .sent { background: var(--ok-bg); color: var(--ok); border-radius: 4px; padding: 10px 12px; margin: 0 0 14px; font-weight: 600; }
   fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
   legend { font-weight: 600; font-size: 15px; margin: 18px 0 6px; padding: 0; }
   .choice { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -23,13 +23,13 @@
   h2 { font-size: 18px; margin: 28px 0 10px; }
   .items { display: grid; gap: 8px; }
   .item { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; font-size: 14px; scroll-margin-top: 12px; }
-  .item:target { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(31, 95, 139, .15); }
+  .item:target { border-color: var(--accent); box-shadow: 0 0 0 2px var(--seal-soft); }
   .item-head { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
   .item-head b { font-size: 15px; overflow-wrap: anywhere; }
   .pill { flex: none; font-size: 12px; font-weight: 600; padding: 2px 9px; border-radius: 999px; background: #e9e7e1; color: var(--ink); white-space: nowrap; }
   .pill.in_review { background: #fdf1d8; color: #7a5200; }
   .pill.needs_changes { background: #fde6d8; color: #8a3a0c; }
-  .pill.approved { background: #e3eef7; color: var(--accent); }
+  .pill.approved { background: var(--seal-soft); color: var(--accent); }
   .pill.published { background: #e3f1e7; color: var(--ok); }
   .pill.rejected { background: var(--danger-bg); color: var(--danger); }
   .meta { color: var(--muted); font-size: 13px; margin-top: 2px; }

@@ -204,3 +204,14 @@ def test_admin_page_loads_only_own_script(client):
 
 def test_admin_script_is_served(client):
     assert client.get("/static/proposals-admin.js").status_code == 200
+
+
+@pytest.mark.parametrize(
+    ("path", "header"),
+    [
+        ("/en/predlozheniya/", '<a class="site-title" href="/en/">ALTA depositors: what&#39;s next</a>'),
+        ("/sr/predlozheniya/", '<a class="site-title" href="/sr/">Štediše ALTA banke: šta dalje</a>'),
+    ],
+)
+def test_site_header_follows_page_language(client, path, header):
+    assert header in client.get(path).text

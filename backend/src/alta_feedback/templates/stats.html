@@ -104,26 +104,7 @@
   .pdf-dialog header a { color: var(--accent); white-space: nowrap; }
   .pdf-dialog button { width: auto; margin: 0; min-height: 36px; padding: 0 14px; }
   .pdf-dialog object { display: block; width: 100%; height: calc(100% - 54px); }
-  /* Та же схема, что у справочника на Starlight (alta-bankruptcy, src/styles/custom.css):
-     бумага, чернила, бордо; шрифты системные — CSP не пускает чужие. */
-  :root {
-    --serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Charter, Georgia, serif;
-    --bg: #f6f2e8; --surface: #fffdf7; --nav: #fbf8f0; --ink: #1b2430; --muted: #5a5448;
-    --line: #d9d2c0; --accent: #9b2c22; --accent-ink: #ffffff; --seal-soft: #f3dcd7;
-    --danger: #9b2c22; --danger-bg: #f3dcd7; --ok: #2d6a4f;
-  }
-  html, body { overflow-x: clip; }
-  body { font: 16px/1.75 ui-sans-serif, 'Helvetica Neue', 'Segoe UI', Roboto, sans-serif; }
-  .site-header {
-    position: sticky; top: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between;
-    gap: 12px; height: 56px; padding: 0 16px; background: var(--nav); border-bottom: 1px solid var(--line);
-  }
-  .site-title { min-width: 0; font: 600 16px/1.15 var(--serif); color: var(--accent); text-decoration: none; }
-  .site-nav { display: flex; gap: 16px; font-size: 14px; white-space: nowrap; }
-  .site-nav a { color: var(--ink); text-decoration: none; font-weight: 600; }
-  .site-nav a:hover, .site-title:hover { text-decoration: underline; }
-  .site-nav .wide { display: none; }
-  main.stats-main { max-width: 752px; padding: 0 16px 40px; }
+  main.stats-main { max-width: 752px; padding: 0 16px 40px; line-height: 1.75; }
   .stats-card { padding: 0; background: none; border: 0; }
   .page-title { padding: 28px 0 18px; margin: 0 0 20px; border-bottom: 1px solid var(--line); }
   .stats-card h1 { font: 600 30px/1.15 var(--serif); letter-spacing: -0.01em; margin: 0 0 10px; }
@@ -263,7 +244,7 @@
   .case-body ul { margin: 0; padding-left: 18px; }
   .case-body li { overflow-wrap: anywhere; }
   .marks { list-style: none; padding: 0 !important; display: grid; gap: 3px; }
-  .marks li { display: flex; justify-content: space-between; gap: 8px; }
+  .marks li { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
   .chip { flex: none; font-size: 12px; padding: 0 8px; border-radius: 99px; white-space: nowrap; border: 1px solid var(--line); color: var(--muted); }
   .chip.confirmed { background: #e3efe8; border-color: #b5d3c2; color: var(--ok); font-weight: 600; }
   .chip.two { color: var(--ink); }
@@ -283,9 +264,6 @@
     .split > p:first-child { grid-column: 1 / -1; }
   }
   @media (min-width: 720px) {
-    .site-header { padding: 0 24px; }
-    .site-title { font-size: 22px; }
-    .site-nav .wide { display: inline; }
     main.stats-main { padding: 0 24px 56px; }
     .card.stats-card { padding: 0; }
     .page-title { padding: 40px 0 24px; }
@@ -301,12 +279,6 @@
 </style>
 {% endblock %}
 {% block main_class %}stats-main{% endblock %}
-{% block header %}
-<header class="site-header">
-  <a class="site-title" href="/">Вкладчики ALTA: что дальше</a>
-  <nav class="site-nav" aria-label="Справочник"><a class="wide" href="/novosti/">Новости</a><a href="/">Справочник</a></nav>
-</header>
-{% endblock %}
 {% macro source(row) -%}
 <a href="{{ row.source_url }}" rel="noopener noreferrer">NBS</a>
 {%- for url in row.also %} <a href="{{ url }}" rel="noopener noreferrer" title="ещё один отчёт NBS, из которого посчитано число">{{ loop.index + 1 }}</a>{% endfor %}
