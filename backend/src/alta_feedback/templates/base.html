@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="ru">
+<html lang="{{ html_lang | default('ru') }}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex">
+<meta name="robots" content="{% block robots %}noindex{% endblock %}">
 <title>{% block title %}Предложить правку{% endblock %}</title>
 <style>
   :root {
@@ -58,7 +58,7 @@
 <link rel="icon" href="/favicon.ico" sizes="32x32">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 {% block head %}{% endblock %}
-<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "fe16933a65524594b31524da4c01f99c"}'></script>
+{% block beacon %}<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "fe16933a65524594b31524da4c01f99c"}'></script>{% endblock %}
 </head>
 <body>
 {% block header %}{% endblock %}

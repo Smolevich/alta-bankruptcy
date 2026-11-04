@@ -9,6 +9,7 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 from alta_feedback.accounts import AccountReport
+from alta_feedback.proposals import PUBLIC_STATUSES, Proposal
 from alta_feedback.stats import AnswerFilter
 from alta_feedback.validate import Suggestion
 
@@ -48,6 +49,26 @@ CREATE INDEX IF NOT EXISTS accounts_time ON accounts (created_at);
 CREATE INDEX IF NOT EXISTS accounts_status ON accounts (status);
 CREATE INDEX IF NOT EXISTS accounts_public ON accounts (status, visit_date DESC, id DESC);
 
+CREATE TABLE IF NOT EXISTS proposals (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at TEXT NOT NULL,
+    title TEXT NOT NULL,
+    text TEXT NOT NULL,
+    doc_url TEXT NOT NULL,
+    sources TEXT NOT NULL,
+    target TEXT NOT NULL,
+    contact TEXT NOT NULL,
+    ip_hash TEXT NOT NULL,
+    user_agent_short TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'new',
+    review_url TEXT NOT NULL DEFAULT '',
+    published_url TEXT NOT NULL DEFAULT '',
+    comment TEXT NOT NULL DEFAULT '',
+    updated_at TEXT
+);
+CREATE INDEX IF NOT EXISTS proposals_ip_time ON proposals (ip_hash, created_at);
+CREATE INDEX IF NOT EXISTS proposals_time ON proposals (created_at);
+
 CREATE TABLE IF NOT EXISTS pow_used (
     challenge TEXT PRIMARY KEY,
     expires_at INTEGER NOT NULL
@@ -68,7 +89,16 @@ COLUMNS = {
         "id", "created_at", "bank", "city", "account_type", "result", "visit_date",
         "residency", "documents", "comment", "ip_hash", "user_agent_short", "status", "branch",
     ),
+    "proposals": (
+        "id", "created_at", "title", "text", "doc_url", "sources", "target", "contact", "ip_hash",
+        "user_agent_short", "status", "review_url", "published_url", "comment", "updated_at",
+    ),
 }
+# Автор, его контакт и следы браузера в публичный список не попадают.
+PUBLIC_PROPOSAL_COLUMNS = (
+    "id", "created_at", "title", "text", "doc_url", "sources", "target", "status",
+    "review_url", "published_url", "comment",
+)
 PUBLIC_ACCOUNT_COLUMNS = (
     "id", "visit_date", "bank", "city", "branch", "account_type", "result", "residency", "documents",
     "comment",
@@ -104,8 +134,9 @@ def public_conditions(answer_filter: AnswerFilter) -> tuple[list[str], list[str 
 
 def decode_row(row: sqlite3.Row) -> dict:
     item = dict(row)
-    if "documents" in item:
-        item["documents"] = json.loads(item["documents"])
+    for column in ("documents", "sources"):
+        if column in item:
+            item[column] = json.loads(item[column])
     return item
 
 
@@ -150,6 +181,40 @@ class Store:
                  item.branch),
             )
             return int(cur.lastrowid or 0)
+
+    def add_proposal(self, item: Proposal, ip_hash: str, user_agent: str, now: datetime) -> int:
+        with self.connect() as db:
+            cur = db.execute(
+                "INSERT INTO proposals (created_at, title, text, doc_url, sources, target, contact,"
+                " ip_hash, user_agent_short) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (iso(now), item.title, item.text, item.doc_url, json.dumps(list(item.sources)),
+                 item.target, item.contact, ip_hash, user_agent),
+            )
+            return int(cur.lastrowid or 0)
+
+    def update_proposal(self, item_id: int, changes: dict[str, str], now: datetime) -> bool:
+        """changes — уже проверенные поля редактора (proposals.EDITOR_FIELDS)."""
+        assignments = ", ".join(f"{column} = ?" for column in changes)
+        with self.connect() as db:
+            cur = db.execute(
+                f"UPDATE proposals SET {assignments}, updated_at = ? WHERE id = ?",
+                (*changes.values(), iso(now), item_id),
+            )
+            return cur.rowcount == 1
+
+    def delete_proposal(self, item_id: int) -> bool:
+        with self.connect() as db:
+            return db.execute("DELETE FROM proposals WHERE id = ?", (item_id,)).rowcount == 1
+
+    def public_proposals(self, limit: int) -> list[dict]:
+        """Все предложения, кроме спама, свежие сверху, без автора и контакта."""
+        marks = ", ".join("?" for _ in PUBLIC_STATUSES)
+        query = (
+            f"SELECT {', '.join(PUBLIC_PROPOSAL_COLUMNS)} FROM proposals"
+            f" WHERE status IN ({marks}) ORDER BY id DESC LIMIT ?"
+        )
+        with self.connect() as db:
+            return [decode_row(row) for row in db.execute(query, (*PUBLIC_STATUSES, limit))]
 
     def recent_from(
         self, ip_hash: str, now: datetime, window: timedelta, table: str = "suggestions"

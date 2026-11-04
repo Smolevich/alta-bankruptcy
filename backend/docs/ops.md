@@ -44,6 +44,46 @@ A list response is `{"count": N, "items": [...]}`, ascending by `id`, up to 500 
 
 Only reports with status `accepted` make it into the stats and the public JSON.
 
+## Material proposals (`/predlozheniya/`)
+
+The working group suggests texts for the site and the `@altabank_closed` channel at
+`https://alta.smolevich.com/predlozheniya/` (also `/en/predlozheniya/`, `/sr/predlozheniya/`). The
+page is not in the menu or the sitemap and is sent with `noindex, nofollow` (meta and
+`X-Robots-Tag`). It shows every proposal except `spam`: title, date, target, status, the editor's
+links and comment; the text, document link and sources are collapsed. The author's name/contact
+is never shown there — only in the admin API and the admin page.
+
+**Admin page:** `https://alta.smolevich.com/predlozheniya/admin/` — paste the admin token; it stays
+in that tab's `sessionStorage` and goes only into the `Authorization` header. Filter by status,
+new count, and per proposal: status, review link, publication link, editor comment, "Сохранить".
+
+**From the terminal** — the token from Vault, never printed (`secret/alta-feedback/admin_token`,
+login as in `docs/secrets.md` of pet-projects):
+
+```bash
+ADMIN_TOKEN=$(vault kv get -field=token secret/alta-feedback/admin_token)
+
+# new proposals (status: new, in_review, needs_changes, approved, published, rejected, spam)
+printf 'Authorization: Bearer %s\n' "$ADMIN_TOKEN" | curl -fsS -H @- \
+  'https://alta.smolevich.com/admin/proposals?status=new' | jq
+
+# change status, links and comment — any subset of the fields; "" clears a link or the comment
+printf 'Authorization: Bearer %s\n' "$ADMIN_TOKEN" | curl -fsS -H @- \
+  -H 'Content-Type: application/json' \
+  -d '{"status":"needs_changes","review_url":"https://docs.google.com/document/d/…","comment":"Нужна ссылка на закон"}' \
+  https://alta.smolevich.com/admin/proposals/12
+
+# remove for good (test entries); "spam" hides it from the list instead
+printf 'Authorization: Bearer %s\n' "$ADMIN_TOKEN" | curl -fsS -H @- -X DELETE \
+  https://alta.smolevich.com/admin/proposals/12
+```
+
+An item: `{id, created_at, title, text, doc_url, sources: [...], target: site|channel|both,
+contact, ip_hash, user_agent_short, status, review_url, published_url, comment, updated_at}`.
+`since` works as for the other lists. The form takes a title, a text up to 20 000 characters
+and/or a document link, at least one source (one per line) and the target; the same rate limit
+(5 an hour per IP hash) and honeypot as the correction form.
+
 ## Public JSON
 
 `GET /api/accounts/public` — no token, `accepted` only, most recent visits first, up to

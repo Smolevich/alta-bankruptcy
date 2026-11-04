@@ -1,9 +1,9 @@
 {% extends "base.html" %}
-{% block title %}Слишком много правок{% endblock %}
+{% block title %}{{ limit_title | default("Слишком много правок") }}{% endblock %}
 {% block content %}
 <div class="card">
-  <h1>Слишком много правок подряд</h1>
-  <p class="lead">С одного адреса принимаем не больше пяти правок в час. Попробуйте позже — спасибо, что помогаете.</p>
-  <a class="back" href="{{ return_url }}">← вернуться к странице</a>
+  <h1>{{ limit_title | default("Слишком много правок подряд") }}</h1>
+  <p class="lead">{{ limit_text | default("С одного адреса принимаем не больше пяти правок в час. Попробуйте позже — спасибо, что помогаете.") }}</p>
+  <a class="back" href="{{ return_url }}">{{ back | default("← вернуться к странице") }}</a>
 </div>
 {% endblock %}

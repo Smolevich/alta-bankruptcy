@@ -28,6 +28,11 @@ the server.
 **Correction:** page section, text, source, contact (if given — never published),
 submission time.
 
+**Material proposal** (`/predlozheniya/`, for the depositors' working group): title, text and/or a
+document link, sources, target (site, channel or both), name or handle (if given — never
+published), submission time, and the editor's status, links and comment. Everything except the
+name/handle is visible in the list on that page.
+
 **Account report:** bank, city, branch (if given), personal or sole-proprietor account,
 outcome, visit date, residence status in Serbia (if given), requested documents, comment,
 submission time.
