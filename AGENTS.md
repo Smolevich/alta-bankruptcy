@@ -26,6 +26,9 @@ npm run check        # translations check + build (schema, internal links)
 - **Not on the site:** whether the failure could have been predicted, the bank's financial
   figures, who owns media outlets, chats, depositor verification, Telegram forms, media
   accusations against people. The bank page uses registries only.
+  Owner's exception (04.11.2026): on `/account/stats` a collapsed «Со слов вкладчиков в чатах»
+  block per bank lists account-opening criteria from open depositor chats — no counts, quotes,
+  names or chat titles (`backend/src/alta_feedback/data/bank_criteria.json`).
 - **PDFs open in the on-site viewer from our own copy** (`src/data/pdfs.ts`; the build fails on a
   PDF without one): small files in `public/docs`, AOD documents in the backend archive
   (`/docs/aod/<name>`, one list for the site and the server:

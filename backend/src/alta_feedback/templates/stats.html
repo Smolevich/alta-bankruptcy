@@ -244,6 +244,44 @@
   .pager .more { background: var(--accent); color: var(--accent-ink); }
   .pager .start { flex: 0 1 auto; border: 1.5px solid var(--accent); color: var(--accent); background: var(--surface); }
   .foot { margin-top: 24px; }
+  .case { margin-top: 26px; }
+  .case-form { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; align-items: end; margin: 0 0 10px; }
+  .case-form label { display: block; margin: 0 0 6px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+  .case-form select {
+    display: block; width: 100%; min-width: 0; height: 46px; margin: 0; padding: 0 10px; font: inherit; font-size: 16px;
+    color: var(--ink); background: #fff; border: 1px solid #c9bfa8; border-radius: 4px;
+  }
+  .case-form button { grid-column: 1 / -1; width: auto; margin: 0; min-height: 44px; border-radius: 4px; font-weight: 700; }
+  .case-lead { color: var(--muted); font-size: 14px; line-height: 1.5; margin: 0 0 10px; }
+  .case-lead b { color: var(--ink); }
+  .case-bank { border-top: 1px solid var(--line); }
+  .case-bank > summary { cursor: pointer; padding: 10px 0; display: flex; flex-wrap: wrap; gap: 2px 10px; align-items: baseline; }
+  .case-bank > summary b { color: var(--accent); overflow-wrap: anywhere; }
+  .case-bank > summary span { font-size: 13px; color: var(--muted); }
+  .case-body { padding: 0 0 12px; font-size: 14px; line-height: 1.5; }
+  .case-body h3 { font-size: 14px; margin: 10px 0 4px; }
+  .case-body ul { margin: 0; padding-left: 18px; }
+  .case-body li { overflow-wrap: anywhere; }
+  .marks { list-style: none; padding: 0 !important; display: grid; gap: 3px; }
+  .marks li { display: flex; justify-content: space-between; gap: 8px; }
+  .chip { flex: none; font-size: 12px; padding: 0 8px; border-radius: 99px; white-space: nowrap; border: 1px solid var(--line); color: var(--muted); }
+  .chip.confirmed { background: #e3efe8; border-color: #b5d3c2; color: var(--ok); font-weight: 600; }
+  .chip.two { color: var(--ink); }
+  .official { background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--ok); border-radius: 3px; padding: 8px 12px; margin: 6px 0; }
+  .official p { margin: 0 0 4px; font-weight: 600; }
+  .split { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; background: #fff8e1; border: 1px dashed var(--ink); border-radius: 3px; padding: 8px 12px; margin: 8px 0; }
+  .split p { margin: 0; }
+  .chat { margin-top: 8px; }
+  .chat summary { cursor: pointer; color: var(--accent); }
+  .chat-note { font-size: 13px; color: var(--muted); margin: 4px 0; }
+  .case-links { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 8px; font-size: 13px; }
+  .no-data { color: var(--muted); }
+  @media (min-width: 720px) {
+    .case-form { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; }
+    .case-form button { grid-column: auto; padding: 0 18px; }
+    .split { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+    .split > p:first-child { grid-column: 1 / -1; }
+  }
   @media (min-width: 720px) {
     .site-header { padding: 0 24px; }
     .site-title { font-size: 22px; }
@@ -295,7 +333,7 @@
     <i class="c-opened" style="width: {{ tally.share('opened') }}%"></i><i class="c-refused" style="width: {{ tally.share('refused') }}%"></i><i class="c-pending" style="width: {{ tally.share('pending') }}%"></i>
   </div>
   <div class="group-note">открыли {{ tally.results.opened }} · отказали {{ tally.results.refused }} · в процессе {{ tally.results.pending }}
-    {%- if show_types %} · личный {{ tally.types.personal }}, ИП {{ tally.types.entrepreneur }}{% endif %}</div>
+    {%- if show_types %} · личный {{ tally.with_type('personal') }}, ИП {{ tally.with_type('entrepreneur') }}{% if tally.types.both %} (оба сразу — {{ tally.types.both }}){% endif %}{% endif %}</div>
   {%- if tally.branches %}
   <div class="branches">
     <div class="branches-title">По отделениям (отделение видно, если о нём минимум два ответа)</div>
@@ -311,6 +349,17 @@
 {%- endmacro %}
 {% macro answers(n) -%}
 {%- if n % 10 == 1 and n % 100 != 11 %}ответ{% elif n % 10 in [2, 3, 4] and n % 100 not in [12, 13, 14] %}ответа{% else %}ответов{% endif -%}
+{%- endmacro %}
+{% macro marks(list) -%}
+<ul class="marks">
+  {%- for mark in list %}
+  <li><span>{{ mark.name }}</span><span class="chip {{ mark.level }}">{% if mark.level == 'confirmed' %}подтвердили {{ mark.people }} чел.{% elif mark.level == 'two' %}двое{% else %}один случай{% endif %}</span></li>
+  {%- endfor %}
+</ul>
+{%- endmacro %}
+{% macro hidden_except(names) -%}
+{%- for name, value in filter.query().items() if name not in names %}<input type="hidden" name="{{ name }}" value="{{ value }}">{% endfor %}
+{%- for name, value in case_filter.query().items() if name not in names %}<input type="hidden" name="{{ name }}" value="{{ value }}">{% endfor %}
 {%- endmacro %}
 {% block content %}
 <div class="card stats-card">
@@ -335,6 +384,7 @@
         {%- for code, name in results.items() %}<option value="{{ code }}"{% if filter.result == code %} selected{% endif %}>{{ name }}</option>{% endfor %}</select></div>
     <div class="field"><label for="f-from">Визит с</label><input type="date" id="f-from" name="from" value="{{ filter.date_from or '' }}"></div>
     <div class="field"><label for="f-to">Визит по</label><input type="date" id="f-to" name="to" value="{{ filter.date_to or '' }}"></div>
+    {{ hidden_except(["bank", "city", "result", "from", "to"]) }}
     <div class="filter-actions"><button type="submit">Показать</button>{% if filter.active %}<a class="reset" href="/account/stats">Сбросить</a>{% endif %}</div>
   </form>
   {% if filter.active %}
@@ -351,6 +401,62 @@
     <div class="tile"><b>{{ stats.results.pending }}</b><span>в процессе</span></div>
   </div>
   <div class="legend"><span><i class="dot c-opened"></i>открыли</span><span><i class="dot c-refused"></i>отказали</span><span><i class="dot c-pending"></i>в процессе</span></div>
+
+
+  <section class="case" id="my-case">
+  <h2>Что просили в вашем случае</h2>
+  <form class="case-form" method="get" action="/account/stats#my-case">
+    {{ hidden_except(["case", "vnzh"]) }}
+    <div><label for="c-case">Счёт</label>
+      <select id="c-case" name="case"><option value="">Любой</option>
+        {%- for code, name in cases.items() %}<option value="{{ code }}"{% if case_filter.case == code %} selected{% endif %}>{{ name }}</option>{% endfor %}</select></div>
+    <div><label for="c-vnzh">ВНЖ</label>
+      <select id="c-vnzh" name="vnzh"><option value="">Неважно</option>
+        {%- for code, name in vnzh_options.items() %}<option value="{{ code }}"{% if case_filter.vnzh == code %} selected{% endif %}>{{ name }}</option>{% endfor %}</select></div>
+    <button type="submit">Показать</button>
+  </form>
+  <p class="case-lead">Числа — сколько <b>разных людей</b> отметили это в форме: от трёх — «подтвердили», двое, один случай. «Официально» — правила с сайта банка. Отдельно, свёрнуто — что вкладчики пишут в открытых чатах: это не проверено и без чисел. «Личный и ИП сразу» входит и в личные, и в ИП.</p>
+  {% if not case_cards | selectattr("people") | list %}
+  <p class="no-data">В форме по этому случаю ответов пока нет — нет данных.</p>
+  {% endif %}
+  {% for card in case_cards %}
+  <details class="case-bank"{% if case_cards | length == 1 %} open{% endif %}>
+    <summary><b>{{ card.name }}</b>
+      {%- if card.people %}<span>{{ card.people }} чел. · открыли {{ card.results.opened }} · отказали {{ card.results.refused }} · в процессе {{ card.results.pending }}</span>
+      {%- else %}<span>в форме нет данных</span>{% endif %}</summary>
+    <div class="case-body">
+      {%- for rule in card.official %}
+      <div class="official"><p>Официально: <a href="{{ rule.url }}" rel="noopener noreferrer">{{ rule.title }}</a></p>
+        <ul>{% for line in rule.items %}<li>{{ line }}</li>{% endfor %}</ul></div>
+      {%- endfor %}
+      {%- if card.documents %}
+      <h3>Какие документы просили (по форме)</h3>
+      {{ marks(card.documents) }}
+      {%- elif card.people %}
+      <p class="no-data">Документы в ответах не отмечены.</p>
+      {%- endif %}
+      {%- if card.split %}
+      <div class="split">
+        <p><b>По-разному:</b> открыли {{ card.split.opened }} чел., отказали {{ card.split.refused }} чел. Что просили у тех и у других:</p>
+        <div><p>Открыли</p>{% if card.split.opened_docs %}{{ marks(card.split.opened_docs) }}{% else %}<p class="no-data">документы не отмечены</p>{% endif %}</div>
+        <div><p>Отказали</p>{% if card.split.refused_docs %}{{ marks(card.split.refused_docs) }}{% else %}<p class="no-data">документы не отмечены</p>{% endif %}</div>
+      </div>
+      {%- endif %}
+      {%- if card.chat %}
+      <details class="chat">
+        <summary>Со слов вкладчиков в чатах</summary>
+        <p class="chat-note">Из открытых чатов вкладчиков, на {{ criteria_checked }}. Банк это не подтверждал; в другом отделении может быть иначе.</p>
+        <ul>{% for line in card.chat %}<li>{{ line }}</li>{% endfor %}</ul>
+      </details>
+      {%- endif %}
+      <div class="case-links">
+        {%- if card.people and card.code %}<a href="/account/stats?bank={{ card.code }}#answers">Все ответы по банку ↓</a>{% endif %}
+        {%- if forms_codes.get(card.name) %}<a href="#forms-{{ forms_codes[card.name] }}">Бланки банка ↓</a>{% endif %}
+      </div>
+    </div>
+  </details>
+  {% endfor %}
+  </section>
 
   <h2>По банкам</h2>
   {% for tally in stats.banks %}{{ group(tally, forms_code=forms_codes.get(tally.name)) }}{% endfor %}

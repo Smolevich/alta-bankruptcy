@@ -34,7 +34,10 @@ CITIES: dict[str, str] = {
     "kragujevac": "Крагуевац",
     "subotica": "Суботица",
 }
-ACCOUNT_TYPES: dict[str, str] = {"personal": "Личный", "entrepreneur": "ИП (preduzetnik)"}
+# «Оба сразу» — один визит, две заявки: в сводке такой ответ считается и среди личных, и среди ИП.
+ACCOUNT_TYPES: dict[str, str] = {
+    "personal": "Личный", "entrepreneur": "ИП (preduzetnik)", "both": "Личный и ИП сразу",
+}
 RESULTS: dict[str, str] = {"opened": "Открыли", "refused": "Отказали", "pending": "Ещё в процессе"}
 # Временный и постоянный ВНЖ для банков одно и то же — одним чипом.
 RESIDENCIES: dict[str, str] = {
@@ -165,7 +168,7 @@ def parse_account_form(
     if not city:
         errors.append("Выберите город или впишите свой.")
     if account_type not in ACCOUNT_TYPES:
-        errors.append("Укажите, какой счёт: личный или ИП.")
+        errors.append("Укажите, какой счёт: личный, ИП или оба сразу.")
     if result not in RESULTS:
         errors.append("Укажите, чем закончилось: открыли, отказали или ещё в процессе.")
     if visit_date is None:

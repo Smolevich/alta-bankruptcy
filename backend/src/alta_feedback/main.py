@@ -41,6 +41,7 @@ from alta_feedback.accounts import (
 from alta_feedback.aod_archive import archive_root, load_manifest
 from alta_feedback.bank_forms import catalog, codes_by_name, for_page
 from alta_feedback.branches import BRANCH_MAX, NOT_SURE, branch_options, city_key, directory
+from alta_feedback.cases import CASES, VNZH, case_banks, criteria, criteria_checked, parse_case_filter
 from alta_feedback.nbs import ASSETS, METRICS, SOURCE_URL, snapshot
 from alta_feedback.pow import CHALLENGE_TTL, Challenge, create_challenge, derive_key, verify_payload
 from alta_feedback.site import (
@@ -361,8 +362,10 @@ async def account_thanks(request: Request) -> HTMLResponse:
     return render("account_thanks.html")
 
 
-def stats_url(answer_filter: AnswerFilter, before: str | None = None) -> str:
-    query = urlencode({**answer_filter.query(), **({"before": before} if before else {})})
+def stats_url(
+    answer_filter: AnswerFilter, before: str | None = None, extra: dict[str, str] | None = None
+) -> str:
+    query = urlencode({**answer_filter.query(), **(extra or {}), **({"before": before} if before else {})})
     return f"/account/stats?{query}#answers" if query else "/account/stats#answers"
 
 
@@ -372,7 +375,9 @@ async def account_stats_page(request: Request) -> HTMLResponse:
     answer_filter = parse_filter(request.query_params)
     before = parse_cursor(request.query_params.get("before"))
     counts = store.public_branch_counts()
-    items = store.public_accounts(answer_filter)
+    items = store.public_accounts(answer_filter, with_person=True)
+    case_filter = parse_case_filter(request.query_params)
+    keep = case_filter.query()
     stats = account_stats(items, counts)
     page = answer_page(store.public_accounts(answer_filter, before, PAGE_SIZE + 1), PAGE_SIZE)
     first = shown_before(items, before) + 1
@@ -386,8 +391,10 @@ async def account_stats_page(request: Request) -> HTMLResponse:
         nbs_reported=reported, nbs_others=others, nbs_source=SOURCE_URL,
         banks=BANKS, cities=CITIES, filter=answer_filter, has_any=has_any,
         entries=answer_cards(page.items, counts), first=first, last=first + len(page.items) - 1,
-        next_url=stats_url(answer_filter, page.next_cursor) if page.next_cursor else None,
-        start_url=stats_url(answer_filter) if before else None, page_size=PAGE_SIZE,
+        next_url=stats_url(answer_filter, page.next_cursor, keep) if page.next_cursor else None,
+        start_url=stats_url(answer_filter, extra=keep) if before else None, page_size=PAGE_SIZE,
+        case_filter=case_filter, cases=CASES, vnzh_options=VNZH,
+        case_cards=case_banks(items, case_filter, criteria()), criteria_checked=criteria_checked(),
         bank_forms=for_page(forms, answer_filter.bank), forms_codes=codes_by_name(forms),
     )
 

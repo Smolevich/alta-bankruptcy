@@ -569,3 +569,53 @@ def test_stats_filter_note_shows_dates_in_russian(client):
     seed(client, 3)
     page = client.get("/account/stats", params={"from": "2026-10-05", "to": "2026-10-30"}).text
     assert "· с 05.10.2026 · по 30.10.2026" in page
+
+
+def test_both_accounts_at_once_is_accepted(client):
+    report(client, account_type="both")
+    assert admin_items(client)[0]["account_type"] == "both"
+
+
+def test_form_offers_both_accounts_at_once(client):
+    assert 'name="account_type" value="both"' in client.get("/account").text
+
+
+def test_both_at_once_counts_as_personal_and_entrepreneur(client):
+    report(client, account_type="both")
+    accept_all(client)
+    assert "личный 1, ИП 1 (оба сразу — 1)" in client.get("/account/stats").text
+
+
+def test_my_case_shows_bank_answered_in_that_case(client):
+    report(client, account_type="both", bank="halkbank")
+    accept_all(client)
+    page = client.get("/account/stats", params={"case": "entrepreneur", "vnzh": "yes"}).text
+    assert re.search(r'class="case-bank"[^>]*>\s*<summary><b>Halkbank</b><span>1 чел\.', page)
+
+
+def test_my_case_says_no_data_when_nobody_answered(client):
+    report(client, account_type="personal")
+    accept_all(client)
+    page = client.get("/account/stats", params={"case": "entrepreneur"}).text
+    assert "ответов пока нет — нет данных" in page
+
+
+def test_my_case_shows_official_rules_with_link(client):
+    report(client)
+    accept_all(client)
+    assert "https://www.yettelbank.rs/obavestenje-o-otvaranju" in client.get("/account/stats").text
+
+
+def test_stats_page_never_shows_ip_hash(client):
+    report(client)
+    accept_all(client)
+    ip_hash = admin_items(client)[0]["ip_hash"]
+    assert ip_hash not in client.get("/account/stats").text
+
+
+def test_answer_pages_keep_my_case(client):
+    for n in range(21):
+        report(client, ip=f"203.0.113.{n + 1}")
+    accept_all(client)
+    page = client.get("/account/stats", params={"case": "personal"}).text
+    assert "case=personal" in re.search(r'class="more" href="([^"]+)"', page).group(1)
