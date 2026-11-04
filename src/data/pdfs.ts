@@ -3,6 +3,7 @@
 // поэтому PDF с других сайтов показываем из своей копии: мелкие лежат в public/docs,
 // документы AOD — в архиве бэкенда (/docs/aod/<name>). Список один на сайт и сервер.
 import AOD_ARCHIVE from '../../backend/src/alta_feedback/data/aod_archive.json';
+import { AOD_FORMS } from './aod-forms';
 import { DOCS } from './documents';
 
 /** Копия PDF с сайта AOD (запись backend/src/alta_feedback/data/aod_archive.json). */
@@ -31,6 +32,12 @@ const EXTRA_COPIES: Record<string, string> = {
 		'aod-2014-02-06-obavestenje-izmirivanje-obaveza.pdf',
 };
 
+// AOD выложил бланки только в Word: в просмотре показываем нашу PDF-копию,
+// а ссылка «Оригинал» в просмотре ведёт на Word-файл AOD.
+const WORD_AS_PDF: Record<string, string> = Object.fromEntries(
+	Object.values(AOD_FORMS).map((f) => [f.sourceUrl, `/docs/${f.file}.pdf`]),
+);
+
 const LOCAL_COPY: Record<string, string> = {
 	...Object.fromEntries(DOCS.map((d) => [d.sourceUrl, `/docs/${d.file}`])),
 	...Object.fromEntries(Object.entries(EXTRA_COPIES).map(([url, file]) => [url, `/docs/${file}`])),
@@ -44,8 +51,9 @@ export const isPdf = (url: string) => /\.pdf($|[?#])/i.test(url);
 
 /** Адрес для просмотра на сайте; null — не PDF или документ из NO_COPY. Неизвестный PDF валит сборку. */
 export function viewerSrc(url: string): string | null {
-	if (!isPdf(url)) return null;
 	const [base, hash] = url.split('#');
+	if (WORD_AS_PDF[base]) return WORD_AS_PDF[base];
+	if (!isPdf(url)) return null;
 	const tail = hash ? `#${hash}` : '';
 	if (LOCAL_COPY[base]) return `${LOCAL_COPY[base]}${tail}`;
 	if (base.startsWith('/docs/')) return url;
