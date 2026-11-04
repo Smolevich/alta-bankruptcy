@@ -199,6 +199,35 @@ html, body { overflow-x: clip; }
 .doc-meta dd { margin: 0; overflow-wrap: anywhere; }
 .doc-go { margin-top: auto; font-weight: 700; font-size: 0.9rem; }
 
+/* ---- Бланки AOD (FormCards.astro) ---- */
+.form-cards { list-style: none; margin: 1rem 0 1.6rem; padding: 0; display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr)); align-items: stretch; }
+.form-cards > li { margin: 0 !important; min-width: 0; }
+.form-card { display: flex; flex-wrap: wrap; gap: 0.9rem; height: 100%; box-sizing: border-box; padding: 0.8rem 0.9rem; background: #fffdf7; border: 1px solid var(--line); border-left: 4px solid var(--seal); border-radius: 3px; }
+.form-thumb { flex: none; width: 6.5rem; align-self: flex-start; }
+.form-thumb img { display: block; width: 100%; height: auto; background: #fff; border: 1px solid var(--line); box-shadow: 0 1px 3px rgb(27 36 48 / 0.18); }
+.form-thumb:hover img { border-color: var(--seal); }
+.form-body { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.form-body h3 { margin: 0 0 0.15rem !important; font-size: 1.05rem; line-height: 1.25; }
+.form-orig { margin: 0 0 0.45rem !important; font-size: 0.8rem; color: #5a5448; font-style: italic; line-height: 1.3; }
+.form-what { margin: 0 0 0.7rem !important; font-size: 0.88rem; line-height: 1.4; }
+.form-actions { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-top: auto; }
+.form-btn { display: inline-flex; flex-direction: column; justify-content: center; min-height: 2.75rem; padding: 0.3rem 0.85rem; font: 700 0.92rem/1.2 var(--sl-font-system); color: #fff !important; background: var(--seal); border: 1.5px solid var(--seal); border-radius: 3px; text-decoration: none !important; }
+.form-btn-2 { color: var(--seal) !important; background: #fffdf7; }
+.form-btn-note { font-weight: 400; font-size: 0.72rem; opacity: 0.85; }
+.form-aod { margin-top: 0.5rem; font-size: 0.8rem; color: #5a5448 !important; }
+.form-fields { flex: 1 1 100%; margin: -0.3rem 0 0; padding-top: 0.4rem; border-top: 1px solid var(--line); font-size: 0.88rem; }
+.form-fields summary { cursor: pointer; font-weight: 700; color: var(--seal); padding: 0.3rem 0; }
+.form-fields ul { margin: 0.2rem 0 0.4rem; padding-left: 1.1rem; }
+.form-fields li { margin: 0 0 0.25rem; }
+/* В новостях карточки короче: без пояснения, оно в тексте новости. */
+.form-cards.compact .form-what { display: none; }
+.form-cards.compact .form-thumb { width: 4.5rem; }
+@media (max-width: 420px) {
+	.form-card { gap: 0.7rem; padding: 0.7rem; }
+	.form-thumb { width: 5rem; }
+	.form-btn { flex: 1 1 100%; }
+}
+
 /* ---- Плашка «осторожно» на главной и предупреждение на страницах ---- */
 .safe-strip { margin: 0 0 1.6rem; padding: 0.7rem 1rem; background: #fff8e1; border: 1px dashed var(--ink); border-radius: 3px; font-size: 0.95rem; }
 .safe-strip strong { margin-right: 0.3rem; }

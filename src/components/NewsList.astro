@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 
 import { viewerSrc } from '../data/pdfs';
+import FormCards from './FormCards.astro';
 import { LOCALE_TAG, UI, type Lang } from '../i18n';
 
 const { limit, lang = 'ru' } = Astro.props as { limit?: number; lang?: Lang };
@@ -24,6 +25,7 @@ const fmt = (d: Date) => d.toLocaleDateString(LOCALE_TAG[lang], { timeZone: 'UTC
 				</div>
 				<h3>{n.data.title}</h3>
 				<p>{n.data.summary}</p>
+				{n.data.forms && !limit && <FormCards forms={n.data.forms} lang={lang} fields={false} />}
 				<p class="news-src">
 					{n.data.sources.map((s, i) => (
 						<>

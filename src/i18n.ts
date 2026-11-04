@@ -37,6 +37,7 @@ export const UI = {
 		allSections: 'Все разделы',
 		about: 'Кто делает сайт',
 		lbl: { pdf: 'Открыть PDF', site: 'Открыть на сайте', inner: 'Открыть →' },
+		forms: { label: 'Бланки AOD', open: 'Открыть', word: 'Word, оригинал AOD', aod: 'На сайте AOD', fields: 'Что заполнять', thumb: 'Первая страница бланка', pages: 'стр.' },
 		acct: {
 			title: 'Где открыть счёт для выплаты',
 			blurb: 'Когда AOD объявит дату выплат и отделения банка-плательщика, деньги нужно будет куда-то перевести. Вкладчики делятся, в каких банках получилось открыть личный счёт, счёт ИП или фирмы.',
@@ -80,6 +81,7 @@ export const UI = {
 		allSections: 'All sections',
 		about: 'Who makes this site',
 		lbl: { pdf: 'Open PDF', site: 'Open website', inner: 'Open →' },
+		forms: { label: 'AOD forms', open: 'Open', word: 'Word, AOD original', aod: 'On the AOD website', fields: 'What to fill in', thumb: 'First page of the form', pages: 'pp.' },
 		acct: {
 			title: 'Where to open an account for the payout',
 			blurb: 'Once AOD announces the payout date and the branches of the paying bank, you will need an account to move the money to. Depositors share which banks let them open a personal account and a sole-trader or business account.',
@@ -124,6 +126,7 @@ export const UI = {
 		allSections: 'Svi odeljci',
 		about: 'Ko pravi sajt',
 		lbl: { pdf: 'Otvori PDF', site: 'Otvori sajt', inner: 'Otvori →' },
+		forms: { label: 'Obrasci AOD', open: 'Otvori', word: 'Word, original AOD', aod: 'Na sajtu AOD', fields: 'Šta se popunjava', thumb: 'Prva strana obrasca', pages: 'str.' },
 		acct: {
 			title: 'Gde otvoriti račun za isplatu',
 			blurb: 'Kada AOD objavi datum isplate i ekspoziture banke isplatioca, novac ćete morati negde da prebacite. Štediše dele u kojim bankama su uspele da otvore lični račun i račun preduzetnika ili poslovni račun.',

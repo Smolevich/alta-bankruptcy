@@ -1,0 +1,52 @@
+---
+// Карточки бланков AOD: превью первой страницы и «Открыть» ведут в просмотр PDF на сайте (PdfDialog),
+// «Word» скачивает файл AOD. Данные — src/data/aod-forms.ts; одни и те же карточки на страницах и в новостях.
+import { AOD_FORMS, AOD_FORMS_PAGE, type FormKey } from '../data/aod-forms';
+import { UI, type Lang } from '../i18n';
+
+const { forms, lang = 'ru', fields = true } = Astro.props as { forms: FormKey[]; lang?: Lang; fields?: boolean };
+const t = UI[lang];
+---
+
+<ul class:list={['form-cards not-content', { compact: !fields }]} aria-label={t.forms.label}>
+	{
+		forms.map((key) => {
+			const f = AOD_FORMS[key];
+			const pdf = `/docs/${f.file}.pdf`;
+			const view = { href: pdf, target: '_blank', rel: 'noopener', 'data-pdf': pdf, 'data-title': f.original, 'data-orig': f.sourceUrl };
+			return (
+				<li>
+					<article class="form-card">
+						<a class="form-thumb" {...view} tabindex="-1" aria-hidden="true">
+							<img src={`/img/forms/${f.file}.webp`} width="360" height={f.thumbHeight} alt="" loading="lazy" decoding="async" />
+						</a>
+						<div class="form-body">
+							<h3>{f.title[lang]}</h3>
+							<p class="form-orig" lang="sr-Cyrl">{f.original}</p>
+							<p class="form-what">{f.purpose[lang]}</p>
+							<div class="form-actions">
+								<a class="form-btn" {...view}>
+									{t.forms.open}
+									<span class="form-btn-note">PDF, {f.pages} {t.forms.pages}</span>
+								</a>
+								<a class="form-btn form-btn-2" href={`/docs/${f.file}.${f.word}`} download>
+									{t.forms.word}
+								</a>
+							</div>
+							<a class="form-aod" href={AOD_FORMS_PAGE} target="_blank" rel="noopener">
+								{t.forms.aod}
+								<span class="sr-only"> ({t.newTab})</span>
+							</a>
+						</div>
+						{fields && (
+							<details class="form-fields">
+								<summary>{t.forms.fields}</summary>
+								<ul>{f.fields[lang].map((x) => <li>{x}</li>)}</ul>
+							</details>
+						)}
+					</article>
+				</li>
+			);
+		})
+	}
+</ul>

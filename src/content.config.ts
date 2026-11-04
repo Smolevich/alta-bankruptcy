@@ -37,6 +37,8 @@ export const collections = {
 			summary: z.string().min(20).max(900),
 			// Порядок среди новостей одного дня: больше — выше.
 			order: z.number().default(0),
+			// Бланки AOD, которые показать карточками под новостью (src/data/aod-forms.ts).
+			forms: z.array(z.enum(['prijava', 'fizicka', 'pravna'])).optional(),
 			sources,
 		}),
 	}),
