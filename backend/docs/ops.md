@@ -57,11 +57,15 @@ is never shown there — only in the admin API and the admin page.
 in that tab's `sessionStorage` and goes only into the `Authorization` header. Filter by status,
 new count, and per proposal: status, review link, publication link, editor comment, "Сохранить".
 
-**From the terminal** — the token from Vault, never printed (`secret/alta-feedback/admin_token`,
-login as in `docs/secrets.md` of pet-projects):
+**From the terminal** — the token from Vault (`secret/alta-feedback/admin_token`, field `token`),
+never printed. Vault listens only on the server, so it is read over ssh with the Vault token on
+stdin (the way `docs/secrets.md` of pet-projects describes):
 
 ```bash
-ADMIN_TOKEN=$(vault kv get -field=token secret/alta-feedback/admin_token)
+RT=$(security find-generic-password -s vault-hetzner-root-token -w)
+ADMIN_TOKEN=$(printf '%s' "$RT" | ssh -o ClearAllForwardings=yes bot-server '
+  IFS= read -r VAULT_TOKEN; export VAULT_TOKEN VAULT_ADDR=http://127.0.0.1:8200
+  vault kv get -field=token secret/alta-feedback/admin_token'); unset RT
 
 # new proposals (status: new, in_review, needs_changes, approved, published, rejected, spam)
 printf 'Authorization: Bearer %s\n' "$ADMIN_TOKEN" | curl -fsS -H @- \
