@@ -25,6 +25,8 @@ const EXTRA_COPIES: Record<string, string> = {
 		'aod-2013-godisnji-finansijski-izvestaj.pdf',
 	'https://web.archive.org/web/20160831012046/http://aod.rs/pdf/2014-02-06-uputstvo-za-podnosenje-prijave-potrazivanja.pdf':
 		'aod-2014-02-06-uputstvo-prijava-potrazivanja.pdf',
+	'http://www.bg.pr.sud.rs/docs/dokument_03112026_104425437.pdf':
+		'privredni-sud-2026-11-03-resenje-10-st-275-2026.pdf',
 	'https://web.archive.org/web/20160830213118/http://aod.rs/pdf/2014-02-06-obavestenje-o-nacinu-izmirivanja.pdf':
 		'aod-2014-02-06-obavestenje-izmirivanje-obaveza.pdf',
 };

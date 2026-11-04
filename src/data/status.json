@@ -74,9 +74,9 @@
           "sr": "Prijava potraživanja iznad 50.000 €"
         },
         "when": {
-          "ru": "90 дней со дня публикации в «Службени гласник» (публикации ещё нет)",
-          "en": "90 days from publication in the Official Gazette (not published yet)",
-          "sr": "90 dana od objavljivanja u „Službenom glasniku“ (još nije objavljeno)"
+          "ru": "90 дней со дня публикации в «Службени гласник» — срок из решения суда (публикации ещё нет)",
+          "en": "90 days from publication in the Official Gazette: the deadline is from the court decision (not published yet)",
+          "sr": "90 dana od objavljivanja u „Službenom glasniku“: rok iz rešenja suda (još nije objavljeno)"
         }
       },
       {
