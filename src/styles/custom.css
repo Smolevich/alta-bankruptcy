@@ -239,3 +239,57 @@ html, body { overflow-x: clip; }
 
 /* ---- «Не юридическая консультация» сверху страниц с правовыми сроками ---- */
 .legal-note { display: block; margin: 0 0 1.2rem; padding: 0.5rem 0.8rem; border-left: 3px solid var(--ink); background: #fffdf7; font-size: 0.88rem; color: #3d4652; }
+
+/* ---- Страница «Адвокат»: путь из четырёх шагов, две колонки, схема объединения, чек-лист ---- */
+.adv-lead { font-size: 1.05rem; }
+.adv-path { margin-top: 1.4rem; }
+.adv-path .flow-blurb { margin-bottom: 0; }
+@media (min-width: 1101px) { .adv-path { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (min-width: 641px) and (max-width: 1100px) {
+	.adv-path { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+	.adv-path li:nth-child(2)::after { content: none; }
+}
+.adv-split { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 1rem; margin: 1rem 0 0.8rem; }
+.adv-card { min-width: 0; padding: 0.8rem 1rem; background: #fffdf7; border: 1px solid var(--line); border-top: 4px solid var(--ink); border-radius: 0 0 4px 4px; }
+.adv-card-lawyer { border-top-color: var(--seal); }
+.adv-card-h { margin: 0 0 0.4rem; font: 700 1.1rem/1.2 var(--serif); }
+.adv-card-lawyer .adv-card-h { color: var(--seal); }
+.adv-card a, .adv-check a:not(.adv-btns a) { color: var(--seal); }
+.adv-card ul { margin: 0; padding-left: 1.1rem; font-size: 0.93rem; }
+.adv-card li { margin: 0 0 0.35rem; overflow-wrap: anywhere; }
+.adv-more { margin: 0.5rem 0; padding: 0.5rem 0.8rem; border: 1px solid var(--line); border-radius: 3px; background: #fbf8f0; font-size: 0.93rem; overflow-wrap: anywhere; }
+.adv-more summary { cursor: pointer; font-weight: 700; color: var(--seal); }
+.adv-more[open] summary { margin-bottom: 0.5rem; }
+.adv-team { margin: 1rem 0; padding: 1rem 0.8rem; background: #fffdf7; border: 1px solid var(--line); border-radius: 4px; text-align: center; }
+.adv-team-top { display: inline-block; padding: 0.4rem 1.1rem; background: var(--seal); color: #fff; font: 700 1.05rem/1.2 var(--serif); border-radius: 4px; position: relative; }
+/* Линии от адвоката к вкладчикам: вертикаль вниз и горизонтальная шина над колонками. */
+.adv-team-top::after { content: ''; position: absolute; left: 50%; top: 100%; width: 2px; height: 0.8rem; background: var(--seal); }
+.adv-team-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.6rem; margin-top: 0.8rem; padding-top: 0.8rem; position: relative; }
+.adv-team-row::before { content: ''; position: absolute; top: 0; left: 16.66%; right: 16.66%; height: 2px; background: var(--seal); }
+.adv-team-p { position: relative; min-width: 0; display: flex; flex-direction: column; gap: 0.3rem; padding: 0.55rem 0.4rem; border: 2px solid var(--ink); border-radius: 4px; background: #fff; font-size: 0.8rem; }
+.adv-team-p::before { content: ''; position: absolute; left: 50%; bottom: 100%; width: 2px; height: calc(0.8rem + 2px); background: var(--seal); }
+.adv-team-p strong { font: 700 0.95rem/1.2 var(--serif); }
+.adv-team-p span { padding: 0.15rem 0.3rem; border-radius: 3px; background: var(--seal-soft); line-height: 1.25; overflow-wrap: anywhere; hyphens: auto; }
+.adv-facts { list-style: none; padding: 0; margin: 0.8rem 0; display: grid; gap: 0.5rem; }
+.adv-facts li { margin: 0 !important; padding: 0.5rem 0.8rem; border-left: 4px solid var(--ink); background: #fffdf7; font-size: 0.93rem; overflow-wrap: anywhere; }
+.adv-check { list-style: none; counter-reset: adv; padding: 0; margin: 1rem 0 0.8rem; display: grid; gap: 0.8rem; }
+.adv-check > li { counter-increment: adv; position: relative; margin: 0; padding: 0.8rem 1rem 0.8rem 3.2rem; background: #fffdf7; border: 1px solid var(--line); border-radius: 4px; font-size: 0.93rem; overflow-wrap: anywhere; }
+.adv-check > li::before { content: '✓'; position: absolute; left: 0.9rem; top: 0.8rem; display: grid; place-content: center; width: 1.6rem; height: 1.6rem; border-radius: 50%; background: var(--ok); color: #fff; font-weight: 700; }
+.adv-check p { margin: 0 0 0.4rem; }
+.adv-check p:last-child { margin-bottom: 0; }
+.adv-check-h { font: 700 1.05rem/1.25 var(--serif); }
+.adv-btns { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.adv-btns a { display: inline-block; padding: 0.35rem 0.8rem; border: 1.5px solid var(--seal); border-radius: 3px; background: #fff; color: var(--seal); font-weight: 700; font-size: 0.9rem; text-decoration: none; }
+.adv-btns a:hover, .adv-btns a:focus-visible { background: var(--seal); color: #fff; }
+.adv-look { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.5rem; margin: 0.3rem 0 0; }
+.adv-look div { min-width: 0; padding: 0.4rem 0.5rem; border: 1px dashed var(--ink); border-radius: 3px; background: #fff; }
+.adv-look dt { font-weight: 700; color: var(--seal); }
+.adv-look dd { margin: 0; font-size: 0.85rem; line-height: 1.3; }
+@media (max-width: 520px) {
+	.adv-look { grid-template-columns: 1fr; }
+	.adv-look div { display: flex; gap: 0.5rem; align-items: baseline; }
+	.adv-look dt { flex: none; min-width: 4.6rem; }
+	.adv-team { padding: 0.8rem 0.5rem; }
+	.adv-team-row { gap: 0.4rem; }
+	.adv-team-p { font-size: 0.74rem; padding: 0.45rem 0.3rem; }
+}
