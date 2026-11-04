@@ -241,13 +241,24 @@ html, body { overflow-x: clip; }
 .pdf-dialog { width: 96vw; height: 96vh; max-width: none; max-height: none; padding: 0; border: 2px solid var(--ink); border-radius: 4px; background: #fffdf7; color: var(--ink); overflow: hidden; }
 .pdf-dialog[open] { display: flex; flex-direction: column; }
 .pdf-dialog::backdrop { background: rgb(27 36 48 / 0.72); }
-.pdf-dialog header { display: flex; align-items: center; gap: 1rem; padding: 0.5rem 0.9rem; border-bottom: 1px solid var(--line); }
-.pdf-dialog header strong { flex: 1; font-family: var(--serif); overflow-wrap: anywhere; }
+.pdf-dialog header { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 1rem; padding: 0.5rem 0.9rem; border-bottom: 1px solid var(--line); }
+.pdf-dialog header strong { flex: 1 1 12rem; font-family: var(--serif); overflow-wrap: anywhere; line-height: 1.25; }
+.pdf-links { display: flex; gap: 1rem; }
 .pdf-dialog header a { color: var(--seal); font-weight: 700; white-space: nowrap; }
-.pdf-dialog header button { padding: 0.25rem 0.9rem; font: 700 0.9rem var(--sl-font-system); color: #fff; background: var(--seal); border: 0; border-radius: 3px; cursor: pointer; }
-.pdf-dialog object { flex: 1; width: 100%; min-height: 0; background: #fff; }
-/* На узком экране встроенный просмотр неудобен (iOS показывает одну страницу): остаётся «Открыть PDF». */
-@media (max-width: 767px) { .doc-preview { display: none; } }
+.pdf-dialog header button { min-height: 2.4rem; padding: 0.25rem 0.9rem; font: 700 0.9rem var(--sl-font-system); color: #fff; background: var(--seal); border: 0; border-radius: 3px; cursor: pointer; }
+.pdf-pages { flex: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 0.8rem; background: #6b6658; outline: none; }
+.pdf-pages canvas { display: block; width: 100%; max-width: 60rem; height: auto; margin: 0 auto 0.8rem; background: #fff; box-shadow: 0 1px 4px rgb(0 0 0 / 0.35); }
+.pdf-note { max-width: 40rem; margin: 2rem auto; padding: 1rem; color: #fff; text-align: center; }
+.pdf-note a { color: #fff; font-weight: 700; }
+/* На телефоне просмотр во весь экран: страницы по ширине, листаются вертикально. */
+@media (max-width: 767px) {
+	.pdf-dialog { width: 100vw; height: 100vh; height: 100dvh; margin: 0; inset: 0; border: 0; border-radius: 0; }
+	.pdf-dialog header { padding: 0.45rem 0.7rem; }
+	.pdf-dialog header strong { flex-basis: 100%; font-size: 0.95rem; }
+	.pdf-links { flex: 1; }
+	.pdf-pages { padding: 0.4rem; }
+	.pdf-pages canvas { margin-bottom: 0.4rem; }
+}
 
 .doc-look { margin: 0 0 0.7rem; font-size: 0.85rem; }
 .doc-look strong { display: block; margin-bottom: 0.2rem; color: var(--seal); }

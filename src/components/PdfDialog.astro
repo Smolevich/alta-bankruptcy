@@ -1,52 +1,151 @@
 ---
 // Один просмотр PDF на страницу: его открывает любой элемент с data-pdf (кнопка «Просмотр» в карточках,
-// ссылка на PDF в тексте и в источниках). Без скрипта ссылки ведут на оригинал, кнопки скрыты.
+// ссылка на PDF в тексте и в источниках). Страницы рисует pdf.js канвасами по ширине экрана: встроенный
+// просмотр браузера на iOS (Safari, браузер Telegram) показывает в <object> только первую страницу,
+// а открытый вкладкой PDF выглядит голым файлом. Без скрипта ссылки ведут на файл, кнопки скрыты.
 import { UI, type Lang } from '../i18n';
 
 const { lang = 'ru' } = Astro.props as { lang?: Lang };
 const t = UI[lang];
 ---
 
-<dialog class="pdf-dialog" id="pdf-view">
+<dialog
+	class="pdf-dialog"
+	id="pdf-view"
+	data-loading={t.docs.loading}
+	data-failed={t.docs.failed}
+	data-open-file={t.docs.openFile}
+>
 	<header>
 		<strong></strong>
-		<a href="" target="_blank" rel="noopener">{t.docs.original}<span class="sr-only"> ({t.newTab})</span></a>
+		<span class="pdf-links">
+			<a class="pdf-orig" href="" target="_blank" rel="noopener">{t.docs.original}<span class="sr-only"> ({t.newTab})</span></a>
+			<a class="pdf-down" href="" download>{t.docs.download}</a>
+		</span>
 		<button type="button" data-close>{t.docs.close}</button>
 	</header>
-	<object type="application/pdf"></object>
+	<div class="pdf-pages" tabindex="-1"></div>
 </dialog>
 
-<script is:inline>
-	(() => {
-		const dlg = document.getElementById('pdf-view');
-		if (!dlg || typeof dlg.showModal !== 'function') return;
-		const title = dlg.querySelector('strong');
-		const orig = dlg.querySelector('header a');
-		// На узком экране встроенный просмотр неудобен (iOS показывает одну страницу): PDF открывается вкладкой.
-		const wide = matchMedia('(min-width: 768px)');
-		document.querySelectorAll('button[data-pdf][hidden]').forEach((b) => { b.hidden = false; });
+<script>
+	import type { PDFDocumentProxy } from 'pdfjs-dist/legacy/build/pdf.mjs';
+	import workerSrc from 'pdfjs-dist/legacy/build/pdf.worker.min.mjs?url';
 
-		const show = (el) => {
-			const src = el.dataset.pdf;
-			const obj = dlg.querySelector('object');
-			title.textContent = el.dataset.title || el.textContent.trim();
-			orig.href = el.dataset.orig || el.href;
-			// <object> не перечитывает data на открытом элементе, поэтому каждый раз новый.
-			const fresh = obj.cloneNode(false);
-			fresh.data = `${src}${src.includes('#') ? '&' : '#'}view=FitH`;
-			obj.replaceWith(fresh);
+	// pdf.js тяжёлый: грузим при первом открытии, а не на каждой странице.
+	const loadPdfjs = async () => {
+		const pdfjs = await import('pdfjs-dist/legacy/build/pdf.mjs');
+		pdfjs.GlobalWorkerOptions.workerSrc = workerSrc;
+		return pdfjs;
+	};
+
+	const dlg = document.getElementById('pdf-view') as HTMLDialogElement | null;
+	if (dlg && typeof dlg.showModal === 'function') {
+		const title = dlg.querySelector('strong')!;
+		const orig = dlg.querySelector<HTMLAnchorElement>('.pdf-orig')!;
+		const down = dlg.querySelector<HTMLAnchorElement>('.pdf-down')!;
+		const pages = dlg.querySelector<HTMLDivElement>('.pdf-pages')!;
+		let doc: PDFDocumentProxy | null = null;
+		let observer: IntersectionObserver | null = null;
+		let session = 0;
+
+		document.querySelectorAll<HTMLButtonElement>('button[data-pdf][hidden]').forEach((b) => {
+			b.hidden = false;
+		});
+
+		const message = (text: string, file?: string) => {
+			pages.replaceChildren();
+			const p = document.createElement('p');
+			p.className = 'pdf-note';
+			p.textContent = text;
+			if (file) {
+				const a = document.createElement('a');
+				a.href = file;
+				a.target = '_blank';
+				a.rel = 'noopener';
+				a.textContent = dlg.dataset.openFile ?? file;
+				p.append(' ', a);
+			}
+			pages.append(p);
+		};
+
+		// Рисуем страницу, только когда она рядом с экраном: документы бывают на сотни страниц.
+		const draw = async (canvas: HTMLCanvasElement, n: number, my: number) => {
+			if (!doc || my !== session || canvas.dataset.drawn) return;
+			canvas.dataset.drawn = '1';
+			const page = await doc.getPage(n);
+			if (my !== session) return;
+			const base = page.getViewport({ scale: 1 });
+			const ratio = Math.min(window.devicePixelRatio || 1, 2);
+			const vp = page.getViewport({ scale: (canvas.clientWidth / base.width) * ratio });
+			canvas.width = Math.floor(vp.width);
+			canvas.height = Math.floor(vp.height);
+			await page.render({ canvas, viewport: vp }).promise;
+		};
+
+		const show = async (el: HTMLElement) => {
+			const [src, hash = ''] = (el.dataset.pdf ?? '').split('#');
+			const my = ++session;
+			title.textContent = el.dataset.title || el.textContent?.trim() || '';
+			orig.href = el.dataset.orig || (el as HTMLAnchorElement).href || src;
+			down.href = src;
+			message(dlg.dataset.loading ?? '…');
 			dlg.showModal();
+			pages.focus();
+			try {
+				const pdfjs = await loadPdfjs();
+				const loaded = await pdfjs.getDocument({ url: src, isEvalSupported: false }).promise;
+				if (my !== session) return void loaded.destroy();
+				doc = loaded;
+			} catch {
+				if (my === session) message(dlg.dataset.failed ?? '', src);
+				return;
+			}
+			pages.replaceChildren();
+			observer = new IntersectionObserver(
+				(entries) => {
+					for (const e of entries) {
+						if (!e.isIntersecting) continue;
+						const c = e.target as HTMLCanvasElement;
+						observer?.unobserve(c);
+						draw(c, Number(c.dataset.page), my);
+					}
+				},
+				{ root: pages, rootMargin: '150% 0px' },
+			);
+			// Размер первой страницы задаёт заготовки всех, чтобы прокрутка и #page=N работали до отрисовки.
+			const first = (await doc.getPage(1)).getViewport({ scale: 1 });
+			if (my !== session) return;
+			for (let n = 1; n <= doc.numPages; n++) {
+				const c = document.createElement('canvas');
+				c.dataset.page = String(n);
+				c.style.aspectRatio = `${first.width} / ${first.height}`;
+				c.setAttribute('aria-label', `${n} / ${doc.numPages}`);
+				pages.append(c);
+				observer.observe(c);
+			}
+			const at = Number(new URLSearchParams(hash).get('page'));
+			if (at > 1 && at <= doc.numPages) pages.children[at - 1]?.scrollIntoView();
+		};
+
+		const reset = () => {
+			session++;
+			observer?.disconnect();
+			observer = null;
+			doc?.destroy();
+			doc = null;
+			pages.replaceChildren();
 		};
 
 		document.addEventListener('click', (e) => {
-			const el = e.target.closest('[data-pdf]');
+			const el = (e.target as Element | null)?.closest<HTMLElement>('[data-pdf]');
 			if (!el || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
 			e.preventDefault();
-			if (wide.matches) show(el);
-			else window.open(el.dataset.pdf, '_blank', 'noopener');
+			show(el);
 		});
-		dlg.querySelector('[data-close]').addEventListener('click', () => dlg.close());
-		dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
-		dlg.addEventListener('close', () => dlg.querySelector('object').removeAttribute('data'));
-	})();
+		dlg.querySelector('[data-close]')!.addEventListener('click', () => dlg.close());
+		dlg.addEventListener('click', (e) => {
+			if (e.target === dlg) dlg.close();
+		});
+		dlg.addEventListener('close', reset);
+	}
 </script>
