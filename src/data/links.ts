@@ -120,13 +120,14 @@ export const LINKS: LinkCard[] = [
 		group: 'official',
 		title: { ru: 'Ассоциация банков Сербии', en: 'Association of Serbian Banks', sr: 'Udruženje banaka Srbije' },
 		what: {
-			ru: 'Совет из чата: если не получается открыть счёт в другом банке, обращаться сюда — в ассоциацию входят основные банки Сербии. Наша автоматическая проверка сайт не открыла.',
-			en: 'The association includes the main banks in Serbia; questions about opening accounts at other banks can go through it (advice from the chat). We could not open the site in an automated check.',
-			sr: 'U udruženju su glavne banke u Srbiji; pitanja o otvaranju računa u drugim bankama mogu se uputiti preko njega (savet iz četa). Sajt nismo uspeli da otvorimo automatskom proverom.',
+			ru: 'Объединение всех банков, которые работают в Сербии. На сайте есть список банков с адресами и телефонами и контакты самой ассоциации: usb@ubs-asb.com, +381 11 30 20 760. В чате вкладчиков советуют писать сюда, если другие банки отказывают в открытии счёта.',
+			en: 'The association of all banks operating in Serbia. Its site lists every bank with its address and phone number, plus the association’s own contacts: usb@ubs-asb.com, +381 11 30 20 760. Depositors in the chat suggest writing here if other banks refuse to open an account for you.',
+			sr: 'Udruženje svih banaka koje posluju u Srbiji. Na sajtu su spisak banaka sa adresama i telefonima i kontakti samog udruženja: usb@ubs-asb.com, +381 11 30 20 760. Štediše u četu savetuju da se ovde obratite ako vam druge banke odbiju da otvore račun.',
 		},
-		kind: 'unverified',
+		kind: 'official',
 		url: 'https://www.ubs-asb.com/en',
 		label: 'ubs-asb.com',
+		extra: { url: 'https://www.ubs-asb.com/en/about-us/asb-members', label: { ru: 'Список банков', en: 'List of banks', sr: 'Spisak banaka' } },
 	},
 	{
 		group: 'tools',
