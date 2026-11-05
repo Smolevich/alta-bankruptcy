@@ -12,20 +12,40 @@ sources:
 ---
 
 import Shot from '../../../components/Shot.astro';
+import Collapsible from '../../../components/Collapsible.astro';
 
-<aside class="save-tip not-content">
-<strong>Elektronsko bankarstvo ALTA banke više ne radi</strong>
-<p>Banka u stečaju obaveštava: „Платне услуге и електронски сервиси банке више нису у функцији и сви рачуни клијената су затворени” (<a href="https://altabanka.rs/">altabanka.rs</a>, provereno 05.11.2026). Bez bankarstva koristite ugovore, mejlove banke sa izvodima i SMS poruke o stanju: <a href="#bez-kabineta">šta sačuvati bez bankarstva</a>.</p>
-</aside>
+## Sada: veb-bankarstvo i aplikacija ne rade
 
-Veb-bankarstvo ALTA banke na adresi online.altabanka.rs se ne otvara: provera 05.11.2026 pokazala je u pregledaču „online.altabanka.rs refused to connect” (ERR_CONNECTION_REFUSED), tj. server odbija vezu. Mobilna aplikacija ALTA banke takođe ne uspostavlja vezu sa serverom (provereno 05.11.2026): na ekranu za PIN prikazuje grešku „Error — URLSessionTask failed with error: Could not connect to the server.” Izvodi će vam trebati ako se obračun banke isplatioca ne poklopi i za prijavu potraživanja iznad 50.000 €. Koraci ispod prikupljeni su iz iskustva štediša i mogu da zastare.
+Veb-bankarstvo ALTA banke na adresi online.altabanka.rs se ne otvara: provera 05.11.2026 pokazala je u pregledaču „online.altabanka.rs refused to connect” (ERR_CONNECTION_REFUSED), tj. server odbija vezu. Mobilna aplikacija ALTA banke takođe ne uspostavlja vezu sa serverom (provereno 05.11.2026): na ekranu za PIN prikazuje grešku „Error — URLSessionTask failed with error: Could not connect to the server.” Izvodi će vam trebati ako se obračun banke isplatioca ne poklopi i za prijavu potraživanja iznad 50.000 €.
 
+<div class="shot-pair not-content">
 <Shot lang="sr" name="kabinet-zakryt" alt="Pregledač prikazuje „This site can’t be reached: online.altabanka.rs refused to connect”" w={390} h={844} narrow>Pregledač pri otvaranju online.altabanka.rs, 05.11.2026: server banke odbija vezu (ERR_CONNECTION_REFUSED).</Shot>
 <Shot lang="sr" name="prilozhenie-oshibka" alt="Aplikacija ALTA, ekran za PIN: prozor sa greškom „URLSessionTask failed with error: Could not connect to the server.”" w={416} h={900} narrow>Mobilna aplikacija ALTA, 05.11.2026: greška „Could not connect to the server” na ekranu za PIN.</Shot>
+</div>
+
+Banka u stečaju obaveštava na svom sajtu: „Платне услуге и електронски сервиси банке више нису у функцији и сви рачуни клијената су затворени” ([altabanka.rs](https://altabanka.rs/), provereno 05.11.2026). Nove izvode sada nije moguće preuzeti, zato se oslonite na ono što ste već sačuvali.
 
 Iznos za isplatu računa se prema stanju na dan otvaranja stečaja (03.11.2026), sa kamatom do tog dana ([Zakon o osiguranju depozita, član 16 stav 1](https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2015/14/2/reg)). Zato su potrebni i ugovori i stanja sa datumima.
 
-## Šta sačuvati
+### Šta raditi bez izvoda
+
+- Skupite ono što već imate: ugovore, mejlove ALTA banke sa izvodima ([kako sačuvati mejl u celini](#pisma)), SMS poruke banke o stanju, papirne potvrde, stare PDF-ove i snimke ekrana.
+- Za isplatu do 50.000 € banci isplatiocu treba lični dokument sa fotografijom i original dokumenta o depozitu: ugovor, štedna knjižica, „картица рачуна” ili drugi dokument sa spiska AOD-a ([šta poneti na isplatu](/sr/vyplata/)). Ako nemate ugovor: [šta raditi](/sr/vyplata/#net-dogovora).
+- Za prijavu potraživanja sudu iznad 50.000 €: ugovori, brojevi računa i depozita i izvodi sa stanjem na poslednji dostupan datum ([kako podneti prijavu](/sr/trebovanie/)). Tačan iznos izračunaće AOD.
+
+<span id="bez-kabineta"></span>
+
+Ako nemate pristup: potražite mejlove ALTA banke u pošti (izvodi stižu na e-adresu upisanu u banci), sačuvajte SMS poruke banke o stanju i papirne priznanice. Podrška banke: +381 11 22 05 500, info@altabanka.rs (sada možda ne odgovaraju).
+
+<span id="pisma"></span>
+
+## Mejlove sa izvodima čuvajte u celini
+
+Naš savet: mesečne mejlove ALTA banke čuvajte u celini, a ne samo PDF prilog. U Gmail-u: meni poruke „Preuzmi poruku“ daje .eml datoteku. Originalni mejl obično ima digitalni potpis banke (DKIM) koji potvrđuje da je mejl stigao od banke. PDF prilog sam po sebi to ne dokazuje.
+
+<Collapsible title="Arhiva: šta smo savetovali da sačuvate iz bankarstva (ne radi od 05.11)">
+
+#### Šta sačuvati
 
 - Pasoš, a ako imate boravišnu dozvolu i nju. Banci isplatiocu je potreban dokument sa fotografijom ([procedura AOD, odeljak VIII](https://www.aod.rs/uploads/dokumenti/osigdepoz/pravniokvir/cir/16_pravniokvir.pdf)).
 - Ugovori o tekućem i deviznom računu i ugovor o depozitu; ako nemate papir, PDF iz pošte ili fotografiju.
@@ -36,7 +56,11 @@ Iznos za isplatu računa se prema stanju na dan otvaranja stečaja (03.11.2026),
 - Detalji računa („Detalji računa“), kartice („Kartice“) i krediti („Krediti“): sačuvajte stanje kredita jer se kredit u stečaju ne oprašta.
 - Snimci sa vidljivim datumom (sat telefona ili računara u kadru). Čuvajte ih van telefona: u oblaku ili u pošti.
 
-## Kako izvesti izvode iz veb-bankarstva
+</Collapsible>
+
+<Collapsible title="Arhiva: kako su se preuzimali izvodi iz bankarstva (ne radi od 05.11)">
+
+#### Kako izvesti izvode iz veb-bankarstva
 
 1. Pronađite korisničko ime („Korisničko ime“). U mobilnoj aplikaciji ALTA: profil (ikona osobe), kartica „My data“, polje „Username“. Ne mešajte sa „User's Full Name“ (ime sa razmakom): za prijavu je „Username“.
 2. Uzmite kod bez prijave u aplikaciju: dole kartica „Token“, „OTP Authorization“. Pojavljuje se jednokratni kod od 8 cifara, važi 10 minuta.
@@ -50,23 +74,19 @@ Iznos za isplatu računa se prema stanju na dan otvaranja stečaja (03.11.2026),
    <Shot lang="sr" name="depoziti" alt="Odeljak Depoziti, strana Detalji depozita sa podacima o depozitu" w={560} h={238}>„Depoziti“ u levom meniju (uokvireno), zatim „Detalji depozita“. Broj partije, iznos, kamatna stopa i stanje su zatamnjeni.</Shot>
 6. Odeljak može da odgovori „Dogodila se nepoznata greška“: sačekajte minut i otvorite ponovo. PDF ponekad završi u „Preuzimanja“ bez prozora za preuzimanje.
 
-<span id="bez-kabineta"></span>
+</Collapsible>
 
-Ako nemate pristup: potražite mejlove ALTA banke u pošti (izvodi stižu na e-adresu upisanu u banci), sačuvajte SMS poruke banke o stanju i papirne priznanice. Podrška banke: +381 11 22 05 500, info@altabanka.rs (sada možda ne odgovaraju).
+<Collapsible title="Arhiva: izvodi za preduzetnike i firme preko Corporate i OfficeBanking (posle 05.11 nije provereno)">
 
-## Mejlove sa izvodima čuvajte u celini
-
-Naš savet: mesečne mejlove ALTA banke čuvajte u celini, a ne samo PDF prilog. U Gmail-u: meni poruke „Preuzmi poruku“ daje .eml datoteku. Originalni mejl obično ima digitalni potpis banke (DKIM) koji potvrđuje da je mejl stigao od banke. PDF prilog sam po sebi to ne dokazuje.
-
-## Ako ste preduzetnik ili firma
+#### Ako ste preduzetnik ili firma
 
 Preduzetnici i firme se prijavljuju drugačije, a mnogi nemaju veb-pristup. U nastavku je iskustvo štediša, a ne uputstvo banke: nije potvrđeno da prijava, sinhronizacija i izvoz još rade posle oduzimanja dozvole. Ako ne prolazi, sačuvajte bar snimak ekrana sa računima.
 
-### Veb-bankarstvo Corporate
+##### Veb-bankarstvo Corporate
 
 Adresa: [online.altabanka.rs/Corporate](https://online.altabanka.rs/Corporate). Uključivalo se u filijali, pa ga mnogi nemaju. Lako se proverava: u aplikaciji potražite prekidač između ličnog i poslovnog profila. Ako ga imate, radite kao za lično veb-bankarstvo: kod iz aplikacije (poslovni profil), prijava, izvodi za svaki račun.
 
-### OfficeBanking i čitač kartica
+##### OfficeBanking i čitač kartica
 
 Potreban je računar sa Windows-om: ubacite karticu „eBanking“ u USB čitač, otvorite ALTA OfficeBanking i unesite PIN kartice. Posle prijave odmah pritisnite „Sinhronizuj“ („Синхронизовать“), inače program prikazuje stanje na dan poslednje prijave.
 
@@ -75,6 +95,8 @@ Potreban je računar sa Windows-om: ubacite karticu „eBanking“ u USB čitač
 <Shot lang="sr" name="ip-vypiski" alt="OfficeBanking: levo Svi izvodi, desno spisak izvoda po datumu, dugme Izvezi" w={560} h={420}>Levo „Все выписки“ (Svi izvodi), desno spisak po datumu (ovde 87). Izaberite redove i pritisnite „Экспортировать“ (Izvezi, uokvireno): izvodi se čuvaju kao datoteka. Snimak ruske verzije programa. Brojevi računa i iznosi su zatamnjeni.</Shot>
 
 Pristup je mogao da ima i vaš računovođa: zamolite ga da i on izveze izvode. Sačuvajte isto što i za lične račune: izvode za svaki račun, promet za oktobar, stanja, kredite i neizvršena plaćanja.
+
+</Collapsible>
 
 ## Nikome ne šaljite izvode
 

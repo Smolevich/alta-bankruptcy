@@ -337,3 +337,18 @@ html, body { overflow-x: clip; }
 	.adv-team-row { gap: 0.4rem; }
 	.adv-team-p { font-size: 0.74rem; padding: 0.45rem 0.3rem; }
 }
+
+/* ---- Два скриншота рядом: одинаковая высота, по центру; на телефоне друг под другом ---- */
+.shot-pair { display: flex; justify-content: center; align-items: flex-start; gap: 1.5rem; margin: 1rem 0 1.4rem; }
+.shot-pair .shot { margin: 0; max-width: none; width: min-content; }
+.shot-pair .shot img { height: 26rem; width: auto; max-width: none; }
+@media (max-width: 640px) {
+	.shot-pair { flex-direction: column; align-items: center; }
+	.shot-pair .shot img { height: 24rem; }
+}
+
+/* ---- Collapsible.astro: архив неактуальных инструкций ---- */
+.collapsible { margin: 1rem 0; border: 1px solid var(--line); border-radius: 6px; background: #fffdf7; }
+.collapsible > summary { cursor: pointer; padding: 0.7rem 1rem; font-weight: 600; color: #4a4538; }
+.collapsible[open] > summary { border-bottom: 1px solid var(--line); }
+.collapsible-body { padding: 0.2rem 1rem 0.8rem; }
