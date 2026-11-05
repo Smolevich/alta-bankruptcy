@@ -277,6 +277,7 @@ html, body { overflow-x: clip; }
 .save-tip { margin: 1rem 0 1.5rem; padding: 0.8rem 1rem; border: 2px solid var(--seal); background: var(--seal-soft); border-radius: 4px; }
 .save-tip strong { display: block; margin-bottom: 0.3rem; color: var(--seal); }
 .save-tip p { margin: 0.3rem 0 0; }
+.save-tip a, .save-tip a:visited { color: var(--seal); }
 .shot-row { display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-start; }
 
 /* ---- «Не юридическая консультация» сверху страниц с правовыми сроками ---- */
