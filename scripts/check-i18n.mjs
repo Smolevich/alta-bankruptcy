@@ -65,6 +65,9 @@ for (const lang of LANGS) {
 }
 for (const [name, files] of Object.entries(news)) compare(`news/${name}`, files);
 
+// Перевода интерфейса Starlight для sr-Latn нет в комплекте: без своего файла /sr/ показывает меню по-русски.
+if (!existsSync('src/content/i18n/sr-Latn.json')) errors.push('нет src/content/i18n/sr-Latn.json: интерфейс /sr/ будет по-русски');
+
 if (errors.length) {
 	console.error(errors.map((e) => `✗ ${e}`).join('\n'));
 	process.exit(1);
