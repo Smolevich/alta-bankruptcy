@@ -27,7 +27,8 @@ import ForIp from '../../components/ForIp.astro';
 import Shot from '../../components/Shot.astro';
 import Faq from '../../components/Faq.astro';
 import FormCards from '../../components/FormCards.astro';
-import PrijavaForm from '../../components/PrijavaForm.astro';
+import DocEditor from '../../components/DocEditor.astro';
+import { prijava } from '../../data/forms/prijava';
 
 <aside class="legal-note not-content"><strong>Не юридическая консультация.</strong> Здесь пересказаны законы и официальные сообщения; по своему случаю обращайтесь к адвокату.</aside>
 
@@ -115,7 +116,7 @@ import PrijavaForm from '../../components/PrijavaForm.astro';
 
 <FormCards fill forms={['prijava', 'fizicka', 'pravna']} />
 
-<PrijavaForm />
+<DocEditor doc={prijava} />
 
 **Если нет JMBG.** Как заполнять поле JMBG тем, у кого его нет (например, иностранцам без сербского личного номера), ни в одном из трёх бланков AOD не сказано; суд и AOD отдельно этого тоже пока не объявляли.
 

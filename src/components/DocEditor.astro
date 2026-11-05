@@ -1,0 +1,142 @@
+---
+// Единый редактор документов, заполняемых на сайте: кнопка на странице открывает полноэкранную модалку,
+// слева форма, справа живой предпросмотр PDF (на телефоне — вкладки «Форма / Документ»), сверху
+// «Скачать PDF» и «Закрыть». Всё в браузере: pdf-lib собирает PDF, pdf.js его рисует, на сервер не уходит ничего.
+//
+// Как добавить документ:
+// 1. Сборщик PDF: функция (values, fonts) => Uint8Array в src/lib/ (пример — prijava-pdf.ts), ключ в
+//    src/lib/doc-editor/builders.ts.
+// 2. Описание полей и групп: src/data/forms/<id>.ts по типу DocSpec (src/lib/doc-editor/spec.ts).
+// 3. Тексты ru/en/sr: раздел UI[lang][text] в src/i18n.ts — title, privacy, about, groups, fields.
+// 4. На странице: <DocEditor doc={spec} lang="…" />; ссылка #anchor открывает редактор.
+import { UI, type Lang } from '../i18n';
+import type { DocSpec } from '../lib/doc-editor/spec';
+
+const { doc, lang = 'ru' } = Astro.props as { doc: DocSpec; lang?: Lang };
+const t = UI[lang][doc.text] as unknown as {
+	title: string;
+	privacy: string;
+	about: string;
+	groups: Record<string, string>;
+	fields: Record<string, [string, string]>;
+};
+const e = UI[lang].editor;
+const formId = `de-form-${doc.id}`;
+---
+
+<div
+	class="de not-content"
+	id={doc.anchor}
+	data-doc-editor
+	data-builder={doc.id}
+	data-file-name={doc.fileName}
+	data-font-regular={doc.fonts.regular}
+	data-font-bold={doc.fonts.bold}
+>
+	<button type="button" class="de-start" data-open>{e.start}</button>
+	<dialog class="de-dialog" aria-label={t.title}>
+		<header class="de-bar">
+			<strong>{t.title}</strong>
+			<button type="submit" form={formId} class="de-primary">{e.submit}</button>
+			<button type="button" data-close>{e.close}</button>
+		</header>
+		<div class="de-tabs" role="tablist">
+			<button type="button" role="tab" aria-selected="true" data-tab="form">{e.tabForm}</button>
+			<button type="button" role="tab" aria-selected="false" data-tab="doc">{e.tabDoc}</button>
+		</div>
+		<div class="de-body" data-show="form">
+			<form class="de-form" id={formId}>
+				<p class="de-note">{t.privacy}</p>
+				<p>{t.about}</p>
+				{
+					doc.groups.map((g) => (
+						<fieldset>
+							<legend>{t.groups[g.key]}</legend>
+							{g.fields.map((f) => {
+								const [label, hint] = t.fields[f.name];
+								return (
+									<label>
+										<span>
+											{label} {f.sr && <i lang="sr-Cyrl">({f.sr})</i>}
+										</span>
+										{f.type === 'lines' ? (
+											<textarea name={f.name} data-type="lines" rows="3">{f.value ?? ''}</textarea>
+										) : (
+											<input name={f.name} value={f.value ?? ''} autocomplete="off" />
+										)}
+										{hint && <small>{hint}</small>}
+									</label>
+								);
+							})}
+						</fieldset>
+					))
+				}
+				<p class="de-status" role="status" data-building={e.building} data-done={e.done} data-open={e.openPdf} data-failed={e.failed}></p>
+				<p class="de-local">{e.local}</p>
+			</form>
+			<section class="de-preview" aria-label={e.preview} aria-busy="false">
+				<div class="de-preview-head">
+					<span>{e.preview}</span>
+					<span class="de-updating" hidden>{e.updating}</span>
+				</div>
+				<div class="de-pages"></div>
+			</section>
+		</div>
+	</dialog>
+</div>
+
+<script>
+	import '../lib/doc-editor/client';
+</script>
+
+<style>
+	.de { margin-top: 1.5rem; }
+	.de button { font: inherit; font-weight: 600; cursor: pointer; border-radius: 0.5rem; }
+	.de-start, .de-primary { padding: 0.75rem 1.1rem; border: 0; background: var(--sl-color-accent); color: #fff; }
+	.de-dialog {
+		width: 100vw; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; overflow: hidden;
+		background: var(--sl-color-bg); color: var(--sl-color-text);
+	}
+	.de-dialog[open] { display: grid; grid-template-rows: auto auto 1fr; grid-template-columns: minmax(0, 1fr); }
+	.de-dialog::backdrop { background: rgb(0 0 0 / 0.5); }
+	.de-bar {
+		display: flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1rem;
+		border-bottom: 1px solid var(--sl-color-gray-5); background: var(--sl-color-bg-nav);
+	}
+	.de-bar strong { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+	.de-bar .de-primary { padding: 0.55rem 0.9rem; }
+	.de-bar [data-close] { padding: 0.55rem 0.9rem; border: 1px solid var(--sl-color-gray-4); background: transparent; color: var(--sl-color-text); }
+	.de-tabs { display: flex; gap: 0.25rem; padding: 0.5rem 1rem 0; }
+	.de-tabs button { flex: 1; padding: 0.55rem; border: 1px solid var(--sl-color-gray-5); background: var(--sl-color-bg); color: var(--sl-color-text); }
+	.de-tabs button[aria-selected='true'] { background: var(--sl-color-accent); border-color: var(--sl-color-accent); color: #fff; }
+	.de-body { min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr); }
+	.de-body[data-show='form'] .de-preview, .de-body[data-show='doc'] .de-form { display: none; }
+	.de-form, .de-preview { overflow-y: auto; min-width: 0; padding: 1rem; }
+	.de-form { display: grid; gap: 1rem; align-content: start; }
+	.de-form p { margin: 0; }
+	.de-form fieldset { display: grid; gap: 0.9rem; border: 0; margin: 0; padding: 0; min-width: 0; }
+	.de-form legend { font-weight: 700; font-size: 1.05rem; margin-bottom: 0.5rem; padding: 0; }
+	.de-form label { display: grid; gap: 0.25rem; }
+	.de-form label span { font-weight: 600; }
+	.de-form i, .de-form small { color: var(--sl-color-gray-3); }
+	.de-form i { font-weight: 400; }
+	.de-form input, .de-form textarea {
+		font: inherit; padding: 0.55rem 0.65rem; border: 1px solid var(--sl-color-gray-4);
+		border-radius: 0.4rem; background: var(--sl-color-bg); color: var(--sl-color-text); width: 100%;
+	}
+	.de-note { background: var(--sl-color-accent-low); padding: 0.6rem 0.8rem; border-radius: 0.4rem; }
+	.de-local { font-size: 0.9rem; color: var(--sl-color-gray-3); }
+	.de-preview { background: var(--sl-color-gray-6); }
+	.de-preview-head { display: flex; justify-content: space-between; gap: 0.5rem; font-weight: 600; margin-bottom: 0.75rem; }
+	.de-updating { color: var(--sl-color-text-accent); }
+	.de-pages { display: grid; gap: 1rem; max-width: 60rem; margin: 0 auto; }
+	.de-pages :global(canvas) { width: 100%; height: auto; display: block; background: #fff; box-shadow: 0 1px 6px rgb(0 0 0 / 0.3); }
+	.de-preview[aria-busy='true'] .de-pages { opacity: 0.6; transition: opacity 0.2s; }
+	@media (min-width: 1024px) {
+		.de-tabs { display: none; }
+		.de-body { grid-template-columns: 2fr 3fr; }
+		.de-body[data-show] .de-form, .de-body[data-show] .de-preview { display: grid; align-content: start; }
+		.de-form { border-right: 1px solid var(--sl-color-gray-5); padding: 1.25rem 1.5rem; }
+		.de-preview { padding: 1.25rem 2rem; }
+	}
+</style>
