@@ -207,6 +207,8 @@ jobs:
             exit 1
           fi
 
+          # Вход в админку предложений через Cloudflare Access: домен команды, aud приложения и email
+          # админов — не секреты, лежат в переменных репозитория (backend/docs/ops.md).
           TMP_ENV=$(sudo mktemp "$APP_DIR/.env.XXXXXX")
           sudo chmod 600 "$TMP_ENV"
           cat << EOF | sudo tee "$TMP_ENV" > /dev/null
@@ -214,6 +216,9 @@ jobs:
           ADMIN_TOKEN=$ADMIN_TOKEN
           IP_SALT=$IP_SALT
           APP_VERSION=${{ needs.preflight.outputs.version }}
+          CF_ACCESS_TEAM_DOMAIN=${{ vars.CF_ACCESS_TEAM_DOMAIN }}
+          CF_ACCESS_AUD=${{ vars.CF_ACCESS_AUD }}
+          ADMIN_EMAILS=${{ vars.ADMIN_EMAILS }}
           EOF
           sudo mv -f "$TMP_ENV" "$APP_DIR/.env"
 
@@ -238,6 +243,9 @@ jobs:
           curl -fsS -o /dev/null -w 'account stats %{http_code}\n' "http://127.0.0.1:$PORT/account/stats"
           code=$(curl -sS -o /dev/null -w '%{http_code}' "http://127.0.0.1:$PORT/admin/suggestions")
           echo "admin without token $code"
+          [ "$code" = 401 ]
+          code=$(curl -sS -o /dev/null -w '%{http_code}' "http://127.0.0.1:$PORT/admin/proposals")
+          echo "proposals admin without login $code"
           [ "$code" = 401 ]
           systemctl is-active --quiet alta-aod-check.timer
           systemctl show -p ExecStart alta-aod-check.service | grep -q /opt/alta-bankruptcy/
