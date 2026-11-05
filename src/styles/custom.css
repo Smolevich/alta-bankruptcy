@@ -145,6 +145,7 @@ html, body { overflow-x: clip; }
 .sources ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.35rem; }
 .sources li { display: grid; grid-template-columns: auto 1fr auto; gap: 0.5rem; align-items: baseline; margin: 0; }
 .sources a { overflow-wrap: anywhere; }
+.sources .src-copy { font-size: 0.8rem; color: #5a5448; }
 .sources time { color: #5a5448; font-size: 0.8rem; white-space: nowrap; }
 .kind { font-size: 0.7rem; padding: 0.05rem 0.4rem; border-radius: 3px; border: 1px solid; white-space: nowrap; }
 .kind-official { color: var(--ok); }
@@ -378,16 +379,7 @@ html, body { overflow-x: clip; }
 	.assets { background: none; }
 }
 
-/* ---- Страница «Что есть у банка»: блок «коротко» сверху и три колонки оценки ---- */
+/* ---- Страница «Что есть у банка»: блок «коротко» сверху ---- */
 .assets-lead { margin: 0 0 1.2rem; padding: 0.8rem 1rem; background: #fffdf7; border: 2px solid var(--ink); border-radius: 4px; box-shadow: 4px 4px 0 var(--seal-soft); }
 .assets-lead ul { margin: 0; padding-left: 1.1rem; }
 .assets-lead li { margin: 0 0 0.3rem; }
-.assets-guess { margin: 0.6rem 0 0.8rem; padding: 0.35rem 0.8rem; border-left: 4px solid var(--seal); background: var(--seal-soft); font-weight: 700; }
-.assets-odds { display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: 0.8rem; margin: 0.8rem 0; }
-.assets-odds > div { min-width: 0; padding: 0.7rem 0.9rem; background: #fffdf7; border: 1px solid var(--line); border-top: 4px solid var(--ok); border-radius: 0 0 4px 4px; font-size: 0.93rem; }
-.sl-markdown-content .assets-odds > div { margin-top: 0; }
-.assets-odds > div.mid { border-top-color: #b07d1a; }
-.assets-odds > div.low { border-top-color: var(--seal); }
-.assets-odds h3 { margin: 0 0 0.4rem; font: 700 1.05rem/1.25 var(--serif); }
-.assets-odds ul { margin: 0; padding-left: 1.1rem; }
-.assets-odds li { margin: 0 0 0.35rem; overflow-wrap: anywhere; }

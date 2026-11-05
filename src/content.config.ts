@@ -12,6 +12,12 @@ const source = z.object({
 	url: z.string().url(),
 	kind: z.enum(SOURCE_KINDS),
 	date: z.coerce.date(),
+	// Официальные сайты удаляют и переносят файлы: рядом с оригиналом — наша копия PDF
+	// (/docs/…) или снимок страницы в веб-архиве.
+	copy: z
+		.string()
+		.regex(/^(\/docs\/|https:\/\/web\.archive\.org\/web\/|https:\/\/archive\.ph\/)/, 'Копия: /docs/… или ссылка на веб-архив')
+		.optional(),
 });
 // Строка на трёх языках: пропуск любого языка ломает сборку.
 const loc = z.object({ ru: z.string(), en: z.string(), sr: z.string() });

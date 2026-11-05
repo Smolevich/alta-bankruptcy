@@ -24,7 +24,7 @@ const norm = (v) => JSON.stringify(v);
 
 function sourcesKey(data) {
 	const date = (d) => (d instanceof Date ? d.toISOString().slice(0, 10) : String(d));
-	return norm((data.sources ?? []).map((s) => [s.url, s.kind, date(s.date)]));
+	return norm((data.sources ?? []).map((s) => [s.url, s.kind, date(s.date), s.copy ?? null]));
 }
 
 function compare(group, files) {

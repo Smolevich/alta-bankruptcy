@@ -32,6 +32,7 @@ export const UI = {
 	ru: {
 		sources: 'Источники',
 		checked: 'сверено',
+		sourceCopy: 'копия',
 		official: 'Официальный источник',
 		reliable_media: 'Надёжное СМИ',
 		unverified: 'Не подтверждено',
@@ -122,6 +123,7 @@ export const UI = {
 	en: {
 		sources: 'Sources',
 		checked: 'checked',
+		sourceCopy: 'copy',
 		official: 'Official source',
 		reliable_media: 'Reliable media',
 		unverified: 'Unverified',
@@ -212,6 +214,7 @@ export const UI = {
 	sr: {
 		sources: 'Izvori',
 		checked: 'provereno',
+		sourceCopy: 'kopija',
 		official: 'Zvanični izvor',
 		reliable_media: 'Pouzdani mediji',
 		unverified: 'Nepotvrđeno',
