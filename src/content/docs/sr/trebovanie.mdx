@@ -20,12 +20,14 @@ sources:
   - { title: "AOD, Univerzal banka: poziv poveriocima za dostavljanje instrukcija", url: "https://www.aod.rs/uploads/dokumenti/oglas/19_1_oglas.pdf", kind: official, date: 2020-08-31 }
   - { title: "AOD: obrasci za deponente Alta banke (prijava potraživanja, ovlašćenja)", url: "https://www.aod.rs/clan/altabanka/obrasci_altabanka", kind: official, date: 2026-11-04 }
   - { title: "AOD: pitanja i odgovori o Alta banci u stečaju", url: "https://www.aod.rs/clan/altabanka/pitanja_odgovori_altabanka", kind: official, date: 2026-11-04 }
+  - { title: "Uprava za javni dug: lista ovlašćenih učesnika (matični broj i PIB Alta banke)", url: "https://www.javnidug.gov.rs/static/uploads/Lista%20ovlascenih%20ucesnika_cir.pdf", kind: official, date: 2025-05-07 }
 ---
 
 import ForIp from '../../../components/ForIp.astro';
 import Shot from '../../../components/Shot.astro';
 import Faq from '../../../components/Faq.astro';
 import FormCards from '../../../components/FormCards.astro';
+import PrijavaForm from '../../../components/PrijavaForm.astro';
 
 <aside class="legal-note not-content"><strong>Ovo nije pravni savet.</strong> Ovde su prepričani zakoni i zvanična saopštenja; za svoj slučaj obratite se advokatu.</aside>
 
@@ -109,7 +111,9 @@ Ovlašćeno lice može da raspolaže sredstvima do visine osiguranog iznosa i da
 
 **Obrasci AOD.** AOD je objavila tri obrasca: obrazac prijave potraživanja, ovlašćenje za fizičko lice i ovlašćenje za pravno lice. Svi su na ćirilici; prijava je naslovljena na Privredni sud u Beogradu, a ovlašćenja omogućavaju drugom licu da preuzme osigurani iznos do 50.000 €. Šta se popunjava, navedeno je ispod svake kartice.
 
-<FormCards lang="sr" forms={['prijava', 'fizicka', 'pravna']} />
+<FormCards fill lang="sr" forms={['prijava', 'fizicka', 'pravna']} />
+
+<PrijavaForm lang="sr" />
 
 **Ako nemate JMBG.** Kako popuniti polje JMBG ako ga nemate (na primer stranac bez srpskog matičnog broja), nije navedeno ni u jednom od tri obrasca AOD; sud i AOD to ni posebno još nisu objavili.
 

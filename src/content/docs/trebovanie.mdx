@@ -20,12 +20,14 @@ sources:
   - { title: "AOD, Univerzal banka: призыв к кредиторам прислать реквизиты", url: "https://www.aod.rs/uploads/dokumenti/oglas/19_1_oglas.pdf", kind: official, date: 2020-08-31 }
   - { title: "AOD: формы для вкладчиков ALTA (образец требования, бланки доверенности)", url: "https://www.aod.rs/clan/altabanka/obrasci_altabanka", kind: official, date: 2026-11-04 }
   - { title: "AOD: вопросы и ответы по ALTA banka в банкротстве", url: "https://www.aod.rs/clan/altabanka/pitanja_odgovori_altabanka", kind: official, date: 2026-11-04 }
+  - { title: "Управа за јавни дуг: список участников рынка госбумаг (МБ и ПИБ ALTA banka)", url: "https://www.javnidug.gov.rs/static/uploads/Lista%20ovlascenih%20ucesnika_cir.pdf", kind: official, date: 2025-05-07 }
 ---
 
 import ForIp from '../../components/ForIp.astro';
 import Shot from '../../components/Shot.astro';
 import Faq from '../../components/Faq.astro';
 import FormCards from '../../components/FormCards.astro';
+import PrijavaForm from '../../components/PrijavaForm.astro';
 
 <aside class="legal-note not-content"><strong>Не юридическая консультация.</strong> Здесь пересказаны законы и официальные сообщения; по своему случаю обращайтесь к адвокату.</aside>
 
@@ -111,7 +113,9 @@ import FormCards from '../../components/FormCards.astro';
 
 **Бланки AOD.** AOD выложил три формы: образец требования в суд, доверенность для физлица и доверенность для юрлица. Все на сербском, кириллицей; требование адресовано Хозяйственному суду Белграда, доверенности нужны для получения страховки до 50 000 € другим человеком. Что заполнять в каждом — под карточкой.
 
-<FormCards forms={['prijava', 'fizicka', 'pravna']} />
+<FormCards fill forms={['prijava', 'fizicka', 'pravna']} />
+
+<PrijavaForm />
 
 **Если нет JMBG.** Как заполнять поле JMBG тем, у кого его нет (например, иностранцам без сербского личного номера), ни в одном из трёх бланков AOD не сказано; суд и AOD отдельно этого тоже пока не объявляли.
 
