@@ -58,24 +58,54 @@ export default defineConfig({
 			},
 			plugins: [// /account отдаёт сервис из backend/, в сборке Astro его страниц нет.
 				starlightLinksValidator({ errorOnRelativeLinks: false, exclude: ['/account', '/account/**'] })],
+			// Сверху действия, справка — в свёрнутых группах; «Как помочь» (/pomoch/) живёт в подвале.
 			sidebar: [
-				{ label: 'Сейчас', slug: 'index', translations: { en: 'Now', 'sr-Latn': 'Sada' } },
-				{ label: 'Процедура и сроки', slug: 'procedura', translations: { en: 'Procedure and timeline', 'sr-Latn': 'Postupak i rokovi' } },
-				{ label: 'Выплата до 50 000 €', slug: 'vyplata', translations: { en: 'Payout up to €50,000', 'sr-Latn': 'Isplata do 50.000 €' } },
-				{ label: 'Требование сверх 50 000 €', slug: 'trebovanie', translations: { en: 'Claim above €50,000', 'sr-Latn': 'Prijava potraživanja iznad 50.000 €' } },
-				{ label: 'Вопросы и ответы', slug: 'voprosy', translations: { en: 'Questions and answers', 'sr-Latn': 'Pitanja i odgovori' } },
-				{ label: 'Что сохранить: выписки и документы', slug: 'vypiski', translations: { en: 'What to save: statements and documents', 'sr-Latn': 'Šta sačuvati: izvodi i dokumenta' } },
-				{ label: 'Как не попасть на мошенников', slug: 'bezopasnost', translations: { en: 'Stay safe: avoid scams', 'sr-Latn': 'Bezbednost: kako da izbegnete prevaru' } },
-				{ label: 'Новости', slug: 'novosti', translations: { en: 'News', 'sr-Latn': 'Vesti' } },
-				{ label: 'Кейсы вкладчиков', slug: 'kejsy', translations: { en: 'Depositor cases', 'sr-Latn': 'Slučajevi štediša' } },
-				{ label: 'Как было: Univerzal 2014 и другие', slug: 'kak-bylo', translations: { en: 'Past cases: Univerzal 2014 and others', 'sr-Latn': 'Raniji slučajevi: Univerzal 2014 i drugi' } },
-				{ label: 'Банк: владелец и руководство', slug: 'bank', translations: { en: 'The bank: owner and management', 'sr-Latn': 'Banka: vlasnik i rukovodstvo' } },
-				{ label: 'Документы банка', slug: 'dokumenty', translations: { en: 'Bank documents', 'sr-Latn': 'Dokumenta banke' } },
-				{ label: 'Законы', slug: 'zakony', translations: { en: 'Laws', 'sr-Latn': 'Zakoni' } },
-				{ label: 'Как помочь и править', slug: 'pomoch', translations: { en: 'How to help and correct', 'sr-Latn': 'Kako pomoći i ispraviti' } },
-				{ label: 'Полезные ссылки и помощь', slug: 'ssylki', translations: { en: 'Useful links and help', 'sr-Latn': 'Korisni linkovi i pomoć' } },
-				// Страница отдаётся сервисом формы, не Starlight: обычная ссылка (валидатор её пропускает через exclude).
-				{ label: 'Где открывают счета', link: '/account/stats', translations: { en: 'Where accounts get opened', 'sr-Latn': 'Gde se otvaraju računi' } },
+				{ label: 'Что сейчас', slug: 'index', translations: { en: 'What is happening now', 'sr-Latn': 'Šta se sada dešava' } },
+				{
+					label: 'Что делать',
+					translations: { en: 'What to do', 'sr-Latn': 'Šta da radite' },
+					collapsed: false,
+					items: [
+						{ label: 'Получить до 50 000 €', slug: 'vyplata', translations: { en: 'Get up to €50,000', 'sr-Latn': 'Preuzmite do 50.000 €' } },
+						{ label: 'Подать требование сверх 50 000 €', slug: 'trebovanie', translations: { en: 'File a claim above €50,000', 'sr-Latn': 'Prijavite potraživanje iznad 50.000 €' } },
+						// Страница отдаётся сервисом формы, не Starlight: обычная ссылка (валидатор её пропускает через exclude).
+						{ label: 'Где открыть счёт для выплаты', link: '/account/stats', translations: { en: 'Where to open an account for the payout', 'sr-Latn': 'Gde otvoriti račun za isplatu' } },
+						{ label: 'Банк отказал в счёте: куда жаловаться', slug: 'otkaz-scheta', translations: { en: 'Account refused: where to complain', 'sr-Latn': 'Odbijen račun: gde se žaliti' } },
+						{ label: 'Какие документы сохранить', slug: 'vypiski', translations: { en: 'Which documents to keep', 'sr-Latn': 'Koja dokumenta sačuvati' } },
+					],
+				},
+				{
+					label: 'Сроки и вопросы',
+					translations: { en: 'Timeline and questions', 'sr-Latn': 'Rokovi i pitanja' },
+					collapsed: false,
+					items: [
+						{ label: 'Вопросы и ответы', slug: 'voprosy', translations: { en: 'Questions and answers', 'sr-Latn': 'Pitanja i odgovori' } },
+						{ label: 'Сроки банкротства', slug: 'procedura', translations: { en: 'Bankruptcy timeline', 'sr-Latn': 'Rokovi stečaja' } },
+						{ label: 'Новости', slug: 'novosti', translations: { en: 'News', 'sr-Latn': 'Vesti' } },
+						{ label: 'Осторожно: мошенники', slug: 'bezopasnost', translations: { en: 'Beware of scams', 'sr-Latn': 'Oprez: prevare' } },
+						{ label: 'Как было с Univerzal (2014)', slug: 'kak-bylo', translations: { en: 'How it went with Univerzal (2014)', 'sr-Latn': 'Kako je bilo sa Univerzal bankom (2014)' } },
+					],
+				},
+				{
+					label: 'От вкладчиков',
+					translations: { en: 'From depositors', 'sr-Latn': 'Od štediša' },
+					collapsed: true,
+					items: [
+						{ label: 'Кейсы вкладчиков', slug: 'kejsy', translations: { en: 'Depositor cases', 'sr-Latn': 'Slučajevi štediša' } },
+						{ label: 'Адвокат: как выбрать и проверить', slug: 'advokat', translations: { en: 'Lawyer: how to choose and check', 'sr-Latn': 'Advokat: kako izabrati i proveriti' } },
+						{ label: 'Чаты и помощь', slug: 'ssylki', translations: { en: 'Chats and help', 'sr-Latn': 'Četovi i pomoć' } },
+					],
+				},
+				{
+					label: 'Справка',
+					translations: { en: 'Reference', 'sr-Latn': 'Informacije' },
+					collapsed: true,
+					items: [
+						{ label: 'Банк: владелец и руководство', slug: 'bank', translations: { en: 'The bank: owner and management', 'sr-Latn': 'Banka: vlasnik i rukovodstvo' } },
+						{ label: 'Документы банка', slug: 'dokumenty', translations: { en: 'Bank documents', 'sr-Latn': 'Dokumenta banke' } },
+						{ label: 'Законы', slug: 'zakony', translations: { en: 'Laws', 'sr-Latn': 'Zakoni' } },
+					],
+				},
 			],
 		}),
 	],
