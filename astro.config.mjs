@@ -102,6 +102,7 @@ export default defineConfig({
 					collapsed: true,
 					items: [
 						{ label: 'Банк: владелец и руководство', slug: 'bank', translations: { en: 'The bank: owner and management', 'sr-Latn': 'Banka: vlasnik i rukovodstvo' } },
+						{ label: 'Что есть у банка', slug: 'imushchestvo-banka', translations: { en: 'What the bank owns', 'sr-Latn': 'Šta banka ima' } },
 						{ label: 'Документы банка', slug: 'dokumenty', translations: { en: 'Bank documents', 'sr-Latn': 'Dokumenta banke' } },
 						{ label: 'Законы', slug: 'zakony', translations: { en: 'Laws', 'sr-Latn': 'Zakoni' } },
 					],
