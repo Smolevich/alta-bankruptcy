@@ -1,0 +1,52 @@
+---
+// Таблица активов банка на 30.06.2026: на широком экране — таблица, на телефоне — карточки
+// (на узком экране таблица иначе уходит в горизонтальную прокрутку).
+import { ASSETS_PDF, ASSETS_TOTAL, ASSET_ROWS, EUR_RATE } from '../data/bank-assets';
+import { LOCALE_TAG, type Lang } from '../i18n';
+
+const { lang = 'ru' } = Astro.props as { lang?: Lang };
+const T = {
+	ru: { caption: 'Активы ALTA banka на 30.06.2026', item: 'Статья', rsd: 'млн динаров', eur: 'млн €', share: 'Доля', total: 'Всего активов', src: 'Источник: раскрытие информации за I полугодие 2026, с. 12', rate: 'Евро — по среднему курсу Нацбанка на 30.06.2026' },
+	en: { caption: 'ALTA banka assets at 30.06.2026', item: 'Item', rsd: 'RSD m', eur: '€ m', share: 'Share', total: 'Total assets', src: 'Source: disclosure for H1 2026, p. 12', rate: 'Euro at the central bank middle rate on 30.06.2026' },
+	sr: { caption: 'Aktiva ALTA banke na dan 30.06.2026.', item: 'Pozicija', rsd: 'mil. RSD', eur: 'mil. €', share: 'Udeo', total: 'Ukupna aktiva', src: 'Izvor: objavljivanje podataka za I polugodište 2026, str. 12', rate: 'Evro po srednjem kursu NBS na dan 30.06.2026.' },
+}[lang];
+
+const loc = LOCALE_TAG[lang];
+const mln = (k: number) => Math.round(k / 1000).toLocaleString(loc);
+const eur = (k: number) => (k / 1000 / EUR_RATE).toLocaleString(loc, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+const pct = (k: number) => `${((k / ASSETS_TOTAL) * 100).toLocaleString(loc, { minimumFractionDigits: 1, maximumFractionDigits: 1 })} %`;
+const rate = EUR_RATE.toLocaleString(loc, { minimumFractionDigits: 4 });
+---
+
+<table class="assets not-content">
+	<caption>{T.caption}</caption>
+	<thead>
+		<tr><th scope="col">{T.item}</th><th scope="col">{T.rsd}</th><th scope="col">{T.eur}</th><th scope="col">{T.share}</th></tr>
+	</thead>
+	<tbody>
+		{
+			ASSET_ROWS.map((r) => (
+				<tr>
+					<th scope="row">
+						{r.label[lang]}
+						<span class="assets-note">{r.note[lang]}</span>
+					</th>
+					<td data-label={T.rsd}>{mln(r.thousandRsd)}</td>
+					<td data-label={T.eur}>{eur(r.thousandRsd)}</td>
+					<td data-label={T.share}>{pct(r.thousandRsd)}</td>
+				</tr>
+			))
+		}
+	</tbody>
+	<tfoot>
+		<tr>
+			<th scope="row">{T.total}</th>
+			<td data-label={T.rsd}>{mln(ASSETS_TOTAL)}</td>
+			<td data-label={T.eur}>{eur(ASSETS_TOTAL)}</td>
+			<td data-label={T.share}>100 %</td>
+		</tr>
+	</tfoot>
+</table>
+<p class="assets-src">
+	<a href={ASSETS_PDF} target="_blank" rel="noopener" data-pdf={ASSETS_PDF}>{T.src}</a>. {T.rate} ({rate}).
+</p>
