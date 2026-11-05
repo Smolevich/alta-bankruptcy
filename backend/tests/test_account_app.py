@@ -63,14 +63,18 @@ def test_form_defaults_visit_date_to_today(client):
     assert f'value="{TODAY}"' in client.get("/account").text
 
 
+def script_sources(client: TestClient, path: str) -> list[str]:
+    csp = client.get(path).headers["content-security-policy"]
+    directives = (d.split() for d in csp.split(";") if d.strip())
+    return next(tokens[1:] for tokens in directives if tokens[0] == "script-src")
+
+
 def test_form_allows_only_own_script(client):
-    csp = client.get("/account").headers["content-security-policy"]
-    assert "script-src 'self'" in csp and "static.cloudflareinsights.com" in csp
+    assert sorted(script_sources(client, "/account")) == ["'self'", "https://static.cloudflareinsights.com"]
 
 
 def test_suggestion_form_still_has_no_scripts(client):
-    csp = client.get("/").headers["content-security-policy"]
-    assert "script-src https://static.cloudflareinsights.com;" in csp
+    assert script_sources(client, "/") == ["https://static.cloudflareinsights.com"]
 
 
 def test_voice_script_is_served(client):
