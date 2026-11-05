@@ -619,3 +619,20 @@ def test_answer_pages_keep_my_case(client):
     accept_all(client)
     page = client.get("/account/stats", params={"case": "personal"}).text
     assert "case=personal" in re.search(r'class="more" href="([^"]+)"', page).group(1)
+
+
+def test_form_has_site_header_linking_home(client):
+    assert '<a class="site-title" href="/">Вкладчики ALTA: что дальше</a>' in client.get("/account").text
+
+
+def test_thanks_page_has_site_header(client):
+    assert 'class="site-header"' in client.get("/account/spasibo").text
+
+
+def test_form_uses_site_accent_not_old_blue(client):
+    page = client.get("/account").text
+    assert ("--accent: #9b2c22" in page, "#1f5f8b" in page) == (True, False)
+
+
+def test_stats_page_has_exactly_one_site_header(client):
+    assert client.get("/account/stats").text.count('class="site-header"') == 1
