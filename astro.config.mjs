@@ -74,7 +74,6 @@ export default defineConfig({
 				{ label: 'Законы', slug: 'zakony', translations: { en: 'Laws', 'sr-Latn': 'Zakoni' } },
 				{ label: 'Как помочь и править', slug: 'pomoch', translations: { en: 'How to help and correct', 'sr-Latn': 'Kako pomoći i ispraviti' } },
 				{ label: 'Полезные ссылки и помощь', slug: 'ssylki', translations: { en: 'Useful links and help', 'sr-Latn': 'Korisni linkovi i pomoć' } },
-				{ label: 'Банк отказал в счёте: куда жаловаться', slug: 'otkaz-scheta', translations: { en: 'Account refused: where to complain', 'sr-Latn': 'Odbijen račun: gde se žaliti' } },
 				// Страница отдаётся сервисом формы, не Starlight: обычная ссылка (валидатор её пропускает через exclude).
 				{ label: 'Где открывают счета', link: '/account/stats', translations: { en: 'Where accounts get opened', 'sr-Latn': 'Gde se otvaraju računi' } },
 			],
