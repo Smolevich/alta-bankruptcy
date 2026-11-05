@@ -11,7 +11,11 @@ WorkingDirectory=/opt/alta-bankruptcy
 # ботов, откуда hetzner-offsite-backup уносит его в R2 (шифрованно).
 Environment=DATA_DIR=/opt/alta-feedback/data
 Environment=AOD_BACKUP_DIR=/var/backups/bots/alta-aod
+# Тем же запуском — tar.gz фото и PDF из картотеки кейсов (data/case-files): база в ночном бэкапе
+# ботов, а файлы рядом с ней туда не попадают.
+Environment=CASES_BACKUP_DIR=/var/backups/bots/alta-cases
 ExecStart=/opt/alta-bankruptcy/.venv/bin/python -m alta_feedback.aod_archive
+ExecStart=/opt/alta-bankruptcy/.venv/bin/python -m alta_feedback.uploads
 TimeoutStartSec=45min
 Nice=10
 IOSchedulingClass=idle

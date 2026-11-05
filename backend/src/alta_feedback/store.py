@@ -9,6 +9,7 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 from alta_feedback.accounts import AccountReport
+from alta_feedback.casebook import CaseReport
 from alta_feedback.proposals import PUBLIC_STATUSES, Proposal
 from alta_feedback.stats import AnswerFilter
 from alta_feedback.validate import Suggestion
@@ -69,6 +70,38 @@ CREATE TABLE IF NOT EXISTS proposals (
 CREATE INDEX IF NOT EXISTS proposals_ip_time ON proposals (ip_hash, created_at);
 CREATE INDEX IF NOT EXISTS proposals_time ON proposals (created_at);
 
+CREATE TABLE IF NOT EXISTS case_stories (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at TEXT NOT NULL,
+    category TEXT NOT NULL,
+    summary TEXT NOT NULL,
+    filed TEXT NOT NULL,
+    result TEXT NOT NULL,
+    event_date TEXT NOT NULL,
+    sources TEXT NOT NULL,
+    own_url TEXT NOT NULL,
+    contact TEXT NOT NULL,
+    ip_hash TEXT NOT NULL,
+    user_agent_short TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'new',
+    published INTEGER NOT NULL DEFAULT 0,
+    files_published INTEGER NOT NULL DEFAULT 0,
+    comment TEXT NOT NULL DEFAULT '',
+    updated_at TEXT
+);
+CREATE INDEX IF NOT EXISTS case_stories_ip_time ON case_stories (ip_hash, created_at);
+CREATE INDEX IF NOT EXISTS case_stories_time ON case_stories (created_at);
+
+CREATE TABLE IF NOT EXISTS case_files (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    case_id INTEGER NOT NULL REFERENCES case_stories (id),
+    created_at TEXT NOT NULL,
+    name TEXT NOT NULL UNIQUE,
+    kind TEXT NOT NULL,
+    bytes INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS case_files_case ON case_files (case_id);
+
 CREATE TABLE IF NOT EXISTS pow_used (
     challenge TEXT PRIMARY KEY,
     expires_at INTEGER NOT NULL
@@ -98,7 +131,13 @@ COLUMNS = {
         "user_agent_short", "status", "review_url", "published_url", "comment", "updated_at",
         "text_format", "edited_text",
     ),
+    "case_stories": (
+        "id", "created_at", "category", "summary", "filed", "result", "event_date", "sources", "own_url",
+        "contact", "ip_hash", "user_agent_short", "status", "published", "files_published", "comment",
+        "updated_at",
+    ),
 }
+CASE_FILE_COLUMNS = ("case_id", "name", "kind", "bytes")
 # Автор, его контакт и следы браузера в публичный список не попадают.
 PUBLIC_PROPOSAL_COLUMNS = (
     "id", "created_at", "title", "text", "doc_url", "sources", "target", "status",
@@ -220,6 +259,85 @@ class Store:
         )
         with self.connect() as db:
             return [decode_row(row) for row in db.execute(query, (*PUBLIC_STATUSES, limit))]
+
+    def add_case(
+        self, item: CaseReport, files: list[tuple[str, str, int]], ip_hash: str, user_agent: str,
+        now: datetime,
+    ) -> int:
+        """Кейс и его файлы (имя, вид, байты) одной транзакцией; сами файлы уже лежат на диске."""
+        with self.connect() as db:
+            cur = db.execute(
+                "INSERT INTO case_stories (created_at, category, summary, filed, result, event_date, sources,"
+                " own_url, contact, ip_hash, user_agent_short) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (iso(now), item.category, item.summary, item.filed, item.result, item.event_date,
+                 json.dumps(list(item.sources)), item.own_url, item.contact, ip_hash, user_agent),
+            )
+            case_id = int(cur.lastrowid or 0)
+            db.executemany(
+                "INSERT INTO case_files (case_id, created_at, name, kind, bytes) VALUES (?, ?, ?, ?, ?)",
+                [(case_id, iso(now), name, kind, size) for name, kind, size in files],
+            )
+            return case_id
+
+    def case_files(self, case_ids: list[int] | None = None) -> dict[int, list[dict]]:
+        """Файлы по кейсам; None — все."""
+        query = f"SELECT {', '.join(CASE_FILE_COLUMNS)} FROM case_files"
+        args: list[int] = []
+        if case_ids is not None:
+            query += f" WHERE case_id IN ({', '.join('?' for _ in case_ids)})"
+            args = case_ids
+        out: dict[int, list[dict]] = {}
+        with self.connect() as db:
+            for row in db.execute(query + " ORDER BY id", args):
+                out.setdefault(row["case_id"], []).append(dict(row))
+        return out
+
+    def case_of_file(self, name: str) -> dict | None:
+        query = (
+            "SELECT s.id, s.status, s.published, s.files_published FROM case_files f"
+            " JOIN case_stories s ON s.id = f.case_id WHERE f.name = ?"
+        )
+        with self.connect() as db:
+            row = db.execute(query, (name,)).fetchone()
+            return dict(row) if row else None
+
+    def files_from(self, ip_hash: str, now: datetime, window: timedelta) -> int:
+        """Сколько файлов прислали с этого хэша IP за окно — лимит загрузок отдельно от лимита кейсов."""
+        query = (
+            "SELECT COUNT(*) FROM case_files f JOIN case_stories s ON s.id = f.case_id"
+            " WHERE s.ip_hash = ? AND f.created_at > ?"
+        )
+        with self.connect() as db:
+            return int(db.execute(query, (ip_hash, iso(now - window))).fetchone()[0])
+
+    def public_cases(self, limit: int) -> list[dict]:
+        """Только принятые и отмеченные к публикации, свежие события сверху."""
+        query = (
+            f"SELECT {', '.join(COLUMNS['case_stories'])} FROM case_stories"
+            " WHERE status = 'accepted' AND published = 1 ORDER BY event_date DESC, id DESC LIMIT ?"
+        )
+        with self.connect() as db:
+            return [decode_row(row) for row in db.execute(query, (limit,))]
+
+    def update_case(self, item_id: int, changes: dict[str, str | int], now: datetime) -> bool:
+        """changes — уже проверенные поля (casebook.EDITOR_FIELDS)."""
+        assignments = ", ".join(f"{column} = ?" for column in changes)
+        with self.connect() as db:
+            cur = db.execute(
+                f"UPDATE case_stories SET {assignments}, updated_at = ? WHERE id = ?",
+                (*changes.values(), iso(now), item_id),
+            )
+            return cur.rowcount == 1
+
+    def delete_case(self, item_id: int) -> list[str] | None:
+        """Удаляет кейс и строки его файлов; возвращает имена файлов, чтобы стереть их с диска."""
+        with self.connect() as db:
+            rows = db.execute("SELECT name FROM case_files WHERE case_id = ?", (item_id,))
+            names = [row[0] for row in rows]
+            db.execute("DELETE FROM case_files WHERE case_id = ?", (item_id,))
+            if db.execute("DELETE FROM case_stories WHERE id = ?", (item_id,)).rowcount != 1:
+                return None
+            return names
 
     def recent_from(
         self, ip_hash: str, now: datetime, window: timedelta, table: str = "suggestions"

@@ -67,6 +67,7 @@ export default defineConfig({
 				{ label: 'Что сохранить: выписки и документы', slug: 'vypiski', translations: { en: 'What to save: statements and documents', 'sr-Latn': 'Šta sačuvati: izvodi i dokumenta' } },
 				{ label: 'Как не попасть на мошенников', slug: 'bezopasnost', translations: { en: 'Stay safe: avoid scams', 'sr-Latn': 'Bezbednost: kako da izbegnete prevaru' } },
 				{ label: 'Новости', slug: 'novosti', translations: { en: 'News', 'sr-Latn': 'Vesti' } },
+				{ label: 'Кейсы вкладчиков', slug: 'kejsy', translations: { en: 'Depositor cases', 'sr-Latn': 'Slučajevi štediša' } },
 				{ label: 'Как было: Univerzal 2014 и другие', slug: 'kak-bylo', translations: { en: 'Past cases: Univerzal 2014 and others', 'sr-Latn': 'Raniji slučajevi: Univerzal 2014 i drugi' } },
 				{ label: 'Банк: владелец и руководство', slug: 'bank', translations: { en: 'The bank: owner and management', 'sr-Latn': 'Banka: vlasnik i rukovodstvo' } },
 				{ label: 'Документы банка', slug: 'dokumenty', translations: { en: 'Bank documents', 'sr-Latn': 'Dokumenta banke' } },

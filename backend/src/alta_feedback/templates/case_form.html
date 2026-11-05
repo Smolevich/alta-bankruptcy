@@ -1,0 +1,66 @@
+<div class="card">
+  <h1>{{ c.case_title }}</h1>
+  <p class="lead">{{ c.case_lead }}</p>
+  {% if case_sent %}<p class="sent" role="status">{{ c.case_sent.format(case_sent) }}</p>{% endif %}
+  <p class="acct">{{ c.account_note }} <a href="/account">{{ c.account_form }}</a> · <a href="/account/stats">{{ c.account_stats }}</a></p>
+
+  {% if errors %}
+  <div class="errors" role="alert" style="margin-top: 14px">{% for e in errors %}<p>{{ e }}</p>{% endfor %}</div>
+  {% endif %}
+  <form method="post" action="{{ case_action }}" enctype="multipart/form-data">
+    <fieldset>
+      <legend>{{ c.f_category }}</legend>
+      <div class="choice col">
+        {% for code in categories %}
+        <label><input type="radio" name="category" value="{{ code }}" required{% if values.category == code %} checked{% endif %}> {{ c.categories[code] }}</label>
+        {% endfor %}
+      </div>
+    </fieldset>
+
+    <label for="summary">{{ c.f_summary }}<span class="hint">{{ c.f_summary_hint.format(summary_max) }}</span></label>
+    <textarea id="summary" name="summary" maxlength="{{ summary_max }}" required>{{ values.summary or '' }}</textarea>
+
+    <label for="filed">{{ c.f_filed }}<span class="hint">{{ c.f_filed_hint }}</span></label>
+    <textarea class="short" id="filed" name="filed" maxlength="{{ filed_max }}">{{ values.filed or '' }}</textarea>
+
+    <label for="result">{{ c.f_result }}<span class="hint">{{ c.f_result_hint }}</span></label>
+    <textarea class="short" id="result" name="result" maxlength="{{ result_max }}" required>{{ values.result or '' }}</textarea>
+
+    <label for="event_date">{{ c.f_date }}<span class="hint">{{ c.f_date_hint }}</span></label>
+    <input type="date" id="event_date" name="event_date" min="2000-01-01" max="{{ today }}" required value="{{ values.event_date or '' }}">
+
+    <label for="case_sources">{{ c.f_sources }}<span class="hint">{{ c.f_sources_hint }}</span></label>
+    <textarea class="short" id="case_sources" name="sources">{{ values.sources or '' }}</textarea>
+
+    <label for="own_url">{{ c.f_own_url }}<span class="hint">{{ c.f_own_url_hint }}</span></label>
+    <input type="text" id="own_url" name="own_url" maxlength="{{ url_max }}" inputmode="url" placeholder="https://…" value="{{ values.own_url or '' }}">
+
+    <label for="files">{{ c.f_files }}<span class="hint">{{ c.f_files_hint.format(files_max, file_mb, total_mb) }}</span></label>
+    <input type="file" id="files" name="files" multiple accept="image/jpeg,image/png,image/heic,image/heif,.heic,.heif,application/pdf">
+    <p class="warn">{{ c.files_warning }}{% if errors %} {{ c.files_again }}{% endif %}</p>
+
+    <label for="case_contact">{{ c.f_contact }}<span class="hint">{{ c.f_contact_hint }}</span></label>
+    <input type="text" id="case_contact" name="contact" maxlength="{{ contact_max }}" autocomplete="off" value="{{ values.contact or '' }}">
+
+    <div class="trap" aria-hidden="true">
+      <label for="website">{{ t.trap }}</label>
+      <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+    </div>
+
+    <div id="pow" class="pow" data-state="idle" data-algorithm="{{ pow.algorithm }}"
+         data-challenge="{{ pow.challenge }}" data-salt="{{ pow.salt }}" data-signature="{{ pow.signature }}"
+         data-maxnumber="{{ pow.maxnumber }}" data-ttl="{{ pow_ttl }}" data-texts="{{ c.pow | tojson | forceescape }}">
+      <input type="hidden" name="altcha" value="">
+      <div id="pow-box" class="pow-box" role="checkbox" aria-checked="false" tabindex="0"
+           aria-labelledby="pow-text" aria-describedby="pow-hint">
+        <span class="pow-mark" aria-hidden="true"></span>
+        <span id="pow-text" class="pow-text" aria-live="polite">{{ c.pow.label }}</span>
+        <span class="pow-note">{% for part in c.pow.note.split("<br>") %}{{ part }}{% if not loop.last %}<br>{% endif %}{% endfor %}</span>
+      </div>
+      <p id="pow-hint" class="pow-hint" aria-live="polite"><noscript>{{ c.pow.nojs }}</noscript></p>
+    </div>
+
+    <p class="note">{{ c.case_public_note }}</p>
+    <button type="submit">{{ c.case_submit }}</button>
+  </form>
+</div>

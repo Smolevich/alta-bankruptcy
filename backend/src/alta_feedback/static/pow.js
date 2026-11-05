@@ -9,6 +9,16 @@
   const form = root && root.closest("form");
   const button = form && form.querySelector("button[type=submit]");
   if (!root || !box || !text || !hint || !field || !form) return;
+  // Подписи на языке страницы приходят в data-texts; без него — русские, как на /account.
+  const T = {
+    label: "Я не робот", working: "Проверяем…", done: "Проверено",
+    expired: "Проверка устарела — отметьте «Я не робот» ещё раз.",
+    unsupported: "Браузер не умеет проверку — откройте страницу в Chrome или Safari.",
+    failed: "Проверка не прошла — отметьте ещё раз или обновите страницу.",
+    waiting: "Секунду, проверка ещё идёт — отправим сразу после неё.",
+    required: "Отметьте «Я не робот» — без этого форма не отправится.",
+    ...JSON.parse(root.dataset.texts || "{}"),
+  };
 
   const BATCH = 500;
   // Мелькнувший за долю секунды спиннер выглядит как сбой, а не как проверка.
@@ -62,17 +72,17 @@
 
   const expire = () => {
     field.value = "";
-    setState("idle", "Я не робот", "Проверка устарела — отметьте «Я не робот» ещё раз.");
+    setState("idle", T.label, T.expired);
     root.dataset.attention = "";
   };
 
   const verify = async () => {
     if (root.dataset.state === "working" || root.dataset.state === "done") return;
     if (!window.crypto || !crypto.subtle) {
-      setState("error", "Я не робот", "Браузер не умеет проверку — откройте страницу в Chrome или Safari.");
+      setState("error", T.label, T.unsupported);
       return;
     }
-    setState("working", "Проверяем…");
+    setState("working", T.working);
     const started = performance.now();
     let current;
     let number = null;
@@ -86,12 +96,12 @@
     if (left > 0) await new Promise((resolve) => setTimeout(resolve, left));
     if (number === null) {
       submitWhenDone = false;
-      setState("error", "Я не робот", "Проверка не прошла — отметьте ещё раз или обновите страницу.");
+      setState("error", T.label, T.failed);
       return;
     }
     const { algorithm, challenge, salt, signature } = current;
     field.value = btoa(JSON.stringify({ algorithm, challenge, number, salt, signature }));
-    setState("done", "Проверено");
+    setState("done", T.done);
     clearTimeout(expiryTimer);
     expiryTimer = setTimeout(expire, Math.max(0, current.deadline - Date.now()));
     if (submitWhenDone) form.requestSubmit ? form.requestSubmit() : form.submit();
@@ -109,15 +119,15 @@
     event.preventDefault();
     if (root.dataset.state === "working") {
       submitWhenDone = true;
-      hint.textContent = "Секунду, проверка ещё идёт — отправим сразу после неё.";
+      hint.textContent = T.waiting;
       return;
     }
     if (root.dataset.state === "done") expire();
-    else hint.textContent = "Отметьте «Я не робот» — без этого форма не отправится.";
+    else hint.textContent = T.required;
     root.dataset.attention = "";
     box.focus();
     box.scrollIntoView({ block: "center", behavior: "smooth" });
   });
 
-  setState("idle", "Я не робот");
+  setState("idle", T.label);
 })();
