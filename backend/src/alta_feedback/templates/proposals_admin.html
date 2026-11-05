@@ -10,8 +10,7 @@
   .bar h1 { margin: 0; }
   .count { font-size: 14px; color: var(--muted); }
   .count b { color: var(--accent); font-size: 16px; }
-  .login { display: flex; gap: 8px; flex-wrap: wrap; }
-  .login input { flex: 1 1 220px; }
+  .ghost-link { font-size: 15px; }
   button { width: auto; margin: 0; min-height: 40px; padding: 0 16px; font-size: 15px; }
   button.ghost { background: transparent; color: var(--accent); border: 1px solid var(--line); }
   select { font: inherit; font-size: 15px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 4px; background: #fff; color: var(--ink); }
@@ -49,12 +48,6 @@
   <span class="count" id="count" hidden>новых: <b id="new-count">0</b> · всего: <span id="total">0</span></span>
 </div>
 
-<form class="card login" id="login">
-  <label for="token" style="flex-basis: 100%; margin: 0">Админ-токен<span class="hint">Хранится только в этой вкладке и уходит в заголовке запроса</span></label>
-  <input type="password" id="token" autocomplete="off" required>
-  <button type="submit">Войти</button>
-</form>
-
 <div id="panel" hidden>
   <div class="bar">
     <div class="tools">
@@ -65,7 +58,7 @@
       </select>
       <button type="button" class="ghost" id="reload">Обновить</button>
     </div>
-    <button type="button" class="ghost" id="logout">Выйти</button>
+    <a class="ghost-link" href="/cdn-cgi/access/logout">Выйти</a>
   </div>
   <div class="rows" id="rows"></div>
 </div>
