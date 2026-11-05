@@ -18,7 +18,9 @@ import Shot from '../../../components/Shot.astro';
 <p>Banka u stečaju obaveštava: „Платне услуге и електронски сервиси банке више нису у функцији и сви рачуни клијената су затворени” (<a href="https://altabanka.rs/">altabanka.rs</a>, provereno 05.11.2026). Bez bankarstva koristite ugovore, mejlove banke sa izvodima i SMS poruke o stanju: <a href="#bez-kabineta">šta sačuvati bez bankarstva</a>.</p>
 </aside>
 
-Veb-bankarstvo ALTA banke može da prestane da radi u bilo kom trenutku. Izvodi će vam trebati ako se obračun banke isplatioca ne poklopi i za prijavu potraživanja iznad 50.000 €. Koraci ispod prikupljeni su iz iskustva štediša i mogu da zastare: server banke nekad odgovara, a nekad ne.
+Veb-bankarstvo ALTA banke na adresi online.altabanka.rs se ne otvara: provera 05.11.2026 pokazala je u pregledaču „online.altabanka.rs refused to connect” (ERR_CONNECTION_REFUSED), tj. server odbija vezu. Mobilna aplikacija ALTA banke takođe ne uspostavlja vezu sa serverom (provereno 05.11.2026): na ekranu za PIN prikazuje grešku „Error — URLSessionTask failed with error: Could not connect to the server.” Izvodi će vam trebati ako se obračun banke isplatioca ne poklopi i za prijavu potraživanja iznad 50.000 €. Koraci ispod prikupljeni su iz iskustva štediša i mogu da zastare.
+
+<Shot lang="sr" name="kabinet-zakryt" alt="Pregledač prikazuje „This site can’t be reached: online.altabanka.rs refused to connect”" w={390} h={844} narrow>Pregledač pri otvaranju online.altabanka.rs, 05.11.2026: server banke odbija vezu (ERR_CONNECTION_REFUSED).</Shot>
 
 Iznos za isplatu računa se prema stanju na dan otvaranja stečaja (03.11.2026), sa kamatom do tog dana ([Zakon o osiguranju depozita, član 16 stav 1](https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2015/14/2/reg)). Zato su potrebni i ugovori i stanja sa datumima.
 
