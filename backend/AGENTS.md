@@ -24,7 +24,8 @@ and pages are in Russian; issues and PRs may be in English, Serbian or Russian.
   write-up links to (`data/aod_archive.json`, served at `/docs/aod/<name>`, checked daily);
   `proposals.py` material proposals from the working group at `/predlozheniya/` (ru/en/sr,
   noindex, public list without the author's contact) and their admin page
-  `/predlozheniya/admin/` (`static/proposals-admin.js`, token in `sessionStorage`); `bank_forms.py` blank account-opening forms per bank and what the bank asks, a block below the
+  `/predlozheniya/admin/` (`static/proposals-admin.js`; sign-in through Cloudflare Access, the
+  service re-checks the Access JWT in `cf_access.py`, Bearer still works); `bank_forms.py` blank account-opening forms per bank and what the bank asks, a block below the
   answers on the stats page (`data/bank_forms.json`; the PDFs are the site's `public/docs/banks`,
   metadata stripped; an official form needs an https `source_url`).
   `cases.py` the «Что просили в вашем случае» block on the stats page: filter by account

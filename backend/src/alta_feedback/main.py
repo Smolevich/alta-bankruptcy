@@ -1,4 +1,4 @@
-"""Форма правок и анонимные отчёты об открытии счетов для страницы про ALTA; чтение токеном."""
+"""Формы и админка для страницы про ALTA; админ-API — по токену, админка предложений — и через Access."""
 
 import hmac
 import os
@@ -10,6 +10,7 @@ from zoneinfo import ZoneInfo
 
 from jinja2 import Environment, PackageLoader, select_autoescape
 from starlette.applications import Starlette
+from starlette.concurrency import run_in_threadpool
 from starlette.middleware import Middleware
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
@@ -42,6 +43,8 @@ from alta_feedback.aod_archive import archive_root, load_manifest
 from alta_feedback.bank_forms import catalog, codes_by_name, for_page
 from alta_feedback.branches import BRANCH_MAX, NOT_SURE, branch_options, city_key, directory
 from alta_feedback.cases import CASES, VNZH, case_banks, criteria, criteria_checked, parse_case_filter
+from alta_feedback.cf_access import HEADER as ACCESS_HEADER
+from alta_feedback.cf_access import AccessConfig, AccessKeys, admin_email, config_from_env
 from alta_feedback.nbs import ASSETS, METRICS, SOURCE_URL, snapshot
 from alta_feedback.pow import CHALLENGE_TTL, Challenge, create_challenge, derive_key, verify_payload
 from alta_feedback.site import (
@@ -133,7 +136,7 @@ STATS_PAGE_HEADERS = {
 
 # Страница предложений — служебная для рабочей группы: в поиск не попадает и ссылкам вес не передаёт.
 NOINDEX = {"X-Robots-Tag": "noindex, nofollow"}
-# Админке нужен свой скрипт и запросы к /admin/proposals со своего адреса; токен живёт в sessionStorage.
+# Админке нужен свой скрипт и запросы к /admin/proposals со своего адреса; вход — Cloudflare Access.
 PROPOSALS_ADMIN_HEADERS = {
     **NOINDEX,
     "Content-Security-Policy": (
@@ -229,10 +232,25 @@ async def thanks(request: Request) -> HTMLResponse:
     return render("thanks.html", section_id=clean_section_id(request.query_params.get("s")))
 
 
-def authorized(request: Request) -> bool:
+def bearer_ok(request: Request) -> bool:
     expected = request.app.state.admin_token
     given = request.headers.get("authorization", "").removeprefix("Bearer ").strip()
     return bool(expected) and hmac.compare_digest(given.encode(), expected.encode())
+
+
+async def access_ok(request: Request) -> bool:
+    """Вход через Cloudflare Access: подписанный токен команды с email из списка админов."""
+    config, token = request.app.state.access, request.headers.get(ACCESS_HEADER, "")
+    if config is None or not token:
+        return False
+    keys = request.app.state.access_keys
+    email = await run_in_threadpool(admin_email, token, config, keys, keys.clock())
+    return email is not None
+
+
+async def authorized(request: Request, via_access: bool = False) -> bool:
+    """Bearer-токен — для мониторов и терминала; Access — только там, где он стоит перед сервисом."""
+    return bearer_ok(request) or (via_access and await access_ok(request))
 
 
 def parse_since(raw: str | None) -> str | None:
@@ -248,9 +266,11 @@ def parse_since(raw: str | None) -> str | None:
     return moment.astimezone(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
-def admin_list(table: str, statuses: frozenset[str]) -> Callable[[Request], Awaitable[JSONResponse]]:
+def admin_list(
+    table: str, statuses: frozenset[str], via_access: bool = False
+) -> Callable[[Request], Awaitable[JSONResponse]]:
     async def handler(request: Request) -> JSONResponse:
-        if not authorized(request):
+        if not await authorized(request, via_access):
             return JSONResponse({"error": "unauthorized"}, status_code=401)
         since = parse_since(request.query_params.get("since"))
         if since is None:
@@ -266,7 +286,7 @@ def admin_list(table: str, statuses: frozenset[str]) -> Callable[[Request], Awai
 
 def admin_set_status(table: str, statuses: frozenset[str]) -> Callable[[Request], Awaitable[JSONResponse]]:
     async def handler(request: Request) -> JSONResponse:
-        if not authorized(request):
+        if not await authorized(request):
             return JSONResponse({"error": "unauthorized"}, status_code=401)
         try:
             status = (await request.json()).get("status")
@@ -479,16 +499,16 @@ def to_slash(path: str) -> Callable[[Request], Awaitable[Response]]:
 
 
 async def proposals_admin_page(request: Request) -> HTMLResponse:
-    """Оболочка без данных: предложения скрипт берёт из /admin/proposals с токеном из поля."""
+    """Оболочка без данных: предложения скрипт берёт из /admin/proposals, вход — Cloudflare Access."""
     return render(
         "proposals_admin.html", headers=PROPOSALS_ADMIN_HEADERS, t=proposals.TEXTS["ru"],
         statuses=proposals.STATUSES, targets=proposals.TARGETS, url_max=proposals.URL_MAX,
-        comment_max=proposals.COMMENT_MAX,
+        comment_max=proposals.COMMENT_MAX, access_on=request.app.state.access is not None,
     )
 
 
 async def admin_update_proposal(request: Request) -> JSONResponse:
-    if not authorized(request):
+    if not await authorized(request, via_access=True):
         return JSONResponse({"error": "unauthorized"}, status_code=401)
     try:
         body = await request.json()
@@ -504,7 +524,7 @@ async def admin_update_proposal(request: Request) -> JSONResponse:
 
 
 async def admin_delete_proposal(request: Request) -> JSONResponse:
-    if not authorized(request):
+    if not await authorized(request, via_access=True):
         return JSONResponse({"error": "unauthorized"}, status_code=401)
     item_id = int(request.path_params["id"])
     if not request.app.state.store.delete_proposal(item_id):
@@ -524,7 +544,10 @@ def proposal_routes() -> list[Route]:
     return routes + [
         Route("/predlozheniya/admin/", proposals_admin_page, methods=["GET"]),
         Route("/predlozheniya/admin", to_slash("/predlozheniya/admin/"), methods=["GET"]),
-        Route("/admin/proposals", admin_list("proposals", frozenset(proposals.STATUSES)), methods=["GET"]),
+        Route(
+            "/admin/proposals", admin_list("proposals", frozenset(proposals.STATUSES), via_access=True),
+            methods=["GET"],
+        ),
         Route("/admin/proposals/{id:int}", admin_update_proposal, methods=["POST"]),
         Route("/admin/proposals/{id:int}", admin_delete_proposal, methods=["DELETE"]),
     ]
@@ -548,6 +571,8 @@ def create_app(
     ip_salt: str | None = None,
     pow_max_number: int = POW_MAX_NUMBER,
     site_dir: Path | None = None,
+    access: AccessConfig | None = None,
+    access_keys: AccessKeys | None = None,
 ) -> Starlette:
     site = site_dir or Path(os.environ.get("SITE_DIR", DEFAULT_SITE_DIR))
     data = data_dir or Path(os.environ.get("DATA_DIR", "data"))
@@ -592,4 +617,6 @@ def create_app(
     app.state.pow_key = derive_key(app.state.ip_salt)
     app.state.pow_max_number = pow_max_number
     app.state.site_dir = site
+    app.state.access = access or config_from_env(os.environ)
+    app.state.access_keys = access_keys or AccessKeys(app.state.access.certs_url if app.state.access else "")
     return app

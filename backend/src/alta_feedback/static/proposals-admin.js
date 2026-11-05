@@ -1,8 +1,11 @@
-// Админка предложений: токен только в sessionStorage этой вкладки, в URL и в куки не попадает.
+// Админка предложений: вход — Cloudflare Access перед этой страницей, его cookie браузер шлёт сам.
+// Пока на сервере Access не настроен, страница показывает поле токена (он живёт только в sessionStorage).
 (() => {
   const KEY = "alta-admin-token";
   const $ = (id) => document.getElementById(id);
   const labels = JSON.parse($("labels").textContent);
+  const login = $("login");
+  const RELOGIN = "Вход истёк или не выполнен — обновите страницу, чтобы войти заново.";
   let items = [];
 
   const storage = {
@@ -10,7 +13,7 @@
     set(v) { try { sessionStorage.setItem(KEY, v); } catch { /* приватный режим: токен живёт до перезагрузки */ } },
     clear() { try { sessionStorage.removeItem(KEY); } catch { /* нечего чистить */ } },
   };
-  let token = storage.get();
+  let token = login ? storage.get() : "";
 
   function say(text, isError) {
     $("msg").textContent = text;
@@ -18,11 +21,20 @@
   }
 
   async function api(path, options = {}) {
-    const headers = { Authorization: `Bearer ${token}`, ...(options.headers || {}) };
-    const response = await fetch(path, { ...options, headers, cache: "no-store" });
-    if (response.status === 401) {
-      logout("Токен не подошёл.");
-      throw new Error("unauthorized");
+    let response;
+    try {
+      // manual: истёкшая сессия Access отвечает переходом на свою страницу входа, а не данными.
+      const headers = { ...(token ? { Authorization: `Bearer ${token}` } : {}), ...(options.headers || {}) };
+      response = await fetch(path, { ...options, headers, cache: "no-store", redirect: "manual" });
+    } catch {
+      throw new Error(RELOGIN);
+    }
+    if (login && response.status === 401) {
+      token = ""; storage.clear(); login.hidden = false; $("panel").hidden = true;
+      throw new Error("Токен не подошёл.");
+    }
+    if (response.type === "opaqueredirect" || response.status === 401 || response.status === 403) {
+      throw new Error(RELOGIN);
     }
     const body = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(body.error || `HTTP ${response.status}`);
@@ -103,31 +115,27 @@
     try {
       items = (await api("/admin/proposals")).items;
     } catch (error) {
-      if (error.message !== "unauthorized") say(error.message, true);
+      say(error.message, true);
       return;
     }
-    $("login").hidden = true;
+    if (login) login.hidden = true;
     $("panel").hidden = false;
     counts();
     render();
   }
 
-  function logout(reason) {
-    token = ""; storage.clear(); items = [];
-    $("rows").replaceChildren();
-    $("panel").hidden = true; $("count").hidden = true; $("login").hidden = false;
-    say(reason || "", Boolean(reason));
-  }
-
-  $("login").addEventListener("submit", (event) => {
-    event.preventDefault();
-    token = $("token").value.trim();
-    $("token").value = "";
-    storage.set(token);
-    load();
-  });
   $("filter").addEventListener("change", render);
   $("reload").addEventListener("click", load);
-  $("logout").addEventListener("click", () => logout());
-  if (token) load();
+  if (login) {
+    login.addEventListener("submit", (event) => {
+      event.preventDefault();
+      token = $("token").value.trim();
+      $("token").value = "";
+      storage.set(token);
+      load();
+    });
+    if (token) load();
+  } else {
+    load();
+  }
 })();

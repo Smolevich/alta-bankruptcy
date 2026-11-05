@@ -16,7 +16,9 @@ iframe and cannot send requests here itself.
 ## Moderation
 
 Everything under `/admin/` requires the `ADMIN_TOKEN` (header
-`Authorization: Bearer …`). Keep the token out of argv — curl reads the header from stdin:
+`Authorization: Bearer …`); `/admin/proposals` and the proposals admin page are also behind
+Cloudflare Access (see «Admin page» below), so from the terminal only `/admin/suggestions` and
+`/admin/accounts` are reachable with the token alone — the monitors use exactly those. Keep the token out of argv — curl reads the header from stdin:
 
 ```bash
 # corrections; since — ISO in UTC, strictly after; status=new — not yet reviewed
@@ -54,13 +56,42 @@ page is not in the menu or the sitemap and is sent with `noindex, nofollow` (met
 links and comment; the text, document link and sources are collapsed. The author's name/contact
 is never shown there — only in the admin API and the admin page.
 
-**Admin page:** `https://alta.smolevich.com/predlozheniya/admin/` — paste the admin token; it stays
-in that tab's `sessionStorage` and goes only into the `Authorization` header. Filter by status,
-new count, and per proposal: status, review link, publication link, editor comment, "Сохранить".
+**Admin page:** `https://alta.smolevich.com/predlozheniya/admin/` — sign in through Cloudflare
+Access (the Access login page, one-time code to the admin's email; the session lasts 24 hours).
+There is no token field. Filter by status, new count, and per proposal: status, review link,
+publication link, editor comment, "Сохранить". «Выйти» ends the Access session.
+
+How the sign-in works:
+
+- The Access application `alta-admin` (Zero Trust → Access → Applications) covers only
+  `alta.smolevich.com/predlozheniya/admin` and `alta.smolevich.com/admin/proposals` (with
+  everything below them). The rest of the site, the forms and `/admin/suggestions`,
+  `/admin/accounts` stay outside Access — the cloudflared ingress does not use Access for this host.
+- Behind Access the service checks the `Cf-Access-Jwt-Assertion` header itself (`cf_access.py`):
+  RS256 signature against the team keys (`https://<team>/cdn-cgi/access/certs`, cached for an hour,
+  re-read on a new key id), `aud` of `alta-admin`, issuer, expiry, and the email in its own admin
+  list. Settings come from `.env`, written by the deploy from repository variables:
+  `CF_ACCESS_TEAM_DOMAIN`, `CF_ACCESS_AUD`, `ADMIN_EMAILS` (comma-separated). Without all three the
+  Access path is off: only the Bearer token works and the admin page shows the token field again.
+- The Bearer token keeps working for `/admin/proposals` when a request gets past Access.
+
+**Add an admin** — two places, both needed:
+
+1. Email into the `allow-owner` policy of the `alta-admin` Access application (dashboard, or API
+   with the `cloudflare-family-cli` token: `PUT /accounts/<acc>/access/apps/<id>` with the whole
+   application body — `PATCH` is not supported).
+2. The same email into the repository variable `ADMIN_EMAILS`
+   (`gh variable set ADMIN_EMAILS --body 'a@example.com,b@example.com'`), then rerun
+   `Deploy backend to Hetzner` (Actions → Run workflow) so `.env` picks it up.
+
+Removing an admin is the reverse; removing them from the Access policy alone already locks them
+out.
 
 **From the terminal** — the token from Vault (`secret/alta-feedback/admin_token`, field `token`),
 never printed. Vault listens only on the server, so it is read over ssh with the Vault token on
-stdin (the way `docs/secrets.md` of pet-projects describes):
+stdin (the way `docs/secrets.md` of pet-projects describes). Since `/admin/proposals` is behind
+Access, from outside these calls go to the service directly on the server
+(`ssh bot-server` and `http://127.0.0.1:8102`), or through the admin page:
 
 ```bash
 RT=$(security find-generic-password -s vault-hetzner-root-token -w)
@@ -69,18 +100,18 @@ ADMIN_TOKEN=$(printf '%s' "$RT" | ssh -o ClearAllForwardings=yes bot-server '
   vault kv get -field=token secret/alta-feedback/admin_token'); unset RT
 
 # new proposals (status: new, in_review, needs_changes, approved, published, rejected, spam)
-printf 'Authorization: Bearer %s\n' "$ADMIN_TOKEN" | curl -fsS -H @- \
-  'https://alta.smolevich.com/admin/proposals?status=new' | jq
+printf 'Authorization: Bearer %s\n' "$ADMIN_TOKEN" | ssh -o ClearAllForwardings=yes bot-server \
+  'curl -fsS -H @- "http://127.0.0.1:8102/admin/proposals?status=new"' | jq
 
 # change status, links and comment — any subset of the fields; "" clears a link or the comment
-printf 'Authorization: Bearer %s\n' "$ADMIN_TOKEN" | curl -fsS -H @- \
-  -H 'Content-Type: application/json' \
-  -d '{"status":"needs_changes","review_url":"https://docs.google.com/document/d/…","comment":"Нужна ссылка на закон"}' \
-  https://alta.smolevich.com/admin/proposals/12
+printf 'Authorization: Bearer %s\n' "$ADMIN_TOKEN" | ssh -o ClearAllForwardings=yes bot-server \
+  'curl -fsS -H @- -H "Content-Type: application/json" \
+     -d "{\"status\":\"needs_changes\",\"comment\":\"Нужна ссылка на закон\"}" \
+     http://127.0.0.1:8102/admin/proposals/12'
 
 # remove for good (test entries); "spam" hides it from the list instead
-printf 'Authorization: Bearer %s\n' "$ADMIN_TOKEN" | curl -fsS -H @- -X DELETE \
-  https://alta.smolevich.com/admin/proposals/12
+printf 'Authorization: Bearer %s\n' "$ADMIN_TOKEN" | ssh -o ClearAllForwardings=yes bot-server \
+  'curl -fsS -H @- -X DELETE http://127.0.0.1:8102/admin/proposals/12'
 ```
 
 An item: `{id, created_at, title, text, doc_url, sources: [...], target: site|channel|both,
@@ -155,7 +186,9 @@ framework) from our own copy, so they stay readable if AOD takes them down. The 
 `backend/` (and manually): tests and lint → copy to the server over Tailscale → `uv sync` → restart
 `alta-bankruptcy.service` (`127.0.0.1:8102`) → check `/healthz` and the pages. The deploy reads
 `ADMIN_TOKEN` and `IP_SALT` from Vault (AppRole; paths in the repository variables `VAULT_*`) and
-writes them to `.env` next to the app; if the read fails, the previous values are kept.
+writes them to `.env` next to the app; if the read fails, the previous values are kept. The Access
+settings (`CF_ACCESS_TEAM_DOMAIN`, `CF_ACCESS_AUD`, `ADMIN_EMAILS`) go to the same `.env` from
+repository variables.
 The move from `Smolevich/alta-feedback`, the traffic switch and the rollback are in `docs/deploy.md`
 at the repository root.
 
