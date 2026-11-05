@@ -17,6 +17,17 @@ export function href(lang: Lang, path: string): string {
 
 export const LOCALE_TAG: Record<Lang, string> = { ru: 'ru-RU', en: 'en-GB', sr: 'sr-Latn-RS' };
 
+// В en месяц словом: «03/11/2026» американский читатель прочтёт как 11 марта.
+const DATE_OPTS: Record<Lang, Intl.DateTimeFormatOptions> = {
+	ru: {},
+	en: { day: 'numeric', month: 'short', year: 'numeric' },
+	sr: {},
+};
+
+export function formatDate(d: Date, lang: Lang): string {
+	return d.toLocaleDateString(LOCALE_TAG[lang], { timeZone: 'UTC', ...DATE_OPTS[lang] });
+}
+
 export const UI = {
 	ru: {
 		sources: 'Источники',
@@ -33,7 +44,7 @@ export const UI = {
 		allStages: 'Все стадии',
 		publisher: { aod: 'AOD', nbs: 'Нацбанк', bank: 'Сайт банка', court: 'Суд' },
 		forIp: 'Для ИП',
-		flowLabel: 'Три шага по порядку',
+		flowLabel: 'Шаги по порядку',
 		allSections: 'Все разделы',
 		about: 'Кто делает сайт',
 		social: { tgChannel: 'Telegram-канал', tgChat: 'Telegram-чат', instagram: 'Instagram' },
@@ -84,10 +95,12 @@ export const UI = {
 		newTab: 'откроется в новой вкладке',
 		flow: [
 			['/procedura/', 'Процедура и сроки', 'Семь стадий от отзыва лицензии до выплат', 'route'],
+			['/vyplata/', 'Выплата до 50 000 €', 'Когда, где и с какими документами — Poštanska', 'route'],
 			['/trebovanie/', 'Требование сверх 50 000 €', 'Кто, куда и в какой срок подаёт', 'route'],
 			['/vypiski/', 'Что сохранить: выписки и документы', 'Какие документы и выписки сохранить и как выгрузить их из кабинета', 'route'],
 			['/bezopasnost/', 'Как не попасть на мошенников', 'Что делать, если обещают «ускорить выплату»', 'safe'],
 			['/voprosy/', 'Частые вопросы', 'Суд, Poštanska, адвокат, ИП, валюта, кредиты, доверенность'],
+			['/advokat/', 'Адвокат', 'Зачем он нужен, как выбрать и проверить'],
 			['/novosti/', 'Новости', 'Сообщения AOD, Нацбанка и банка'],
 			['/kak-bylo/', 'Как было: Univerzal 2014', 'Что и когда получили вкладчики Univerzal banka'],
 			['/bank/', 'Банк', 'Владелец и руководство по реестрам'],
@@ -112,7 +125,7 @@ export const UI = {
 		allStages: 'All stages',
 		publisher: { aod: 'AOD', nbs: 'National Bank', bank: 'Bank website', court: 'Court' },
 		forIp: 'For sole traders',
-		flowLabel: 'Three steps in order',
+		flowLabel: 'Steps in order',
 		allSections: 'All sections',
 		about: 'Who makes this site',
 		social: { tgChannel: 'Telegram channel', tgChat: 'Telegram chat', instagram: 'Instagram' },
@@ -163,10 +176,12 @@ export const UI = {
 		newTab: 'opens in a new tab',
 		flow: [
 			['/procedura/', 'Procedure and timeline', 'Seven stages from licence revocation to payouts', 'route'],
+			['/vyplata/', 'Payout up to €50,000', 'When, where and with which documents: Poštanska', 'route'],
 			['/trebovanie/', 'Claim above €50,000', 'Who files, where and by when', 'route'],
 			['/vypiski/', 'What to save: statements and documents', 'Which documents and statements to keep and how to export them', 'route'],
 			['/bezopasnost/', 'Stay safe: avoid scams', 'What to do if someone promises to “speed up the payout”', 'safe'],
 			['/voprosy/', 'FAQ', 'Court, Poštanska, lawyer, sole traders, currency, loans, power of attorney'],
+			['/advokat/', 'A lawyer', 'Why you might need one, how to choose and check'],
 			['/novosti/', 'News', 'Announcements from AOD, the National Bank and the bank'],
 			['/kak-bylo/', 'Past cases (Univerzal)', 'What depositors received in 2014'],
 			['/bank/', 'The bank', 'Owner and management from registries'],
@@ -192,7 +207,7 @@ export const UI = {
 		allStages: 'Sve faze',
 		publisher: { aod: 'AOD', nbs: 'NBS', bank: 'Sajt banke', court: 'Sud' },
 		forIp: 'Za preduzetnike',
-		flowLabel: 'Tri koraka redom',
+		flowLabel: 'Koraci redom',
 		allSections: 'Svi odeljci',
 		about: 'Ko pravi sajt',
 		social: { tgChannel: 'Telegram kanal', tgChat: 'Telegram čet', instagram: 'Instagram' },
@@ -243,10 +258,12 @@ export const UI = {
 		newTab: 'otvara se u novoj kartici',
 		flow: [
 			['/procedura/', 'Postupak i rokovi', 'Sedam faza od oduzimanja dozvole do isplata', 'route'],
+			['/vyplata/', 'Isplata do 50.000 €', 'Kada, gde i sa kojim dokumentima: Poštanska', 'route'],
 			['/trebovanie/', 'Potraživanje iznad 50.000 €', 'Ko, gde i do kada prijavljuje', 'route'],
 			['/vypiski/', 'Šta sačuvati: izvodi i dokumenta', 'Koja dokumenta i izvode sačuvati i kako ih izvesti iz bankarstva', 'route'],
 			['/bezopasnost/', 'Bezbednost: kako da izbegnete prevaru', 'Šta raditi ako neko obećava „bržu isplatu“', 'safe'],
 			['/voprosy/', 'Česta pitanja', 'Sud, Poštanska, advokat, preduzetnici, valuta, krediti, punomoćje'],
+			['/advokat/', 'Advokat', 'Zašto je potreban, kako ga izabrati i proveriti'],
 			['/novosti/', 'Vesti', 'Saopštenja AOD, NBS i banke'],
 			['/kak-bylo/', 'Kako je bilo (Univerzal)', 'Šta su štediše dobile 2014.'],
 			['/bank/', 'Banka', 'Vlasnik i rukovodstvo iz registara'],

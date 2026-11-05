@@ -3,7 +3,7 @@ import { getCollection } from 'astro:content';
 
 import { viewerSrc } from '../data/pdfs';
 import FormCards from './FormCards.astro';
-import { LOCALE_TAG, UI, type Lang } from '../i18n';
+import { formatDate, UI, type Lang } from '../i18n';
 
 const { limit, lang = 'ru' } = Astro.props as { limit?: number; lang?: Lang };
 const PUBLISHER = UI[lang].publisher;
@@ -12,7 +12,7 @@ const all = (await getCollection('news', (n) => n.id.startsWith(`${lang}/`))).so
 	(a, b) => b.data.date.getTime() - a.data.date.getTime() || b.data.order - a.data.order,
 );
 const items = limit ? all.slice(0, limit) : all;
-const fmt = (d: Date) => d.toLocaleDateString(LOCALE_TAG[lang], { timeZone: 'UTC' });
+const fmt = (d: Date) => formatDate(d, lang);
 ---
 
 <ol class="news not-content">

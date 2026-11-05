@@ -1,7 +1,7 @@
 ---
 // Источники и дата сверки под каждой страницей: читатель видит, на чём держится текст.
 import Default from '@astrojs/starlight/components/Footer.astro';
-import { LOCALE_TAG, UI, href, langOf } from '../i18n';
+import { formatDate, UI, href, langOf } from '../i18n';
 import { opensInNewTab } from '../links';
 import { viewerSrc } from '../data/pdfs';
 import PdfDialog from './PdfDialog.astro';
@@ -13,7 +13,7 @@ const data = Astro.locals.starlightRoute.entry.data as {
 	sources?: { title: string; url: string; kind: 'official' | 'reliable_media' | 'unverified'; date: Date }[];
 	checked?: Date;
 };
-const fmt = (d: Date) => d.toLocaleDateString(LOCALE_TAG[lang], { timeZone: 'UTC' });
+const fmt = (d: Date) => formatDate(d, lang);
 ---
 
 {
