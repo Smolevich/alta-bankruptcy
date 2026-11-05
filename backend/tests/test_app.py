@@ -40,8 +40,8 @@ def test_submit_redirects_to_thanks(client):
     assert submit(client).headers["location"].startswith("/spasibo")
 
 
-def test_thanks_page_links_back_to_artifact(client):
-    assert "claude.ai/artifact/" in client.get("/spasibo").text
+def test_thanks_page_links_back_to_site(client):
+    assert "alta.smolevich.com" in client.get("/spasibo").text
 
 
 def test_submitted_suggestion_is_readable_by_admin(client):
