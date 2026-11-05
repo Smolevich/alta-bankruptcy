@@ -10,7 +10,7 @@ const lang = langOf(Astro.locals.starlightRoute.lang);
 const t = UI[lang];
 
 const data = Astro.locals.starlightRoute.entry.data as {
-	sources?: { title: string; url: string; kind: 'official' | 'reliable_media' | 'unverified'; date: Date }[];
+	sources?: { title: string; url: string; kind: 'official' | 'reliable_media' | 'unverified'; date: Date; copy?: string }[];
 	checked?: Date;
 };
 const fmt = (d: Date) => formatDate(d, lang);
@@ -27,7 +27,15 @@ const fmt = (d: Date) => formatDate(d, lang);
 				{data.sources.map((s) => (
 					<li>
 						<span class={`kind kind-${s.kind}`}>{t[s.kind]}</span>
-						<a href={s.url} target={opensInNewTab(s.url) ? '_blank' : undefined} rel="noopener" data-pdf={viewerSrc(s.url)}>{s.title}</a>
+						<span>
+							<a href={s.url} target={opensInNewTab(s.url) ? '_blank' : undefined} rel="noopener" data-pdf={viewerSrc(s.url)}>{s.title}</a>
+							{s.copy && (
+								<>
+									{' · '}
+									<a class="src-copy" href={s.copy} target="_blank" rel="noopener" data-pdf={s.copy.startsWith('/docs/') ? s.copy : undefined}>{t.sourceCopy}</a>
+								</>
+							)}
+						</span>
 						<time>{fmt(s.date)}</time>
 					</li>
 				))}

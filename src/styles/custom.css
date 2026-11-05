@@ -145,6 +145,7 @@ html, body { overflow-x: clip; }
 .sources ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.35rem; }
 .sources li { display: grid; grid-template-columns: auto 1fr auto; gap: 0.5rem; align-items: baseline; margin: 0; }
 .sources a { overflow-wrap: anywhere; }
+.sources .src-copy { font-size: 0.8rem; color: #5a5448; }
 .sources time { color: #5a5448; font-size: 0.8rem; white-space: nowrap; }
 .kind { font-size: 0.7rem; padding: 0.05rem 0.4rem; border-radius: 3px; border: 1px solid; white-space: nowrap; }
 .kind-official { color: var(--ok); }
@@ -352,3 +353,33 @@ html, body { overflow-x: clip; }
 .collapsible > summary { cursor: pointer; padding: 0.7rem 1rem; font-weight: 600; color: #4a4538; }
 .collapsible[open] > summary { border-bottom: 1px solid var(--line); }
 .collapsible-body { padding: 0.2rem 1rem 0.8rem; }
+
+/* ---- BankAssets.astro: таблица активов; на телефоне строки становятся карточками ---- */
+.assets { width: 100%; margin: 1rem 0 0.4rem; border-collapse: collapse; background: #fffdf7; font-size: 0.93rem; }
+.assets caption { text-align: left; font: 700 1.05rem/1.3 var(--serif); padding-bottom: 0.4rem; }
+.assets th, .assets td { padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--line); vertical-align: top; text-align: left; }
+.assets td { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.assets thead th { border-bottom: 2px solid var(--ink); font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em; }
+.assets thead th:not(:first-child) { text-align: right; }
+.assets tbody th { font-weight: 700; }
+.assets-note { display: block; margin-top: 0.15rem; font-weight: 400; font-size: 0.84rem; color: #5a5448; }
+.assets tfoot th, .assets tfoot td { border-top: 2px solid var(--ink); border-bottom: 0; font-weight: 700; }
+.assets-src { font-size: 0.85rem; color: #5a5448; }
+.assets-src a { color: var(--seal); }
+@media (max-width: 640px) {
+	.assets, .assets tbody, .assets tfoot, .assets tr, .assets th, .assets td { display: block; }
+	.assets thead { display: none; }
+	.assets caption { display: block; width: 100%; }
+	.assets tr { margin: 0 0 0.6rem; padding: 0.6rem 0.8rem; border: 1px solid var(--line); border-left: 4px solid var(--ink); border-radius: 3px; background: #fffdf7; }
+	.assets tfoot tr { border-left-color: var(--seal); }
+	.assets th, .assets td, .assets tfoot th, .assets tfoot td { padding: 0; border: 0; }
+	.assets tbody th, .assets tfoot th { margin-bottom: 0.35rem; }
+	.assets td { display: flex; justify-content: space-between; gap: 1rem; text-align: right; }
+	.assets td::before { content: attr(data-label); color: #5a5448; font-weight: 400; text-align: left; }
+	.assets { background: none; }
+}
+
+/* ---- Страница «Что есть у банка»: блок «коротко» сверху ---- */
+.assets-lead { margin: 0 0 1.2rem; padding: 0.8rem 1rem; background: #fffdf7; border: 2px solid var(--ink); border-radius: 4px; box-shadow: 4px 4px 0 var(--seal-soft); }
+.assets-lead ul { margin: 0; padding-left: 1.1rem; }
+.assets-lead li { margin: 0 0 0.3rem; }

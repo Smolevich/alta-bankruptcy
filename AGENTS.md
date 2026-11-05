@@ -29,6 +29,16 @@ npm run check        # translations check + build (schema, internal links)
   Owner's exception (04.11.2026): on `/account/stats` a collapsed «Со слов вкладчиков в чатах»
   block per bank lists account-opening criteria from open depositor chats — no counts, quotes,
   names or chat titles (`backend/src/alta_feedback/data/bank_criteria.json`).
+  Owner's exception (05.11.2026): финансовые цифры банка публикуются только с официальным
+  источником (отчётность APR/банка/NBS/AOD), с номером страницы и копией документа в
+  `public/docs/`; без оценок и догадок (решение владельца 05.11.2026). Used on
+  `/imushchestvo-banka/`; what the documents do not disclose is written as «в документах не
+  раскрыто: …», never as a guess. No claims about payout ranks.
+- **Every external source has a backup.** A PDF goes to `public/docs/` (and `src/data/pdfs.ts`);
+  a web page (NBS, AOD, press, city notices) is saved to web.archive.org (or archive.ph) and the
+  snapshot goes into the source's `copy` field next to the original URL. Press is kept only as
+  a direct fact from the article, attributed «по данным <издание>, <дата>», `reliable_media`;
+  if an official primary source exists (city plan, Službeni list, NBS, AOD), cite it instead.
 - **PDFs open in the on-site viewer from our own copy** (`src/data/pdfs.ts`; the build fails on a
   PDF without one): small files in `public/docs`, AOD documents in the backend archive
   (`/docs/aod/<name>`, one list for the site and the server:
