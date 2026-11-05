@@ -1,9 +1,19 @@
-// Админка предложений: вход — Cloudflare Access перед этой страницей; его cookie браузер шлёт сам.
+// Админка предложений: вход — Cloudflare Access перед этой страницей, его cookie браузер шлёт сам.
+// Пока на сервере Access не настроен, страница показывает поле токена (он живёт только в sessionStorage).
 (() => {
+  const KEY = "alta-admin-token";
   const $ = (id) => document.getElementById(id);
   const labels = JSON.parse($("labels").textContent);
+  const login = $("login");
   const RELOGIN = "Вход истёк или не выполнен — обновите страницу, чтобы войти заново.";
   let items = [];
+
+  const storage = {
+    get() { try { return sessionStorage.getItem(KEY) || ""; } catch { return ""; } },
+    set(v) { try { sessionStorage.setItem(KEY, v); } catch { /* приватный режим: токен живёт до перезагрузки */ } },
+    clear() { try { sessionStorage.removeItem(KEY); } catch { /* нечего чистить */ } },
+  };
+  let token = login ? storage.get() : "";
 
   function say(text, isError) {
     $("msg").textContent = text;
@@ -14,9 +24,14 @@
     let response;
     try {
       // manual: истёкшая сессия Access отвечает переходом на свою страницу входа, а не данными.
-      response = await fetch(path, { ...options, cache: "no-store", redirect: "manual" });
+      const headers = { ...(token ? { Authorization: `Bearer ${token}` } : {}), ...(options.headers || {}) };
+      response = await fetch(path, { ...options, headers, cache: "no-store", redirect: "manual" });
     } catch {
       throw new Error(RELOGIN);
+    }
+    if (login && response.status === 401) {
+      token = ""; storage.clear(); login.hidden = false; $("panel").hidden = true;
+      throw new Error("Токен не подошёл.");
     }
     if (response.type === "opaqueredirect" || response.status === 401 || response.status === 403) {
       throw new Error(RELOGIN);
@@ -103,6 +118,7 @@
       say(error.message, true);
       return;
     }
+    if (login) login.hidden = true;
     $("panel").hidden = false;
     counts();
     render();
@@ -110,5 +126,16 @@
 
   $("filter").addEventListener("change", render);
   $("reload").addEventListener("click", load);
-  load();
+  if (login) {
+    login.addEventListener("submit", (event) => {
+      event.preventDefault();
+      token = $("token").value.trim();
+      $("token").value = "";
+      storage.set(token);
+      load();
+    });
+    if (token) load();
+  } else {
+    load();
+  }
 })();

@@ -72,7 +72,7 @@ How the sign-in works:
   re-read on a new key id), `aud` of `alta-admin`, issuer, expiry, and the email in its own admin
   list. Settings come from `.env`, written by the deploy from repository variables:
   `CF_ACCESS_TEAM_DOMAIN`, `CF_ACCESS_AUD`, `ADMIN_EMAILS` (comma-separated). Without all three the
-  Access path is off and only the Bearer token works.
+  Access path is off: only the Bearer token works and the admin page shows the token field again.
 - The Bearer token keeps working for `/admin/proposals` when a request gets past Access.
 
 **Add an admin** — two places, both needed:

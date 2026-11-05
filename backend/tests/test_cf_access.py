@@ -250,5 +250,11 @@ def test_without_access_config_jwt_is_ignored(tmp_path):
     assert client.get("/admin/proposals", headers=access(make_token())).status_code == 401
 
 
-def test_admin_page_has_no_token_field(client):
+def test_admin_page_has_no_token_field_behind_access(client):
     assert 'type="password"' not in client.get("/predlozheniya/admin/").text
+
+
+def test_admin_page_keeps_token_field_until_access_is_configured(tmp_path):
+    """Пока деплой не передал настройки Access, без поля токена в админку было бы не войти."""
+    client = TestClient(create_app(data_dir=tmp_path, admin_token=TOKEN, ip_salt="salt"))
+    assert 'type="password"' in client.get("/predlozheniya/admin/").text

@@ -503,7 +503,7 @@ async def proposals_admin_page(request: Request) -> HTMLResponse:
     return render(
         "proposals_admin.html", headers=PROPOSALS_ADMIN_HEADERS, t=proposals.TEXTS["ru"],
         statuses=proposals.STATUSES, targets=proposals.TARGETS, url_max=proposals.URL_MAX,
-        comment_max=proposals.COMMENT_MAX,
+        comment_max=proposals.COMMENT_MAX, access_on=request.app.state.access is not None,
     )
 
 
