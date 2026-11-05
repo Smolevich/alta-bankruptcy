@@ -368,6 +368,7 @@ html, body { overflow-x: clip; }
 @media (max-width: 640px) {
 	.assets, .assets tbody, .assets tfoot, .assets tr, .assets th, .assets td { display: block; }
 	.assets thead { display: none; }
+	.assets caption { display: block; width: 100%; }
 	.assets tr { margin: 0 0 0.6rem; padding: 0.6rem 0.8rem; border: 1px solid var(--line); border-left: 4px solid var(--ink); border-radius: 3px; background: #fffdf7; }
 	.assets tfoot tr { border-left-color: var(--seal); }
 	.assets th, .assets td, .assets tfoot th, .assets tfoot td { padding: 0; border: 0; }
@@ -382,8 +383,9 @@ html, body { overflow-x: clip; }
 .assets-lead ul { margin: 0; padding-left: 1.1rem; }
 .assets-lead li { margin: 0 0 0.3rem; }
 .assets-guess { margin: 0.6rem 0 0.8rem; padding: 0.35rem 0.8rem; border-left: 4px solid var(--seal); background: var(--seal-soft); font-weight: 700; }
-.assets-odds { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 0.8rem; margin: 0.8rem 0; }
+.assets-odds { display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: 0.8rem; margin: 0.8rem 0; }
 .assets-odds > div { min-width: 0; padding: 0.7rem 0.9rem; background: #fffdf7; border: 1px solid var(--line); border-top: 4px solid var(--ok); border-radius: 0 0 4px 4px; font-size: 0.93rem; }
+.sl-markdown-content .assets-odds > div { margin-top: 0; }
 .assets-odds > div.mid { border-top-color: #b07d1a; }
 .assets-odds > div.low { border-top-color: var(--seal); }
 .assets-odds h3 { margin: 0 0 0.4rem; font: 700 1.05rem/1.25 var(--serif); }
