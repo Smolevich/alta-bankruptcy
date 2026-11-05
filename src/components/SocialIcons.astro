@@ -1,0 +1,38 @@
+---
+// Starlight берёт подпись иконки из конфига одной строкой на все языки; здесь она на языке страницы,
+// чтобы канал и чат в Telegram различались и читались на ru/en/sr.
+import config from 'virtual:starlight/user-config';
+import { Icon } from '@astrojs/starlight/components';
+import { UI, langOf } from '../i18n';
+import { INSTAGRAM_URL, TELEGRAM_CHANNEL_URL, TELEGRAM_CHAT_URL } from '../site.mjs';
+
+const t = UI[langOf(Astro.locals.starlightRoute.lang)].social;
+const labels: Record<string, string> = {
+	[TELEGRAM_CHANNEL_URL]: t.tgChannel,
+	[TELEGRAM_CHAT_URL]: t.tgChat,
+	[INSTAGRAM_URL]: t.instagram,
+};
+const links = config.social || [];
+---
+
+{
+	links.map(({ label, href, icon }) => (
+		<a {href} rel="me" class="sl-flex" title={labels[href] ?? label}>
+			<span class="sr-only">{labels[href] ?? label}</span>
+			<Icon name={icon} />
+		</a>
+	))
+}
+
+<style>
+	@layer starlight.core {
+		a {
+			color: var(--sl-color-text-accent);
+			padding: 0.5em;
+			margin: -0.5em;
+		}
+		a:hover {
+			color: var(--sl-color-white);
+		}
+	}
+</style>

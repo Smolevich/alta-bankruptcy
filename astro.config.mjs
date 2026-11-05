@@ -2,7 +2,7 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import starlightLinksValidator from 'starlight-links-validator';
-import { INSTAGRAM_URL } from './src/site.mjs';
+import { INSTAGRAM_URL, TELEGRAM_CHANNEL_URL, TELEGRAM_CHAT_URL } from './src/site.mjs';
 import { unified } from '@astrojs/markdown-remark';
 import rehypeNewTab from './src/rehype-new-tab.mjs';
 
@@ -35,8 +35,9 @@ export default defineConfig({
 			editLink: { baseUrl: 'https://github.com/Smolevich/alta-bankruptcy/edit/main/' },
 			social: [
 				{ icon: 'github', label: 'GitHub', href: 'https://github.com/Smolevich/alta-bankruptcy' },
-				// Группа вкладчиков сама выберет ник: пока ссылки нет, значок скрыт.
-				{ icon: 'telegram', label: 'Telegram', href: 'https://t.me/Altadef50k' },
+				// Подписи на языке страницы подставляет src/components/SocialIcons.astro.
+				{ icon: 'telegram', label: 'Telegram-канал', href: TELEGRAM_CHANNEL_URL },
+				{ icon: 'telegram', label: 'Telegram-чат', href: TELEGRAM_CHAT_URL },
 				...(INSTAGRAM_URL ? [{ icon: 'instagram', label: 'Instagram', href: INSTAGRAM_URL }] : []),
 			],
 			defaultLocale: 'root',
@@ -50,6 +51,7 @@ export default defineConfig({
 			customCss: ['./src/styles/custom.css'],
 			components: {
 				Footer: './src/components/Footer.astro',
+				SocialIcons: './src/components/SocialIcons.astro',
 				// Только светлая тема: так написано на всех скриншотах и в брифе.
 				ThemeProvider: './src/components/ThemeProvider.astro',
 				ThemeSelect: './src/components/Empty.astro',
@@ -57,22 +59,22 @@ export default defineConfig({
 			plugins: [// /account отдаёт сервис из backend/, в сборке Astro его страниц нет.
 				starlightLinksValidator({ errorOnRelativeLinks: false, exclude: ['/account', '/account/**'] })],
 			sidebar: [
-				{ label: 'Сейчас', slug: 'index', translations: { en: 'Now', sr: 'Sada' } },
-				{ label: 'Процедура и сроки', slug: 'procedura', translations: { en: 'Procedure and timeline', sr: 'Postupak i rokovi' } },
-				{ label: 'Выплата до 50 000 €', slug: 'vyplata', translations: { en: 'Payout up to €50,000', sr: 'Isplata do 50.000 €' } },
-				{ label: 'Требование сверх 50 000 €', slug: 'trebovanie', translations: { en: 'Claim above €50,000', sr: 'Prijava potraživanja iznad 50.000 €' } },
-				{ label: 'Вопросы и ответы', slug: 'voprosy', translations: { en: 'Questions and answers', sr: 'Pitanja i odgovori' } },
-				{ label: 'Что сохранить: выписки и документы', slug: 'vypiski', translations: { en: 'What to save: statements and documents', sr: 'Šta sačuvati: izvodi i dokumenta' } },
-				{ label: 'Как не попасть на мошенников', slug: 'bezopasnost', translations: { en: 'Stay safe: avoid scams', sr: 'Bezbednost: kako da izbegnete prevaru' } },
-				{ label: 'Новости', slug: 'novosti', translations: { en: 'News', sr: 'Vesti' } },
-				{ label: 'Как было: Univerzal 2014 и другие', slug: 'kak-bylo', translations: { en: 'Past cases: Univerzal 2014 and others', sr: 'Raniji slučajevi: Univerzal 2014 i drugi' } },
-				{ label: 'Банк: владелец и руководство', slug: 'bank', translations: { en: 'The bank: owner and management', sr: 'Banka: vlasnik i rukovodstvo' } },
-				{ label: 'Документы банка', slug: 'dokumenty', translations: { en: 'Bank documents', sr: 'Dokumenta banke' } },
-				{ label: 'Законы', slug: 'zakony', translations: { en: 'Laws', sr: 'Zakoni' } },
-				{ label: 'Как помочь и править', slug: 'pomoch', translations: { en: 'How to help and correct', sr: 'Kako pomoći i ispraviti' } },
-				{ label: 'Полезные ссылки и помощь', slug: 'ssylki', translations: { en: 'Useful links and help', sr: 'Korisni linkovi i pomoć' } },
+				{ label: 'Сейчас', slug: 'index', translations: { en: 'Now', 'sr-Latn': 'Sada' } },
+				{ label: 'Процедура и сроки', slug: 'procedura', translations: { en: 'Procedure and timeline', 'sr-Latn': 'Postupak i rokovi' } },
+				{ label: 'Выплата до 50 000 €', slug: 'vyplata', translations: { en: 'Payout up to €50,000', 'sr-Latn': 'Isplata do 50.000 €' } },
+				{ label: 'Требование сверх 50 000 €', slug: 'trebovanie', translations: { en: 'Claim above €50,000', 'sr-Latn': 'Prijava potraživanja iznad 50.000 €' } },
+				{ label: 'Вопросы и ответы', slug: 'voprosy', translations: { en: 'Questions and answers', 'sr-Latn': 'Pitanja i odgovori' } },
+				{ label: 'Что сохранить: выписки и документы', slug: 'vypiski', translations: { en: 'What to save: statements and documents', 'sr-Latn': 'Šta sačuvati: izvodi i dokumenta' } },
+				{ label: 'Как не попасть на мошенников', slug: 'bezopasnost', translations: { en: 'Stay safe: avoid scams', 'sr-Latn': 'Bezbednost: kako da izbegnete prevaru' } },
+				{ label: 'Новости', slug: 'novosti', translations: { en: 'News', 'sr-Latn': 'Vesti' } },
+				{ label: 'Как было: Univerzal 2014 и другие', slug: 'kak-bylo', translations: { en: 'Past cases: Univerzal 2014 and others', 'sr-Latn': 'Raniji slučajevi: Univerzal 2014 i drugi' } },
+				{ label: 'Банк: владелец и руководство', slug: 'bank', translations: { en: 'The bank: owner and management', 'sr-Latn': 'Banka: vlasnik i rukovodstvo' } },
+				{ label: 'Документы банка', slug: 'dokumenty', translations: { en: 'Bank documents', 'sr-Latn': 'Dokumenta banke' } },
+				{ label: 'Законы', slug: 'zakony', translations: { en: 'Laws', 'sr-Latn': 'Zakoni' } },
+				{ label: 'Как помочь и править', slug: 'pomoch', translations: { en: 'How to help and correct', 'sr-Latn': 'Kako pomoći i ispraviti' } },
+				{ label: 'Полезные ссылки и помощь', slug: 'ssylki', translations: { en: 'Useful links and help', 'sr-Latn': 'Korisni linkovi i pomoć' } },
 				// Страница отдаётся сервисом формы, не Starlight: обычная ссылка (валидатор её пропускает через exclude).
-				{ label: 'Где открывают счета', link: '/account/stats', translations: { en: 'Where accounts get opened', sr: 'Gde se otvaraju računi' } },
+				{ label: 'Где открывают счета', link: '/account/stats', translations: { en: 'Where accounts get opened', 'sr-Latn': 'Gde se otvaraju računi' } },
 			],
 		}),
 	],

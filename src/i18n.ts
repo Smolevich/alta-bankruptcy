@@ -36,6 +36,7 @@ export const UI = {
 		flowLabel: 'Три шага по порядку',
 		allSections: 'Все разделы',
 		about: 'Кто делает сайт',
+		social: { tgChannel: 'Telegram-канал', tgChat: 'Telegram-чат', instagram: 'Instagram' },
 		lbl: { pdf: 'Открыть PDF', site: 'Открыть на сайте', inner: 'Открыть →' },
 		forms: { label: 'Бланки AOD', open: 'Открыть', word: 'Word, оригинал AOD', aod: 'На сайте AOD', fields: 'Что заполнять', thumb: 'Первая страница бланка', pages: 'стр.' },
 		acct: {
@@ -80,6 +81,7 @@ export const UI = {
 		flowLabel: 'Three steps in order',
 		allSections: 'All sections',
 		about: 'Who makes this site',
+		social: { tgChannel: 'Telegram channel', tgChat: 'Telegram chat', instagram: 'Instagram' },
 		lbl: { pdf: 'Open PDF', site: 'Open website', inner: 'Open →' },
 		forms: { label: 'AOD forms', open: 'Open', word: 'Word, AOD original', aod: 'On the AOD website', fields: 'What to fill in', thumb: 'First page of the form', pages: 'pp.' },
 		acct: {
@@ -125,6 +127,7 @@ export const UI = {
 		flowLabel: 'Tri koraka redom',
 		allSections: 'Svi odeljci',
 		about: 'Ko pravi sajt',
+		social: { tgChannel: 'Telegram kanal', tgChat: 'Telegram čet', instagram: 'Instagram' },
 		lbl: { pdf: 'Otvori PDF', site: 'Otvori sajt', inner: 'Otvori →' },
 		forms: { label: 'Obrasci AOD', open: 'Otvori', word: 'Word, original AOD', aod: 'Na sajtu AOD', fields: 'Šta se popunjava', thumb: 'Prva strana obrasca', pages: 'str.' },
 		acct: {
