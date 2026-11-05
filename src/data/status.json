@@ -43,14 +43,14 @@
       {
         "n": 3,
         "title": {
-          "ru": "AOD назвал банк-плательщика: Poštanska štedionica",
-          "en": "AOD named the paying bank: Poštanska štedionica",
-          "sr": "AOD odredila banku isplatioca: Poštanska štedionica"
+          "ru": "AOD назвал банк-плательщика: Poštanska štedionica; договор подписан 05.11",
+          "en": "AOD named the paying bank, Poštanska štedionica; contract signed on 05.11",
+          "sr": "AOD odredila banku isplatioca: Poštanska štedionica; ugovor potpisan 05.11."
         },
         "when": {
-          "ru": "03.11.2026",
-          "en": "03.11.2026",
-          "sr": "03.11.2026"
+          "ru": "03.11.2026, договор — 05.11.2026",
+          "en": "03.11.2026, contract 05.11.2026",
+          "sr": "03.11.2026, ugovor 05.11.2026"
         }
       },
       {
@@ -107,6 +107,12 @@
       }
     ],
     "sources": [
+      {
+        "title": "Banka Poštanska štedionica: «Банка Поштанска штедионица потписала уговор са Агенцијом за осигурање депозита»",
+        "url": "https://www.posted.co.rs/media/novosti.html",
+        "kind": "official",
+        "date": "2026-11-05"
+      },
       {
         "title": "AOD: «Привредни суд у Београду донео решење о покретању стечајног поступка над Алта банком»",
         "url": "https://www.aod.rs/clan/vest/vest_forma/139",
