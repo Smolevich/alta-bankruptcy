@@ -27,7 +27,8 @@ import ForIp from '../../../components/ForIp.astro';
 import Shot from '../../../components/Shot.astro';
 import Faq from '../../../components/Faq.astro';
 import FormCards from '../../../components/FormCards.astro';
-import PrijavaForm from '../../../components/PrijavaForm.astro';
+import DocEditor from '../../../components/DocEditor.astro';
+import { prijava } from '../../../data/forms/prijava';
 
 <aside class="legal-note not-content"><strong>Not legal advice.</strong> This page summarises the laws and official announcements; for your own case, see a lawyer.</aside>
 
@@ -113,7 +114,7 @@ The authorised person can collect funds up to the insured amount and sign the do
 
 <FormCards fill lang="en" forms={['prijava', 'fizicka', 'pravna']} />
 
-<PrijavaForm lang="en" />
+<DocEditor doc={prijava} lang="en" />
 
 **If you have no JMBG.** None of the three AOD forms says how to fill in the JMBG field if you do not have one (for example, a foreigner without a Serbian personal number); the court and AOD have not announced it separately either.
 

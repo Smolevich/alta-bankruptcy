@@ -27,7 +27,8 @@ import ForIp from '../../../components/ForIp.astro';
 import Shot from '../../../components/Shot.astro';
 import Faq from '../../../components/Faq.astro';
 import FormCards from '../../../components/FormCards.astro';
-import PrijavaForm from '../../../components/PrijavaForm.astro';
+import DocEditor from '../../../components/DocEditor.astro';
+import { prijava } from '../../../data/forms/prijava';
 
 <aside class="legal-note not-content"><strong>Ovo nije pravni savet.</strong> Ovde su prepričani zakoni i zvanična saopštenja; za svoj slučaj obratite se advokatu.</aside>
 
@@ -113,7 +114,7 @@ Ovlašćeno lice može da raspolaže sredstvima do visine osiguranog iznosa i da
 
 <FormCards fill lang="sr" forms={['prijava', 'fizicka', 'pravna']} />
 
-<PrijavaForm lang="sr" />
+<DocEditor doc={prijava} lang="sr" />
 
 **Ako nemate JMBG.** Kako popuniti polje JMBG ako ga nemate (na primer stranac bez srpskog matičnog broja), nije navedeno ni u jednom od tri obrasca AOD; sud i AOD to ni posebno još nisu objavili.
 
