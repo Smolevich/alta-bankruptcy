@@ -101,7 +101,7 @@ SCRIPTS = frozenset({
 # Перебор запускает отметка «Я не робот»; среднее число попыток — половина, на Mac ~0,4 с, на телефоне 1–3 с.
 POW_MAX_NUMBER = 200_000
 POW_FAILED = "Не прошла проверка от ботов. Подождите пару секунд и отправьте ещё раз."
-DEFAULT_RETURN_URL = "https://claude.ai/artifact/RrfqFLbzQh5wEkb9RxC7UQ"
+DEFAULT_RETURN_URL = "https://alta.smolevich.com"
 
 # Счётчик посещений Cloudflare Web Analytics: единственный разрешённый чужой скрипт и адрес отправки данных.
 CF_SCRIPT = "https://static.cloudflareinsights.com"
