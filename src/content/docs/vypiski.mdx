@@ -16,7 +16,7 @@ import Collapsible from '../../components/Collapsible.astro';
 
 ## Сейчас: кабинет и приложение не работают
 
-Веб-кабинет ALTA по адресу online.altabanka.rs не открывается: проверка 05.11.2026 показала в браузере «online.altabanka.rs refused to connect» (ERR_CONNECTION_REFUSED), то есть сервер отказывает в соединении. Мобильное приложение ALTA тоже не подключается к серверу (проверено 05.11.2026): после ввода PIN оно показывает ошибку «Error — URLSessionTask failed with error: Could not connect to the server.» Выписки понадобятся, если расчёт банка-плательщика не совпадёт, и для требования сверх 50 000 €.
+Веб-кабинет ALTA (online.altabanka.rs) не открывается. 05.11.2026 браузер показал «online.altabanka.rs refused to connect» (ERR_CONNECTION_REFUSED): сервер банка не принимает соединение. Мобильное приложение ALTA тоже не работает (проверено 05.11.2026). После ввода PIN оно пишет «Error — URLSessionTask failed with error: Could not connect to the server.» Выписки понадобятся в двух случаях: если расчёт банка-плательщика не совпадёт с вашим и для требования сверх 50 000 €.
 
 <div class="shot-pair not-content">
 <Shot lang="ru" name="kabinet-zakryt" alt="Браузер пишет «This site can’t be reached: online.altabanka.rs refused to connect»" w={390} h={844} narrow>Браузер при открытии online.altabanka.rs, 05.11.2026: сервер банка отказывает в соединении (ERR_CONNECTION_REFUSED).</Shot>
@@ -35,7 +35,7 @@ import Collapsible from '../../components/Collapsible.astro';
 
 <span id="bez-kabineta"></span>
 
-Если доступа нет: поищите в почте письма ALTA (выписки приходят на e-mail, записанный в банке), сохраните SMS банка об остатках и бумажные квитанции. Поддержка банка больше не работает: банк в банкротстве, его сервисы отключены, счета закрыты; справки о выплате и требованиях даёт AOD, управляющий банком ([сайт банка](https://www.altabanka.rs/), [AOD](https://www.aod.rs/)).
+Выписки ALTA приходили на e-mail, записанный в банке: поищите эти письма в почте. Сохраните SMS банка об остатках и бумажные квитанции. Поддержка банка больше не работает: банк в банкротстве, сервисы отключены, счета закрыты. Справки о выплате и требованиях даёт AOD, управляющий банком ([сайт банка](https://www.altabanka.rs/), [AOD](https://www.aod.rs/)).
 
 <span id="pisma"></span>
 
