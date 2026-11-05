@@ -59,6 +59,7 @@ export default defineConfig({
 			sidebar: [
 				{ label: 'Сейчас', slug: 'index', translations: { en: 'Now', sr: 'Sada' } },
 				{ label: 'Процедура и сроки', slug: 'procedura', translations: { en: 'Procedure and timeline', sr: 'Postupak i rokovi' } },
+				{ label: 'Выплата до 50 000 €', slug: 'vyplata', translations: { en: 'Payout up to €50,000', sr: 'Isplata do 50.000 €' } },
 				{ label: 'Требование сверх 50 000 €', slug: 'trebovanie', translations: { en: 'Claim above €50,000', sr: 'Prijava potraživanja iznad 50.000 €' } },
 				{ label: 'Вопросы и ответы', slug: 'voprosy', translations: { en: 'Questions and answers', sr: 'Pitanja i odgovori' } },
 				{ label: 'Что сохранить: выписки и документы', slug: 'vypiski', translations: { en: 'What to save: statements and documents', sr: 'Šta sačuvati: izvodi i dokumenta' } },
