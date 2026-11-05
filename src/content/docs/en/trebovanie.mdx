@@ -20,12 +20,14 @@ sources:
   - { title: "AOD, Univerzal banka: call to creditors to send payment details", url: "https://www.aod.rs/uploads/dokumenti/oglas/19_1_oglas.pdf", kind: official, date: 2020-08-31 }
   - { title: "AOD: forms for ALTA depositors (claim template, authorisation forms)", url: "https://www.aod.rs/clan/altabanka/obrasci_altabanka", kind: official, date: 2026-11-04 }
   - { title: "AOD: questions and answers on ALTA banka in bankruptcy", url: "https://www.aod.rs/clan/altabanka/pitanja_odgovori_altabanka", kind: official, date: 2026-11-04 }
+  - { title: "Public Debt Administration: list of government securities market participants (ALTA banka registration number and PIB)", url: "https://www.javnidug.gov.rs/static/uploads/Lista%20ovlascenih%20ucesnika_cir.pdf", kind: official, date: 2025-05-07 }
 ---
 
 import ForIp from '../../../components/ForIp.astro';
 import Shot from '../../../components/Shot.astro';
 import Faq from '../../../components/Faq.astro';
 import FormCards from '../../../components/FormCards.astro';
+import PrijavaForm from '../../../components/PrijavaForm.astro';
 
 <aside class="legal-note not-content"><strong>Not legal advice.</strong> This page summarises the laws and official announcements; for your own case, see a lawyer.</aside>
 
@@ -109,7 +111,9 @@ The authorised person can collect funds up to the insured amount and sign the do
 
 **AOD forms.** AOD has published three forms: the claim template for the court, the authorisation for an individual and the authorisation for a company. All are in Serbian Cyrillic; the claim is addressed to the Commercial Court in Belgrade, the authorisations let another person collect the insured amount up to €50,000. What to fill in is listed under each card.
 
-<FormCards lang="en" forms={['prijava', 'fizicka', 'pravna']} />
+<FormCards fill lang="en" forms={['prijava', 'fizicka', 'pravna']} />
+
+<PrijavaForm lang="en" />
 
 **If you have no JMBG.** None of the three AOD forms says how to fill in the JMBG field if you do not have one (for example, a foreigner without a Serbian personal number); the court and AOD have not announced it separately either.
 

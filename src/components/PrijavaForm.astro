@@ -1,0 +1,164 @@
+---
+// Требование в суд по образцу AOD, заполняемое в браузере: данные не покидают устройство, PDF собирает
+// pdf-lib на месте. Библиотека и шрифты (~0,5 МБ) грузятся со своего адреса только по нажатию «Скачать».
+// Должник и дело вписаны по решению суда 10 Ст 275/2026, ПИБ — по списку Управы за јавни дуг; всё правится.
+import regularUrl from '../assets/fonts/LiberationSerif-Regular-sub.ttf?url';
+import boldUrl from '../assets/fonts/LiberationSerif-Bold-sub.ttf?url';
+import { UI, type Lang } from '../i18n';
+
+const { lang = 'ru' } = Astro.props as { lang?: Lang };
+const t = UI[lang].prijava;
+
+type Field = { name: keyof typeof t.fields; sr: string; value?: string; area?: boolean };
+const groups: [keyof typeof t.groups, Field[]][] = [
+	[
+		'creditor',
+		[
+			{ name: 'name', sr: 'име и презиме' },
+			{ name: 'address', sr: 'адреса' },
+			{ name: 'jmbg', sr: 'ЈМБГ' },
+			{ name: 'account', sr: 'рачун бр.' },
+			{ name: 'bank', sr: 'назив банке' },
+			{ name: 'bankSeat', sr: 'седиште банке' },
+		],
+	],
+	[
+		'claim',
+		[
+			{ name: 'amount', sr: 'укупан износ' },
+			{ name: 'basis', sr: 'по основу', area: true },
+			{ name: 'evidence', sr: 'докази', area: true },
+		],
+	],
+	[
+		'sign',
+		[
+			{ name: 'place', sr: 'У', value: 'Београду' },
+			{ name: 'date', sr: 'дана' },
+		],
+	],
+	[
+		'case',
+		[
+			{ name: 'caseNo', sr: 'Ст.', value: '275/2026' },
+			{ name: 'decisionDate', sr: 'Решењем од', value: '03.11.2026.' },
+			{ name: 'gazetteNo', sr: '„Службени гласник” бр.' },
+			{ name: 'gazetteDate', sr: 'од' },
+			{ name: 'days', sr: 'у року од … дана', value: '90' },
+			{ name: 'debtor', sr: 'стечајни дужник', value: 'ALTA BANKA AD BEOGRAD – U STEČAJU' },
+			{ name: 'debtorSeat', sr: 'из', value: 'Београда' },
+			{ name: 'debtorRep', sr: 'ког заступа', value: 'Агенција за осигурање депозита, стечајни управник' },
+			{ name: 'debtorMb', sr: 'матични број', value: '07074433' },
+			{ name: 'debtorPib', sr: 'ПИБ', value: '100001829' },
+		],
+	],
+];
+---
+
+<details class="prijava-box not-content" id="zapolnit">
+	<summary>{t.title}</summary>
+	<form class="prijava" id="prijava" data-font-regular={regularUrl} data-font-bold={boldUrl}>
+		<p class="prijava-note">{t.privacy}</p>
+		<p class="prijava-about">{t.about}</p>
+		{
+			groups.map(([group, fields]) => (
+				<fieldset>
+					<legend>{t.groups[group]}</legend>
+					{fields.map((f) => {
+						const [label, hint] = t.fields[f.name];
+						return (
+							<label>
+								<span>
+									{label} <i lang="sr-Cyrl">({f.sr})</i>
+								</span>
+								{f.area ? (
+									<textarea name={f.name} rows="3" />
+								) : (
+									<input name={f.name} value={f.value ?? ''} autocomplete="off" />
+								)}
+								{hint && <small>{hint}</small>}
+							</label>
+						);
+					})}
+				</fieldset>
+			))
+		}
+		<button type="submit">{t.submit}</button>
+		<p class="prijava-status" role="status" data-building={t.building} data-done={t.done} data-open={t.open} data-failed={t.failed}></p>
+	</form>
+</details>
+
+<script>
+	import type { PrijavaData } from '../lib/prijava-pdf';
+
+	const box = document.getElementById('zapolnit') as HTMLDetailsElement | null;
+	const form = document.getElementById('prijava') as HTMLFormElement | null;
+
+	// Кнопка «Заполнить онлайн» в карточке бланка ведёт на #zapolnit: раскрываем форму и при переходе по ссылке.
+	const openOnHash = () => {
+		if (box && location.hash === '#zapolnit') box.open = true;
+	};
+	openOnHash();
+	addEventListener('hashchange', openOnHash);
+
+	if (form) {
+		const status = form.querySelector<HTMLElement>('.prijava-status')!;
+		let lastUrl = '';
+		form.addEventListener('submit', async (e) => {
+			e.preventDefault();
+			status.textContent = status.dataset.building!;
+			const fd = new FormData(form);
+			const get = (k: string) => String(fd.get(k) ?? '');
+			const data = Object.fromEntries([...fd.keys()].map((k) => [k, get(k)])) as unknown as PrijavaData;
+			data.basis = get('basis').split('\n');
+			data.evidence = get('evidence').split('\n');
+			try {
+				const [{ buildPrijava }, regular, bold] = await Promise.all([
+					import('../lib/prijava-pdf'),
+					fetch(form.dataset.fontRegular!).then((r) => r.arrayBuffer()),
+					fetch(form.dataset.fontBold!).then((r) => r.arrayBuffer()),
+				]);
+				const bytes = await buildPrijava(data, { regular, bold });
+				if (lastUrl) URL.revokeObjectURL(lastUrl);
+				lastUrl = URL.createObjectURL(new Blob([bytes], { type: 'application/pdf' }));
+				const a = document.createElement('a');
+				a.href = lastUrl;
+				a.download = 'prijava-potrazivanja.pdf';
+				document.body.append(a);
+				a.click();
+				a.remove();
+				// Встроенные браузеры (Telegram на iOS) не умеют download у blob: оставляем ссылку на открытие.
+				const open = document.createElement('a');
+				open.href = lastUrl;
+				open.target = '_blank';
+				open.textContent = status.dataset.open!;
+				status.replaceChildren(`${status.dataset.done} `, open);
+			} catch (err) {
+				status.textContent = `${status.dataset.failed} ${(err as Error).message}`;
+			}
+		});
+	}
+</script>
+
+<style>
+	.prijava-box { margin-top: 1.5rem; border: 1px solid var(--sl-color-gray-5); border-radius: 0.6rem; padding: 0.4rem 1rem; }
+	.prijava-box > summary { cursor: pointer; font-weight: 600; padding: 0.5rem 0; color: var(--sl-color-text-accent); }
+	.prijava { display: grid; gap: 1rem; max-width: 40rem; padding: 0.5rem 0 1rem; }
+	.prijava fieldset { display: grid; gap: 0.9rem; border: 0; margin: 0; padding: 0; min-width: 0; }
+	.prijava legend { font-weight: 700; font-size: 1.05rem; margin-bottom: 0.5rem; padding: 0; }
+	.prijava label { display: grid; gap: 0.25rem; }
+	.prijava label span { font-weight: 600; }
+	.prijava i { font-weight: 400; color: var(--sl-color-gray-3); }
+	.prijava input, .prijava textarea {
+		font: inherit; padding: 0.55rem 0.65rem; border: 1px solid var(--sl-color-gray-4);
+		border-radius: 0.4rem; background: var(--sl-color-bg); color: var(--sl-color-text); width: 100%;
+	}
+	.prijava small { color: var(--sl-color-gray-3); }
+	.prijava button {
+		font: inherit; font-weight: 600; padding: 0.75rem 1rem; border: 0; border-radius: 0.5rem;
+		background: var(--sl-color-accent); color: #fff; cursor: pointer; justify-self: start;
+	}
+	.prijava-note { background: var(--sl-color-accent-low); padding: 0.6rem 0.8rem; border-radius: 0.4rem; margin: 0; }
+	.prijava-about { margin: 0; }
+	.prijava-status { margin: 0; }
+</style>

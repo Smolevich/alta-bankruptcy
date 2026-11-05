@@ -30,6 +30,8 @@ const EXTRA_COPIES: Record<string, string> = {
 		'privredni-sud-2026-11-03-resenje-10-st-275-2026.pdf',
 	'https://web.archive.org/web/20160830213118/http://aod.rs/pdf/2014-02-06-obavestenje-o-nacinu-izmirivanja.pdf':
 		'aod-2014-02-06-obavestenje-izmirivanje-obaveza.pdf',
+	'https://www.javnidug.gov.rs/static/uploads/Lista%20ovlascenih%20ucesnika_cir.pdf':
+		'uprava-za-javni-dug-2025-05-lista-ovlascenih-ucesnika.pdf',
 };
 
 // AOD выложил бланки только в Word: в просмотре показываем нашу PDF-копию,
