@@ -56,10 +56,20 @@ page is not in the menu or the sitemap and is sent with `noindex, nofollow` (met
 links and comment; the text, document link and sources are collapsed. The author's name/contact
 is never shown there — only in the admin API and the admin page.
 
+**Formatted text.** The text field is a Tiptap editor (bold, italic, H2/H3, lists, quote, links);
+without JavaScript it stays a plain textarea and the text becomes paragraphs. The server keeps only
+p, br, strong, em, h2, h3, ul, ol, li, blockquote and a with an http(s) link (`richtext.py`, stdlib
+`html.parser`: nh3 would change `pyproject.toml`/`uv.lock`, which need a CODEOWNERS review), and
+counts the 20 000 limit in visible characters. Older proposals keep plain text (`text_format` empty).
+Rebuilding the editor bundle: `cd backend/editor && npm ci && npm run build` (writes
+`src/alta_feedback/static/richtext.js`; commit it).
+
 **Admin page:** `https://alta.smolevich.com/predlozheniya/admin/` — sign in through Cloudflare
 Access (the Access login page, one-time code to the admin's email; the session lasts 24 hours).
 There is no token field. Filter by status, new count, and per proposal: status, review link,
-publication link, editor comment, "Сохранить". «Выйти» ends the Access session.
+publication link, editor comment, "Сохранить"; below, "Текст для публикации" — "Править текст" opens
+the same editor over the editor's copy (`edited_text`), "Вернуть текст автора" clears it. The public
+page shows `edited_text` when it is set; the author's text stays unchanged in `text`. «Выйти» ends the Access session.
 
 How the sign-in works:
 
@@ -115,7 +125,9 @@ printf 'Authorization: Bearer %s\n' "$ADMIN_TOKEN" | ssh -o ClearAllForwardings=
 ```
 
 An item: `{id, created_at, title, text, doc_url, sources: [...], target: site|channel|both,
-contact, ip_hash, user_agent_short, status, review_url, published_url, comment, updated_at}`.
+contact, ip_hash, user_agent_short, status, review_url, published_url, comment, updated_at,
+text_format, edited_text, text_html}` (`text_html` — the author's text as cleaned HTML). The POST also
+takes `edited_text` (HTML, cleaned; `""` returns to the author's text).
 `since` works as for the other lists. The form takes a title, a text up to 20 000 characters
 and/or a document link, at least one source (one per line) and the target; the same rate limit
 (5 an hour per IP hash) and honeypot as the correction form.

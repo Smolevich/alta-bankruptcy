@@ -1,4 +1,5 @@
 import re
+import sqlite3
 
 import pytest
 from starlette.testclient import TestClient
@@ -215,3 +216,102 @@ def test_admin_script_is_served(client):
 )
 def test_site_header_follows_page_language(client, path, header):
     assert header in client.get(path).text
+
+
+def public_body(client: TestClient, item_id: int = 1) -> str:
+    """HTML текста предложения на публичной странице."""
+    card = client.get(PAGE).text.split(f'id="p{item_id}"')[1].split("</article>")[0]
+    return card.split('<div class="body rich">')[1].split("</div>")[0]
+
+
+def test_editor_html_is_published_cleaned(client):
+    propose(client, text_format="html",
+            text='<h2>Сроки</h2><p onclick="x()"><strong>30 дней</strong><script>alert(1)</script></p>')
+    body = public_body(client)
+    assert "<h2>Сроки</h2><p><strong>30 дней</strong></p>" in body and "alert" not in body
+
+
+@pytest.mark.parametrize(
+    "dirty",
+    ['<img src=x onerror=alert(1)>текст', '<a href="&#106;avascript:alert(1)">текст</a>',
+     '<svg onload=alert(1)></svg>текст', '<iframe src=https://evil.example></iframe>текст',
+     '<p style="x:expression(alert(1))">текст</p>',
+     '<a href="data:text/html,<script>alert(1)</script>">текст</a>'],
+)
+def test_public_page_never_renders_active_markup(client, dirty):
+    propose(client, text_format="html", text=dirty)
+    body = public_body(client)
+    bad = ("onerror", "onload", "javascript:", "<svg", "<iframe", "style=", "data:")
+    assert not any(marker in body for marker in bad)
+
+
+def test_plain_text_without_js_is_shown_as_text(client):
+    propose(client, text="Строка <b>не тег</b>\nвторая")
+    assert "Строка &lt;b&gt;не тег&lt;/b&gt;<br>вторая" in public_body(client)
+
+
+def test_text_limit_counts_visible_characters_not_tags(client):
+    text = "<p><strong>" + "а" * 100 + "</strong></p>"
+    assert propose(client, text_format="html", text=text * 150).status_code == 303
+
+
+def test_editor_text_over_limit_is_rejected_on_submit(client):
+    assert propose(client, text_format="html", text="<p>" + "а" * 20_001 + "</p>").status_code == 400
+
+
+def test_markup_without_text_counts_as_empty(client):
+    response = propose(client, text_format="html", text="<p><br></p><script>x</script>")
+    assert response.status_code == 400
+
+
+def test_rejected_form_returns_cleaned_html_to_editor(client):
+    response = propose(client, title="", text_format="html", text="<p>ok<script>alert(1)</script></p>")
+    assert "alert(1)" not in response.text
+
+
+def test_editor_text_is_published_and_author_original_kept(client):
+    propose(client, text_format="html", text="<p>Текст автора</p>")
+    edit(client, 1, edited_text="<p>Текст <em>редактора</em></p>")
+    assert "Текст <em>редактора</em>" in public_body(client)
+    item = admin_items(client)[0]
+    assert item["text"] == "<p>Текст автора</p>" and item["text_html"] == "<p>Текст автора</p>"
+
+
+def test_editor_text_is_cleaned(client):
+    propose(client)
+    edit(client, 1, edited_text='<p>ok</p><img src=x onerror=alert(1)><a href="javascript:x">y</a>')
+    assert admin_items(client)[0]["edited_text"] == "<p>ok</p>y"
+
+
+def test_clearing_editor_text_brings_back_author_text(client):
+    propose(client, text="Текст автора")
+    edit(client, 1, edited_text="<p>Правка</p>")
+    edit(client, 1, edited_text="")
+    assert "Текст автора" in public_body(client)
+
+
+def test_editor_text_at_limit_fits_into_request(client):
+    """Кириллица в JSON — по 2 байта на знак: 20 000 знаков не пролезали в общий лимит тела 16 КБ."""
+    propose(client)
+    assert edit(client, 1, edited_text="<p>" + "а" * 20_000 + "</p>").status_code == 200
+
+
+def test_editor_text_over_limit_is_rejected(client):
+    propose(client)
+    assert edit(client, 1, edited_text="<p>" + "а" * 20_001 + "</p>").status_code == 400
+
+
+def test_old_plain_text_proposal_is_escaped(client, tmp_path):
+    propose(client)
+    with sqlite3.connect(tmp_path / "feedback.db") as db:
+        db.execute("UPDATE proposals SET text = '<script>alert(1)</script>', text_format = NULL")
+    assert "&lt;script&gt;alert(1)&lt;/script&gt;" in public_body(client)
+
+
+def test_proposal_page_loads_own_editor_script(client):
+    csp = client.get(PAGE).headers["content-security-policy"]
+    assert "script-src 'self'" in csp and "unsafe-eval" not in csp
+
+
+def test_editor_script_is_served(client):
+    assert client.get("/static/richtext.js").status_code == 200

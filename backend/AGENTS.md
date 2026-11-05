@@ -12,7 +12,9 @@ write-up (`/`) and anonymous "where did you open an account" reports (`/account`
 and pages are in Russian; issues and PRs may be in English, Serbian or Russian.
 
 - Stack: Python 3.13, Starlette + Jinja, SQLite. Own scripts live in
-  `src/alta_feedback/static/` — no libraries, no bundler.
+  `src/alta_feedback/static/` — no libraries, no bundler. The one exception is the proposal text
+  editor `static/richtext.js`: Tiptap (MIT) bundled from `editor/` (`cd editor && npm ci && npm run
+  build`, pinned versions, output committed); its source is `editor/src/richtext.js`.
 - Code: `main.py` routes and middleware, `accounts.py` account-report parsing and
   `scrub_pii`, `validate.py` correction form and IP hashing, `store.py` SQLite,
   `pow.py` ALTCHA-style proof-of-work, `stats.py` public stats, `branches.py` the bank
@@ -23,7 +25,8 @@ and pages are in Russian; issues and PRs may be in English, Serbian or Russian.
   without an https `source_url` is not rendered); `aod_archive.py` our copy of the AOD PDFs the
   write-up links to (`data/aod_archive.json`, served at `/docs/aod/<name>`, checked daily);
   `proposals.py` material proposals from the working group at `/predlozheniya/` (ru/en/sr,
-  noindex, public list without the author's contact) and their admin page
+  noindex, public list without the author's contact; the text is formatted HTML from the editor,
+  cleaned by `richtext.sanitize` on the way in and again on output) and their admin page
   `/predlozheniya/admin/` (`static/proposals-admin.js`; sign-in through Cloudflare Access, the
   service re-checks the Access JWT in `cf_access.py`, Bearer still works); `bank_forms.py` blank account-opening forms per bank and what the bank asks, a block below the
   answers on the stats page (`data/bank_forms.json`; the PDFs are the site's `public/docs/banks`,
@@ -58,8 +61,12 @@ The database goes to `$DATA_DIR/feedback.db` (default `data/`).
   `/account` adds `script-src 'self'` and `connect-src 'self'` (fresh PoW challenge), and
   `/account/stats` adds only `script-src 'self'` (`static/filters.js`: search lists and date fields;
   without JS the filters stay plain `<select>`/`<input type=date>`; `static/pdfview.js`: the PDF
-  viewer) and `object-src`/`frame-src 'self'` for the bank forms in that viewer. Its pure search logic is tested
+  viewer) and `object-src`/`frame-src 'self'` for the bank forms in that viewer; `/predlozheniya/`
+  adds `script-src 'self'` for the text editor. The pure search logic of `filters.js` is tested
   with `node --test tests/js/filters.test.js`.
+- **Formatted text only through `richtext.sanitize`.** Allowed: p, br, strong, em, h2, h3, ul, ol,
+  li, blockquote, a (http/https `href` only, our `rel`). Stored text is already cleaned and is cleaned
+  again before rendering; never mark proposal text safe any other way.
 - **A test for every behaviour and a regression test for every bug**; pytest tests
   behaviour, not implementation.
 - **Deploy only through CI** (push to `main`), no manual changes on the server. No secrets
