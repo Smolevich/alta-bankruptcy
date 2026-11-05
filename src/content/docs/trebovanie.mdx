@@ -18,8 +18,8 @@ sources:
   - { title: "Письмо AOD вкладчику, 02.11.2026 13:47 (скриншот)", url: "https://alta.smolevich.com/img/aod/aod-odgovor-2-ru.webp", kind: official, date: 2026-11-02 }
   - { title: "Закон о хозяйственных обществах, ст. 83", url: "https://www.paragraf.rs/propisi/zakon_o_privrednim_drustvima.html", kind: official, date: 2026-11-02 }
   - { title: "AOD, Univerzal banka: призыв к кредиторам прислать реквизиты", url: "https://www.aod.rs/uploads/dokumenti/oglas/19_1_oglas.pdf", kind: official, date: 2020-08-31 }
-  - { title: "AOD: формы для вкладчиков ALTA (образец требования, бланки доверенности)", url: "https://www.aod.rs/clan/stecajlikv/obrasci_isplata", kind: official, date: 2026-11-04 }
-  - { title: "AOD: вопросы и ответы по ALTA banka в банкротстве", url: "https://www.aod.rs/clan/stecajlikv/pitanja_odgovori_isplata", kind: official, date: 2026-11-04 }
+  - { title: "AOD: формы для вкладчиков ALTA (образец требования, бланки доверенности)", url: "https://www.aod.rs/clan/altabanka/obrasci_altabanka", kind: official, date: 2026-11-04 }
+  - { title: "AOD: вопросы и ответы по ALTA banka в банкротстве", url: "https://www.aod.rs/clan/altabanka/pitanja_odgovori_altabanka", kind: official, date: 2026-11-04 }
 ---
 
 import ForIp from '../../components/ForIp.astro';
@@ -103,7 +103,7 @@ import FormCards from '../../components/FormCards.astro';
 
 <FormCards forms={['fizicka', 'pravna']} />
 
-Доверенный может получить деньги в пределах застрахованной суммы и подписать документы для выплаты. Оба бланка оформляют в трёх экземплярах: вкладчику, банку в банкротстве и банку-плательщику. За фирму или ИП, если приходит не представитель из реестра, AOD требует доверенность на бланке фирмы с именем доверенного, подписью представителя и печатью, а ещё ОП-образец и личную карту доверенного (в виде исключения паспорт) ([AOD, вопросы и ответы по ALTA](https://www.aod.rs/clan/stecajlikv/pitanja_odgovori_isplata)).
+Доверенный может получить деньги в пределах застрахованной суммы и подписать документы для выплаты. Оба бланка оформляют в трёх экземплярах: вкладчику, банку в банкротстве и банку-плательщику. За фирму или ИП, если приходит не представитель из реестра, AOD требует доверенность на бланке фирмы с именем доверенного, подписью представителя и печатью, а ещё ОП-образец и личную карту доверенного (в виде исключения паспорт) ([AOD, вопросы и ответы по ALTA](https://www.aod.rs/clan/altabanka/pitanja_odgovori_altabanka)).
 
 **Заверение и документы из-за границы.** По процедуре AOD 2015 года доверенность заверяет суд или община, с датой не раньше отзыва лицензии; заверенная нотариусом за границей сначала проверяется в банке в банкротстве ([процедура AOD, разд. VIII](https://www.aod.rs/uploads/dokumenti/osigdepoz/pravniokvir/cir/16_pravniokvir.pdf)). Нужны ли для ALTA перевод и апостиль, AOD не написал ни в бланках, ни в вопросах и ответах. Если у вас нет JMBG — [см. ниже, у образца требования](#obrazac).
 
@@ -117,7 +117,7 @@ import FormCards from '../../components/FormCards.astro';
 
 **Если нет JMBG.** Как заполнять поле JMBG тем, у кого его нет (например, иностранцам без сербского личного номера), ни в одном из трёх бланков AOD не сказано; суд и AOD отдельно этого тоже пока не объявляли.
 
-Образец не обязателен: AOD пишет, что требование кредитор может составить и в свободной форме, но в нём должны быть обязательные пункты из ст. 111 закона о банкротстве ([AOD, вопросы и ответы о банкротстве](https://www.aod.rs/clan/stecajlikv/pitanja_odgovori)). Эти пункты AOD повторил в вопросах и ответах по ALTA ([AOD, вопросы и ответы по ALTA](https://www.aod.rs/clan/stecajlikv/pitanja_odgovori_isplata); [Закон о банкротстве, ст. 111 ч. 1](https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2009/104/25/reg)):
+Образец не обязателен: AOD пишет, что требование кредитор может составить и в свободной форме, но в нём должны быть обязательные пункты из ст. 111 закона о банкротстве ([AOD, вопросы и ответы о банкротстве](https://www.aod.rs/clan/stecajlikv/pitanja_odgovori)). Эти пункты AOD повторил в вопросах и ответах по ALTA ([AOD, вопросы и ответы по ALTA](https://www.aod.rs/clan/altabanka/pitanja_odgovori_altabanka); [Закон о банкротстве, ст. 111 ч. 1](https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2009/104/25/reg)):
 
 - имя (для фирмы — наименование), адрес и контактный адрес;
 - JMBG (для фирмы — матичный номер);
