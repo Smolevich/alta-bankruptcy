@@ -1,0 +1,16 @@
+{
+  "name": "alta-richtext-editor",
+  "private": true,
+  "description": "Сборка редактора текста предложений (Tiptap, MIT) в один файл static/richtext.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "esbuild src/richtext.js --bundle --minify --format=iife --target=es2020 --legal-comments=eof --outfile=../src/alta_feedback/static/richtext.js \"--banner:js=/* Сборка backend/editor (npm run build). Tiptap, ProseMirror, linkifyjs, orderedmap, rope-sequence, w3c-keyname — MIT. */\""
+  },
+  "devDependencies": {
+    "@tiptap/core": "3.32.0",
+    "@tiptap/extension-link": "3.32.0",
+    "@tiptap/pm": "3.32.0",
+    "@tiptap/starter-kit": "3.32.0",
+    "esbuild": "0.28.2"
+  }
+}

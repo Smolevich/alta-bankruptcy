@@ -78,6 +78,10 @@ CREATE TABLE IF NOT EXISTS pow_used (
 # Колонки, добавленные после запуска: (таблица, колонка, тип). Только nullable — старые строки получают NULL.
 ADDED_COLUMNS = (
     ("accounts", "branch", "TEXT"),
+    # html — text хранит очищенный HTML редактора; NULL — простой текст старых предложений.
+    ("proposals", "text_format", "TEXT"),
+    # Правка текста редактором перед публикацией; текст автора в text не меняется.
+    ("proposals", "edited_text", "TEXT"),
 )
 
 COLUMNS = {
@@ -92,12 +96,13 @@ COLUMNS = {
     "proposals": (
         "id", "created_at", "title", "text", "doc_url", "sources", "target", "contact", "ip_hash",
         "user_agent_short", "status", "review_url", "published_url", "comment", "updated_at",
+        "text_format", "edited_text",
     ),
 }
 # Автор, его контакт и следы браузера в публичный список не попадают.
 PUBLIC_PROPOSAL_COLUMNS = (
     "id", "created_at", "title", "text", "doc_url", "sources", "target", "status",
-    "review_url", "published_url", "comment",
+    "review_url", "published_url", "comment", "text_format", "edited_text",
 )
 PUBLIC_ACCOUNT_COLUMNS = (
     "id", "visit_date", "bank", "city", "branch", "account_type", "result", "residency", "documents",
@@ -186,7 +191,7 @@ class Store:
         with self.connect() as db:
             cur = db.execute(
                 "INSERT INTO proposals (created_at, title, text, doc_url, sources, target, contact,"
-                " ip_hash, user_agent_short) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                " ip_hash, user_agent_short, text_format) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'html')",
                 (iso(now), item.title, item.text, item.doc_url, json.dumps(list(item.sources)),
                  item.target, item.contact, ip_hash, user_agent),
             )

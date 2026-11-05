@@ -28,7 +28,23 @@
   .contact span { color: var(--muted); }
   details { margin-top: 6px; }
   summary { cursor: pointer; color: var(--accent); font-weight: 600; }
-  .body { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 360px; overflow: auto; margin: 6px 0 0; }
+  .body { overflow-wrap: anywhere; max-height: 360px; overflow: auto; margin: 6px 0 0; }
+  .rich p, .rich ul, .rich ol, .rich blockquote { margin: 0 0 8px; }
+  .rich h2 { font-size: 16px; margin: 10px 0 6px; }
+  .rich h3 { font-size: 15px; margin: 8px 0 6px; }
+  .rich ul, .rich ol { padding-left: 22px; }
+  .rich blockquote, .rt-doc blockquote { border-left: 3px solid var(--line); padding-left: 10px; color: var(--muted); }
+  .redact { grid-column: 1 / -1; border-top: 1px solid var(--line); padding-top: 8px; display: grid; gap: 6px; }
+  .redact-head { display: flex; gap: 8px; align-items: center; }
+  .tag { font-size: 12px; color: var(--muted); }
+  .rt { border: 1px solid var(--line); border-radius: 4px; background: #fff; }
+  .rt-bar { display: flex; flex-wrap: wrap; gap: 4px; padding: 6px; border-bottom: 1px solid var(--line); background: var(--nav); }
+  .rt-btn { min-width: 34px; min-height: 32px; padding: 0 8px; font-size: 14px; font-weight: 700; background: #fff; color: var(--ink); border: 1px solid var(--line); border-radius: 4px; }
+  .rt-btn.on { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .rt-doc { min-height: 200px; max-height: 70vh; overflow: auto; padding: 10px 12px; font-size: 15px; line-height: 1.5; outline: none; }
+  .rt-doc p, .rt-doc ul, .rt-doc ol { margin: 0 0 8px; }
+  .rt-doc ul, .rt-doc ol { padding-left: 22px; }
+  .rt-doc a { color: var(--accent); }
   .src { margin: 6px 0 0; padding-left: 18px; overflow-wrap: anywhere; }
   .edit { display: grid; gap: 6px; }
   .edit label { margin: 0; font-size: 13px; font-weight: 600; }
@@ -81,8 +97,8 @@
       <div class="meta" data-f="meta"></div>
       <div class="contact"><span>Контакт:</span> <span data-f="contact"></span></div>
       <details>
-        <summary>Текст и источники</summary>
-        <div class="body" data-f="text"></div>
+        <summary>Текст автора и источники</summary>
+        <div class="body rich" data-f="text"></div>
         <p data-f="doc" style="margin: 6px 0 0"></p>
         <ul class="src" data-f="sources"></ul>
       </details>
@@ -98,8 +114,23 @@
       <label>Комментарий редактора<textarea name="comment" maxlength="{{ comment_max }}"></textarea></label>
       <div class="save"><button type="submit">Сохранить</button><span class="saved" data-f="saved"></span></div>
     </form>
+    <section class="redact">
+      <div class="redact-head">
+        <b>Текст для публикации</b>
+        <span class="tag" data-f="edited-tag"></span>
+      </div>
+      <div class="body rich" data-f="edited"></div>
+      <textarea data-f="edited-input" hidden aria-label="Текст для публикации"></textarea>
+      <div class="save">
+        <button type="button" class="ghost" data-f="edit">Править текст</button>
+        <button type="button" data-f="edit-save" hidden>Сохранить текст</button>
+        <button type="button" class="ghost" data-f="edit-reset" hidden>Вернуть текст автора</button>
+        <span class="saved" data-f="edit-note"></span>
+      </div>
+    </section>
   </article>
 </template>
 <script type="application/json" id="labels">{{ {"targets": t.targets} | tojson }}</script>
+<script src="/static/richtext.js"></script>
 <script src="/static/proposals-admin.js"></script>
 {% endblock %}

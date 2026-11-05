@@ -3,8 +3,12 @@
 from dataclasses import dataclass
 from urllib.parse import urlsplit
 
+from alta_feedback.richtext import plain_to_html, sanitize, visible_text
+
 TITLE_MAX = 200
 TEXT_MAX = 20_000
+# Разметка поверх текста: лимит текста считается по видимым знакам, а HTML целиком — с запасом на теги.
+HTML_MAX = 4 * TEXT_MAX
 URL_MAX = 1000
 SOURCE_MAX = 500
 SOURCES_MAX = 20
@@ -15,7 +19,7 @@ TARGETS = ("site", "channel", "both")
 STATUSES = ("new", "in_review", "needs_changes", "approved", "published", "rejected", "spam")
 PUBLIC_STATUSES = STATUSES[:-1]
 LANGS = ("ru", "en", "sr")
-EDITOR_FIELDS = ("status", "review_url", "published_url", "comment")
+EDITOR_FIELDS = ("status", "review_url", "published_url", "comment", "edited_text")
 
 
 @dataclass(frozen=True)
@@ -38,11 +42,32 @@ def split_sources(raw: str) -> tuple[str, ...]:
     return tuple(line.strip() for line in raw.splitlines() if line.strip())
 
 
+def clean_text(raw: str, is_html: bool) -> str:
+    """Текст из редактора (HTML) или из простого поля без JS → очищенный HTML; пустой — ""."""
+    clean = sanitize(raw) if is_html else plain_to_html(raw.strip())
+    return clean if visible_text(clean) else ""
+
+
+def too_long(clean: str) -> bool:
+    return len(visible_text(clean)) > TEXT_MAX or len(clean) > HTML_MAX
+
+
+def display_html(item: dict) -> str:
+    """Что показать как текст предложения: правка редактора, иначе текст автора; всегда очищенный HTML.
+
+    Старые предложения хранят простой текст (text_format пустой)."""
+    if item.get("edited_text"):
+        return sanitize(item["edited_text"])
+    if item.get("text_format") == "html":
+        return sanitize(item.get("text") or "")
+    return plain_to_html(item.get("text") or "")
+
+
 def parse_proposal(form: dict[str, str], lang: str = "ru") -> tuple[Proposal, list[str]]:
     """Собирает предложение из полей формы и возвращает его вместе со списком ошибок на языке страницы."""
     msg = TEXTS[lang]["errors"]
     title = " ".join((form.get("title") or "").split())
-    text = (form.get("text") or "").strip()
+    text = clean_text(form.get("text") or "", form.get("text_format") == "html")
     doc_url = (form.get("doc_url") or "").strip()
     sources = split_sources(form.get("sources") or "")
     target = (form.get("target") or "").strip()
@@ -54,7 +79,7 @@ def parse_proposal(form: dict[str, str], lang: str = "ru") -> tuple[Proposal, li
         errors.append(msg["title_long"].format(TITLE_MAX))
     if not text and not doc_url:
         errors.append(msg["body"])
-    if len(text) > TEXT_MAX:
+    if too_long(text):
         errors.append(msg["text_long"].format(TEXT_MAX))
     if doc_url and (len(doc_url) > URL_MAX or not is_http_url(doc_url)):
         errors.append(msg["doc_url"])
@@ -87,6 +112,10 @@ def parse_editor_update(body: object) -> tuple[dict[str, str], str | None]:
             return {}, f"{key}: нужна ссылка http(s)"
     if len(changes.get("comment", "")) > COMMENT_MAX:
         return {}, f"comment: не длиннее {COMMENT_MAX} знаков"
+    if "edited_text" in changes:
+        changes["edited_text"] = clean_text(changes["edited_text"], is_html=True)
+        if too_long(changes["edited_text"]):
+            return {}, f"edited_text: не длиннее {TEXT_MAX} знаков текста"
     return changes, None
 
 

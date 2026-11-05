@@ -9,6 +9,7 @@ from urllib.parse import urlencode
 from zoneinfo import ZoneInfo
 
 from jinja2 import Environment, PackageLoader, select_autoescape
+from markupsafe import Markup
 from starlette.applications import Starlette
 from starlette.concurrency import run_in_threadpool
 from starlette.middleware import Middleware
@@ -92,7 +93,8 @@ PUBLIC_ACCOUNTS_MAX = 2000
 LOCAL_TZ = ZoneInfo("Europe/Belgrade")
 STATIC_DIR = Path(__file__).parent / "static"
 SCRIPTS = frozenset({
-    "branch.js", "combo.js", "filters.js", "pdfview.js", "pow.js", "proposals-admin.js", "voice.js",
+    "branch.js", "combo.js", "filters.js", "pdfview.js", "pow.js", "proposals-admin.js", "richtext.js",
+    "voice.js",
 })
 # Перебор запускает отметка «Я не робот»; среднее число попыток — половина, на Mac ~0,4 с, на телефоне 1–3 с.
 POW_MAX_NUMBER = 200_000
@@ -136,6 +138,13 @@ STATS_PAGE_HEADERS = {
 
 # Страница предложений — служебная для рабочей группы: в поиск не попадает и ссылкам вес не передаёт.
 NOINDEX = {"X-Robots-Tag": "noindex, nofollow"}
+# Форме предложения нужен свой скрипт редактора (static/richtext.js); в сеть он не ходит.
+PROPOSALS_PAGE_HEADERS = {
+    **NOINDEX,
+    "Content-Security-Policy": SECURITY_HEADERS["Content-Security-Policy"].replace(
+        f"script-src {CF_SCRIPT};", f"script-src 'self' {CF_SCRIPT};"
+    ),
+}
 # Админке нужен свой скрипт и запросы к /admin/proposals со своего адреса; вход — Cloudflare Access.
 PROPOSALS_ADMIN_HEADERS = {
     **NOINDEX,
@@ -164,7 +173,8 @@ class SecurityHeaders(BaseHTTPMiddleware):
 
 
 def body_limit(path: str) -> int:
-    return PROPOSAL_BODY_MAX if path in PROPOSAL_PATHS else BODY_MAX
+    big = path in PROPOSAL_PATHS or path.startswith("/admin/proposals/")
+    return PROPOSAL_BODY_MAX if big else BODY_MAX
 
 
 def client_ip(request: Request) -> str:
@@ -267,7 +277,8 @@ def parse_since(raw: str | None) -> str | None:
 
 
 def admin_list(
-    table: str, statuses: frozenset[str], via_access: bool = False
+    table: str, statuses: frozenset[str], via_access: bool = False,
+    decorate: Callable[[dict], dict] = lambda item: item,
 ) -> Callable[[Request], Awaitable[JSONResponse]]:
     async def handler(request: Request) -> JSONResponse:
         if not await authorized(request, via_access):
@@ -279,7 +290,7 @@ def admin_list(
         if status and status not in statuses:
             return JSONResponse({"error": f"status: одно из {sorted(statuses)}"}, status_code=400)
         items = request.app.state.store.since(since, status, ADMIN_PAGE_MAX, table=table)
-        return JSONResponse({"count": len(items), "items": items})
+        return JSONResponse({"count": len(items), "items": [decorate(item) for item in items]})
 
     return handler
 
@@ -448,14 +459,24 @@ def proposals_page(
 ) -> HTMLResponse:
     sent = request.query_params.get("sent", "")
     return render(
-        "proposals.html", status_code=status_code, headers=NOINDEX, t=proposals.TEXTS[lang],
+        "proposals.html", status_code=status_code, headers=PROPOSALS_PAGE_HEADERS, t=proposals.TEXTS[lang],
         html_lang=proposals.TEXTS[lang]["html_lang"], lang=lang, action=proposals.page_path(lang),
         home=proposals.site_home(lang), targets=proposals.TARGETS, values=values, errors=errors,
         sent=int(sent) if sent.isdigit() else None,
-        items=request.app.state.store.public_proposals(PROPOSALS_SHOWN),
+        items=[with_html(item) for item in request.app.state.store.public_proposals(PROPOSALS_SHOWN)],
         title_max=proposals.TITLE_MAX, body_max=proposals.TEXT_MAX, url_max=proposals.URL_MAX,
         contact_max=proposals.CONTACT_MAX, sources_max=proposals.SOURCES_MAX,
     )
+
+
+def with_html(item: dict) -> dict:
+    """Текст для показа — только через очистку; Markup, чтобы шаблон не экранировал теги второй раз."""
+    return {**item, "html": Markup(proposals.display_html(item))}
+
+
+def with_original_html(item: dict) -> dict:
+    """Админке — текст автора отдельно от правки редактора."""
+    return {**item, "text_html": proposals.display_html({**item, "edited_text": None})}
 
 
 def proposals_view(lang: str) -> Callable[[Request], Awaitable[HTMLResponse]]:
@@ -473,7 +494,9 @@ def proposals_submit(lang: str) -> Callable[[Request], Awaitable[Response]]:
             return RedirectResponse(path, status_code=303)
         proposal, errors = proposals.parse_proposal(form, lang)
         if errors:
-            return proposals_page(request, lang, form, errors, status_code=400)
+            # В редактор возвращаем уже очищенный HTML, а не то, что пришло.
+            values = {**form, "text": proposal.text} if form.get("text_format") == "html" else form
+            return proposals_page(request, lang, values, errors, status_code=400)
         store: Store = request.app.state.store
         now = datetime.now(UTC)
         ip_hash = ip_hash_of(request)
@@ -545,7 +568,9 @@ def proposal_routes() -> list[Route]:
         Route("/predlozheniya/admin/", proposals_admin_page, methods=["GET"]),
         Route("/predlozheniya/admin", to_slash("/predlozheniya/admin/"), methods=["GET"]),
         Route(
-            "/admin/proposals", admin_list("proposals", frozenset(proposals.STATUSES), via_access=True),
+            "/admin/proposals", admin_list(
+                "proposals", frozenset(proposals.STATUSES), via_access=True, decorate=with_original_html,
+            ),
             methods=["GET"],
         ),
         Route("/admin/proposals/{id:int}", admin_update_proposal, methods=["POST"]),

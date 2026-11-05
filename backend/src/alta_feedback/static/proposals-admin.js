@@ -56,8 +56,10 @@
     f("title").textContent = item.title;
     f("meta").textContent = `№${item.id} · ${day(item.created_at)} · ${labels.targets[item.target] || item.target}`;
     f("contact").textContent = item.contact || "—";
-    f("text").textContent = item.text;
-    f("text").hidden = !item.text;
+    // text_html и edited_text сервер отдаёт уже очищенными (richtext.py) — только разрешённые теги.
+    f("text").innerHTML = item.text_html;
+    f("text").hidden = !item.text_html;
+    redactor(row, item);
     if (item.doc_url) f("doc").append("Документ: ", link(item.doc_url));
     for (const source of item.sources) {
       const li = document.createElement("li");
@@ -68,6 +70,46 @@
     for (const name of ["status", "review_url", "published_url", "comment"]) form.elements[name].value = item[name] || "";
     row.classList.toggle("is-new", item.status === "new");
     form.addEventListener("submit", (event) => save(event, item, row));
+  }
+
+  function showEdited(row, item) {
+    const f = (name) => row.querySelector(`[data-f="${name}"]`);
+    f("edited").innerHTML = item.edited_text || item.text_html;
+    f("edited-tag").textContent = item.edited_text ? "правка редактора" : "как у автора";
+    f("edit-reset").hidden = !item.edited_text;
+  }
+
+  // Редактор поднимается только по кнопке: на сотню строк сотня редакторов не нужна.
+  function redactor(row, item) {
+    const f = (name) => row.querySelector(`[data-f="${name}"]`);
+    let editor = null;
+    showEdited(row, item);
+    f("edit").addEventListener("click", () => {
+      if (editor || !window.AltaRichText) return;
+      f("edited-input").value = item.edited_text || item.text_html;
+      f("edited").hidden = true;
+      editor = window.AltaRichText.mount(f("edited-input"), { format: "html" });
+      f("edit").hidden = true;
+      f("edit-save").hidden = false;
+    });
+    const send = async (value) => {
+      const note = f("edit-note");
+      note.className = "saved"; note.textContent = "Сохраняю…";
+      try {
+        const body = await api(`/admin/proposals/${item.id}`, {
+          method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ edited_text: value }),
+        });
+        item.edited_text = body.edited_text;
+        if (editor) { editor.destroy(); editor = null; row.querySelector(".rt").remove(); }
+        f("edited").hidden = false; f("edit").hidden = false; f("edit-save").hidden = true;
+        showEdited(row, item);
+        note.textContent = "Сохранено";
+      } catch (error) {
+        note.className = "saved err"; note.textContent = error.message;
+      }
+    };
+    f("edit-save").addEventListener("click", () => send(f("edited-input").value));
+    f("edit-reset").addEventListener("click", () => send(""));
   }
 
   async function save(event, item, row) {
