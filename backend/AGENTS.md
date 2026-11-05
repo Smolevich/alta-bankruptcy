@@ -31,6 +31,10 @@ and pages are in Russian; issues and PRs may be in English, Serbian or Russian.
   service re-checks the Access JWT in `cf_access.py`, Bearer still works); `bank_forms.py` blank account-opening forms per bank and what the bank asks, a block below the
   answers on the stats page (`data/bank_forms.json`; the PDFs are the site's `public/docs/banks`,
   metadata stripped; an official form needs an https `source_url`).
+  `casebook.py` the case catalogue («Мой кейс» tab of `/predlozheniya/`, admin under
+  `/admin/proposals/cases`, public feed `/api/cases/public` for the site page `/kejsy/`) and
+  `uploads.py` its photos/PDFs (type by magic bytes, Pillow re-encode without EXIF, HEIC → JPEG,
+  `data/case-files/`, private until the admin publishes the case and its files; see `docs/ops.md`).
   `cases.py` the «Что просили в вашем случае» block on the stats page: filter by account
   (personal / ИП / both at once — «both» counts in both) and residence permit; documents per bank
   counted in distinct people (IP hash, never rendered), opened-vs-refused split, official rules and

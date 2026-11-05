@@ -33,6 +33,16 @@ document link, sources, target (site, channel or both), name or handle (if given
 published), submission time, and the editor's status, links and comment. Everything except the
 name/handle is visible in the list on that page.
 
+**Case** (`/predlozheniya/?type=case`, "Мой кейс"): category (real estate or a deal, loan or
+mortgage, family or joint account, sole trader or company, other), what happened, what was filed
+and where, the result, a date, optional sources and a link to the person's own page, a name or
+handle (if given — never published) and up to 10 photos or PDFs. The free-text fields go through
+the same `scrub_pii` as account reports. Photos are re-encoded on the server, which drops EXIF
+(location, phone model) and anything appended to the file; HEIC becomes JPEG. The file type is
+read from its content, not its name. Files live next to the database (`data/case-files/`, random
+names) and are served only to the admin until the admin both publishes the case and allows its
+files. Account opening is not a case: it has its own form `/account`.
+
 **Account report:** bank, city, branch (if given), personal or sole-proprietor account,
 outcome, visit date, residence status in Serbia (if given), requested documents, comment,
 submission time.
@@ -56,7 +66,9 @@ browser name are wiped after 30 days. Used anti-bot challenges — after 30 minu
 fields: bank, city, account type, outcome, visit date, status, documents, comment. No
 submission time, hash or browser. The branch is shown only when at least two checked
 reports name the same branch of the same bank; otherwise it is hidden ("other branches"),
-so a single answer cannot point at one person. Corrections are not public.
+so a single answer cannot point at one person. Corrections are not public. Cases appear in the "Кейсы" feed on the site only after the admin
+accepts and publishes them (`/api/cases/public`): category, what happened, what was filed, result,
+date, the first source link, the own-page link and — only when allowed separately — the files.
 
 **Voice.** The "Голосом" (voice) button uses the browser's speech recognition: Chrome
 sends the audio to Google, Safari to Apple. We never receive or store the audio — only

@@ -132,6 +132,57 @@ takes `edited_text` (HTML, cleaned; `""` returns to the author's text).
 and/or a document link, at least one source (one per line) and the target; the same rate limit
 (5 an hour per IP hash) and honeypot as the correction form.
 
+## Cases ("Картотека кейсов")
+
+The proposals page has two tabs: «Материал» (`/predlozheniya/`) and «Мой кейс»
+(`/predlozheniya/?type=case`, also `/en/…`, `/sr/…`). The case form posts multipart to
+`/predlozheniya/case` and is protected like `/account`: honeypot, the proof-of-work checkbox
+(`static/pow.js`, captions on the page language), 5 cases an hour per IP hash, plus a separate limit
+of 30 files an hour per IP hash. Sources are optional for a case (required for a material). A
+request without `Content-Length` gets 411, a body over 42 MB gets 413.
+
+Files: up to 10 per case, each up to 10 MB, 40 MB together; JPG, PNG, HEIC or PDF by their first
+bytes. Images are decoded and saved again with Pillow (EXIF and tails dropped, HEIC → JPEG, long
+side ≤ 2560 px, ≤ 60 Mpx); a PDF is kept as is (it needs `%PDF-` and `%%EOF`) and is only ever served
+as a download. They are written to `$DATA_DIR/case-files/<24 hex>.<ext>`; uploads stop when the disk
+has less than 3 GB free or the folder reaches 5 GB (the form asks to send the case without files).
+
+Visibility: `status` is `new`, `accepted`, `rejected`, `test` or `spam`; `published` puts an accepted
+case into the feed; `files_published` additionally shows its photos/PDFs there. Until both apply a
+file is served only by the admin route, which is behind Access like the rest of `/admin/proposals`.
+`/api/cases/files/<name>` answers 404 otherwise and sends `Cache-Control: no-cache`, so Cloudflare
+does not keep an unpublished file.
+
+The admin page `/predlozheniya/admin/?type=case` (or the «Тип» switch) shows category, texts,
+contact, previews of the files (fetched with the same sign-in), status, both flags, the author's
+link (clear it to hide it) and a private comment; «Удалить» removes the case with its files.
+
+```bash
+# list (statuses as above), then mark a test entry
+printf 'Authorization: Bearer %s\n' "$ADMIN_TOKEN" | ssh -o ClearAllForwardings=yes bot-server \
+  'curl -fsS -H @- "http://127.0.0.1:8102/admin/proposals/cases?status=new"' | jq
+printf 'Authorization: Bearer %s\n' "$ADMIN_TOKEN" | ssh -o ClearAllForwardings=yes bot-server \
+  'curl -fsS -H @- -H "Content-Type: application/json" -d "{\"status\":\"test\"}" \
+     http://127.0.0.1:8102/admin/proposals/cases/1'
+```
+
+An item: `{id, created_at, category, summary, filed, result, event_date, sources, own_url, contact,
+ip_hash, user_agent_short, status, published, files_published, comment, updated_at,
+files: [{case_id, name, kind, bytes}]}`. The POST takes any subset of `status`, `published`,
+`files_published` (booleans), `own_url`, `comment`.
+
+Public feed: `GET /api/cases/public` — accepted and published only, newest event first, up to 500:
+`{count, items: [{id, category, summary, filed, result, date, source_url, own_url,
+files: [{url, kind}]}], labels: {category: {ru, en, sr}}}`. The site page `/kejsy/` (ru/en/sr)
+reads it in the browser and shows «Подтверждено источником» when `source_url` is set, otherwise
+«Личный опыт».
+
+Backup: `feedback.db` is in the nightly bot backup; the files are not, so `alta-aod-check.service`
+runs `python -m alta_feedback.uploads` after the AOD check and writes
+`/var/backups/bots/alta-cases/<date>.tar.gz` when the folder changed (adding or deleting a file
+changes it), refreshing the previous tar otherwise. A deleted file stays in older tars until they
+are rotated.
+
 ## Public JSON
 
 `GET /api/accounts/public` — no token, `accepted` only, most recent visits first, up to
