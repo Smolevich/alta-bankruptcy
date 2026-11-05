@@ -70,9 +70,10 @@ How the sign-in works:
 - Behind Access the service checks the `Cf-Access-Jwt-Assertion` header itself (`cf_access.py`):
   RS256 signature against the team keys (`https://<team>/cdn-cgi/access/certs`, cached for an hour,
   re-read on a new key id), `aud` of `alta-admin`, issuer, expiry, and the email in its own admin
-  list. Settings come from `.env`, written by the deploy from repository variables:
-  `CF_ACCESS_TEAM_DOMAIN`, `CF_ACCESS_AUD`, `ADMIN_EMAILS` (comma-separated). Without all three the
-  Access path is off: only the Bearer token works and the admin page shows the token field again.
+  list. Settings: `CF_ACCESS_TEAM_DOMAIN`, `CF_ACCESS_AUD`, `ADMIN_EMAILS` (comma-separated) —
+  defaults in `cf_access.DEFAULTS` (not secrets), an environment variable in `.env` overrides one.
+  An empty value turns the Access path off: only the Bearer token works and the admin page shows
+  the token field again.
 - The Bearer token keeps working for `/admin/proposals` when a request gets past Access.
 
 **Add an admin** — two places, both needed:
@@ -80,9 +81,8 @@ How the sign-in works:
 1. Email into the `allow-owner` policy of the `alta-admin` Access application (dashboard, or API
    with the `cloudflare-family-cli` token: `PUT /accounts/<acc>/access/apps/<id>` with the whole
    application body — `PATCH` is not supported).
-2. The same email into the repository variable `ADMIN_EMAILS`
-   (`gh variable set ADMIN_EMAILS --body 'a@example.com,b@example.com'`), then rerun
-   `Deploy backend to Hetzner` (Actions → Run workflow) so `.env` picks it up.
+2. The same email into `ADMIN_EMAILS` in `cf_access.DEFAULTS` (comma-separated), PR → `main` →
+   the backend deploy picks it up.
 
 Removing an admin is the reverse; removing them from the Access policy alone already locks them
 out.
@@ -187,8 +187,7 @@ framework) from our own copy, so they stay readable if AOD takes them down. The 
 `alta-bankruptcy.service` (`127.0.0.1:8102`) → check `/healthz` and the pages. The deploy reads
 `ADMIN_TOKEN` and `IP_SALT` from Vault (AppRole; paths in the repository variables `VAULT_*`) and
 writes them to `.env` next to the app; if the read fails, the previous values are kept. The Access
-settings (`CF_ACCESS_TEAM_DOMAIN`, `CF_ACCESS_AUD`, `ADMIN_EMAILS`) go to the same `.env` from
-repository variables.
+settings have defaults in the code (`cf_access.DEFAULTS`).
 The move from `Smolevich/alta-feedback`, the traffic switch and the rollback are in `docs/deploy.md`
 at the repository root.
 

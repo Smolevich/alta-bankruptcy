@@ -186,9 +186,20 @@ def test_verify_token_needs_known_kid():
 
 
 @pytest.mark.parametrize("missing", ["CF_ACCESS_TEAM_DOMAIN", "CF_ACCESS_AUD", "ADMIN_EMAILS"])
-def test_access_is_off_without_full_config(missing):
+def test_empty_env_value_turns_access_off(missing):
     env = {"CF_ACCESS_TEAM_DOMAIN": TEAM, "CF_ACCESS_AUD": AUD, "ADMIN_EMAILS": ADMIN}
     assert config_from_env({**env, missing: ""}) is None
+
+
+def test_access_works_from_defaults_without_env():
+    """Деплой не кладёт настройки Access в .env — без значений по умолчанию админка была бы без входа."""
+    assert config_from_env({}) is not None
+
+
+def test_env_overrides_default():
+    defaults = {"CF_ACCESS_TEAM_DOMAIN": TEAM, "CF_ACCESS_AUD": AUD, "ADMIN_EMAILS": ADMIN}
+    config = config_from_env({"ADMIN_EMAILS": "other@example.com"}, defaults)
+    assert config == AccessConfig(TEAM, AUD, frozenset({"other@example.com"}))
 
 
 def test_admin_list_from_env_is_split_and_lowercased():
@@ -245,16 +256,23 @@ def test_access_token_does_not_open_account_reports(client):
     assert client.get("/admin/accounts", headers=access(make_token())).status_code == 401
 
 
-def test_without_access_config_jwt_is_ignored(tmp_path):
+def test_without_access_config_jwt_is_ignored(tmp_path, monkeypatch):
+    monkeypatch.setenv("CF_ACCESS_AUD", "")
     client = TestClient(create_app(data_dir=tmp_path, admin_token=TOKEN, ip_salt="salt"))
     assert client.get("/admin/proposals", headers=access(make_token())).status_code == 401
+
+
+def test_admin_page_has_no_token_field_by_default(tmp_path):
+    client = TestClient(create_app(data_dir=tmp_path, admin_token=TOKEN, ip_salt="salt"))
+    assert 'type="password"' not in client.get("/predlozheniya/admin/").text
 
 
 def test_admin_page_has_no_token_field_behind_access(client):
     assert 'type="password"' not in client.get("/predlozheniya/admin/").text
 
 
-def test_admin_page_keeps_token_field_until_access_is_configured(tmp_path):
-    """Пока деплой не передал настройки Access, без поля токена в админку было бы не войти."""
+def test_admin_page_shows_token_field_when_access_is_off(tmp_path, monkeypatch):
+    """С выключенным Access без поля токена в админку было бы не войти."""
+    monkeypatch.setenv("CF_ACCESS_AUD", "")
     client = TestClient(create_app(data_dir=tmp_path, admin_token=TOKEN, ip_salt="salt"))
     assert 'type="password"' in client.get("/predlozheniya/admin/").text

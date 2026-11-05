@@ -22,6 +22,13 @@ LEEWAY = 60
 # DigestInfo SHA-256 из RFC 8017, 9.2: подпись сравниваем с полной ожидаемой записью, а не разбираем её —
 # так не пройдут подделки с «мусором» в разборе ASN.1.
 SHA256_PREFIX = bytes.fromhex("3031300d060960864801650304020105000420")
+# Настройки по умолчанию — не секреты: домен команды Zero Trust, aud приложения alta-admin и email админа.
+# Переменная окружения перекрывает значение, пустая — выключает вход через Access.
+DEFAULTS = {
+    "CF_ACCESS_TEAM_DOMAIN": "sparkling-pine-a39b.cloudflareaccess.com",
+    "CF_ACCESS_AUD": "9578f393790da8c36a371e9ade797bcb2e68684d9fb68952fd2a486dc2248ba2",
+    "ADMIN_EMAILS": "smolevich90@gmail.com",
+}
 
 
 class AccessError(Exception):
@@ -49,11 +56,14 @@ class AccessConfig:
         return f"{self.issuer}/cdn-cgi/access/certs"
 
 
-def config_from_env(env: Mapping[str, str]) -> AccessConfig | None:
+def config_from_env(env: Mapping[str, str], defaults: Mapping[str, str] = DEFAULTS) -> AccessConfig | None:
     """Без домена команды, aud или хотя бы одного админа вход через Access выключен."""
-    team = env.get("CF_ACCESS_TEAM_DOMAIN", "").strip().removeprefix("https://").rstrip("/")
-    aud = env.get("CF_ACCESS_AUD", "").strip()
-    admins = frozenset(e.strip().lower() for e in env.get("ADMIN_EMAILS", "").split(",") if e.strip())
+    def get(name: str) -> str:
+        return env.get(name, defaults.get(name, "")).strip()
+
+    team = get("CF_ACCESS_TEAM_DOMAIN").removeprefix("https://").rstrip("/")
+    aud = get("CF_ACCESS_AUD")
+    admins = frozenset(e.strip().lower() for e in get("ADMIN_EMAILS").split(",") if e.strip())
     return AccessConfig(team, aud, admins) if team and aud and admins else None
 
 
