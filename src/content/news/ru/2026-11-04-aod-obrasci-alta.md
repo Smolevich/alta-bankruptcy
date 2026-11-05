@@ -7,7 +7,7 @@ forms: [prijava, fizicka, pravna]
 summary: >-
   На странице «Алта банка у стечају — Обрасци» AOD опубликовал три формы. 1) «Образац пријаве потраживања» — образец требования сверх 50 000 € в Хозяйственный суд Белграда: номер дела, данные кредитора (имя, адрес, JMBG, счёт и банк; для фирмы — матичный номер и ПИБ), данные банка-должника, решение суда и номер «Службени гласник», сумма на день открытия банкротства и основания, список доказательств, просьба признать требование, подпись. Можно и в свободной форме, если в ней есть пункты ст. 111 закона о банкротстве (AOD). 2) и 3) Бланки доверенности на получение страховки до 50 000 € — для физлиц и для фирм и ИП, в трёх экземплярах. Во всех формах есть поле JMBG; как его заполнять тем, у кого его нет, в формах не сказано. Копии и разбор — на странице «Требование», разделы об образце и о доверенности.
 sources:
-  - { title: "AOD: формы для вкладчиков ALTA (сербский)", url: "https://www.aod.rs/clan/stecajlikv/obrasci_isplata", kind: official, date: 2026-11-04 }
+  - { title: "AOD: формы для вкладчиков ALTA (сербский)", url: "https://www.aod.rs/clan/altabanka/obrasci_altabanka", kind: official, date: 2026-11-04 }
   - { title: "AOD: образец требования (Образац пријаве потраживања)", url: "https://www.aod.rs/uploads/dokumenti/altabanka/potrazivanja.docx", kind: official, date: 2026-11-04 }
   - { title: "AOD: бланк доверенности для физлиц", url: "https://www.aod.rs/uploads/dokumenti/altabanka/fizicka_lica.doc", kind: official, date: 2026-11-04 }
   - { title: "AOD: бланк доверенности для фирм и ИП", url: "https://www.aod.rs/uploads/dokumenti/altabanka/pravna_lica.doc", kind: official, date: 2026-11-04 }

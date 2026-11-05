@@ -23,7 +23,7 @@ export type AodForm = {
 	thumbHeight: number;
 };
 
-export const AOD_FORMS_PAGE = 'https://www.aod.rs/clan/stecajlikv/obrasci_isplata';
+export const AOD_FORMS_PAGE = 'https://www.aod.rs/clan/altabanka/obrasci_altabanka';
 const UPLOADS = 'https://www.aod.rs/uploads/dokumenti/altabanka';
 
 export const AOD_FORMS: Record<FormKey, AodForm> = {
