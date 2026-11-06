@@ -1,5 +1,6 @@
 """Предложения материалов для сайта и канала: разбор формы, правки редактора и тексты страницы."""
 
+import re
 from dataclasses import dataclass
 from urllib.parse import urlsplit
 
@@ -10,8 +11,8 @@ TEXT_MAX = 20_000
 # Разметка поверх текста: лимит текста считается по видимым знакам, а HTML целиком — с запасом на теги.
 HTML_MAX = 4 * TEXT_MAX
 URL_MAX = 1000
-SOURCE_MAX = 500
-SOURCES_MAX = 20
+SOURCE_MAX = 1000
+SOURCES_MAX = 40
 CONTACT_MAX = 200
 COMMENT_MAX = 1000
 TARGETS = ("site", "channel", "both")
@@ -37,9 +38,37 @@ def is_http_url(value: str) -> bool:
     return parts.scheme in {"http", "https"} and bool(parts.netloc) and not any(c.isspace() for c in value)
 
 
+# Конец ссылки: перед пробелом, концом строки или «,»/«;», за которыми идёт следующая ссылка.
+LINK = re.compile(r"https?://\S+?(?=[,;]?(?:\s|$)|[,;]\s*https?://)")
+SEPARATORS = " \t,;"
+
+
+def split_line(line: str) -> list[str]:
+    """Строку с несколькими ссылками (через запятую, «;» или пробел) режет на источники по ссылке;
+    подпись перед ссылкой остаётся с ней, хвост после последней — с последней."""
+    ends = [m.end() for m in LINK.finditer(line)]
+    if len(ends) < 2:
+        return [line]
+    starts = [0, *ends[:-1]]
+    ends[-1] = len(line)
+    parts = (line[a:b].strip(SEPARATORS) for a, b in zip(starts, ends, strict=True))
+    return [part for part in parts if part]
+
+
 def split_sources(raw: str) -> tuple[str, ...]:
-    """Один источник — одна строка; пустые строки не считаются."""
-    return tuple(line.strip() for line in raw.splitlines() if line.strip())
+    """Источники из поля: каждый с новой строки или ссылки через запятую; пустые строки не считаются."""
+    return tuple(part for line in raw.splitlines() if line.strip() for part in split_line(line.strip()))
+
+
+def source_errors(sources: tuple[str, ...], msg: dict[str, str]) -> list[str]:
+    """Что не так со списком источников — с номером и началом источника, который не прошёл."""
+    if not sources:
+        return [msg["sources"]]
+    errors = [msg["sources_many"].format(len(sources), SOURCES_MAX)] if len(sources) > SOURCES_MAX else []
+    for number, source in enumerate(sources, 1):
+        if len(source) > SOURCE_MAX:
+            errors.append(msg["source_long"].format(number, len(source), SOURCE_MAX, source[:60]))
+    return errors
 
 
 def clean_text(raw: str, is_html: bool) -> str:
@@ -83,10 +112,7 @@ def parse_proposal(form: dict[str, str], lang: str = "ru") -> tuple[Proposal, li
         errors.append(msg["text_long"].format(TEXT_MAX))
     if doc_url and (len(doc_url) > URL_MAX or not is_http_url(doc_url)):
         errors.append(msg["doc_url"])
-    if not sources:
-        errors.append(msg["sources"])
-    elif len(sources) > SOURCES_MAX or any(len(s) > SOURCE_MAX for s in sources):
-        errors.append(msg["sources_long"].format(SOURCES_MAX, SOURCE_MAX))
+    errors += source_errors(sources, msg)
     if target not in TARGETS:
         errors.append(msg["target"])
     if len(contact) > CONTACT_MAX:
@@ -137,7 +163,10 @@ TEXTS: dict[str, dict] = {
         "f_doc_url": "Ссылка на документ",
         "f_doc_url_hint": "Google Docs или другой документ, открытый по ссылке",
         "f_sources": "Источники",
-        "f_sources_hint": "Обязательно хотя бы один. Каждый с новой строки: ссылка или название документа",
+        "f_sources_hint": (
+            "Обязательно хотя бы один. Каждый с новой строки (ссылки можно через запятую): "
+            "ссылка или название документа"
+        ),
         "f_target": "Куда",
         "targets": {"site": "Сайт", "channel": "Канал", "both": "Сайт и канал"},
         "f_contact": "Имя или ник для связи",
@@ -168,7 +197,11 @@ TEXTS: dict[str, dict] = {
             "text_long": "Текст длиннее {} знаков — дайте его ссылкой на документ.",
             "doc_url": "Ссылка на документ должна начинаться с https://.",
             "sources": "Укажите хотя бы один источник.",
-            "sources_long": "Источников — не больше {}, каждый не длиннее {} знаков.",
+            "sources_many": "Источников получилось {}, а можно не больше {}. Оставьте главные.",
+            "source_long": (
+                "Источник №{} длиннее, чем можно: {} знаков при лимите {} («{}…»). "
+                "Если это несколько источников, поставьте каждый с новой строки."
+            ),
             "target": "Выберите, куда: сайт, канал или оба.",
             "contact_long": "Контакт длиннее {} знаков.",
         },
@@ -192,7 +225,9 @@ TEXTS: dict[str, dict] = {
         "f_doc_url": "Link to a document",
         "f_doc_url_hint": "Google Docs or another document open by link",
         "f_sources": "Sources",
-        "f_sources_hint": "At least one. One per line: a link or the document's name",
+        "f_sources_hint": (
+            "At least one. One per line (links may be comma-separated): a link or the document's name"
+        ),
         "f_target": "Where",
         "targets": {"site": "Site", "channel": "Channel", "both": "Site and channel"},
         "f_contact": "Name or handle for contact",
@@ -226,7 +261,11 @@ TEXTS: dict[str, dict] = {
             "text_long": "The text is longer than {} characters — send it as a link to a document.",
             "doc_url": "The document link must start with https://.",
             "sources": "Give at least one source.",
-            "sources_long": "At most {} sources, each up to {} characters.",
+            "sources_many": "That is {} sources; the limit is {}. Keep the main ones.",
+            "source_long": (
+                "Source #{} is too long: {} characters, the limit is {} (\u201c{}…\u201d). "
+                "If it is several sources, put each on its own line."
+            ),
             "target": "Choose where: site, channel or both.",
             "contact_long": "The contact is longer than {} characters.",
         },
@@ -248,7 +287,9 @@ TEXTS: dict[str, dict] = {
         "f_doc_url": "Link ka dokumentu",
         "f_doc_url_hint": "Google Docs ili drugi dokument otvoren po linku",
         "f_sources": "Izvori",
-        "f_sources_hint": "Najmanje jedan. Svaki u novom redu: link ili naziv dokumenta",
+        "f_sources_hint": (
+            "Najmanje jedan. Svaki u novom redu (linkovi mogu i sa zarezom): link ili naziv dokumenta"
+        ),
         "f_target": "Gde",
         "targets": {"site": "Sajt", "channel": "Kanal", "both": "Sajt i kanal"},
         "f_contact": "Ime ili nadimak za kontakt",
@@ -279,7 +320,11 @@ TEXTS: dict[str, dict] = {
             "text_long": "Tekst je duži od {} znakova — pošaljite ga kao link ka dokumentu.",
             "doc_url": "Link ka dokumentu mora da počinje sa https://.",
             "sources": "Navedite najmanje jedan izvor.",
-            "sources_long": "Najviše {} izvora, svaki do {} znakova.",
+            "sources_many": "Izvora je {}, a dozvoljeno je najviše {}. Ostavite glavne.",
+            "source_long": (
+                "Izvor br. {} je predugačak: {} znakova, a dozvoljeno je {} („{}…“). "
+                "Ako je to više izvora, stavite svaki u novi red."
+            ),
             "target": "Izaberite gde: sajt, kanal ili oba.",
             "contact_long": "Kontakt je duži od {} znakova.",
         },

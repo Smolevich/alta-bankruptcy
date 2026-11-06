@@ -4,6 +4,7 @@ import sqlite3
 import pytest
 from starlette.testclient import TestClient
 
+from alta_feedback import proposals
 from alta_feedback.main import create_app
 
 TOKEN = "admin-secret"
@@ -315,3 +316,41 @@ def test_proposal_page_loads_own_editor_script(client):
 
 def test_editor_script_is_served(client):
     assert client.get("/static/richtext.js").status_code == 200
+
+
+UTM_LINK = "https://www.paragraf.rs/propisi/zakon_o_stecaju.html?utm_source=google&utm_medium=cpc&utm_campaign=alta"
+
+
+@pytest.mark.parametrize(
+    "separator", [", ", "; ", ",", " "], ids=["comma", "semicolon", "bare-comma", "space"],
+)
+def test_links_on_one_line_are_not_rejected_as_one_long_source(client, separator):
+    sources = separator.join(f"{UTM_LINK}&n={n}" for n in range(12))
+    assert propose(client, sources=sources).status_code == 303
+
+
+def test_links_on_one_line_count_as_separate_sources():
+    sources = proposals.split_sources(f"Закон о стечају: {UTM_LINK}, Одлука НБС: https://nbs.rs/a.pdf")
+    assert sources == (f"Закон о стечају: {UTM_LINK}", "Одлука НБС: https://nbs.rs/a.pdf")
+
+
+def test_word_paste_with_crlf_blank_lines_and_numbering_is_accepted(client):
+    sources = "\r\n\r\n".join(f"{n}. {UTM_LINK}&n={n}" for n in range(1, 16))
+    assert propose(client, sources=sources).status_code == 303
+
+
+def test_source_with_comma_inside_stays_one_source():
+    assert proposals.split_sources("Закон о стечају, чл. 54, https://nbs.rs/a.pdf") == (
+        "Закон о стечају, чл. 54, https://nbs.rs/a.pdf",
+    )
+
+
+def test_too_long_source_error_names_which_one(client):
+    sources = f"https://www.aod.rs/\n{'Очень длинное название документа ' * 40}"
+    page = propose(client, sources=sources).text
+    assert "Источник №2 длиннее, чем можно" in page
+
+
+def test_too_many_sources_error_says_how_many(client):
+    sources = "\n".join(f"https://www.aod.rs/{n}" for n in range(proposals.SOURCES_MAX + 1))
+    assert f"Источников получилось {proposals.SOURCES_MAX + 1}" in propose(client, sources=sources).text
