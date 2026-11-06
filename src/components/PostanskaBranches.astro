@@ -435,8 +435,26 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 		});
 	}
 
+	// Leaflet вендорен в public/vendor/leaflet (без npm-зависимости и CDN) и подключается при доскролле.
+	function loadLeaflet(): Promise<any> {
+		const w = window as any;
+		if (w.L) return Promise.resolve(w.L);
+		const base = import.meta.env.BASE_URL.replace(/\/?$/, '/') + 'vendor/leaflet/';
+		const css = document.createElement('link');
+		css.rel = 'stylesheet';
+		css.href = base + 'leaflet.css';
+		document.head.appendChild(css);
+		return new Promise((resolve, reject) => {
+			const s = document.createElement('script');
+			s.src = base + 'leaflet.js';
+			s.onload = () => resolve(w.L);
+			s.onerror = reject;
+			document.head.appendChild(s);
+		});
+	}
+
 	async function init(wrap: HTMLElement) {
-		const [{ default: L }] = await Promise.all([import('leaflet'), import('leaflet/dist/leaflet.css')]);
+		const L = await loadLeaflet();
 		const pts: { id: string; lat: number; lng: number; size: string | null; label: string; html: string }[] = JSON.parse(wrap.dataset.points ?? '[]');
 		const map = L.map(wrap.querySelector('.branch-leaflet') as HTMLElement, { scrollWheelZoom: false }).setView([44.81, 20.46], 12);
 		L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
