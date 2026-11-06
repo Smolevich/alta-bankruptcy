@@ -61,9 +61,9 @@
           "sr": "Isplata do 50.000 €: ugovor potpisan 05.11, čeka se datum i ekspoziture"
         },
         "when": {
-          "ru": "начать — в течение 7 раб. дней после решения суда",
-          "en": "must start within 7 working days of the court decision",
-          "sr": "početak najkasnije 7 radnih dana od odluke suda"
+          "ru": "начать — не позже 13.11.2026 (7 раб. дней после решения суда 03.11; 11.11 — праздник)",
+          "en": "must start by 13.11.2026 (7 working days after the court decision of 03.11; 11.11 is a public holiday)",
+          "sr": "početak najkasnije 13.11.2026. (7 radnih dana od rešenja suda od 03.11; 11.11. je praznik)"
         }
       },
       {
@@ -118,6 +118,12 @@
         "url": "https://www.aod.rs/clan/vest/vest_forma/139",
         "kind": "official",
         "date": "2026-11-03"
+      },
+      {
+        "title": "Закон о государственных и других праздниках, ст. 1а и 3 (11 ноября — нерабочий день)",
+        "url": "https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2001/43/1/reg",
+        "kind": "official",
+        "date": "2026-11-06"
       },
       {
         "title": "AOD: «Одузета дозвола за рад Алта банци»",
