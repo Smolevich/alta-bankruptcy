@@ -714,6 +714,30 @@ async def admin_delete_case(request: Request) -> JSONResponse:
     return JSONResponse({"id": item_id, "deleted": True})
 
 
+# Служебные и JSON-маршруты: человек по ним не ходит, ссылок со слешем не бывает.
+SLASHLESS_PREFIXES = ("/admin", "/api", "/static", "/healthz", "/account/challenge", "/account/branches")
+
+
+def to_canonical(path: str) -> Callable[[Request], Awaitable[Response]]:
+    """Вариант со слешем на конце → канонический адрес; query сохраняем, ссылки в чатах бывают с ней."""
+    async def handler(request: Request) -> Response:
+        query = request.url.query
+        return RedirectResponse(f"{path}?{query}" if query else path, status_code=308)
+
+    return handler
+
+
+def slash_twins(routes: list[Route]) -> list[Route]:
+    """Для каждой GET-страницы без слеша ставит редирект с адреса со слешем (иначе справочник отдаёт 404)."""
+    return [
+        Route(f"{route.path}/", to_canonical(route.path), methods=["GET"])
+        for route in routes
+        if route.path != "/" and "{" not in route.path and not route.path.endswith("/")
+        and "GET" in (route.methods or ())
+        and not route.path.startswith(SLASHLESS_PREFIXES)
+    ]
+
+
 def to_slash(path: str) -> Callable[[Request], Awaitable[Response]]:
     async def handler(request: Request) -> Response:
         return RedirectResponse(path, status_code=308)
@@ -811,31 +835,35 @@ def create_app(
     site = site_dir or Path(os.environ.get("SITE_DIR", DEFAULT_SITE_DIR))
     data = data_dir or Path(os.environ.get("DATA_DIR", "data"))
     aod_public = archive_root(data) / "public"
+    page_routes = [
+        Route("/", home, methods=["GET"]),
+        Route("/fix", form_page, methods=["GET"]),
+        Route("/", submit, methods=["POST"]),
+        Route("/spasibo", thanks, methods=["GET"]),
+        Route("/healthz", healthz, methods=["GET"]),
+        Route("/admin/suggestions", admin_list("suggestions", STATUSES), methods=["GET"]),
+        Route(
+            "/admin/suggestions/{id:int}/status",
+            admin_set_status("suggestions", STATUSES), methods=["POST"],
+        ),
+        Route("/account", account_page, methods=["GET"]),
+        Route("/account", account_submit, methods=["POST"]),
+        Route("/account/challenge", account_challenge, methods=["GET"]),
+        Route("/account/branches", account_branches, methods=["GET"]),
+        Route("/account/spasibo", account_thanks, methods=["GET"]),
+        Route("/account/stats", account_stats_page, methods=["GET"]),
+        Route("/static/{name}", static_script, methods=["GET"]),
+        Route("/api/accounts/public", public_accounts, methods=["GET"]),
+        Route("/admin/accounts", admin_list("accounts", ACCOUNT_STATUSES), methods=["GET"]),
+        Route(
+            "/admin/accounts/{id:int}/status",
+            admin_set_status("accounts", ACCOUNT_STATUSES), methods=["POST"],
+        ),
+    ]
     app = Starlette(
         routes=[
-            Route("/", home, methods=["GET"]),
-            Route("/fix", form_page, methods=["GET"]),
-            Route("/", submit, methods=["POST"]),
-            Route("/spasibo", thanks, methods=["GET"]),
-            Route("/healthz", healthz, methods=["GET"]),
-            Route("/admin/suggestions", admin_list("suggestions", STATUSES), methods=["GET"]),
-            Route(
-                "/admin/suggestions/{id:int}/status",
-                admin_set_status("suggestions", STATUSES), methods=["POST"],
-            ),
-            Route("/account", account_page, methods=["GET"]),
-            Route("/account", account_submit, methods=["POST"]),
-            Route("/account/challenge", account_challenge, methods=["GET"]),
-            Route("/account/branches", account_branches, methods=["GET"]),
-            Route("/account/spasibo", account_thanks, methods=["GET"]),
-            Route("/account/stats", account_stats_page, methods=["GET"]),
-            Route("/static/{name}", static_script, methods=["GET"]),
-            Route("/api/accounts/public", public_accounts, methods=["GET"]),
-            Route("/admin/accounts", admin_list("accounts", ACCOUNT_STATUSES), methods=["GET"]),
-            Route(
-                "/admin/accounts/{id:int}/status",
-                admin_set_status("accounts", ACCOUNT_STATUSES), methods=["POST"],
-            ),
+            *page_routes,
+            *slash_twins(page_routes),
             *proposal_routes(),
             Mount("/docs/aod", app=ArchiveFiles(aod_public, load_manifest()), name="aod"),
             # Последним: всё, чего нет среди маршрутов выше, ищем в собранном справочнике.
