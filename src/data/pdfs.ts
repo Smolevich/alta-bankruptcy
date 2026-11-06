@@ -34,6 +34,8 @@ const EXTRA_COPIES: Record<string, string> = {
 		'nbs-2025-zakon-zastita-korisnika-finansijskih-usluga.pdf',
 	'https://www.aod.rs/uploads/dokumenti/altabanka/uputstvo_novi_ra%C4%8Dun_6_11_2026.pdf':
 		'aod-2026-11-06-uputstvo-izmirenje-obaveza-krediti.pdf',
+	'https://www.aod.rs/uploads/dokumenti/altabanka/Obave%C5%A1tenje_o_po%C4%8Detku_isplate_OD_6nov2026.pdf':
+		'aod-2026-11-06-obavestenje-pocetak-isplate.pdf',
 	'https://www.javnidug.gov.rs/static/uploads/Lista%20ovlascenih%20ucesnika_cir.pdf':
 		'uprava-za-javni-dug-2025-05-lista-ovlascenih-ucesnika.pdf',
 	'https://www.posted.co.rs/korisno/doc/Tarifa/Tarifa-naknada-za-usluge-u-radu-sa-fizickim-licima.pdf':
