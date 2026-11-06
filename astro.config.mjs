@@ -70,7 +70,7 @@ export default defineConfig({
 						{ label: 'Подать требование сверх 50 000 €', slug: 'trebovanie', translations: { en: 'File a claim above €50,000', 'sr-Latn': 'Prijavite potraživanje iznad 50.000 €' } },
 						// Страница отдаётся сервисом формы и есть только по-русски: полный адрес, иначе Starlight
 						// приклеит /en/ или /sr/ и ссылка уйдёт в 404.
-						{ label: 'Где открыть счёт для выплаты', link: 'https://alta.smolevich.com/account/stats', translations: { en: 'Where to open an account for the payout (in Russian)', 'sr-Latn': 'Gde otvoriti račun za isplatu (na ruskom)' } },
+						{ label: 'Где открыть счёт для выплаты', link: 'https://alta.smolevich.com/account/stats', translations: { en: 'Where to open an account for the payout', 'sr-Latn': 'Gde otvoriti račun za isplatu' } },
 						{ label: 'Банк отказал в счёте: куда жаловаться', slug: 'otkaz-scheta', translations: { en: 'Account refused: where to complain', 'sr-Latn': 'Odbijen račun: gde se žaliti' } },
 						{ label: 'Какие документы сохранить', slug: 'vypiski', translations: { en: 'Which documents to keep', 'sr-Latn': 'Koja dokumenta sačuvati' } },
 					],
