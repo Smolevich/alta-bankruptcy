@@ -640,3 +640,21 @@ def test_form_uses_site_accent_not_old_blue(client):
 
 def test_stats_page_has_exactly_one_site_header(client):
     assert client.get("/account/stats").text.count('class="site-header"') == 1
+
+
+@pytest.mark.parametrize("path", ["/account", "/account/stats", "/account/spasibo", "/fix", "/spasibo"])
+def test_page_opens_with_and_without_trailing_slash(client, path):
+    bare = client.get(path)
+    slashed = client.get(f"{path}/")
+
+    assert bare.status_code == 200
+    assert slashed.status_code == 200
+    assert slashed.history[0].status_code == 308
+    assert str(slashed.url).endswith(path)
+
+
+def test_trailing_slash_redirect_keeps_query(client):
+    response = client.get("/account/stats/?bank=x", follow_redirects=False)
+
+    assert response.status_code == 308
+    assert response.headers["location"] == "/account/stats?bank=x"
