@@ -7,12 +7,14 @@ from urllib.parse import urlsplit
 from alta_feedback.richtext import plain_to_html, sanitize, visible_text
 
 TITLE_MAX = 200
-TEXT_MAX = 20_000
+TEXT_MAX = 50_000
 # Разметка поверх текста: лимит текста считается по видимым знакам, а HTML целиком — с запасом на теги.
 HTML_MAX = 4 * TEXT_MAX
 URL_MAX = 1000
-SOURCE_MAX = 1000
-SOURCES_MAX = 40
+# Источники — свободный текст в любом формате; ограничиваем только поле целиком.
+SOURCES_TEXT_MAX = 20_000
+# Подставляется, если автор не выбрал: «куда» решает редактор, автору выбор не обязателен.
+DEFAULT_TARGET = "both"
 CONTACT_MAX = 200
 COMMENT_MAX = 1000
 TARGETS = ("site", "channel", "both")
@@ -60,15 +62,20 @@ def split_sources(raw: str) -> tuple[str, ...]:
     return tuple(part for line in raw.splitlines() if line.strip() for part in split_line(line.strip()))
 
 
-def source_errors(sources: tuple[str, ...], msg: dict[str, str]) -> list[str]:
-    """Что не так со списком источников — с номером и началом источника, который не прошёл."""
-    if not sources:
-        return [msg["sources"]]
-    errors = [msg["sources_many"].format(len(sources), SOURCES_MAX)] if len(sources) > SOURCES_MAX else []
-    for number, source in enumerate(sources, 1):
-        if len(source) > SOURCE_MAX:
-            errors.append(msg["source_long"].format(number, len(source), SOURCE_MAX, source[:60]))
-    return errors
+def grouped(number: int) -> str:
+    """50000 → «50 000»: так лимит читается в подсказках и ошибках на всех трёх языках."""
+    return f"{number:,}".replace(",", " ")
+
+
+def with_scheme(url: str) -> str:
+    """Ссылку, вставленную без https:// (docs.google.com/…), дополняет схемой."""
+    return url if not url or "://" in url or ":" in url.split("/")[0] else f"https://{url}"
+
+
+def fallback_title(text_html: str, doc_url: str) -> str:
+    """Заголовок, если автор его не написал: начало текста, иначе ссылка на документ."""
+    words = " ".join(visible_text(text_html).split()) or doc_url
+    return words if len(words) <= 80 else words[:80].rsplit(" ", 1)[0] + "…"
 
 
 def clean_text(raw: str, is_html: bool) -> str:
@@ -95,29 +102,25 @@ def display_html(item: dict) -> str:
 def parse_proposal(form: dict[str, str], lang: str = "ru") -> tuple[Proposal, list[str]]:
     """Собирает предложение из полей формы и возвращает его вместе со списком ошибок на языке страницы."""
     msg = TEXTS[lang]["errors"]
-    title = " ".join((form.get("title") or "").split())
     text = clean_text(form.get("text") or "", form.get("text_format") == "html")
-    doc_url = (form.get("doc_url") or "").strip()
-    sources = split_sources(form.get("sources") or "")
+    doc_url = with_scheme((form.get("doc_url") or "").strip())
+    title = " ".join((form.get("title") or "").split()) or fallback_title(text, doc_url)
+    raw_sources = form.get("sources") or ""
     target = (form.get("target") or "").strip()
+    target = target if target in TARGETS else DEFAULT_TARGET
     contact = (form.get("contact") or "").strip()
     errors: list[str] = []
-    if not title:
-        errors.append(msg["title"])
-    elif len(title) > TITLE_MAX:
-        errors.append(msg["title_long"].format(TITLE_MAX))
     if not text and not doc_url:
         errors.append(msg["body"])
     if too_long(text):
-        errors.append(msg["text_long"].format(TEXT_MAX))
+        errors.append(msg["text_long"].format(grouped(TEXT_MAX)))
     if doc_url and (len(doc_url) > URL_MAX or not is_http_url(doc_url)):
         errors.append(msg["doc_url"])
-    errors += source_errors(sources, msg)
-    if target not in TARGETS:
-        errors.append(msg["target"])
+    if len(raw_sources) > SOURCES_TEXT_MAX:
+        errors.append(msg["sources_long"].format(grouped(SOURCES_TEXT_MAX)))
     if len(contact) > CONTACT_MAX:
         errors.append(msg["contact_long"].format(CONTACT_MAX))
-    return Proposal(title, text, doc_url, sources, target, contact), errors
+    return Proposal(title[:TITLE_MAX], text, doc_url, split_sources(raw_sources), target, contact), errors
 
 
 def parse_editor_update(body: object) -> tuple[dict[str, str], str | None]:
@@ -158,15 +161,13 @@ TEXTS: dict[str, dict] = {
         ],
         "rules": "Мнения публикуем только с пометкой «мнение». Цены адвокатов публично не сравниваем.",
         "f_title": "Заголовок",
+        "f_title_hint": "Необязательно — если пусто, возьмём начало текста",
         "f_text": "Текст",
-        "f_text_hint": "До {} знаков. Или оставьте пустым и дайте ссылку ниже",
+        "f_text_hint": "До {} знаков. Можно вместо текста дать ссылку на документ ниже",
         "f_doc_url": "Ссылка на документ",
-        "f_doc_url_hint": "Google Docs или другой документ, открытый по ссылке",
+        "f_doc_url_hint": "Google Docs или другой документ, открытый по ссылке. Нужен текст или ссылка",
         "f_sources": "Источники",
-        "f_sources_hint": (
-            "Обязательно хотя бы один. Каждый с новой строки (ссылки можно через запятую): "
-            "ссылка или название документа"
-        ),
+        "f_sources_hint": "Необязательно. Ссылки и названия документов — в любом виде, как удобно",
         "f_target": "Куда",
         "targets": {"site": "Сайт", "channel": "Канал", "both": "Сайт и канал"},
         "f_contact": "Имя или ник для связи",
@@ -191,18 +192,13 @@ TEXTS: dict[str, dict] = {
         "limit_title": "Слишком много предложений подряд",
         "limit": "С одного адреса принимаем не больше пяти предложений в час. Попробуйте позже.",
         "errors": {
-            "title": "Напишите заголовок.",
-            "title_long": "Заголовок длиннее {} знаков.",
             "body": "Добавьте текст или ссылку на документ.",
             "text_long": "Текст длиннее {} знаков — дайте его ссылкой на документ.",
-            "doc_url": "Ссылка на документ должна начинаться с https://.",
-            "sources": "Укажите хотя бы один источник.",
-            "sources_many": "Источников получилось {}, а можно не больше {}. Оставьте главные.",
-            "source_long": (
-                "Источник №{} длиннее, чем можно: {} знаков при лимите {} («{}…»). "
-                "Если это несколько источников, поставьте каждый с новой строки."
+            "doc_url": "Ссылка на документ не открывается — проверьте, что она вида https://…",
+            "sources_long": (
+                "В поле «Источники» больше {} знаков. "
+                "Оставьте главные или перечислите их в документе по ссылке."
             ),
-            "target": "Выберите, куда: сайт, канал или оба.",
             "contact_long": "Контакт длиннее {} знаков.",
         },
     },
@@ -220,14 +216,13 @@ TEXTS: dict[str, dict] = {
             "Opinions are published only when marked as opinion. We do not compare lawyers' fees publicly."
         ),
         "f_title": "Title",
+        "f_title_hint": "Optional — if empty, we use the start of the text",
         "f_text": "Text",
-        "f_text_hint": "Up to {} characters. Or leave empty and give a link below",
+        "f_text_hint": "Up to {} characters. You can give a link to a document below instead",
         "f_doc_url": "Link to a document",
-        "f_doc_url_hint": "Google Docs or another document open by link",
+        "f_doc_url_hint": "Google Docs or another document open by link. A text or a link is needed",
         "f_sources": "Sources",
-        "f_sources_hint": (
-            "At least one. One per line (links may be comma-separated): a link or the document's name"
-        ),
+        "f_sources_hint": "Optional. Links and document names in any form you like",
         "f_target": "Where",
         "targets": {"site": "Site", "channel": "Channel", "both": "Site and channel"},
         "f_contact": "Name or handle for contact",
@@ -255,18 +250,13 @@ TEXTS: dict[str, dict] = {
         "limit_title": "Too many suggestions in a row",
         "limit": "We accept at most five suggestions an hour from one address. Please try later.",
         "errors": {
-            "title": "Add a title.",
-            "title_long": "The title is longer than {} characters.",
             "body": "Add a text or a link to a document.",
             "text_long": "The text is longer than {} characters — send it as a link to a document.",
-            "doc_url": "The document link must start with https://.",
-            "sources": "Give at least one source.",
-            "sources_many": "That is {} sources; the limit is {}. Keep the main ones.",
-            "source_long": (
-                "Source #{} is too long: {} characters, the limit is {} (\u201c{}…\u201d). "
-                "If it is several sources, put each on its own line."
+            "doc_url": "The document link does not open — check that it looks like https://…",
+            "sources_long": (
+                "The Sources field is longer than {} characters. Keep the main ones or list them "
+                "in the linked document."
             ),
-            "target": "Choose where: site, channel or both.",
             "contact_long": "The contact is longer than {} characters.",
         },
     },
@@ -282,14 +272,13 @@ TEXTS: dict[str, dict] = {
         ],
         "rules": "Mišljenja objavljujemo samo uz oznaku „mišljenje“. Cene advokata javno ne upoređujemo.",
         "f_title": "Naslov",
+        "f_title_hint": "Nije obavezno — ako je prazno, uzećemo početak teksta",
         "f_text": "Tekst",
-        "f_text_hint": "Do {} znakova. Ili ostavite prazno i dajte link ispod",
+        "f_text_hint": "Do {} znakova. Umesto teksta možete dati link ka dokumentu ispod",
         "f_doc_url": "Link ka dokumentu",
-        "f_doc_url_hint": "Google Docs ili drugi dokument otvoren po linku",
+        "f_doc_url_hint": "Google Docs ili drugi dokument otvoren po linku. Potreban je tekst ili link",
         "f_sources": "Izvori",
-        "f_sources_hint": (
-            "Najmanje jedan. Svaki u novom redu (linkovi mogu i sa zarezom): link ili naziv dokumenta"
-        ),
+        "f_sources_hint": "Nije obavezno. Linkovi i nazivi dokumenata — u bilo kom obliku",
         "f_target": "Gde",
         "targets": {"site": "Sajt", "channel": "Kanal", "both": "Sajt i kanal"},
         "f_contact": "Ime ili nadimak za kontakt",
@@ -314,18 +303,12 @@ TEXTS: dict[str, dict] = {
         "limit_title": "Previše predloga zaredom",
         "limit": "Sa jedne adrese primamo najviše pet predloga na sat. Pokušajte kasnije.",
         "errors": {
-            "title": "Napišite naslov.",
-            "title_long": "Naslov je duži od {} znakova.",
             "body": "Dodajte tekst ili link ka dokumentu.",
             "text_long": "Tekst je duži od {} znakova — pošaljite ga kao link ka dokumentu.",
-            "doc_url": "Link ka dokumentu mora da počinje sa https://.",
-            "sources": "Navedite najmanje jedan izvor.",
-            "sources_many": "Izvora je {}, a dozvoljeno je najviše {}. Ostavite glavne.",
-            "source_long": (
-                "Izvor br. {} je predugačak: {} znakova, a dozvoljeno je {} („{}…“). "
-                "Ako je to više izvora, stavite svaki u novi red."
+            "doc_url": "Link ka dokumentu se ne otvara — proverite da li je oblika https://…",
+            "sources_long": (
+                "Polje „Izvori“ ima više od {} znakova. Ostavite glavne ili ih navedite u dokumentu po linku."
             ),
-            "target": "Izaberite gde: sajt, kanal ili oba.",
             "contact_long": "Kontakt je duži od {} znakova.",
         },
     },

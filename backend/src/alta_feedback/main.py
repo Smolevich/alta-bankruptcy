@@ -83,8 +83,8 @@ from alta_feedback.validate import (
 )
 
 BODY_MAX = 16_384
-# Текст предложения до 20 000 знаков: кириллица в urlencoded — до 6 байт на знак, плюс источники.
-PROPOSAL_BODY_MAX = 262_144
+# Кириллица в urlencoded — до 6 байт на знак (текст и источники), разметка редактора — до 3 байт.
+PROPOSAL_BODY_MAX = 6 * (proposals.TEXT_MAX + proposals.SOURCES_TEXT_MAX) + 3 * proposals.HTML_MAX + 65_536
 PROPOSALS_SHOWN = 300
 RATE_LIMIT = 5
 RATE_WINDOW = timedelta(hours=1)
@@ -494,7 +494,8 @@ def proposals_page(
         sent=number_param(request, "sent"), case_sent=number_param(request, "case_sent"),
         items=[with_html(item) for item in request.app.state.store.public_proposals(PROPOSALS_SHOWN)],
         title_max=proposals.TITLE_MAX, body_max=proposals.TEXT_MAX, url_max=proposals.URL_MAX,
-        contact_max=proposals.CONTACT_MAX, sources_max=proposals.SOURCES_MAX,
+        contact_max=proposals.CONTACT_MAX, sources_text_max=proposals.SOURCES_TEXT_MAX,
+        default_target=proposals.DEFAULT_TARGET, grouped=proposals.grouped,
         summary_max=casebook.SUMMARY_MAX, filed_max=casebook.FILED_MAX, result_max=casebook.RESULT_MAX,
         files_max=uploads.MAX_FILES, file_mb=uploads.FILE_MAX // MB, total_mb=uploads.TOTAL_MAX // MB,
         today=today_local().date().isoformat(),

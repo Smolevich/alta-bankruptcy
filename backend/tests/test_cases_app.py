@@ -106,11 +106,6 @@ def test_case_without_sources_is_accepted(client):
     assert send_case(client, sources="").status_code == 303
 
 
-def test_material_still_requires_sources(client):
-    data = {"title": "Заголовок", "text": "Текст", "sources": "", "target": "site"}
-    assert client.post("/predlozheniya/", data=data, follow_redirects=False).status_code == 400
-
-
 def test_case_without_bot_check_is_not_stored(client):
     send_case(client, altcha="")
     assert admin_cases(client) == []

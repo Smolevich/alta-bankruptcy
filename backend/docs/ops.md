@@ -60,7 +60,7 @@ is never shown there — only in the admin API and the admin page.
 without JavaScript it stays a plain textarea and the text becomes paragraphs. The server keeps only
 p, br, strong, em, h2, h3, ul, ol, li, blockquote and a with an http(s) link (`richtext.py`, stdlib
 `html.parser`: nh3 would change `pyproject.toml`/`uv.lock`, which need a CODEOWNERS review), and
-counts the 20 000 limit in visible characters. Older proposals keep plain text (`text_format` empty).
+counts the 50 000 limit in visible characters. Older proposals keep plain text (`text_format` empty).
 Rebuilding the editor bundle: `cd backend/editor && npm ci && npm run build` (writes
 `src/alta_feedback/static/richtext.js`; commit it).
 
@@ -128,8 +128,10 @@ An item: `{id, created_at, title, text, doc_url, sources: [...], target: site|ch
 contact, ip_hash, user_agent_short, status, review_url, published_url, comment, updated_at,
 text_format, edited_text, text_html}` (`text_html` — the author's text as cleaned HTML). The POST also
 takes `edited_text` (HTML, cleaned; `""` returns to the author's text).
-`since` works as for the other lists. The form takes a title, a text up to 20 000 characters
-and/or a document link, at least one source (one per line) and the target; the same rate limit
+`since` works as for the other lists. The form needs only a text up to 50 000 characters
+or a document link (`https://` is added if missing). The title is optional (the start of the text is
+used), the target defaults to `both`, sources are optional free text up to 20 000 characters in
+total (split into lines/links only for display); the same rate limit
 (5 an hour per IP hash) and honeypot as the correction form.
 
 ## Cases ("Картотека кейсов")
