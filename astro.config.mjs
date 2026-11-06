@@ -72,7 +72,6 @@ export default defineConfig({
 						// приклеит /en/ или /sr/ и ссылка уйдёт в 404.
 						{ label: 'Где открыть счёт для выплаты', link: 'https://alta.smolevich.com/account/stats', translations: { en: 'Where to open an account for the payout', 'sr-Latn': 'Gde otvoriti račun za isplatu' } },
 						{ label: 'Банк отказал в счёте: куда жаловаться', slug: 'otkaz-scheta', translations: { en: 'Account refused: where to complain', 'sr-Latn': 'Odbijen račun: gde se žaliti' } },
-						{ label: 'Сорвалась покупка квартиры: налог', slug: 'nalog-kvartira', translations: { en: 'Flat purchase fell through: tax', 'sr-Latn': 'Propala kupovina stana: porez' } },
 						{ label: 'Какие документы сохранить', slug: 'vypiski', translations: { en: 'Which documents to keep', 'sr-Latn': 'Koja dokumenta sačuvati' } },
 					],
 				},
