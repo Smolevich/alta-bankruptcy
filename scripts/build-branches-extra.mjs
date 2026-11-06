@@ -32,6 +32,17 @@ function peak(histogram, days) {
 	return best ? `${best[0]}–${best[1] + 1}` : null;
 }
 
+// Часы 8–20 для столбиков: среднее по дням, округлено до целого процента; null — Google не дал данных.
+function hist(histogram, days) {
+	const rows = days.map((d) => new Map((histogram?.[d] ?? []).map((x) => [x.hour, x.occupancyPercent])));
+	const out = [];
+	for (let h = 8; h <= 20; h++) {
+		const v = rows.map((r) => r.get(h)).filter((x) => x !== undefined);
+		out.push(v.length ? Math.round(v.reduce((a, b) => a + b, 0) / v.length) : null);
+	}
+	return out.some((x) => x) ? out : null;
+}
+
 function mapsUrl(p, a) {
 	if (a?.placeId) return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.maps_name ?? 'Banka Poštanska štedionica')}&query_place_id=${a.placeId}`;
 	if (p.maps_url && p.maps_url.length > 40) return p.maps_url;
@@ -51,6 +62,8 @@ for (const p of photos) {
 		size: SIZE[p.size_guess] ?? null,
 		peak: peak(a?.popularTimesHistogram, ['Mo', 'Tu', 'We', 'Th', 'Fr']),
 		peak_saturday: peak(a?.popularTimesHistogram, ['Sa']),
+		hist: hist(a?.popularTimesHistogram, ['Mo', 'Tu', 'We', 'Th', 'Fr']) && { weekday: hist(a.popularTimesHistogram, ['Mo', 'Tu', 'We', 'Th', 'Fr']), sat: hist(a.popularTimesHistogram, ['Sa']) },
+		sv_date: p.streetview_date && p.streetview_date !== 'None' ? p.streetview_date : null,
 		source_date: SOURCE_DATE,
 	};
 }

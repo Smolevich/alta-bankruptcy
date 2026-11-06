@@ -425,3 +425,34 @@ html, body { overflow-x: clip; }
 .dot-unknown { width: 0.8rem; height: 0.8rem; background: #8a8478; }
 .branch .branch-extra { margin: 0 0 0.25rem; font-size: 0.88rem; }
 @media (max-width: 600px) { .branch-leaflet { height: 20rem; } }
+
+/* График загрузки по часам и Street View в карточках и попапах */
+.hist { margin: 0.4rem 0 0.3rem; max-width: 16rem; }
+.hist-lbl { font-size: 0.78rem; color: #5a5448; margin-top: 0.25rem; }
+.hist-svg { display: block; width: 100%; height: auto; color: #5a5448; }
+.hist-svg .bar { fill: var(--sl-color-text-accent, #9b2c22); }
+.hist-svg .axis { stroke: currentColor; stroke-width: 0.5; opacity: 0.5; }
+.hist-svg .tick { fill: currentColor; font-size: 7px; }
+.hist-note { margin: 0.25rem 0 0 !important; font-size: 0.75rem; line-height: 1.3; color: #5a5448; }
+.sv { margin: 0.4rem 0 0.2rem; }
+.sv-btn { font: inherit; font-size: 0.85rem; font-weight: 700; padding: 0.3rem 0.6rem; border: 1px solid var(--line); border-radius: 3px; background: #fffdf7; color: var(--seal); cursor: pointer; max-width: 100%; }
+.sv-btn:hover { background: var(--seal-soft); }
+.sv-box iframe { display: block; width: 100%; height: 13rem; border: 1px solid var(--line); border-radius: 3px; margin-top: 0.4rem; }
+.sv-cap { margin: 0.2rem 0 0 !important; font-size: 0.75rem; color: #5a5448; }
+.leaflet-popup-content .hist, .leaflet-popup-content .sv-box iframe { max-width: 100%; }
+.leaflet-popup-content .sv-box iframe { height: 10rem; }
+:root[data-theme='dark'] .hist-svg, :root[data-theme='dark'] .hist-lbl, :root[data-theme='dark'] .hist-note, :root[data-theme='dark'] .sv-cap { color: #cfc9b8; }
+
+/* Фильтры отделений */
+.branches [hidden] { display: none !important; }
+.branch-filters { display: flex; flex-wrap: wrap; gap: 0.5rem 0.9rem; align-items: flex-end; margin: 0 0 0.8rem; padding: 0.6rem 0.8rem; background: #fffdf7; border: 1px solid var(--line); border-radius: 3px; }
+.branch-filters label { display: flex; flex-direction: column; gap: 0.15rem; font-size: 0.82rem; color: #5a5448; min-width: 0; }
+.branch-filters select, .branch-filters button { font: inherit; font-size: 0.92rem; padding: 0.3rem 0.4rem; border: 1px solid var(--line); border-radius: 3px; background: #fff; color: var(--ink); max-width: 100%; }
+.branch-filters button { cursor: pointer; font-weight: 700; color: var(--seal); }
+.branch-filters fieldset { display: flex; flex-wrap: wrap; gap: 0.4rem 0.7rem; margin: 0; padding: 0; border: 0; min-width: 0; }
+.branch-filters legend { font-size: 0.82rem; color: #5a5448; padding: 0; margin-bottom: 0.15rem; }
+.branch-filters .f-note, .branch-filters .f-count { flex-basis: 100%; margin: 0 !important; font-size: 0.82rem; color: #5a5448; }
+.branch.f-hl { border-left-color: var(--ok); }
+.branch .f-free { color: var(--ok); font-weight: 700; }
+.branch .branch-nodata { color: #5a5448; font-style: italic; }
+@media (max-width: 600px) { .branch-filters label, .branch-filters fieldset { flex: 1 1 8rem; } }
