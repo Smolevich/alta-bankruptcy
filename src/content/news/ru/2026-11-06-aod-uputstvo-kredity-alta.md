@@ -8,4 +8,5 @@ summary: >-
 sources:
   - { title: "AOD: Uputstvo o izmirenju obaveza korisnicima kredita u Alta banci (PDF)", url: "https://www.aod.rs/uploads/dokumenti/altabanka/uputstvo_novi_ra%C4%8Dun_6_11_2026.pdf", kind: official, date: 2026-11-06 }
   - { title: "AOD: saopštenja o Alta banci", url: "https://www.aod.rs/clan/altabanka/saopstenja_altabanka", kind: official, date: 2026-11-06 }
+  - { title: "AOD: новость об инструкции для заёмщиков ALTA", url: "https://www.aod.rs/clan/vest/vest_forma/141", kind: official, date: 2026-11-06 }
 ---
