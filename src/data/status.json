@@ -3,14 +3,14 @@
     "id": "current",
     "stage": 4,
     "headline": {
-      "ru": "Суд открыл банкротство, банк-плательщик назван — ждём дату выплат",
-      "en": "Bankruptcy opened, paying bank named: waiting for the payout date",
-      "sr": "Stečaj otvoren, banka isplatilac određena: čeka se datum isplate"
+      "ru": "Выплата до 50 000 € начинается 13.11.2026 в Poštanska štedionica",
+      "en": "Payout of up to €50,000 starts on 13.11.2026 at Poštanska štedionica",
+      "sr": "Isplata do 50.000 € počinje 13.11.2026. u Poštanskoj štedionici"
     },
     "note": {
-      "ru": "03.11.2026 Хозяйственный суд Белграда открыл банкротство ALTA banka, управляющим стало AOD (дело 10 Ст 275/2026). Банк-плательщик (банк, где будут выдавать деньги) — Banka Poštanska štedionica. 05.11.2026 Poštanska и AOD подписали договор о выплате; дату начала выплат и отделения, где будут платить, AOD объявит на aod.rs (на утро 06.11 ещё не объявил); начать выплату до 50 000 € оно обязано в течение 7 рабочих дней. Забрать деньги можно в течение 3 лет.",
-      "en": "On 03.11.2026 the Commercial Court in Belgrade opened bankruptcy of ALTA banka and AOD became administrator (case 10 St 275/2026). The paying bank (where the money will be paid out) is Banka Poštanska štedionica. On 05.11.2026 Poštanska and AOD signed the payout contract; AOD will announce on aod.rs the date payouts start and the branches that will pay (not yet announced as of the morning of 06.11); it must start paying up to €50,000 within 7 working days. You can collect the money within 3 years.",
-      "sr": "Privredni sud u Beogradu je 03.11.2026. otvorio stečaj nad Alta bankom, a AOD je postala stečajni upravnik (predmet 10 St 275/2026). Banka isplatilac (banka u kojoj će se isplaćivati novac) je Banka Poštanska štedionica. Poštanska i AOD su 05.11.2026. potpisale ugovor o isplati; datum početka isplate i ekspoziture u kojima će se isplaćivati AOD će objaviti na aod.rs (na dan 06.11. ujutru još nije objavljeno); isplatu do 50.000 € mora da započne u roku od 7 radnih dana. Novac se može preuzeti u roku od 3 godine."
+      "ru": "06.11.2026 AOD объявил: выплата застрахованных вкладов ALTA banka до 50 000 € на вкладчика начинается 13.11.2026 через Banka Poštanska štedionica, в её отделениях, назначенных для вкладчиков ALTA. Динарные вклады платят в динарах, валютные — в евро по среднему курсу на 03.11.2026. Список отделений с телефонами AOD публикует на aod.rs и posted.co.rs (на 06.11 ещё не опубликован). Подать заявление можно до 03.11.2029. С собой: документ личности и оригинал документа о вкладе; ИП и фирмам — ещё ОП-образац и при необходимости доверенность.",
+      "en": "On 06.11.2026 AOD announced that the payout of insured ALTA banka deposits, up to €50,000 per depositor, starts on 13.11.2026 through Banka Poštanska štedionica, at its branches designated for ALTA depositors. Dinar deposits are paid in dinars, foreign-currency deposits in euros at the middle rate of 03.11.2026. AOD publishes the list of branches with phone numbers on aod.rs and posted.co.rs (not out yet as of 06.11). You can apply until 03.11.2029. Bring an identity document and the original deposit document; sole traders and companies also the OP form and, if needed, an authorisation.",
+      "sr": "AOD je 06.11.2026. objavila da isplata osiguranih depozita Alta banke do 50.000 € po deponentu počinje 13.11.2026. preko Banke Poštanska štedionica, u ekspoziturama određenim za deponente Alta banke. Dinarski depoziti isplaćuju se u dinarima, devizni u evrima po srednjem kursu na dan 03.11.2026. Spisak ekspozitura sa brojevima telefona objavljuje se na aod.rs i posted.co.rs (na dan 06.11. još nije objavljen). Zahtev se može podneti do 03.11.2029. Ponesite ispravu o identitetu i original isprave o depozitu; preduzetnici i pravna lica i OP obrazac i, po potrebi, ovlašćenje."
     },
     "checkedAt": "2026-11-06",
     "stages": [
@@ -56,14 +56,14 @@
       {
         "n": 4,
         "title": {
-          "ru": "Выплата до 50 000 €: договор подписан 05.11, ждём дату и отделения",
-          "en": "Payout of up to €50,000: contract signed 05.11, waiting for date and branches",
-          "sr": "Isplata do 50.000 €: ugovor potpisan 05.11, čeka se datum i ekspoziture"
+          "ru": "Выплата до 50 000 € в Poštanska: с 13.11.2026",
+          "en": "Payout of up to €50,000 at Poštanska: from 13.11.2026",
+          "sr": "Isplata do 50.000 € u Poštanskoj: od 13.11.2026."
         },
         "when": {
-          "ru": "начать — не позже 13.11.2026 (7 раб. дней после решения суда 03.11; 11.11 — праздник)",
-          "en": "must start by 13.11.2026 (7 working days after the court decision of 03.11; 11.11 is a public holiday)",
-          "sr": "početak najkasnije 13.11.2026. (7 radnih dana od rešenja suda od 03.11; 11.11. je praznik)"
+          "ru": "с 13.11.2026, подать заявление — до 03.11.2029 (объявление AOD 06.11)",
+          "en": "from 13.11.2026, apply by 03.11.2029 (AOD notice of 06.11)",
+          "sr": "od 13.11.2026, zahtev do 03.11.2029. (obaveštenje AOD od 06.11.)"
         }
       },
       {
@@ -107,6 +107,12 @@
       }
     ],
     "sources": [
+      {
+        "title": "AOD: Обавештење о датуму почетка исплате осигураних износа депозита АЛТА банке (PDF)",
+        "url": "https://www.aod.rs/uploads/dokumenti/altabanka/Obave%C5%A1tenje_o_po%C4%8Detku_isplate_OD_6nov2026.pdf",
+        "kind": "official",
+        "date": "2026-11-06"
+      },
       {
         "title": "Banka Poštanska štedionica: «Банка Поштанска штедионица потписала уговор са Агенцијом за осигурање депозита»",
         "url": "https://www.posted.co.rs/media/novosti.html",
