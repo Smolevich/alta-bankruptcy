@@ -28,7 +28,7 @@ const t = UI[lang];
 							<div class="form-actions">
 								<a class="form-btn" {...view}>
 									{t.forms.open}
-									<span class="form-btn-note">PDF, {f.pages} {t.forms.pages}</span>
+									<span class="form-btn-note">PDF, {f.pages} {f.pages === 1 ? t.forms.page : t.forms.pages}</span>
 								</a>
 								<a class="form-btn form-btn-2" href={`/docs/${f.file}.${f.word}`} download>
 									{t.forms.word}

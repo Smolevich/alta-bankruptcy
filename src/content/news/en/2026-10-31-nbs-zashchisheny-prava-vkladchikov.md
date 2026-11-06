@@ -1,5 +1,5 @@
 ---
-title: "National Bank: \"Zaštićena prava poverilaca i štediša\""
+title: "National Bank: rights of creditors and depositors protected (“Zaštićena prava poverilaca i štediša”)"
 date: 2026-10-31
 publisher: nbs
 order: 1

@@ -70,12 +70,12 @@ export const UNIVERZAL_SOURCES: Source[] = [
 		},
 		date: same('18.04.2022'),
 		main: {
-			ru: 'IV очередь (крупные компании): 6,00 %, всего 391,5 млн динаров.',
-			en: 'Rank IV (large companies): 6.00%, RSD 391.5 m in total.',
-			sr: 'IV isplatni red (velika pravna lica): 6,00%, ukupno 391,5 mil. dinara.',
+			ru: 'IV очередь: 6,00 %, всего 391,5 млн динаров.',
+			en: 'Rank IV: 6.00%, RSD 391.5 m in total.',
+			sr: 'IV isplatni red: 6,00%, ukupno 391,5 mil. dinara.',
 		},
 		url: `${AOD}/77_1_oglas.pdf`,
-		meta: { ru: 'PDF-скан, 75 стр., 3,8 МБ', en: 'Scanned PDF, 75 pp., 3.8 MB', sr: 'PDF-skeniran, 75 str., 3,8 MB' },
+		meta: { ru: 'PDF-скан, 75 стр., 3,8 МБ', en: 'Scanned PDF, 75 pp., 3.8 MB', sr: 'skenirani PDF, 75 str., 3,8 MB' },
 	},
 	{
 		title: {
@@ -90,7 +90,7 @@ export const UNIVERZAL_SOURCES: Source[] = [
 			sr: 'IV isplatni red: 1,85%, ukupno 120,7 mil. dinara.',
 		},
 		url: `${AOD}/115_1_oglas.pdf`,
-		meta: { ru: 'PDF-скан, 73 стр., 0,8 МБ', en: 'Scanned PDF, 73 pp., 0.8 MB', sr: 'PDF-skeniran, 73 str., 0,8 MB' },
+		meta: { ru: 'PDF-скан, 73 стр., 0,8 МБ', en: 'Scanned PDF, 73 pp., 0.8 MB', sr: 'skenirani PDF, 73 str., 0,8 MB' },
 	},
 	{
 		title: {
@@ -120,7 +120,7 @@ export const UNIVERZAL_SOURCES: Source[] = [
 			sr: 'IV isplatni red: 0,69%, ukupno 45,0 mil. dinara.',
 		},
 		url: `${AOD}/212_1_oglas.pdf`,
-		meta: { ru: 'PDF-скан, 81 стр., 2,7 МБ', en: 'Scanned PDF, 81 pp., 2.7 MB', sr: 'PDF-skeniran, 81 str., 2,7 MB' },
+		meta: { ru: 'PDF-скан, 81 стр., 2,7 МБ', en: 'Scanned PDF, 81 pp., 2.7 MB', sr: 'skenirani PDF, 81 str., 2,7 MB' },
 	},
 	{
 		title: {
@@ -229,6 +229,21 @@ export const UNIVERZAL_SOURCES: Source[] = [
 	},
 	{
 		title: {
+			ru: 'Квартальный отчёт AOD по Univerzal banka, I квартал 2026',
+			en: 'AOD quarterly report on Univerzal banka, Q1 2026',
+			sr: 'Kvartalni izveštaj AOD o Univerzal banci, I kvartal 2026.',
+		},
+		date: same('31.03.2026'),
+		main: {
+			ru: 'Таблица 3г, IV очередь: на начало квартала 5 683,8 млн динаров, выплачено за квартал 294,9 млн, на конец квартала 5 388,9 млн.',
+			en: 'Table 3г, rank IV: RSD 5,683.8 m at the start of the quarter, RSD 294.9 m paid in the quarter, RSD 5,388.9 m at the end.',
+			sr: 'Tabela 3g, IV isplatni red: na početku kvartala 5.683,8 mil. dinara, isplaćeno u kvartalu 294,9 mil., na kraju kvartala 5.388,9 mil.',
+		},
+		url: 'https://www.aod.rs/uploads/dokumenti/kvartalniizvestaj/Univerzal%20banka_1%20kvartal%202026.pdf',
+		meta: { ru: 'PDF, 0,3 МБ', en: 'PDF, 0.3 MB', sr: 'PDF, 0,3 MB' },
+	},
+	{
+		title: {
 			ru: 'Квартальный отчёт AOD по Univerzal banka, II квартал 2026',
 			en: 'AOD quarterly report on Univerzal banka, Q2 2026',
 			sr: 'Kvartalni izveštaj AOD o Univerzal banci, II kvartal 2026.',
@@ -322,7 +337,7 @@ const WHO: Record<Lang, string> = {
 const EXAMPLE: Record<Lang, string> = {
 	ru: 'Что есть что, на реальной строке без имени (требование № 1 первой очереди, физлицо из Белграда). «Признанная сумма» — сколько банк должен человеку сверх страховки: 2 127 615,15 дин. (около 18 000 €), в каждом из трёх документов. «Процент» — какую часть всего долга платят в этот раз: он считается от всего долга, а не от остатка. «Сумма к выплате» = долг × процент. 2 127 615 × 50 % = 1 063 807 (решение суда 18.08.2020); × 40 % = 851 046 (07.04.2021); × 10 % = 212 761 (15.06.2021); итого 100 %, в динарах и без процентов за годы ожидания. Как вернуть 1000 € в три приёма: 500, 400 и 100. Сколько всего было на счёте, из списка не видно: страховую часть AOD выплатил отдельно, в списке только то, что шло через банкротство.',
 	en: 'What is what, on a real row without the name (claim no. 1 of rank I, an individual from Belgrade). The recognised amount is how much the bank owes the person above the insurance: RSD 2,127,615.15 (about €18,000), the same in all three documents. The percentage is the part of the whole debt paid this time: it is counted from the whole debt, not from what is left. The amount to be paid = debt × percentage. 2,127,615 × 50% = 1,063,807 (court decision of 18.08.2020); × 40% = 851,046 (07.04.2021); × 10% = 212,761 (15.06.2021); in total 100%, in dinars and without interest for the years of waiting. Like repaying €1,000 in three instalments: 500, 400 and 100. The list does not show how much was in the account in total: AOD paid the insured part separately, the list shows only what went through the bankruptcy.',
-	sr: 'Šta je šta, na stvarnom redu bez imena (potraživanje br. 1 prvog reda, fizičko lice iz Beograda). Utvrđeno potraživanje je koliko banka duguje čoveku iznad osiguranja: 2.127.615,15 din. (oko 18.000 €), isto u sva tri dokumenta. Procenat je deo celog duga koji se isplaćuje ovog puta: računa se od celog duga, a ne od ostatka. Iznos za isplatu = dug × procenat. 2.127.615 × 50 % = 1.063.807 (rešenje suda od 18.08.2020); × 40 % = 851.046 (07.04.2021); × 10 % = 212.761 (15.06.2021); ukupno 100 %, u dinarima i bez kamate za godine čekanja. Kao kad se 1.000 € vraća u tri rate: 500, 400 i 100. Iz spiska se ne vidi koliko je ukupno bilo na računu: osigurani deo AOD je isplatio odvojeno, u spisku je samo ono što je išlo kroz stečaj.',
+	sr: 'Šta je šta, na stvarnom redu bez imena (potraživanje br. 1 prvog reda, fizičko lice iz Beograda). Utvrđeno potraživanje je koliko banka duguje čoveku iznad osiguranja: 2.127.615,15 din. (oko 18.000 €), isto u sva tri dokumenta. Procenat je deo celog duga koji se isplaćuje ovog puta: računa se od celog duga, a ne od ostatka. Iznos za isplatu = dug × procenat. 2.127.615 × 50 % = 1.063.807 (rešenje suda od 18.08.2020); × 40 % = 851.046 (07.04.2021); × 10 % = 212.761 (15.06.2021); ukupno 100 %, u dinarima i bez kamate za godine čekanja. Kao kad se 1.000 € vraća u tri rate: 500, 400 i 100. Iz spiska se ne vidi koliko je ukupno bilo na računu: osigurani deo AOD je isplatila odvojeno, u spisku je samo ono što je išlo kroz stečaj.',
 };
 
 const draft = (page: number, total: number, pct: string, extra?: Record<Lang, string>): Look => ({
@@ -346,7 +361,7 @@ const scan = (pct: string): Look => ({
 const quarter = (page: number, note?: Record<Lang, string>): Look => ({
 	page,
 	look: {
-		ru: [`Стр. ${page}: таблица «3г Готовински одливи – утврђена потраживања поверилаца према стечајном дужнику» (в файле она может быть латиницей: «3g Gotovinski odlivi …») и в ней строка «I исплатни ред» (I isplatni red). Таблица может начинаться ниже середины страницы, листайте вниз.`, 'Колонки: потраживания на начало периода; повышение по итогам заседаний и начисления процентов; «Исплаћена потраживања у извештајном периоду или смањење по основу окончаних парничних поступака»; остаток на конец периода.', 'Третья колонка смешивает выплаты и уменьшения по оконченным судебным делам. Для I очереди в 2020–2021 годах это в основном выплаты по распределениям.', ...(note ? [note.ru] : [])],
+		ru: [`Стр. ${page}: таблица «3г Готовински одливи – утврђена потраживања поверилаца према стечајном дужнику» (в файле она может быть латиницей: «3g Gotovinski odlivi …») и в ней строка «I исплатни ред» (I isplatni red). Таблица может начинаться ниже середины страницы, листайте вниз.`, 'Колонки: требования на начало периода; повышение по итогам заседаний и начисления процентов; «Исплаћена потраживања у извештајном периоду или смањење по основу окончаних парничних поступака»; остаток на конец периода.', 'Третья колонка смешивает выплаты и уменьшения по оконченным судебным делам. Для I очереди в 2020–2021 годах это в основном выплаты по распределениям.', ...(note ? [note.ru] : [])],
 		en: [`Page ${page}: the table “3г Готовински одливи – утврђена потраживања поверилаца према стечајном дужнику” (in the file it may be in Latin script: “3g Gotovinski odlivi …”) and in it the “I исплатни ред” (I isplatni red) row. The table may start low on the page, so scroll down.`, 'Columns: claims at the start of the period; increase from hearings and interest accrual; “Исплаћена потраживања у извештајном периоду или смањење по основу окончаних парничних поступака”; balance at the end of the period.', 'The third column mixes payouts with reductions from concluded lawsuits. For rank I in 2020–2021 it is mostly payouts from the distributions.', ...(note ? [note.en] : [])],
 		sr: [`Str. ${page}: tabela „3г Готовински одливи – утврђена потраживања поверилаца према стечајном дужнику“ (u fajlu može biti latinicom: „3g Gotovinski odlivi …“) i u njoj red „I исплатни ред“ (I isplatni red). Tabela može početi pri dnu strane, listajte nadole.`, 'Kolone: potraživanja na početku perioda; povećanje po ispitnim ročištima i obračunu kamate; „Исплаћена потраживања у извештајном периоду или смањење по основу окончаних парничних поступака“; stanje na kraju perioda.', 'Treća kolona meša isplate sa smanjenjima po okončanim parnicama. Za I red u 2020–2021. to su uglavnom isplate po deobama.', ...(note ? [note.sr] : [])],
 	},
@@ -387,6 +402,11 @@ export const LOOK: Record<string, Look> = {
 	[`${BASE}/kvartalniizvestaj/332_kvartalni_izvestaj.pdf`]: quarter(2),
 	[`${BASE}/kvartalniizvestaj/346_kvartalni_izvestaj.pdf`]: quarter(2),
 	[`${BASE}/kvartalniizvestaj/377_kvartalni_izvestaj.pdf`]: quarter(2),
+	[`${BASE}/kvartalniizvestaj/Univerzal%20banka_1%20kvartal%202026.pdf`]: quarter(2, {
+		ru: 'Строка «IV исплатни ред»: 5 683 831 037,49 на начало, 294 918 822,38 выплачено за квартал, 5 388 912 215,11 на конец.',
+		en: 'The “IV исплатни ред” row: 5,683,831,037.49 at the start, 294,918,822.38 paid in the quarter, 5,388,912,215.11 at the end.',
+		sr: 'Red „IV исплатни ред“: 5.683.831.037,49 na početku, 294.918.822,38 isplaćeno u kvartalu, 5.388.912.215,11 na kraju.',
+	}),
 	[`${BASE}/kvartalniizvestaj/Univerzal%20banka_II%20kvartal%202026.pdf`]: quarter(3, {
 		ru: 'Здесь же: остаток по I очереди — 72,8 млн динаров, по IV очереди — 5 383,4 млн из признанных 6 525,3 млн.',
 		en: 'Same table: the rank I balance is RSD 72.8 m; rank IV has RSD 5,383.4 m left of 6,525.3 m recognised.',
