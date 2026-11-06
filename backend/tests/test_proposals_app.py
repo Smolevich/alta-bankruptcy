@@ -60,8 +60,18 @@ def test_public_list_hides_author_contact(client):
     assert "@ivan_secret" not in client.get(PAGE).text
 
 
-def test_proposal_without_sources_is_rejected(client):
-    assert propose(client, sources=" \n  ").status_code == 400
+def test_proposal_without_sources_is_accepted(client):
+    assert propose(client, sources=" \n  ").status_code == 303
+
+
+def test_proposal_without_title_gets_start_of_text(client):
+    propose(client, title="", text="Как подать требование в стечай без адвоката")
+    assert admin_items(client)[0]["title"] == "Как подать требование в стечай без адвоката"
+
+
+def test_link_pasted_without_https_is_accepted(client):
+    propose(client, text="", doc_url="docs.google.com/document/d/x")
+    assert admin_items(client)[0]["doc_url"] == "https://docs.google.com/document/d/x"
 
 
 def test_proposal_without_text_and_link_is_rejected(client):
@@ -76,21 +86,27 @@ def test_document_link_must_be_http(client):
     assert propose(client, doc_url="javascript:alert(1)").status_code == 400
 
 
-def test_unknown_target_is_rejected(client):
-    assert propose(client, target="newspaper").status_code == 400
+def test_proposal_without_target_goes_to_site_and_channel(client):
+    propose(client, target="")
+    assert admin_items(client)[0]["target"] == "both"
 
 
 def test_rejected_form_keeps_what_was_typed(client):
-    page = propose(client, sources="", text="Длинный черновик текста").text
-    assert "Длинный черновик текста" in page and "хотя бы один источник" in page
+    page = propose(client, sources="x" * 20_001, text="Длинный черновик текста").text
+    assert "Длинный черновик текста" in page
 
 
-def test_text_of_twenty_thousand_cyrillic_characters_is_accepted(client):
-    assert propose(client, text="ж" * 20_000).status_code == 303
+def test_text_of_fifty_thousand_cyrillic_characters_is_accepted(client):
+    assert propose(client, text="ж" * 50_000).status_code == 303
+
+
+def test_long_article_with_markup_and_sources_fits_into_request(client):
+    article = "<p><strong>" + "ж" * 1000 + "</strong></p>"
+    assert propose(client, text_format="html", text=article * 50, sources="ж" * 20_000).status_code == 303
 
 
 def test_text_over_limit_is_rejected(client):
-    assert propose(client, text="x" * 20_001).status_code == 400
+    assert propose(client, text="x" * 50_001).status_code == 400
 
 
 def test_honeypot_submission_is_not_stored(client):
@@ -132,8 +148,8 @@ def test_translated_pages_have_title_and_form(client, path, title):
 
 
 def test_english_form_reports_errors_in_english(client):
-    page = propose(client, path="/en/predlozheniya/", sources="").text
-    assert "Give at least one source." in page
+    page = propose(client, path="/en/predlozheniya/", text="", doc_url="").text
+    assert "Add a text or a link to a document." in page
 
 
 def test_editor_status_comment_and_links_show_in_list(client):
@@ -257,7 +273,7 @@ def test_text_limit_counts_visible_characters_not_tags(client):
 
 
 def test_editor_text_over_limit_is_rejected_on_submit(client):
-    assert propose(client, text_format="html", text="<p>" + "а" * 20_001 + "</p>").status_code == 400
+    assert propose(client, text_format="html", text="<p>" + "а" * 50_001 + "</p>").status_code == 400
 
 
 def test_markup_without_text_counts_as_empty(client):
@@ -292,14 +308,14 @@ def test_clearing_editor_text_brings_back_author_text(client):
 
 
 def test_editor_text_at_limit_fits_into_request(client):
-    """Кириллица в JSON — по 2 байта на знак: 20 000 знаков не пролезали в общий лимит тела 16 КБ."""
+    """Кириллица в JSON — по 2 байта на знак: длинный текст не должен упираться в общий лимит тела 16 КБ."""
     propose(client)
-    assert edit(client, 1, edited_text="<p>" + "а" * 20_000 + "</p>").status_code == 200
+    assert edit(client, 1, edited_text="<p>" + "а" * 50_000 + "</p>").status_code == 200
 
 
 def test_editor_text_over_limit_is_rejected(client):
     propose(client)
-    assert edit(client, 1, edited_text="<p>" + "а" * 20_001 + "</p>").status_code == 400
+    assert edit(client, 1, edited_text="<p>" + "а" * 50_001 + "</p>").status_code == 400
 
 
 def test_old_plain_text_proposal_is_escaped(client, tmp_path):
@@ -345,12 +361,26 @@ def test_source_with_comma_inside_stays_one_source():
     )
 
 
-def test_too_long_source_error_names_which_one(client):
-    sources = f"https://www.aod.rs/\n{'Очень длинное название документа ' * 40}"
-    page = propose(client, sources=sources).text
-    assert "Источник №2 длиннее, чем можно" in page
+def test_any_number_of_sources_of_any_length_is_accepted(client):
+    long_ones = [f"{'Очень длинное название документа ' * 40} {UTM_LINK}&n={n}" for n in range(10)]
+    sources = ", ".join(long_ones + [f"https://www.aod.rs/{n}" for n in range(41)])
+    assert propose(client, sources=sources).status_code == 303
 
 
-def test_too_many_sources_error_says_how_many(client):
-    sources = "\n".join(f"https://www.aod.rs/{n}" for n in range(proposals.SOURCES_MAX + 1))
-    assert f"Источников получилось {proposals.SOURCES_MAX + 1}" in propose(client, sources=sources).text
+@pytest.mark.parametrize(("path", "message"), [
+    (PAGE, "В поле «Источники» больше 20 000 знаков"),
+    ("/en/predlozheniya/", "The Sources field is longer than 20 000 characters"),
+    ("/sr/predlozheniya/", "Polje „Izvori“ ima više od 20 000 znakova"),
+])
+def test_sources_field_over_limit_says_so(client, path, message):
+    response = propose(client, path=path, sources="ж" * 20_001)
+    assert response.status_code == 400 and message in response.text
+
+
+@pytest.mark.parametrize(("path", "hint"), [
+    (PAGE, "Необязательно. Ссылки и названия документов"),
+    ("/en/predlozheniya/", "Optional. Links and document names"),
+    ("/sr/predlozheniya/", "Nije obavezno. Linkovi i nazivi dokumenata"),
+])
+def test_form_says_sources_are_optional(client, path, hint):
+    assert hint in client.get(path).text

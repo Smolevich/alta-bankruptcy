@@ -116,23 +116,23 @@
   <div class="errors" role="alert" style="margin-top: 14px">{% for e in errors %}<p>{{ e }}</p>{% endfor %}</div>
   {% endif %}
   <form method="post" action="{{ action }}">
-    <label for="title">{{ t.f_title }}</label>
-    <input type="text" id="title" name="title" maxlength="{{ title_max }}" required value="{{ values.title or '' }}">
+    <label for="title">{{ t.f_title }}<span class="hint">{{ t.f_title_hint }}</span></label>
+    <input type="text" id="title" name="title" maxlength="{{ title_max }}" value="{{ values.title or '' }}">
 
-    <label for="text">{{ t.f_text }}<span class="hint">{{ t.f_text_hint.format("{:,}".format(body_max).replace(",", " ")) }}</span></label>
+    <label for="text">{{ t.f_text }}<span class="hint">{{ t.f_text_hint.format(grouped(body_max)) }}</span></label>
     <textarea id="text" name="text" maxlength="{{ body_max }}" data-richtext data-format="{{ 'html' if values.text_format == 'html' else 'plain' }}">{{ values.text or '' }}</textarea>
 
     <label for="doc_url">{{ t.f_doc_url }}<span class="hint">{{ t.f_doc_url_hint }}</span></label>
     <input type="text" id="doc_url" name="doc_url" maxlength="{{ url_max }}" inputmode="url" placeholder="https://…" value="{{ values.doc_url or '' }}">
 
     <label for="sources">{{ t.f_sources }}<span class="hint">{{ t.f_sources_hint }}</span></label>
-    <textarea class="short" id="sources" name="sources" required>{{ values.sources or '' }}</textarea>
+    <textarea class="short" id="sources" name="sources" maxlength="{{ sources_text_max }}">{{ values.sources or '' }}</textarea>
 
     <fieldset>
       <legend>{{ t.f_target }}</legend>
       <div class="choice">
         {% for code in targets %}
-        <label><input type="radio" name="target" value="{{ code }}" required{% if values.target == code %} checked{% endif %}> {{ t.targets[code] }}</label>
+        <label><input type="radio" name="target" value="{{ code }}"{% if (values.target or default_target) == code %} checked{% endif %}> {{ t.targets[code] }}</label>
         {% endfor %}
       </div>
     </fieldset>
@@ -171,12 +171,14 @@
       <summary>{{ t.show_text }}</summary>
       {% if item.html %}<div class="body rich">{{ item.html }}</div>{% endif %}
       {% if item.doc_url %}<p style="margin: 6px 0 0">{{ t.doc }}: <a href="{{ item.doc_url }}" rel="noopener nofollow" target="_blank">{{ item.doc_url }}</a></p>{% endif %}
+      {% if item.sources %}
       <p style="margin: 8px 0 0; font-weight: 600">{{ t.sources }}</p>
       <ul class="src">
         {% for source in item.sources %}
         <li>{% if source.startswith("http://") or source.startswith("https://") %}<a href="{{ source }}" rel="noopener nofollow" target="_blank">{{ source }}</a>{% else %}{{ source }}{% endif %}</li>
         {% endfor %}
       </ul>
+      {% endif %}
     </details>
   </article>
   {% endfor %}
