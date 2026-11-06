@@ -32,6 +32,8 @@ const EXTRA_COPIES: Record<string, string> = {
 		'aod-2014-02-06-obavestenje-izmirivanje-obaveza.pdf',
 	'https://nbs.rs/export/sites/NBS_site/documents/propisi/zakoni/zastita_korisnika_finansijskih_usluga_2025.pdf':
 		'nbs-2025-zakon-zastita-korisnika-finansijskih-usluga.pdf',
+	'https://www.aod.rs/uploads/dokumenti/altabanka/uputstvo_novi_ra%C4%8Dun_6_11_2026.pdf':
+		'aod-2026-11-06-uputstvo-izmirenje-obaveza-krediti.pdf',
 	'https://www.javnidug.gov.rs/static/uploads/Lista%20ovlascenih%20ucesnika_cir.pdf':
 		'uprava-za-javni-dug-2025-05-lista-ovlascenih-ucesnika.pdf',
 };
