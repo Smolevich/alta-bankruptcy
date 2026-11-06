@@ -44,9 +44,34 @@ npm run check        # translations check + build (schema, internal links)
   (`/docs/aod/<name>`, one list for the site and the server:
   `backend/src/alta_feedback/data/aod_archive.json`). A document naming private persons is
   `public: false` and stays an external link. The link text still points to the original.
+- **No personal data in the repository, history included.** No names, emails, phones, JMBG,
+  account numbers or Telegram handles of depositors, chat members or form authors; no screenshots
+  of letters, chats or bank cabinets that show them (black out before committing); no filled-in
+  forms. The repository is public and history is forever: a leak means rotating and reporting,
+  not "deleting the file". Official contacts of organisations (AOD, NBS, banks) are fine.
+- **Documents come only from the official source or from our backup.** A document on the site is
+  either loaded straight from its official publisher or opened from our own copy (`public/docs`,
+  AOD archive) that sits next to a link to the original; web pages go to the web archive. A file
+  with no official original (for example sent by a depositor) is not published as a document.
+  No guesses: a figure, date or requirement we cannot point to a source for does not go in
+  (decision of 05.11.2026).
 - Light theme only; no third-party scripts, fonts or trackers (the server sends a strict CSP).
 - Instagram link of the depositors' group: `INSTAGRAM_URL` in `src/site.mjs` (empty = hidden).
 - News: one file per item and language in `src/content/news/<lang>/`.
 - Deploy only through CI (`docs/deploy.md`); no secrets or server addresses in the repository.
 - `backend/` is the Python service that serves the whole site (forms, stats, admin, AOD archive,
   CSP); it has its own `backend/AGENTS.md`. Tests: `cd backend && uv run pytest -q`.
+
+## Backend and release
+
+- Code: `backend/` (Starlette + SQLite, details in `backend/AGENTS.md`). `deploy-backend.yml` runs
+  tests, copies to `/opt/alta-bankruptcy` and restarts `alta-bankruptcy.service` on
+  `127.0.0.1:8102`; the site is built by `deploy.yml`. Live data (database, AOD archive) is in
+  `/opt/alta-feedback/data`; never edit the server by hand.
+- Moderation: reports and corrections through `/admin/accounts` and `/admin/suggestions`
+  (Bearer `ADMIN_TOKEN`), proposals and cases under `/admin/proposals` behind Cloudflare Access;
+  statuses `new|accepted|rejected|test|spam`. Commands and the Access setup: `backend/docs/ops.md`.
+  Moderation touches statuses only; never publish an unreviewed form text.
+- Review: `.github/CODEOWNERS` requires an owner for `.github/`, `scripts/`, `package*.json`,
+  `astro.config.mjs`, `backend/deploy/`, `backend/pyproject.toml` and `backend/uv.lock`. Merge
+  with `--admin` only after CI is green. Commits and PRs in English.
