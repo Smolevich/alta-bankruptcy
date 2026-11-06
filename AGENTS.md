@@ -34,6 +34,7 @@ npm run check        # translations check + build (schema, internal links)
   `public/docs/`; без оценок и догадок (решение владельца 05.11.2026). Used on
   `/imushchestvo-banka/`; what the documents do not disclose is written as «в документах не
   раскрыто: …», never as a guess. No claims about payout ranks.
+- **Every claim has an official source or an explicit mark.** Каждое утверждение — с официальным источником (копия в public/docs + ссылка на оригинал). Если источника нет (опыт вкладчика, кейс из формы, бланк, присланный вкладчиком, наше наблюдение) — публикуется только с явной видимой пометкой «со слов вкладчика / источника нет»; догадки и оценки без такой пометки не публикуются. Источник ищем всегда в первую очередь (решение владельца 06.11.2026).
 - **Every external source has a backup.** A PDF goes to `public/docs/` (and `src/data/pdfs.ts`);
   a web page (NBS, AOD, press, city notices) is saved to web.archive.org (or archive.ph) and the
   snapshot goes into the source's `copy` field next to the original URL. Press is kept only as
