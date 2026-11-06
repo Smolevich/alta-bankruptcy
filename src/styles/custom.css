@@ -410,3 +410,18 @@ html, body { overflow-x: clip; }
 .branch-city ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.6rem; grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); }
 .branch-city li { margin: 0 !important; }
 .branches-phones { margin-top: 1rem !important; font-size: 0.88rem; }
+
+/* Карта отделений и строки «размер / обычно людно» */
+.branches-note { font-size: 0.9rem; padding: 0.6rem 0.8rem; background: #fffdf7; border: 1px solid var(--line); border-left: 4px solid var(--seal); border-radius: 3px; }
+.branch-map-wrap { margin: 0 0 1rem; max-width: 100%; }
+.branch-leaflet { height: 26rem; max-width: 100%; border: 1px solid var(--line); border-radius: 3px; background: #ece8dc; z-index: 0; }
+.branch-leaflet .branch-code { white-space: normal; }
+.branch-legend { display: flex; flex-wrap: wrap; gap: 0.3rem 0.9rem; margin: 0.4rem 0 0 !important; font-size: 0.85rem; color: #5a5448; }
+.branch-legend span { display: inline-flex; align-items: center; gap: 0.3rem; }
+.dot { display: inline-block; border-radius: 50%; border: 1px solid #222; }
+.dot-small { width: 0.7rem; height: 0.7rem; background: #2f8f5b; }
+.dot-medium { width: 0.95rem; height: 0.95rem; background: #d98a1f; }
+.dot-large { width: 1.2rem; height: 1.2rem; background: #b3261e; }
+.dot-unknown { width: 0.8rem; height: 0.8rem; background: #8a8478; }
+.branch .branch-extra { margin: 0 0 0.25rem; font-size: 0.88rem; }
+@media (max-width: 600px) { .branch-leaflet { height: 20rem; } }

@@ -2,6 +2,7 @@
 // Отделения Poštanska для выплаты вкладчикам ALTA. Данные — src/data/postanska-branches.json,
 // поля дословно из списка AOD (PDF от 06.11.2026); город выводится из названия отделения.
 import LIST from '../data/postanska-branches.json';
+import EXTRA from '../data/postanska-branches-extra.json';
 import { type Lang } from '../i18n';
 
 const { lang = 'ru' } = Astro.props as { lang?: Lang };
@@ -45,6 +46,20 @@ const T = {
 		phonesLink: 'posted.co.rs, «Експозитуре»',
 		cities: 'Города',
 		newTab: 'откроется в новой вкладке',
+		note: 'Размер — наша оценка по фото Google Карт, не данные банка. Загрузка — данные Google «Обычно в это время», это не очередь на выплату. В маленьких отделениях очередь может быть на улице — возьмите воду и перекус. Срок подачи — три года.',
+		size: 'Размер',
+		sizes: { small: 'маленькое', medium: 'среднее', large: 'большое' },
+		sizeNote: 'наша оценка по фото Google Карт',
+		busy: 'Обычно людно',
+		busyWd: 'будни',
+		busySat: 'суббота',
+		busyNote: 'Google',
+		gmaps: 'Открыть в Google Картах',
+		mapLabel: 'Карта отделений',
+		legend: 'Размер отделения (наша оценка):',
+		unknown: 'не определён',
+		hint: 'Показать карту',
+		bankSite: 'у банка на сайте указано',
 	},
 	en: {
 		source: 'Source: AOD list',
@@ -61,6 +76,20 @@ const T = {
 		phonesLink: 'posted.co.rs, “Ekspoziture”',
 		cities: 'Cities',
 		newTab: 'opens in a new tab',
+		note: 'Size is our estimate from Google Maps photos, not bank data. Busyness is Google’s “Popular times” data, not the payout queue. In small branches the queue may be outside — bring water and a snack. The filing deadline is three years.',
+		size: 'Size',
+		sizes: { small: 'small', medium: 'medium', large: 'large' },
+		sizeNote: 'our estimate from Google Maps photos',
+		busy: 'Usually busy',
+		busyWd: 'weekdays',
+		busySat: 'Saturday',
+		busyNote: 'Google',
+		gmaps: 'Open in Google Maps',
+		mapLabel: 'Branch map',
+		legend: 'Branch size (our estimate):',
+		unknown: 'unknown',
+		hint: 'Show map',
+		bankSite: 'the bank’s website gives',
 	},
 	sr: {
 		source: 'Izvor: spisak AOD',
@@ -77,6 +106,20 @@ const T = {
 		phonesLink: 'posted.co.rs, „Ekspoziture”',
 		cities: 'Gradovi',
 		newTab: 'otvara se u novoj kartici',
+		note: 'Veličina je naša procena prema fotografijama sa Google mapa, a ne podatak banke. Opterećenost su Google podaci „Obično u ovo vreme”, to nije red za isplatu. U malim ekspoziturama red može biti na ulici — ponesite vodu i užinu. Rok za podnošenje zahteva je tri godine.',
+		size: 'Veličina',
+		sizes: { small: 'mala', medium: 'srednja', large: 'velika' },
+		sizeNote: 'naša procena prema fotografijama sa Google mapa',
+		busy: 'Obično gužva',
+		busyWd: 'radnim danom',
+		busySat: 'subotom',
+		busyNote: 'Google',
+		gmaps: 'Otvori u Google mapama',
+		mapLabel: 'Mapa ekspozitura',
+		legend: 'Veličina ekspoziture (naša procena):',
+		unknown: 'nije određena',
+		hint: 'Prikaži mapu',
+		bankSite: 'na sajtu banke piše',
 	},
 }[lang];
 
@@ -89,6 +132,31 @@ function cityKey(naziv: string): string {
 const mapUrl = (b: Pick<Branch, 'ulicaIBroj' | 'pttBroj'>, city: string) =>
 	`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${b.ulicaIBroj}, ${b.pttBroj} ${CITIES[city].latin}, Srbija`)}`;
 
+const ADDR_NOTE: Record<string, string> = { '767': 'Hercegovačka 19' };
+const esc = (v: string) => v.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+
+type Extra = (typeof EXTRA)[keyof typeof EXTRA];
+const extraOf = (id: string): Extra | undefined => (EXTRA as Record<string, Extra>)[id];
+const sizeText = (e?: Extra) => (e?.size ? T.sizes[e.size as 'small' | 'medium' | 'large'] : null);
+function busyText(e?: Extra): string | null {
+	if (!e?.peak) return null;
+	return `${T.busyWd} ${e.peak}` + (e.peak_saturday ? `, ${T.busySat} ${e.peak_saturday}` : '');
+}
+
+type Point = { id: string; name: string; addr: string; hours: string; sat: string; code: string };
+function popup(b: Point, e: Extra): string {
+	const size = sizeText(e);
+	const busy = busyText(e);
+	return [
+		`<strong>${esc(b.name)}</strong> <span class="branch-code">${T.code} ${esc(b.code)}</span>`,
+		`<br>${esc(b.addr)}` + (ADDR_NOTE[b.id] ? ` (${T.bankSite}: ${ADDR_NOTE[b.id]})` : ''),
+		`<br>${T.weekdays} ${esc(b.hours)}, ${T.saturday} ${esc(b.sat)}`,
+		size ? `<br>${T.size.toLowerCase()}: ${size} — ${T.sizeNote}` : '',
+		busy ? `<br>${T.busy.toLowerCase()}: ${busy} (${T.busyNote})` : '',
+		`<br><a href="${esc(e.maps_url)}" target="_blank" rel="noopener">${T.gmaps}</a>`,
+	].join('');
+}
+
 const groups = new Map<string, Branch[]>();
 for (const b of LIST.ekspoziture) {
 	const k = cityKey(b.naziv);
@@ -97,6 +165,13 @@ for (const b of LIST.ekspoziture) {
 const order = [...FIRST, ...[...groups.keys()].filter((k) => !FIRST.includes(k)).sort((a, b) => CITIES[a][lang].localeCompare(CITIES[b][lang], lang))];
 const slug = (k: string) => `otdeleniya-${CITIES[k].latin.toLowerCase().normalize('NFD').replace(/[^a-z ]/g, '').replace(/ /g, '-')}`;
 const S = LIST.specijalizovana;
+const SPECIAL_PT: Point = { id: S.sifra, name: S.naziv, addr: `${S.ulicaIBroj}, ${S.pttBroj} ${CITIES.BEOGRAD.latin}`, hours: S.radnoVremeRadnimDanom, sat: S.radnoVremeSubotom, code: S.sifra };
+const points = [
+	SPECIAL_PT,
+	...LIST.ekspoziture.map((b) => ({ id: b.sifra, name: b.naziv.replace(/^EKSPOZITURA /, ''), addr: `${b.ulicaIBroj}, ${b.pttBroj} ${CITIES[cityKey(b.naziv)].latin}`, hours: b.radnoVremeRadnimDanom, sat: b.radnoVremeSubotom, code: b.sifra })),
+]
+	.filter((p) => extraOf(p.id))
+	.map((p) => ({ lat: extraOf(p.id)!.lat, lng: extraOf(p.id)!.lng, size: extraOf(p.id)!.size, label: p.name, html: popup(p, extraOf(p.id)!) }));
 const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST.url };
 ---
 
@@ -118,8 +193,22 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			<dt>{T.weekdays}</dt><dd>{S.radnoVremeRadnimDanom}</dd>
 			<dt>{T.saturday}</dt><dd>{S.radnoVremeSubotom}</dd>
 		</dl>
+		{sizeText(extraOf(S.sifra)) && <p class="branch-extra">{T.size}: {sizeText(extraOf(S.sifra))}</p>}
+		{busyText(extraOf(S.sifra)) && <p class="branch-extra">{T.busy}: {busyText(extraOf(S.sifra))}</p>}
 		<a class="branch-map" href={mapUrl(S, 'BEOGRAD')} target="_blank" rel="noopener">{T.map}<span class="sr-only"> ({T.newTab})</span></a>
 	</article>
+
+	<p class="branches-note">{T.note}</p>
+	<div class="branch-map-wrap" data-points={JSON.stringify(points)}>
+		<div class="branch-leaflet" role="region" aria-label={T.mapLabel}></div>
+		<p class="branch-legend">
+			{T.legend}
+			<span><i class="dot dot-small"></i>{T.sizes.small}</span>
+			<span><i class="dot dot-medium"></i>{T.sizes.medium}</span>
+			<span><i class="dot dot-large"></i>{T.sizes.large}</span>
+			<span><i class="dot dot-unknown"></i>{T.unknown}</span>
+		</p>
+	</div>
 
 	<nav class="branch-cities" aria-label={T.cities}>
 		{order.map((k) => <a href={`#${slug(k)}`}>{CITIES[k][lang]} <span>{groups.get(k)!.length}</span></a>)}
@@ -140,12 +229,15 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 							<p class="branch-addr">
 								{b.ulicaIBroj}, {b.pttBroj} {CITIES[k].latin}
 							</p>
+							{ADDR_NOTE[b.sifra] && <p class="branch-extra">{T.bankSite}: {ADDR_NOTE[b.sifra]}</p>}
 							<dl class="branch-hours">
 								<dt>{T.weekdays}</dt>
 								<dd>{b.radnoVremeRadnimDanom}</dd>
 								<dt>{T.saturday}</dt>
 								<dd>{b.radnoVremeSubotom}</dd>
 							</dl>
+							{sizeText(extraOf(b.sifra)) && <p class="branch-extra">{T.size}: {sizeText(extraOf(b.sifra))}</p>}
+							{busyText(extraOf(b.sifra)) && <p class="branch-extra">{T.busy}: {busyText(extraOf(b.sifra))}</p>}
 							<a class="branch-map" href={mapUrl(b, k)} target="_blank" rel="noopener">
 								{T.map}
 								<span class="sr-only"> ({T.newTab})</span>
@@ -162,3 +254,39 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 		<a href={POSTED_SEARCH} target="_blank" rel="noopener">{T.phonesLink}<span class="sr-only"> ({T.newTab})</span></a>
 	</p>
 </div>
+
+<script>
+	// Карта грузится лениво: Leaflet подтягивается, когда блок подъезжает к экрану.
+	const COLORS: Record<string, string> = { small: '#2f8f5b', medium: '#d98a1f', large: '#b3261e', none: '#8a8478' };
+	const RADIUS: Record<string, number> = { small: 6, medium: 9, large: 12, none: 7 };
+
+	async function init(wrap: HTMLElement) {
+		const [{ default: L }] = await Promise.all([import('leaflet'), import('leaflet/dist/leaflet.css')]);
+		const pts: { lat: number; lng: number; size: string | null; label: string; html: string }[] = JSON.parse(wrap.dataset.points ?? '[]');
+		const map = L.map(wrap.querySelector('.branch-leaflet') as HTMLElement, { scrollWheelZoom: false }).setView([44.2, 20.9], 7);
+		L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+			maxZoom: 18,
+			attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+		}).addTo(map);
+		const group = pts.map((p) => {
+			const k = p.size ?? 'none';
+			return L.circleMarker([p.lat, p.lng], { radius: RADIUS[k], color: '#222', weight: 1, fillColor: COLORS[k], fillOpacity: 0.85 })
+				.bindPopup(p.html, { maxWidth: 260 })
+				.bindTooltip(p.label)
+				.addTo(map);
+		});
+		map.fitBounds(L.featureGroup(group).getBounds().pad(0.1));
+	}
+
+	document.querySelectorAll<HTMLElement>('.branch-map-wrap').forEach((wrap) => {
+		const io = new IntersectionObserver(
+			(entries) => {
+				if (!entries.some((e) => e.isIntersecting)) return;
+				io.disconnect();
+				init(wrap);
+			},
+			{ rootMargin: '300px' },
+		);
+		io.observe(wrap);
+	});
+</script>
