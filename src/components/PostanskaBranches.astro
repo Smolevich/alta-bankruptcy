@@ -2,6 +2,7 @@
 // Отделения Poštanska для выплаты вкладчикам ALTA. Данные — src/data/postanska-branches.json,
 // поля дословно из списка AOD (PDF от 06.11.2026); город выводится из названия отделения.
 import LIST from '../data/postanska-branches.json';
+import EXTRA from '../data/postanska-branches-extra.json';
 import { type Lang } from '../i18n';
 
 const { lang = 'ru' } = Astro.props as { lang?: Lang };
@@ -45,6 +46,33 @@ const T = {
 		phonesLink: 'posted.co.rs, «Експозитуре»',
 		cities: 'Города',
 		newTab: 'откроется в новой вкладке',
+		note: 'Размер — наша оценка по фото Google Карт, не данные банка. Загрузка — данные Google «Обычно в это время», это не очередь на выплату. В маленьких отделениях очередь может быть на улице — возьмите воду и перекус. Срок подачи — три года.',
+		size: 'Размер',
+		sizes: { small: 'маленькое', medium: 'среднее', large: 'большое' },
+		sizeNote: 'наша оценка по фото',
+		busy: 'Обычно людно',
+		busyWd: 'будни',
+		busySat: 'суббота',
+		busyNote: 'Google',
+		gmaps: 'Открыть в Google Картах',
+		mapLabel: 'Карта отделений',
+		legend: 'Размер отделения (наша оценка):',
+		unknown: 'не определён',
+		hint: 'Показать карту',
+		bankSite: 'у банка на сайте указано',
+		chartWd: 'будни (среднее пн–пт)',
+		chartSat: 'суббота',
+		chartNote: 'Обычная загрузка по данным Google — по геолокации телефонов, обезличенно, за прошлые недели. 100% — обычный пик этого отделения. Наплыв вкладчиков ALTA здесь не учтён.',
+		chartLink: 'Как Google считает',
+		chartLabel: 'Загрузка отделения по часам с 8 до 20',
+		svBtn: 'Посмотреть вход (Google Street View)',
+		svCap: (d: string | null) => `Изображение — Google Street View${d ? `, дата съёмки: ${d}` : ''}`,
+		svOpen: 'Открыть в Google Картах',
+		fCity: 'Город', fAllCities: 'все города', fSize: 'Размер', fAllSizes: 'все', fWhen: 'Когда пойти', fAnyTime: 'не выбрано',
+		fDay: 'День', fHour: 'Час',
+		fNote: 'Свободнее обычного в этот час — относительно пика самого отделения, а не сравнение отделений между собой.',
+		fShown: 'Показано отделений: %n', fLabel: 'Фильтры отделений', fReset: 'Сбросить', noData: 'нет данных Google', freeAt: 'в этот час %p% от пика',
+		estimate: 'оценка',
 	},
 	en: {
 		source: 'Source: AOD list',
@@ -61,6 +89,33 @@ const T = {
 		phonesLink: 'posted.co.rs, “Ekspoziture”',
 		cities: 'Cities',
 		newTab: 'opens in a new tab',
+		note: 'Size is our estimate from Google Maps photos, not bank data. Busyness is Google’s “Popular times” data, not the payout queue. In small branches the queue may be outside — bring water and a snack. The filing deadline is three years.',
+		size: 'Size',
+		sizes: { small: 'small', medium: 'medium', large: 'large' },
+		sizeNote: 'our estimate from photos',
+		busy: 'Usually busy',
+		busyWd: 'weekdays',
+		busySat: 'Saturday',
+		busyNote: 'Google',
+		gmaps: 'Open in Google Maps',
+		mapLabel: 'Branch map',
+		legend: 'Branch size (our estimate):',
+		unknown: 'unknown',
+		hint: 'Show map',
+		bankSite: 'the bank’s website gives',
+		chartWd: 'weekdays (Mon–Fri average)',
+		chartSat: 'Saturday',
+		chartNote: 'Usual busyness per Google data — from phone geolocation, anonymised, over past weeks. 100% is this branch’s usual peak. The influx of ALTA depositors is not reflected here.',
+		chartLink: 'How Google calculates it',
+		chartLabel: 'Branch busyness by hour, 8 to 20',
+		svBtn: 'See the entrance (Google Street View)',
+		svCap: (d: string | null) => `Image — Google Street View${d ? `, captured: ${d}` : ''}`,
+		svOpen: 'Open in Google Maps',
+		fCity: 'City', fAllCities: 'all cities', fSize: 'Size', fAllSizes: 'all', fWhen: 'When to go', fAnyTime: 'not selected',
+		fDay: 'Day', fHour: 'Hour',
+		fNote: 'Quieter than usual at this hour — relative to the branch’s own peak, not a comparison between branches.',
+		fShown: 'Branches shown: %n', fLabel: 'Branch filters', fReset: 'Reset', noData: 'no Google data', freeAt: 'at this hour %p% of peak',
+		estimate: 'estimate',
 	},
 	sr: {
 		source: 'Izvor: spisak AOD',
@@ -77,6 +132,33 @@ const T = {
 		phonesLink: 'posted.co.rs, „Ekspoziture”',
 		cities: 'Gradovi',
 		newTab: 'otvara se u novoj kartici',
+		note: 'Veličina je naša procena prema fotografijama sa Google mapa, a ne podatak banke. Opterećenost su Google podaci „Obično u ovo vreme”, to nije red za isplatu. U malim ekspoziturama red može biti na ulici — ponesite vodu i užinu. Rok za podnošenje zahteva je tri godine.',
+		size: 'Veličina',
+		sizes: { small: 'mala', medium: 'srednja', large: 'velika' },
+		sizeNote: 'naša procena prema fotografijama',
+		busy: 'Obično gužva',
+		busyWd: 'radnim danom',
+		busySat: 'subotom',
+		busyNote: 'Google',
+		gmaps: 'Otvori u Google mapama',
+		mapLabel: 'Mapa ekspozitura',
+		legend: 'Veličina ekspoziture (naša procena):',
+		unknown: 'nije određena',
+		hint: 'Prikaži mapu',
+		bankSite: 'na sajtu banke piše',
+		chartWd: 'radnim danom (prosek pon–pet)',
+		chartSat: 'subota',
+		chartNote: 'Uobičajena opterećenost prema Google podacima — iz geolokacije telefona, anonimizovano, za prethodne nedelje. 100% je uobičajeni vrhunac ove ekspoziture. Priliv štediša ALTA ovde nije uračunat.',
+		chartLink: 'Kako Google računa',
+		chartLabel: 'Opterećenost ekspoziture po satima, od 8 do 20',
+		svBtn: 'Pogledaj ulaz (Google Street View)',
+		svCap: (d: string | null) => `Slika — Google Street View${d ? `, datum snimanja: ${d}` : ''}`,
+		svOpen: 'Otvori u Google mapama',
+		fCity: 'Grad', fAllCities: 'svi gradovi', fSize: 'Veličina', fAllSizes: 'sve', fWhen: 'Kada ići', fAnyTime: 'nije izabrano',
+		fDay: 'Dan', fHour: 'Sat',
+		fNote: 'Slobodnije nego obično u ovaj sat — u odnosu na vrhunac same ekspoziture, a ne poređenje ekspozitura međusobno.',
+		fShown: 'Prikazano ekspozitura: %n', fLabel: 'Filteri ekspozitura', fReset: 'Poništi', noData: 'nema Google podataka', freeAt: 'u ovaj sat %p% vrhunca',
+		estimate: 'procena',
 	},
 }[lang];
 
@@ -89,6 +171,71 @@ function cityKey(naziv: string): string {
 const mapUrl = (b: Pick<Branch, 'ulicaIBroj' | 'pttBroj'>, city: string) =>
 	`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${b.ulicaIBroj}, ${b.pttBroj} ${CITIES[city].latin}, Srbija`)}`;
 
+const ADDR_NOTE: Record<string, string> = { '767': 'Hercegovačka 19' };
+const esc = (v: string) => v.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+
+type Extra = (typeof EXTRA)[keyof typeof EXTRA];
+const extraOf = (id: string): Extra | undefined => (EXTRA as Record<string, Extra>)[id];
+const sizeText = (e?: Extra) => (e?.size ? T.sizes[e.size as 'small' | 'medium' | 'large'] : null);
+function busyText(e?: Extra): string | null {
+	if (!e?.peak) return null;
+	return `${T.busyWd} ${e.peak}` + (e.peak_saturday ? `, ${T.busySat} ${e.peak_saturday}` : '');
+}
+
+type Hist = { weekday: (number | null)[]; sat: (number | null)[] | null };
+const GOOGLE_BUSY = 'https://support.google.com/business/answer/6263531';
+const HOURS = [8, 12, 16, 20];
+// Столбики 8–20 ч, inline SVG: цвета — через currentColor и var(--sl-color-text-accent), чтобы работало в любой теме.
+function row(label: string, v: (number | null)[]): string {
+	const W = 13 * 10;
+	const bars = v
+		.map((p, i) => `<rect x="${i * 10 + 1}" y="${30 - (p ?? 0) * 0.28}" width="8" height="${(p ?? 0) * 0.28}" class="bar"/>`)
+		.join('');
+	const ticks = HOURS.map((h) => `<text x="${(h - 8) * 10 + 5}" y="40" text-anchor="middle" class="tick">${h}</text>`).join('');
+	return `<div class="hist-lbl">${esc(label)}</div><svg viewBox="0 0 ${W} 43" class="hist-svg" role="img" aria-label="${esc(label)}: ${v.map((p) => p ?? 0).join(', ')}%"><line x1="0" y1="30.5" x2="${W}" y2="30.5" class="axis"/>${bars}${ticks}</svg>`;
+}
+function chart(e?: Extra): string {
+	const h = (e as { hist?: Hist | null } | undefined)?.hist;
+	if (!h) return '';
+	return `<div class="hist" role="group" aria-label="${esc(T.chartLabel)}">${row(T.chartWd, h.weekday)}${h.sat ? row(T.chartSat, h.sat) : ''}<p class="hist-note">${esc(T.chartNote)} <a href="${GOOGLE_BUSY}" target="_blank" rel="noopener">${esc(T.chartLink)}</a></p></div>`;
+}
+const svOf = (e?: Extra) => (e ? { lat: e.lat, lng: e.lng, date: (e as { sv_date?: string | null }).sv_date ?? null } : null);
+// Street View: iframe не создаётся при загрузке страницы, только по клику (см. скрипт). Без съёмки — только ссылка на Карты.
+function streetView(e?: Extra): string {
+	const sv = svOf(e);
+	if (!sv) return '';
+	if (!sv.date) return `<a class="branch-map" href="${esc(e!.maps_url)}" target="_blank" rel="noopener">${T.svOpen}</a>`;
+	const cap = esc(T.svCap(sv.date));
+	return `<div class="sv"><button type="button" class="sv-btn" data-lat="${sv.lat}" data-lng="${sv.lng}" data-cap="${cap}" data-fallback="https://www.google.com/maps/@?api=1&amp;map_action=pano&amp;viewpoint=${sv.lat},${sv.lng}">${T.svBtn}</button><div class="sv-box"></div></div>`;
+}
+
+const histOf = (id: string) => (extraOf(id) as { hist?: Hist | null } | undefined)?.hist ?? null;
+// Данные для фильтров: часы 8–20 в атрибутах карточки, скрипт читает их же для карты.
+const fa = (id: string, city: string) => ({
+	'data-id': id,
+	'data-city': city,
+	'data-size': extraOf(id)?.size ?? '',
+	'data-wd': histOf(id)?.weekday.join(',') ?? '',
+	'data-sat': histOf(id)?.sat?.join(',') ?? '',
+});
+const noData = (id: string) => !histOf(id);
+
+type Point = { id: string; name: string; addr: string; hours: string; sat: string; code: string };
+function popup(b: Point, e: Extra): string {
+	const size = sizeText(e);
+	const busy = busyText(e);
+	return [
+		`<strong>${esc(b.name)}</strong> <span class="branch-code">${T.code} ${esc(b.code)}</span>`,
+		`<br>${esc(b.addr)}` + (ADDR_NOTE[b.id] ? ` (${T.bankSite}: ${ADDR_NOTE[b.id]})` : ''),
+		`<br>${T.weekdays} ${esc(b.hours)}, ${T.saturday} ${esc(b.sat)}`,
+		size ? `<br>${T.size}: ${size} (${T.sizeNote}, ${T.estimate})` : '',
+		busy ? `<br>${T.busy.toLowerCase()}: ${busy} (${T.busyNote})` : '',
+		chart(e),
+		streetView(e),
+		`<br><a href="${esc(e.maps_url)}" target="_blank" rel="noopener">${T.gmaps}</a>`,
+	].join('');
+}
+
 const groups = new Map<string, Branch[]>();
 for (const b of LIST.ekspoziture) {
 	const k = cityKey(b.naziv);
@@ -97,6 +244,13 @@ for (const b of LIST.ekspoziture) {
 const order = [...FIRST, ...[...groups.keys()].filter((k) => !FIRST.includes(k)).sort((a, b) => CITIES[a][lang].localeCompare(CITIES[b][lang], lang))];
 const slug = (k: string) => `otdeleniya-${CITIES[k].latin.toLowerCase().normalize('NFD').replace(/[^a-z ]/g, '').replace(/ /g, '-')}`;
 const S = LIST.specijalizovana;
+const SPECIAL_PT: Point = { id: S.sifra, name: S.naziv, addr: `${S.ulicaIBroj}, ${S.pttBroj} ${CITIES.BEOGRAD.latin}`, hours: S.radnoVremeRadnimDanom, sat: S.radnoVremeSubotom, code: S.sifra };
+const points = [
+	SPECIAL_PT,
+	...LIST.ekspoziture.map((b) => ({ id: b.sifra, name: b.naziv.replace(/^EKSPOZITURA /, ''), addr: `${b.ulicaIBroj}, ${b.pttBroj} ${CITIES[cityKey(b.naziv)].latin}`, hours: b.radnoVremeRadnimDanom, sat: b.radnoVremeSubotom, code: b.sifra })),
+]
+	.filter((p) => extraOf(p.id))
+	.map((p) => ({ id: p.id, lat: extraOf(p.id)!.lat, lng: extraOf(p.id)!.lng, size: extraOf(p.id)!.size, label: p.name, html: popup(p, extraOf(p.id)!) }));
 const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST.url };
 ---
 
@@ -108,7 +262,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 	</p>
 	<p class="branches-total">{T.total(LIST.ekspoziture.length + 1, groups.size)}</p>
 
-	<article class="branch branch-special">
+	<article class="branch branch-special" {...fa(S.sifra, 'BEOGRAD')}>
 		<p class="branch-tag">{T.special}</p>
 		<p class="branch-tag-orig" lang="sr-Latn">{S.oznaka}</p>
 		<p class="branch-tag-note">{T.unclear}</p>
@@ -118,34 +272,88 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			<dt>{T.weekdays}</dt><dd>{S.radnoVremeRadnimDanom}</dd>
 			<dt>{T.saturday}</dt><dd>{S.radnoVremeSubotom}</dd>
 		</dl>
+		{sizeText(extraOf(S.sifra)) && <p class="branch-extra">{T.size}: {sizeText(extraOf(S.sifra))} ({T.sizeNote})</p>}
+		{busyText(extraOf(S.sifra)) && <p class="branch-extra">{T.busy}: {busyText(extraOf(S.sifra))}</p>}
+							{noData(S.sifra) && <p class="branch-extra branch-nodata">{T.noData}</p>}
+							<Fragment set:html={chart(extraOf(S.sifra))} />
+							<Fragment set:html={streetView(extraOf(S.sifra))} />
 		<a class="branch-map" href={mapUrl(S, 'BEOGRAD')} target="_blank" rel="noopener">{T.map}<span class="sr-only"> ({T.newTab})</span></a>
 	</article>
 
-	<nav class="branch-cities" aria-label={T.cities}>
-		{order.map((k) => <a href={`#${slug(k)}`}>{CITIES[k][lang]} <span>{groups.get(k)!.length}</span></a>)}
+	<p class="branches-note">{T.note}</p>
+	<div class="branch-filters" role="group" aria-label={T.fLabel} data-shown={T.fShown} data-free={T.freeAt}>
+		<label>{T.fCity}
+			<select class="f-city">
+				<option value="">{T.fAllCities}</option>
+				{order.map((k) => <option value={k}>{CITIES[k][lang]}</option>)}
+			</select>
+		</label>
+		<label>{T.fSize}
+			<select class="f-size">
+				<option value="">{T.fAllSizes}</option>
+				<option value="small">{T.sizes.small}</option>
+				<option value="medium">{T.sizes.medium}</option>
+				<option value="large">{T.sizes.large}</option>
+			</select>
+		</label>
+		<fieldset>
+			<legend>{T.fWhen}</legend>
+			<label>{T.fDay}
+				<select class="f-day"><option value="wd">{T.weekdays}</option><option value="sat">{T.saturday}</option></select>
+			</label>
+			<label>{T.fHour}
+				<select class="f-hour">
+					<option value="">{T.fAnyTime}</option>
+					{Array.from({ length: 12 }, (_, i) => i + 8).map((h) => <option value={h}>{h}:00</option>)}
+				</select>
+			</label>
+		</fieldset>
+		<button type="button" class="f-reset">{T.fReset}</button>
+		<p class="f-note" hidden>{T.fNote}</p>
+		<p class="f-count" aria-live="polite"></p>
+	</div>
+	<div class="branch-map-wrap" data-points={JSON.stringify(points)}>
+		<div class="branch-leaflet" role="region" aria-label={T.mapLabel}></div>
+		<p class="branch-legend">
+			{T.legend}
+			<span><i class="dot dot-small"></i>{T.sizes.small}</span>
+			<span><i class="dot dot-medium"></i>{T.sizes.medium}</span>
+			<span><i class="dot dot-large"></i>{T.sizes.large}</span>
+			<span><i class="dot dot-unknown"></i>{T.unknown}</span>
+		</p>
+	</div>
+
+	<nav class="branch-cities" data-nav aria-label={T.cities}>
+		{order.map((k) => <a href={`#${slug(k)}`} data-city={k}>{CITIES[k][lang]} <span>{groups.get(k)!.length}</span></a>)}
 	</nav>
 
 	{
 		order.map((k) => (
-			<section class="branch-city" id={slug(k)}>
+			<section class="branch-city" id={slug(k)} data-city={k}>
 				<h3>
 					{CITIES[k][lang]} <span class="branch-n">{groups.get(k)!.length}</span>
 				</h3>
 				<ul>
 					{groups.get(k)!.map((b) => (
-						<li class="branch">
+						<li class="branch" {...fa(b.sifra, k)}>
 							<h4>
 								{b.naziv.replace(/^EKSPOZITURA /, '')} <span class="branch-code">{T.code} {b.sifra}</span>
 							</h4>
 							<p class="branch-addr">
 								{b.ulicaIBroj}, {b.pttBroj} {CITIES[k].latin}
 							</p>
+							{ADDR_NOTE[b.sifra] && <p class="branch-extra">{T.bankSite}: {ADDR_NOTE[b.sifra]}</p>}
 							<dl class="branch-hours">
 								<dt>{T.weekdays}</dt>
 								<dd>{b.radnoVremeRadnimDanom}</dd>
 								<dt>{T.saturday}</dt>
 								<dd>{b.radnoVremeSubotom}</dd>
 							</dl>
+							{sizeText(extraOf(b.sifra)) && <p class="branch-extra">{T.size}: {sizeText(extraOf(b.sifra))} ({T.sizeNote})</p>}
+							{busyText(extraOf(b.sifra)) && <p class="branch-extra">{T.busy}: {busyText(extraOf(b.sifra))}</p>}
+							{noData(b.sifra) && <p class="branch-extra branch-nodata">{T.noData}</p>}
+							<Fragment set:html={chart(extraOf(b.sifra))} />
+							<Fragment set:html={streetView(extraOf(b.sifra))} />
 							<a class="branch-map" href={mapUrl(b, k)} target="_blank" rel="noopener">
 								{T.map}
 								<span class="sr-only"> ({T.newTab})</span>
@@ -162,3 +370,159 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 		<a href={POSTED_SEARCH} target="_blank" rel="noopener">{T.phonesLink}<span class="sr-only"> ({T.newTab})</span></a>
 	</p>
 </div>
+
+<script>
+	// Карта грузится лениво: Leaflet подтягивается, когда блок подъезжает к экрану.
+	const COLORS: Record<string, string> = { small: '#2f8f5b', medium: '#d98a1f', large: '#b3261e', none: '#8a8478' };
+	const RADIUS: Record<string, number> = { small: 6, medium: 9, large: 12, none: 7 };
+
+	type Info = { el: HTMLElement; city: string; size: string; wd: number[]; sat: number[] };
+	const nums = (v?: string) => (v ? v.split(',').map(Number) : []);
+	const infos = new Map<string, Info>();
+	document.querySelectorAll<HTMLElement>('.branches [data-id]').forEach((el) => {
+		infos.set(el.dataset.id!, { el, city: el.dataset.city!, size: el.dataset.size ?? '', wd: nums(el.dataset.wd), sat: nums(el.dataset.sat) });
+	});
+	const box = document.querySelector<HTMLElement>('.branch-filters');
+	const sel = (c: string) => box?.querySelector<HTMLSelectElement>(c);
+	let onVisible: ((ids: Set<string>, city: string, hl: Set<string>) => void) | null = null;
+	let lastState: [Set<string>, string, Set<string>] | null = null;
+
+	// Значение — процент от пика самого отделения в этот час; 0 в часы без данных (закрыто) считаем «нет данных».
+	function pctAt(i: Info, day: string, hour: number): number | null {
+		const v = (day === 'sat' ? i.sat : i.wd)[hour - 8];
+		return v ? v : null;
+	}
+	function applyFilters() {
+		if (!box) return;
+		const city = sel('.f-city')!.value, size = sel('.f-size')!.value, day = sel('.f-day')!.value, hour = Number(sel('.f-hour')!.value) || 0;
+		const show = new Set<string>(), hl = new Set<string>();
+		const val = new Map<string, number>();
+		infos.forEach((i, id) => {
+			if ((city && i.city !== city) || (size && i.size !== size)) return;
+			if (hour) {
+				const p = pctAt(i, day, hour);
+				if (p === null) show.add(id);
+				else if (p < 50) { show.add(id); hl.add(id); val.set(id, p); }
+			} else show.add(id);
+		});
+		infos.forEach((i, id) => {
+			i.el.hidden = !show.has(id);
+			i.el.classList.toggle('f-hl', hl.has(id));
+			if (i.el.tagName === 'LI') i.el.style.order = hour && show.has(id) ? String(val.get(id) ?? 1000) : '';
+			let note = i.el.querySelector<HTMLElement>('.f-free');
+			if (hl.has(id)) {
+				if (!note) { note = document.createElement('p'); note.className = 'branch-extra f-free'; i.el.querySelector('.branch-map')?.before(note); }
+				note.textContent = box.dataset.free!.replace('%p', String(val.get(id)));
+			} else note?.remove();
+		});
+		document.querySelectorAll<HTMLElement>('.branch-city').forEach((sec) => {
+			sec.hidden = ![...sec.querySelectorAll<HTMLElement>('.branch')].some((el) => !el.hidden);
+		});
+		document.querySelectorAll<HTMLElement>('[data-nav] a').forEach((a) => {
+			a.hidden = document.getElementById(a.getAttribute('href')!.slice(1))?.hidden ?? false;
+		});
+		box.querySelector<HTMLElement>('.f-note')!.hidden = !hour;
+		box.querySelector('.f-count')!.textContent = box.dataset.shown!.replace('%n', String(show.size));
+		lastState = [show, city, hl];
+		onVisible?.(show, city, hl);
+	}
+	if (box) {
+		applyFilters();
+		box.querySelectorAll('select').forEach((s) => s.addEventListener('change', applyFilters));
+		box.querySelector('.f-reset')!.addEventListener('click', () => {
+			box.querySelectorAll('select').forEach((s) => (s.selectedIndex = 0));
+			applyFilters();
+		});
+	}
+
+	// Leaflet вендорен в public/vendor/leaflet (без npm-зависимости и CDN) и подключается при доскролле.
+	function loadLeaflet(): Promise<any> {
+		const w = window as any;
+		if (w.L) return Promise.resolve(w.L);
+		const base = import.meta.env.BASE_URL.replace(/\/?$/, '/') + 'vendor/leaflet/';
+		const css = document.createElement('link');
+		css.rel = 'stylesheet';
+		css.href = base + 'leaflet.css';
+		document.head.appendChild(css);
+		return new Promise((resolve, reject) => {
+			const s = document.createElement('script');
+			s.src = base + 'leaflet.js';
+			s.onload = () => resolve(w.L);
+			s.onerror = reject;
+			document.head.appendChild(s);
+		});
+	}
+
+	async function init(wrap: HTMLElement) {
+		const L = await loadLeaflet();
+		const pts: { id: string; lat: number; lng: number; size: string | null; label: string; html: string }[] = JSON.parse(wrap.dataset.points ?? '[]');
+		const map = L.map(wrap.querySelector('.branch-leaflet') as HTMLElement, { scrollWheelZoom: false }).setView([44.81, 20.46], 12);
+		L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+			maxZoom: 18,
+			attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+		}).addTo(map);
+		const markers = new Map<string, ReturnType<typeof L.circleMarker>>();
+		const group = pts.map((p) => {
+			const k = p.size ?? 'none';
+			const m = L.circleMarker([p.lat, p.lng], { radius: RADIUS[k], color: '#222', weight: 1, fillColor: COLORS[k], fillOpacity: 0.85 })
+				.bindPopup(p.html, { maxWidth: 280 })
+				.bindTooltip(p.label)
+				.addTo(map);
+			markers.set(p.id, m);
+			return m;
+		});
+		// Фильтры: маркеры вне выборки уходят с карты, найденные «свободнее обычного» — с жирной обводкой.
+		onVisible = (ids, city, hl) => {
+			const inView: ReturnType<typeof L.circleMarker>[] = [];
+			markers.forEach((m, id) => {
+				if (ids.has(id)) { m.addTo(map); m.setStyle({ weight: hl.has(id) ? 4 : 1, color: hl.has(id) ? '#1b2430' : '#222' }); inView.push(m); }
+				else m.remove();
+			});
+			if (city && inView.length) map.fitBounds(L.featureGroup(inView).getBounds().pad(0.2), { maxZoom: 14 });
+		};
+		if (lastState) onVisible(...lastState);
+		// Старт — Белград: большинство отделений там, по всей Сербии карта мелкая.
+		const bg = pts.filter((p) => p.lat > 44.65 && p.lat < 44.95 && p.lng > 20.25 && p.lng < 20.65);
+		if (bg.length) map.fitBounds(L.latLngBounds(bg.map((p) => [p.lat, p.lng] as [number, number])).pad(0.15), { maxZoom: 12 });
+		else map.fitBounds(L.featureGroup(group).getBounds().pad(0.1));
+	}
+
+	// Street View подгружается по клику: embed без ключа; если у кнопки нет съёмки — осталась ссылка на Карты.
+	document.addEventListener('click', (ev) => {
+		const btn = (ev.target as HTMLElement).closest<HTMLButtonElement>('.sv-btn');
+		if (!btn) return;
+		const box = btn.nextElementSibling as HTMLElement;
+		if (box.firstChild) {
+			box.replaceChildren();
+			return;
+		}
+		const { lat, lng, cap, fallback } = btn.dataset;
+		const f = document.createElement('iframe');
+		f.src = `https://maps.google.com/maps?layer=c&cbll=${lat},${lng}&cbp=12,0,0,0,0&output=svembed`;
+		f.loading = 'lazy';
+		f.title = btn.textContent ?? '';
+		f.referrerPolicy = 'no-referrer';
+		const p = document.createElement('p');
+		p.className = 'sv-cap';
+		p.textContent = cap ?? '';
+		const a = document.createElement('a');
+		a.href = fallback ?? '#';
+		a.target = '_blank';
+		a.rel = 'noopener';
+		a.textContent = ' ↗';
+		p.append(a);
+		box.append(f, p);
+	});
+
+	document.querySelectorAll<HTMLElement>('.branch-map-wrap').forEach((wrap) => {
+		const io = new IntersectionObserver(
+			(entries) => {
+				if (!entries.some((e) => e.isIntersecting)) return;
+				io.disconnect();
+				init(wrap);
+			},
+			{ rootMargin: '300px' },
+		);
+		io.observe(wrap);
+	});
+</script>
