@@ -8,11 +8,11 @@
       "sr": "Stečaj otvoren, banka isplatilac određena: čeka se datum isplate"
     },
     "note": {
-      "ru": "03.11.2026 Хозяйственный суд Белграда открыл банкротство ALTA banka, управляющим стало AOD (дело 10 Ст 275/2026). Банк-плательщик (банк, где будут выдавать деньги) — Banka Poštanska štedionica. 05.11.2026 Poštanska и AOD подписали договор о выплате; дату начала выплат и отделения, где будут платить, AOD объявит на aod.rs (на 05.11 ещё не объявил); начать выплату до 50 000 € оно обязано в течение 7 рабочих дней. Забрать деньги можно в течение 3 лет.",
-      "en": "On 03.11.2026 the Commercial Court in Belgrade opened bankruptcy of ALTA banka and AOD became administrator (case 10 St 275/2026). The paying bank (where the money will be paid out) is Banka Poštanska štedionica. On 05.11.2026 Poštanska and AOD signed the payout contract; AOD will announce on aod.rs the date payouts start and the branches that will pay (not yet announced as of 05.11); it must start paying up to €50,000 within 7 working days. You can collect the money within 3 years.",
-      "sr": "Privredni sud u Beogradu je 03.11.2026. otvorio stečaj nad Alta bankom, a AOD je postala stečajni upravnik (predmet 10 St 275/2026). Banka isplatilac (banka u kojoj će se isplaćivati novac) je Banka Poštanska štedionica. Poštanska i AOD su 05.11.2026. potpisale ugovor o isplati; datum početka isplate i ekspoziture u kojima će se isplaćivati AOD će objaviti na aod.rs (na dan 05.11. još nije objavljeno); isplatu do 50.000 € mora da započne u roku od 7 radnih dana. Novac se može preuzeti u roku od 3 godine."
+      "ru": "03.11.2026 Хозяйственный суд Белграда открыл банкротство ALTA banka, управляющим стало AOD (дело 10 Ст 275/2026). Банк-плательщик (банк, где будут выдавать деньги) — Banka Poštanska štedionica. 05.11.2026 Poštanska и AOD подписали договор о выплате; дату начала выплат и отделения, где будут платить, AOD объявит на aod.rs (на утро 06.11 ещё не объявил); начать выплату до 50 000 € оно обязано в течение 7 рабочих дней. Забрать деньги можно в течение 3 лет.",
+      "en": "On 03.11.2026 the Commercial Court in Belgrade opened bankruptcy of ALTA banka and AOD became administrator (case 10 St 275/2026). The paying bank (where the money will be paid out) is Banka Poštanska štedionica. On 05.11.2026 Poštanska and AOD signed the payout contract; AOD will announce on aod.rs the date payouts start and the branches that will pay (not yet announced as of the morning of 06.11); it must start paying up to €50,000 within 7 working days. You can collect the money within 3 years.",
+      "sr": "Privredni sud u Beogradu je 03.11.2026. otvorio stečaj nad Alta bankom, a AOD je postala stečajni upravnik (predmet 10 St 275/2026). Banka isplatilac (banka u kojoj će se isplaćivati novac) je Banka Poštanska štedionica. Poštanska i AOD su 05.11.2026. potpisale ugovor o isplati; datum početka isplate i ekspoziture u kojima će se isplaćivati AOD će objaviti na aod.rs (na dan 06.11. ujutru još nije objavljeno); isplatu do 50.000 € mora da započne u roku od 7 radnih dana. Novac se može preuzeti u roku od 3 godine."
     },
-    "checkedAt": "2026-11-05",
+    "checkedAt": "2026-11-06",
     "stages": [
       {
         "n": 1,
@@ -87,9 +87,9 @@
           "sr": "Utvrđivanje potraživanja i konačna lista poverilaca"
         },
         "when": {
-          "ru": "около 8–12 месяцев",
-          "en": "about 8–12 months",
-          "sr": "oko 8–12 meseci"
+          "ru": "до 6 месяцев после срока подачи + до 60 дней (ст. 17)",
+          "en": "up to 6 months after the filing period + up to 60 days (art. 17)",
+          "sr": "do 6 meseci od isteka roka za prijavu + do 60 dana (čl. 17)"
         }
       },
       {
@@ -100,9 +100,9 @@
           "sr": "Isplate iznad limita"
         },
         "when": {
-          "ru": "срока нет, годы",
-          "en": "no deadline, years",
-          "sr": "bez roka, godine"
+          "ru": "срока по закону нет",
+          "en": "no deadline in the law",
+          "sr": "zakonom rok nije određen"
         }
       }
     ],
