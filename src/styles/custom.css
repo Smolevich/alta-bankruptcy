@@ -383,3 +383,29 @@ html, body { overflow-x: clip; }
 .assets-lead { margin: 0 0 1.2rem; padding: 0.8rem 1rem; background: #fffdf7; border: 2px solid var(--ink); border-radius: 4px; box-shadow: 4px 4px 0 var(--seal-soft); }
 .assets-lead ul { margin: 0; padding-left: 1.1rem; }
 .assets-lead li { margin: 0 0 0.3rem; }
+
+/* ---- Отделения Poštanska для выплаты (PostanskaBranches.astro): карточки, без широкой таблицы ---- */
+.branches { margin: 1rem 0 1.6rem; }
+.branches a { color: var(--sl-color-text-accent); }
+.branches p { margin: 0 0 0.6rem; }
+.branches-src { font-size: 0.88rem; color: #5a5448; overflow-wrap: anywhere; }
+.branches-total { font-weight: 700; }
+.branch { box-sizing: border-box; padding: 0.7rem 0.85rem; background: #fffdf7; border: 1px solid var(--line); border-left: 4px solid var(--line); border-radius: 3px; min-width: 0; }
+.branch h4 { margin: 0 0 0.2rem; font-size: 1rem; line-height: 1.3; overflow-wrap: anywhere; }
+.branch .branch-addr { margin: 0 0 0.35rem; font-size: 0.95rem; overflow-wrap: anywhere; }
+.branch-code { font-weight: 400; font-size: 0.78rem; color: #5a5448; white-space: nowrap; }
+.branch-hours { display: grid; grid-template-columns: auto 1fr; gap: 0.1rem 0.6rem; margin: 0 0 0.1rem; font-size: 0.88rem; }
+.branch-hours dt { color: #5a5448; }
+.branch-hours dd { margin: 0; font-variant-numeric: tabular-nums; }
+.branch-map { display: inline-block; font-weight: 700; font-size: 0.9rem; padding: 0.25rem 0 0; }
+.branch-special { margin: 0 0 1rem; border-left-color: var(--seal); background: #fff8f5; }
+.branch .branch-tag { margin: 0; font-weight: 700; color: var(--seal); font-size: 0.9rem; }
+.branch .branch-tag-orig { margin: 0 0 0.3rem; font-size: 0.75rem; color: #5a5448; font-style: italic; }
+.branch-cities { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0 0 1rem; }
+.branch-cities a { padding: 0.35rem 0.6rem; border: 1px solid var(--line); border-radius: 3px; background: #fffdf7; font-size: 0.88rem; text-decoration: none; }
+.branch-cities a span, .branch-n { color: #5a5448; font-weight: 400; }
+.branch-city { scroll-margin-top: 5rem; }
+.branch-city h3 { margin: 1.2rem 0 0.5rem; font-size: 1.15rem; }
+.branch-city ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.6rem; grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); }
+.branch-city li { margin: 0 !important; }
+.branches-phones { margin-top: 1rem !important; font-size: 0.88rem; }

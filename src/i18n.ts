@@ -96,7 +96,7 @@ export const UI = {
 		},
 		acct: {
 			title: 'Где открыть счёт для выплаты',
-			blurb: 'Когда AOD объявит дату выплат и отделения банка-плательщика, деньги нужно будет куда-то перевести. Вкладчики делятся, в каких банках получилось открыть личный счёт, счёт ИП или фирмы.',
+			blurb: 'Выплату через Poštanska можно получить переводом на счёт в другом банке в Сербии. Вкладчики делятся, в каких банках получилось открыть личный счёт, счёт ИП или фирмы.',
 			stats: 'Статистика по банкам',
 			share: 'Поделиться своим опытом',
 		},
@@ -187,7 +187,7 @@ export const UI = {
 		},
 		acct: {
 			title: 'Where to open an account for the payout',
-			blurb: 'Once AOD announces the payout date and the branches of the paying bank, you will need an account to move the money to. Depositors share which banks let them open a personal account and a sole-trader or business account.',
+			blurb: 'The payout through Poštanska can be transferred to an account at another bank in Serbia. Depositors share which banks let them open a personal account and a sole-trader or business account.',
 			stats: 'Statistics by bank',
 			share: 'Share your experience',
 		},
@@ -279,7 +279,7 @@ export const UI = {
 		},
 		acct: {
 			title: 'Gde otvoriti račun za isplatu',
-			blurb: 'Kada AOD objavi datum isplate i ekspoziture banke isplatioca, novac ćete morati negde da prebacite. Štediše dele u kojim bankama su uspele da otvore lični račun i račun preduzetnika ili poslovni račun.',
+			blurb: 'Isplatu preko Poštanske štedionice možete primiti i prenosom na račun u drugoj banci u Srbiji. Štediše dele u kojim bankama su uspele da otvore lični račun i račun preduzetnika ili poslovni račun.',
 			stats: 'Statistika po bankama',
 			share: 'Podelite svoje iskustvo',
 		},

@@ -1,0 +1,160 @@
+---
+// Отделения Poštanska для выплаты вкладчикам ALTA. Данные — src/data/postanska-branches.json,
+// поля дословно из списка AOD (PDF от 06.11.2026); город выводится из названия отделения.
+import LIST from '../data/postanska-branches.json';
+import { type Lang } from '../i18n';
+
+const { lang = 'ru' } = Astro.props as { lang?: Lang };
+
+type Branch = (typeof LIST.ekspoziture)[number];
+
+const COPY = '/docs/aod-2026-11-06-spisak-ekspozitura-postanska.pdf';
+const POSTED_SEARCH = 'https://www.posted.co.rs/o-nama/ekspoziture.html';
+
+// Ключ — город так, как он написан в названии отделения в PDF.
+const CITIES: Record<string, { latin: string; ru: string; en: string; sr: string }> = {
+	BEOGRAD: { latin: 'Beograd', ru: 'Белград', en: 'Belgrade', sr: 'Beograd' },
+	'NOVI SAD': { latin: 'Novi Sad', ru: 'Нови-Сад', en: 'Novi Sad', sr: 'Novi Sad' },
+	NIŠ: { latin: 'Niš', ru: 'Ниш', en: 'Niš', sr: 'Niš' },
+	KRAGUJEVAC: { latin: 'Kragujevac', ru: 'Крагуевац', en: 'Kragujevac', sr: 'Kragujevac' },
+	KRALJEVO: { latin: 'Kraljevo', ru: 'Кралево', en: 'Kraljevo', sr: 'Kraljevo' },
+	UŽICE: { latin: 'Užice', ru: 'Ужице', en: 'Užice', sr: 'Užice' },
+	ČAČAK: { latin: 'Čačak', ru: 'Чачак', en: 'Čačak', sr: 'Čačak' },
+	LUČANI: { latin: 'Lučani', ru: 'Лучани', en: 'Lučani', sr: 'Lučani' },
+	'NOVI PAZAR': { latin: 'Novi Pazar', ru: 'Нови-Пазар', en: 'Novi Pazar', sr: 'Novi Pazar' },
+	'STARA PAZOVA': { latin: 'Stara Pazova', ru: 'Стара-Пазова', en: 'Stara Pazova', sr: 'Stara Pazova' },
+	SUBOTICA: { latin: 'Subotica', ru: 'Суботица', en: 'Subotica', sr: 'Subotica' },
+	ŠABAC: { latin: 'Šabac', ru: 'Шабац', en: 'Šabac', sr: 'Šabac' },
+	VRŠAC: { latin: 'Vršac', ru: 'Вршац', en: 'Vršac', sr: 'Vršac' },
+};
+const FIRST = ['BEOGRAD', 'NOVI SAD', 'NIŠ', 'KRAGUJEVAC'];
+
+const T = {
+	ru: {
+		source: 'Источник: список AOD',
+		published: 'опубликован 06.11.2026',
+		pdf: 'PDF, 2 стр.',
+		total: (n: number) => `${n} отделений и одно специализированное отделение только для выплаты.`,
+		special: 'Специализированное отделение только для выплаты',
+		code: 'шифра',
+		weekdays: 'Будни',
+		saturday: 'Суббота',
+		map: 'На карте',
+		phones: 'Телефонов в списке AOD нет. Телефоны отделений — в поиске отделений на сайте Poštanska:',
+		phonesLink: 'posted.co.rs, «Експозитуре»',
+		cities: 'Города',
+		newTab: 'откроется в новой вкладке',
+	},
+	en: {
+		source: 'Source: AOD list',
+		published: 'published 06.11.2026',
+		pdf: 'PDF, 2 pp.',
+		total: (n: number) => `${n} branches plus one specialised branch for payouts only.`,
+		special: 'Specialised branch for payouts only',
+		code: 'code',
+		weekdays: 'Weekdays',
+		saturday: 'Saturday',
+		map: 'Map',
+		phones: 'The AOD list has no phone numbers. Branch phone numbers are in the branch finder on the Poštanska website:',
+		phonesLink: 'posted.co.rs, “Ekspoziture”',
+		cities: 'Cities',
+		newTab: 'opens in a new tab',
+	},
+	sr: {
+		source: 'Izvor: spisak AOD',
+		published: 'objavljen 06.11.2026.',
+		pdf: 'PDF, 2 str.',
+		total: (n: number) => `${n} ekspozitura i jedna specijalizovana ekspozitura samo za isplatu.`,
+		special: 'Specijalizovana ekspozitura samo za isplatu',
+		code: 'šifra',
+		weekdays: 'Radnim danom',
+		saturday: 'Subotom',
+		map: 'Na mapi',
+		phones: 'U spisku AOD nema brojeva telefona. Telefoni ekspozitura su u pretrazi ekspozitura na sajtu Poštanske štedionice:',
+		phonesLink: 'posted.co.rs, „Ekspoziture”',
+		cities: 'Gradovi',
+		newTab: 'otvara se u novoj kartici',
+	},
+}[lang];
+
+function cityKey(naziv: string): string {
+	const key = naziv.replace(/^EKSPOZITURA /, '').replace(/ \d+.*$/, '');
+	if (!CITIES[key]) throw new Error(`PostanskaBranches: unknown city in "${naziv}"`);
+	return key;
+}
+
+const mapUrl = (b: Pick<Branch, 'ulicaIBroj' | 'pttBroj'>, city: string) =>
+	`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${b.ulicaIBroj}, ${b.pttBroj} ${CITIES[city].latin}, Srbija`)}`;
+
+const groups = new Map<string, Branch[]>();
+for (const b of LIST.ekspoziture) {
+	const k = cityKey(b.naziv);
+	groups.set(k, [...(groups.get(k) ?? []), b]);
+}
+const order = [...FIRST, ...[...groups.keys()].filter((k) => !FIRST.includes(k)).sort((a, b) => CITIES[a][lang].localeCompare(CITIES[b][lang], lang))];
+const slug = (k: string) => `otdeleniya-${CITIES[k].latin.toLowerCase().normalize('NFD').replace(/[^a-z ]/g, '').replace(/ /g, '-')}`;
+const S = LIST.specijalizovana;
+const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST.url };
+---
+
+<div class="branches not-content" data-count={LIST.ekspoziture.length}>
+	<p class="branches-src">
+		{T.source} «<span lang="sr-Cyrl">{LIST.title}</span>», {T.published}:{' '}
+		<a href={COPY} target="_blank" rel="noopener" {...pdfAttrs}>{T.pdf}</a> ·{' '}
+		<a href={LIST.url} target="_blank" rel="noopener">aod.rs<span class="sr-only"> ({T.newTab})</span></a>
+	</p>
+	<p class="branches-total">{T.total(LIST.ekspoziture.length)}</p>
+
+	<article class="branch branch-special">
+		<p class="branch-tag">{T.special}</p>
+		<p class="branch-tag-orig" lang="sr-Latn">{S.oznaka}</p>
+		<h4>{S.naziv} <span class="branch-code">{T.code} {S.sifra}</span></h4>
+		<p class="branch-addr">{S.ulicaIBroj}, {S.pttBroj} {CITIES.BEOGRAD.latin}</p>
+		<dl class="branch-hours">
+			<dt>{T.weekdays}</dt><dd>{S.radnoVremeRadnimDanom}</dd>
+			<dt>{T.saturday}</dt><dd>{S.radnoVremeSubotom}</dd>
+		</dl>
+		<a class="branch-map" href={mapUrl(S, 'BEOGRAD')} target="_blank" rel="noopener">{T.map}<span class="sr-only"> ({T.newTab})</span></a>
+	</article>
+
+	<nav class="branch-cities" aria-label={T.cities}>
+		{order.map((k) => <a href={`#${slug(k)}`}>{CITIES[k][lang]} <span>{groups.get(k)!.length}</span></a>)}
+	</nav>
+
+	{
+		order.map((k) => (
+			<section class="branch-city" id={slug(k)}>
+				<h3>
+					{CITIES[k][lang]} <span class="branch-n">{groups.get(k)!.length}</span>
+				</h3>
+				<ul>
+					{groups.get(k)!.map((b) => (
+						<li class="branch">
+							<h4>
+								{b.naziv.replace(/^EKSPOZITURA /, '')} <span class="branch-code">{T.code} {b.sifra}</span>
+							</h4>
+							<p class="branch-addr">
+								{b.ulicaIBroj}, {b.pttBroj} {CITIES[k].latin}
+							</p>
+							<dl class="branch-hours">
+								<dt>{T.weekdays}</dt>
+								<dd>{b.radnoVremeRadnimDanom}</dd>
+								<dt>{T.saturday}</dt>
+								<dd>{b.radnoVremeSubotom}</dd>
+							</dl>
+							<a class="branch-map" href={mapUrl(b, k)} target="_blank" rel="noopener">
+								{T.map}
+								<span class="sr-only"> ({T.newTab})</span>
+							</a>
+						</li>
+					))}
+				</ul>
+			</section>
+		))
+	}
+
+	<p class="branches-phones">
+		{T.phones}{' '}
+		<a href={POSTED_SEARCH} target="_blank" rel="noopener">{T.phonesLink}<span class="sr-only"> ({T.newTab})</span></a>
+	</p>
+</div>
