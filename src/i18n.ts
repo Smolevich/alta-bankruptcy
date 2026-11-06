@@ -50,7 +50,7 @@ export const UI = {
 		about: 'Кто делает сайт',
 		social: { tgChannel: 'Telegram-канал', tgChat: 'Telegram-чат', instagram: 'Instagram' },
 		lbl: { pdf: 'Открыть PDF', site: 'Открыть на сайте', inner: 'Открыть →' },
-		forms: { label: 'Бланки AOD', open: 'Открыть', word: 'Word, оригинал AOD', aod: 'На сайте AOD', fields: 'Что заполнять', thumb: 'Первая страница бланка', fill: 'Заполнить онлайн', pages: 'стр.' },
+		forms: { label: 'Бланки AOD', open: 'Открыть', word: 'Word, оригинал AOD', aod: 'На сайте AOD', fields: 'Что заполнять', thumb: 'Первая страница бланка', fill: 'Заполнить онлайн', pages: 'стр.', page: 'стр.' },
 		prijava: {
 			title: 'Заполнить требование онлайн',
 			privacy: 'Данные не уходят на сервер: PDF собирается в вашем браузере, на этом устройстве. Как и на любой странице сайта, здесь загружается счётчик посещений Cloudflare: он видит, что страницу открыли, но не получает то, что вы вводите.',
@@ -59,7 +59,7 @@ export const UI = {
 			fields: {
 				name: ['Имя и фамилия', ''],
 				address: ['Адрес', 'Город, улица и номер дома.'],
-				jmbg: ['JMBG', 'Необязательно. Если у вас нет JMBG, уточняйте у AOD.'],
+				jmbg: ['JMBG', 'Обязательный пункт (ст. 111 ч. 1 п. 2 закона о банкротстве). Если JMBG нет — уточните у AOD.'],
 				account: ['Номер счёта для выплаты', ''],
 				bank: ['Банк, где этот счёт', 'Только название: в бланке после него уже напечатано «банци а. д.».'],
 				bankSeat: ['Город банка', 'Например: Београд.'],
@@ -100,7 +100,7 @@ export const UI = {
 			stats: 'Статистика по банкам',
 			share: 'Поделиться своим опытом',
 		},
-		docs: { preview: 'Просмотр', close: 'Закрыть', original: 'Оригинал', download: 'Скачать', loading: 'Загружаю…', failed: 'Не удалось показать документ здесь. Откройте его по ссылке:', openFile: 'открыть файл', pages: 'стр.', source: 'Источник', period: 'Период', mb: 'МБ', label: 'Список документов' },
+		docs: { preview: 'Просмотр', close: 'Закрыть', original: 'Оригинал', download: 'Скачать', loading: 'Загружаю…', failed: 'Не удалось показать документ здесь. Откройте его по ссылке:', openFile: 'открыть файл', pages: 'стр.', page: 'стр.', source: 'Источник', period: 'Период', mb: 'МБ', label: 'Список документов' },
 		srcCards: { label: 'Первоисточники по Univerzal', date: 'Дата', type: 'Источник', look: 'На что смотреть' },
 		newTab: 'откроется в новой вкладке',
 		flow: [
@@ -141,7 +141,7 @@ export const UI = {
 		about: 'Who makes this site',
 		social: { tgChannel: 'Telegram channel', tgChat: 'Telegram chat', instagram: 'Instagram' },
 		lbl: { pdf: 'Open PDF', site: 'Open website', inner: 'Open →' },
-		forms: { label: 'AOD forms', open: 'Open', word: 'Word, AOD original', aod: 'On the AOD website', fields: 'What to fill in', thumb: 'First page of the form', fill: 'Fill in online', pages: 'pp.' },
+		forms: { label: 'AOD forms', open: 'Open', word: 'Word, AOD original', aod: 'On the AOD website', fields: 'What to fill in', thumb: 'First page of the form', fill: 'Fill in online', pages: 'pp.', page: 'p.' },
 		prijava: {
 			title: 'Fill in the claim online',
 			privacy: 'Your data does not go to a server: the PDF is put together in your browser, on this device. As on every page of the site, the Cloudflare visit counter loads here: it sees that the page was opened but does not receive what you type.',
@@ -150,7 +150,7 @@ export const UI = {
 			fields: {
 				name: ['Full name', ''],
 				address: ['Address', 'Town, street and house number.'],
-				jmbg: ['JMBG', 'Optional. If you have no JMBG, ask AOD.'],
+				jmbg: ['JMBG', 'Required in the claim (art. 111 para. 1 item 2 of the Bankruptcy Law). If you have no JMBG, ask AOD.'],
 				account: ['Account number for the payment', ''],
 				bank: ['Bank holding that account', 'Name only: the form already prints “банци а. д.” after it.'],
 				bankSeat: ['Town of the bank', 'For example: Београд.'],
@@ -186,12 +186,12 @@ export const UI = {
 			local: 'Everything happens only in your browser: neither what you type nor the document is sent to a server.',
 		},
 		acct: {
-			title: 'Where to open an account for the payout',
+			title: 'Where to open an account for the payout (in Russian)',
 			blurb: 'The payout through Poštanska can be transferred to an account at another bank in Serbia. Depositors share which banks let them open a personal account and a sole-trader or business account.',
 			stats: 'Statistics by bank',
 			share: 'Share your experience',
 		},
-		docs: { preview: 'Preview', close: 'Close', original: 'Original', download: 'Download', loading: 'Loading…', failed: 'Could not show the document here. Open it via the link:', openFile: 'open the file', pages: 'pp.', source: 'Source', period: 'Period', mb: 'MB', label: 'List of documents' },
+		docs: { preview: 'Preview', close: 'Close', original: 'Original', download: 'Download', loading: 'Loading…', failed: 'Could not show the document here. Open it via the link:', openFile: 'open the file', pages: 'pp.', page: 'p.', source: 'Source', period: 'Period', mb: 'MB', label: 'List of documents' },
 		srcCards: { label: 'Primary sources on Univerzal', date: 'Date', type: 'Source', look: 'What to look at' },
 		newTab: 'opens in a new tab',
 		flow: [
@@ -233,7 +233,7 @@ export const UI = {
 		about: 'Ko pravi sajt',
 		social: { tgChannel: 'Telegram kanal', tgChat: 'Telegram čet', instagram: 'Instagram' },
 		lbl: { pdf: 'Otvori PDF', site: 'Otvori sajt', inner: 'Otvori →' },
-		forms: { label: 'Obrasci AOD', open: 'Otvori', word: 'Word, original AOD', aod: 'Na sajtu AOD', fields: 'Šta se popunjava', thumb: 'Prva strana obrasca', fill: 'Popuni onlajn', pages: 'str.' },
+		forms: { label: 'Obrasci AOD', open: 'Otvori', word: 'Word, original AOD', aod: 'Na sajtu AOD', fields: 'Šta se popunjava', thumb: 'Prva strana obrasca', fill: 'Popuni onlajn', pages: 'str.', page: 'str.' },
 		prijava: {
 			title: 'Popunite prijavu onlajn',
 			privacy: 'Podaci ne idu na server: PDF se sastavlja u vašem pregledaču, na ovom uređaju. Kao i na svakoj stranici sajta, ovde se učitava Cloudflare brojač poseta: on vidi da je stranica otvorena, ali ne dobija ono što unosite.',
@@ -242,7 +242,7 @@ export const UI = {
 			fields: {
 				name: ['Ime i prezime', ''],
 				address: ['Adresa', 'Mesto, ulica i broj.'],
-				jmbg: ['JMBG', 'Nije obavezno. Ako nemate JMBG, raspitajte se kod AOD.'],
+				jmbg: ['JMBG', 'Obavezan podatak u prijavi (član 111 stav 1 tačka 2 Zakona o stečaju). Ako nemate JMBG, raspitajte se kod AOD.'],
 				account: ['Broj računa za isplatu', ''],
 				bank: ['Banka u kojoj je račun', 'Samo naziv: u obrascu posle njega već piše „банци а. д.“.'],
 				bankSeat: ['Sedište banke', 'Na primer: Београд.'],
@@ -278,12 +278,12 @@ export const UI = {
 			local: 'Sve se dešava samo u vašem pregledaču: ni uneti podaci ni dokument ne šalju se na server.',
 		},
 		acct: {
-			title: 'Gde otvoriti račun za isplatu',
+			title: 'Gde otvoriti račun za isplatu (na ruskom)',
 			blurb: 'Isplatu preko Poštanske štedionice možete primiti i prenosom na račun u drugoj banci u Srbiji. Štediše dele u kojim bankama su uspele da otvore lični račun i račun preduzetnika ili poslovni račun.',
 			stats: 'Statistika po bankama',
 			share: 'Podelite svoje iskustvo',
 		},
-		docs: { preview: 'Pregled', close: 'Zatvori', original: 'Original', download: 'Preuzmi', loading: 'Učitavam…', failed: 'Dokument ne može da se prikaže ovde. Otvorite ga preko linka:', openFile: 'otvori fajl', pages: 'str.', source: 'Izvor', period: 'Period', mb: 'MB', label: 'Spisak dokumenata' },
+		docs: { preview: 'Pregled', close: 'Zatvori', original: 'Original', download: 'Preuzmi', loading: 'Učitavam…', failed: 'Dokument ne može da se prikaže ovde. Otvorite ga preko linka:', openFile: 'otvori fajl', pages: 'str.', page: 'str.', source: 'Izvor', period: 'Period', mb: 'MB', label: 'Spisak dokumenata' },
 		srcCards: { label: 'Izvori o Univerzal banci', date: 'Datum', type: 'Izvor', look: 'Na šta gledati' },
 		newTab: 'otvara se u novoj kartici',
 		flow: [

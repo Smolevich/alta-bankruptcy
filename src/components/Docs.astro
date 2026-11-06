@@ -25,7 +25,7 @@ const size = (b: number) =>
 							<a href={d.sourceUrl} target="_blank" rel="noopener">{SOURCE_LABEL[d.source][lang]}</a>
 						</dd>
 						<dt>PDF</dt>
-						<dd>{d.pages} {t.docs.pages}, {size(d.bytes)}</dd>
+						<dd>{d.pages} {d.pages === 1 ? t.docs.page : t.docs.pages}, {size(d.bytes)}</dd>
 					</dl>
 					<span class="doc-go">
 						<a href={`/docs/${d.file}`} target="_blank" rel="noopener">
