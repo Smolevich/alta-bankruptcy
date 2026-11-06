@@ -36,6 +36,8 @@ const EXTRA_COPIES: Record<string, string> = {
 		'aod-2026-11-06-uputstvo-izmirenje-obaveza-krediti.pdf',
 	'https://www.aod.rs/uploads/dokumenti/altabanka/Obave%C5%A1tenje_o_po%C4%8Detku_isplate_OD_6nov2026.pdf':
 		'aod-2026-11-06-obavestenje-pocetak-isplate.pdf',
+	'https://www.aod.rs/uploads/dokumenti/altabanka/Spisak.pdf':
+		'aod-2026-11-06-spisak-ekspozitura-postanska.pdf',
 	'https://www.aod.rs/uploads/dokumenti/altabanka/FZI_20261106.pdf':
 		'aod-2026-11-06-poziv-mali-investitori-fzi.pdf',
 	'https://www.aod.rs/uploads/dokumenti/pravnareg/40_pravnareg.pdf':

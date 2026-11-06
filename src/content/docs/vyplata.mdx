@@ -3,6 +3,8 @@ title: "Как получить страховое возмещение до 50 
 description: "Выплата AOD вкладчикам ALTA через Banka Poštanska štedionica: сколько и в какой валюте, шаги для физлиц, ИП и фирм, какой документ о вкладе нужен в оригинале, что если нет договора, доверенность."
 checked: 2026-11-06
 sources:
+  - { title: "AOD: список отделений Banka Poštanska štedionica для получения застрахованной суммы, 06.11.2026 (PDF)", url: "https://www.aod.rs/uploads/dokumenti/altabanka/Spisak.pdf", kind: official, date: 2026-11-06 }
+  - { title: "Banka Poštanska štedionica: поиск отделений (адреса, телефоны)", url: "https://www.posted.co.rs/o-nama/ekspoziture.html", kind: official, date: 2026-11-06, copy: "https://web.archive.org/web/20261106154651/https://www.posted.co.rs/o-nama/ekspoziture.html" }
   - { title: "AOD: призыв к мелким инвесторам — клиентам ALTA banka подать заявление на выплату защищённого требования, 06.11.2026 (PDF)", url: "https://www.aod.rs/uploads/dokumenti/altabanka/FZI_20261106.pdf", kind: official, date: 2026-11-06 }
   - { title: "AOD: бланк «Захтев за исплату заштићеног потраживања» (PDF)", url: "https://www.aod.rs/uploads/dokumenti/pravnareg/40_pravnareg.pdf", kind: official, date: 2026-11-06 }
   - { title: "AOD: объявление о дате начала выплаты застрахованных вкладов ALTA banka, 06.11.2026 (PDF)", url: "https://www.aod.rs/uploads/dokumenti/altabanka/Obave%C5%A1tenje_o_po%C4%8Detku_isplate_OD_6nov2026.pdf", kind: official, date: 2026-11-06 }
@@ -22,6 +24,7 @@ sources:
 ---
 
 import FormCards from '../../components/FormCards.astro';
+import PostanskaBranches from '../../components/PostanskaBranches.astro';
 import Shot from '../../components/Shot.astro';
 
 <aside class="legal-note not-content"><strong>Не юридическая консультация.</strong> Здесь пересказаны вопросы и ответы, формы и процедура AOD; под ключевыми пунктами — дословная цитата на сербском и ссылка на первоисточник.</aside>
@@ -37,7 +40,7 @@ import Shot from '../../components/Shot.astro';
 - **Выплата начинается 13.11.2026** через Banka Poštanska štedionica (банк-плательщик).
 - **Сумма — до 50 000 € на одного вкладчика.** Вклады в динарах выплачивают в динарах, валютные — в евро (см. [«Сколько и в какой валюте»](#skolko)).
 - **Кому:** физлицам, ИП (предузетникам), микро-, малым и средним юрлицам.
-- **Где:** в отделениях Poštanska, которые назначены для вкладчиков ALTA, в обычные часы работы. Список этих отделений с телефонами AOD публикует на [aod.rs](https://www.aod.rs/clan/altabanka/saopstenja_altabanka) и [posted.co.rs](https://www.posted.co.rs/); на 06.11 (проверено около 15:30) списка нет. **Порядок приёма пока не объявлен: списка отделений нет, куда приходить — неизвестно. Известна только дата начала — 13 ноября.** До этого AOD должен опубликовать список отделений, вероятны и другие объявления — следим и обновим страницу. По объявлению AOD, адреса и часы работы можно узнать и в любом отделении Poštanska.
+- **Где:** в отделениях Poštanska из списка AOD от 06.11.2026: 53 отделения в 13 городах и одно специализированное отделение только для выплаты (AOD - Centrala banke, Kraljice Marije 3, Белград). Адреса и часы работы — [ниже](#otdeleniya) ([список AOD, PDF](https://www.aod.rs/uploads/dokumenti/altabanka/Spisak.pdf)). По объявлению AOD, адреса и часы работы можно узнать и в любом отделении Poštanska.
 - **Срок подачи — до 03.11.2029:** три года со дня решения суда об открытии банкротства.
 
 > «…исплата осигураних износа депозита почиње дана 13.11.2026. године преко Банке Поштанска штедионица акционарско друштво Београд као банке исплатиоца.» — [AOD, 06.11.2026](https://www.aod.rs/uploads/dokumenti/altabanka/Obave%C5%A1tenje_o_po%C4%8Detku_isplate_OD_6nov2026.pdf).
@@ -45,6 +48,12 @@ import Shot from '../../components/Shot.astro';
 > «Депоненти имају право да поднесу захтев за исплату осигураног износа у року од три године од доношења решења о покретању стечајног поступка над банком, најкасније до 3.11.2029. године.» — [AOD, 06.11.2026](https://www.aod.rs/uploads/dokumenti/altabanka/Obave%C5%A1tenje_o_po%C4%8Detku_isplate_OD_6nov2026.pdf).
 
 Были инвестиции в ALTA (брокерский счёт, ценные бумаги)? Это отдельная выплата до 20 000 € через AOD, см. [«Если у вас были инвестиции в ALTA»](#investicii).
+
+<span id="otdeleniya"></span>
+
+## Отделения Poštanska для выплаты
+
+<PostanskaBranches />
 
 <span id="chto-vzyat"></span>
 
