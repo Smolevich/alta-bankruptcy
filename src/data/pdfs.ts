@@ -36,6 +36,10 @@ const EXTRA_COPIES: Record<string, string> = {
 		'aod-2026-11-06-uputstvo-izmirenje-obaveza-krediti.pdf',
 	'https://www.javnidug.gov.rs/static/uploads/Lista%20ovlascenih%20ucesnika_cir.pdf':
 		'uprava-za-javni-dug-2025-05-lista-ovlascenih-ucesnika.pdf',
+	'https://www.posted.co.rs/korisno/doc/Tarifa/Tarifa-naknada-za-usluge-u-radu-sa-fizickim-licima.pdf':
+		'postanska-2026-tarifa-fizicka-lica.pdf',
+	'https://www.posted.co.rs/korisno/doc/PUN/PUN_Devizni_tekuci_racuni.pdf':
+		'postanska-2025-pregled-naknada-devizni-tekuci-racun-rezidenta.pdf',
 };
 
 // AOD выложил бланки только в Word: в просмотре показываем нашу PDF-копию,
