@@ -400,7 +400,8 @@ html, body { overflow-x: clip; }
 .branch-map { display: inline-block; font-weight: 700; font-size: 0.9rem; padding: 0.25rem 0 0; }
 .branch-special { margin: 0 0 1rem; border-left-color: var(--seal); background: #fff8f5; }
 .branch .branch-tag { margin: 0; font-weight: 700; color: var(--seal); font-size: 0.9rem; }
-.branch .branch-tag-orig { margin: 0 0 0.3rem; font-size: 0.75rem; color: #5a5448; font-style: italic; }
+.branch .branch-tag-orig { margin: 0; font-size: 0.75rem; color: #5a5448; font-style: italic; }
+.branch .branch-tag-note { margin: 0 0 0.3rem; font-size: 0.8rem; color: #5a5448; }
 .branch-cities { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0 0 1rem; }
 .branch-cities a { padding: 0.35rem 0.6rem; border: 1px solid var(--line); border-radius: 3px; background: #fffdf7; font-size: 0.88rem; text-decoration: none; }
 .branch-cities a span, .branch-n { color: #5a5448; font-weight: 400; }
