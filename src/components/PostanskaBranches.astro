@@ -34,8 +34,9 @@ const T = {
 		source: 'Источник: список AOD',
 		published: 'опубликован 06.11.2026',
 		pdf: 'PDF, 2 стр.',
-		total: (n: number) => `${n} отделений и одно специализированное отделение только для выплаты.`,
-		special: 'Специализированное отделение только для выплаты',
+		total: (n: number, c: number) => `Отделений в списке: ${n}, городов: ${c}.`,
+		special: 'Пометка в списке AOD',
+		unclear: 'Что значит эта пометка, из документа AOD не ясно — ждём пояснений.',
 		code: 'шифра',
 		weekdays: 'Будни',
 		saturday: 'Суббота',
@@ -49,8 +50,9 @@ const T = {
 		source: 'Source: AOD list',
 		published: 'published 06.11.2026',
 		pdf: 'PDF, 2 pp.',
-		total: (n: number) => `${n} branches plus one specialised branch for payouts only.`,
-		special: 'Specialised branch for payouts only',
+		total: (n: number, c: number) => `Branches on the list: ${n}, cities: ${c}.`,
+		special: 'Mark in the AOD list',
+		unclear: 'What this mark means is not clear from the AOD document; we are waiting for clarification.',
 		code: 'code',
 		weekdays: 'Weekdays',
 		saturday: 'Saturday',
@@ -64,8 +66,9 @@ const T = {
 		source: 'Izvor: spisak AOD',
 		published: 'objavljen 06.11.2026.',
 		pdf: 'PDF, 2 str.',
-		total: (n: number) => `${n} ekspozitura i jedna specijalizovana ekspozitura samo za isplatu.`,
-		special: 'Specijalizovana ekspozitura samo za isplatu',
+		total: (n: number, c: number) => `Ekspozitura na spisku: ${n}, gradova: ${c}.`,
+		special: 'Oznaka u spisku AOD',
+		unclear: 'Šta ta oznaka znači, iz dokumenta AOD nije jasno; čekamo pojašnjenje.',
 		code: 'šifra',
 		weekdays: 'Radnim danom',
 		saturday: 'Subotom',
@@ -103,11 +106,12 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 		<a href={COPY} target="_blank" rel="noopener" {...pdfAttrs}>{T.pdf}</a> ·{' '}
 		<a href={LIST.url} target="_blank" rel="noopener">aod.rs<span class="sr-only"> ({T.newTab})</span></a>
 	</p>
-	<p class="branches-total">{T.total(LIST.ekspoziture.length)}</p>
+	<p class="branches-total">{T.total(LIST.ekspoziture.length + 1, groups.size)}</p>
 
 	<article class="branch branch-special">
 		<p class="branch-tag">{T.special}</p>
 		<p class="branch-tag-orig" lang="sr-Latn">{S.oznaka}</p>
+		<p class="branch-tag-note">{T.unclear}</p>
 		<h4>{S.naziv} <span class="branch-code">{T.code} {S.sifra}</span></h4>
 		<p class="branch-addr">{S.ulicaIBroj}, {S.pttBroj} {CITIES.BEOGRAD.latin}</p>
 		<dl class="branch-hours">
