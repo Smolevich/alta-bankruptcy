@@ -714,6 +714,10 @@ async def admin_delete_case(request: Request) -> JSONResponse:
     return JSONResponse({"id": item_id, "deleted": True})
 
 
+# Служебные и JSON-маршруты: человек по ним не ходит, ссылок со слешем не бывает.
+SLASHLESS_PREFIXES = ("/admin", "/api", "/static", "/healthz", "/account/challenge", "/account/branches")
+
+
 def to_canonical(path: str) -> Callable[[Request], Awaitable[Response]]:
     """Вариант со слешем на конце → канонический адрес; query сохраняем, ссылки в чатах бывают с ней."""
     async def handler(request: Request) -> Response:
@@ -724,13 +728,13 @@ def to_canonical(path: str) -> Callable[[Request], Awaitable[Response]]:
 
 
 def slash_twins(routes: list[Route]) -> list[Route]:
-    """Для каждой GET-страницы без слеша добавляет редирект с адреса со слешем (иначе его съедает справочник и отдаёт 404)."""
+    """Для каждой GET-страницы без слеша ставит редирект с адреса со слешем (иначе справочник отдаёт 404)."""
     return [
         Route(f"{route.path}/", to_canonical(route.path), methods=["GET"])
         for route in routes
         if route.path != "/" and "{" not in route.path and not route.path.endswith("/")
         and "GET" in (route.methods or ())
-        and not route.path.startswith(("/admin", "/api", "/static", "/healthz", "/account/challenge", "/account/branches"))
+        and not route.path.startswith(SLASHLESS_PREFIXES)
     ]
 
 
