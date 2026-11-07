@@ -5,12 +5,13 @@ import starlightLinksValidator from 'starlight-links-validator';
 import { INSTAGRAM_URL, TELEGRAM_CHANNEL_URL, TELEGRAM_CHAT_URL } from './src/site.mjs';
 import { unified } from '@astrojs/markdown-remark';
 import rehypeNewTab from './src/rehype-new-tab.mjs';
+import rehypeHeadingIds from './src/rehype-heading-ids.mjs';
 
 // Сайт живёт в корне alta.smolevich.com: статику отдаёт сервис из backend/
 // (см. docs/deploy.md), поэтому base не задаём.
 export default defineConfig({
 	site: 'https://alta.smolevich.com',
-	markdown: { processor: unified({ rehypePlugins: [rehypeNewTab] }) },
+	markdown: { processor: unified({ rehypePlugins: [rehypeNewTab, rehypeHeadingIds] }) },
 	integrations: [
 		starlight({
 			title: { ru: 'Вкладчики ALTA: что дальше', en: "ALTA depositors: what's next", 'sr-Latn': 'Štediše ALTA banke: šta dalje' },
@@ -21,6 +22,8 @@ export default defineConfig({
 				{ tag: 'meta', attrs: { name: 'msvalidate.01', content: 'F904AA02101BD3884A4A984CD73C8E57' } },
 				{ tag: 'link', attrs: { rel: 'icon', href: '/favicon.ico', sizes: '32x32' } },
 				{ tag: 'link', attrs: { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' } },
+				// Разосланные старые якоря ведут на новые английские (см. src/heading-ids.mjs).
+				{ tag: 'script', attrs: { src: '/anchor-redirect.js', defer: true } },
 				// Счётчик Cloudflare Web Analytics; токен публичный. CSP разрешает его в backend (site.py).
 				{
 					tag: 'script',
