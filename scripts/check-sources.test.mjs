@@ -1,4 +1,3 @@
-// Тесты проверки ссылок: node --test scripts/
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readdirSync, readFileSync } from 'node:fs';
@@ -46,14 +45,14 @@ test('настоящие ссылки проходят', () => {
 
 test('гомоглифы: кириллица и греческий в хосте → idn с подсказкой', () => {
 	for (const [url, like] of [
-		['https://www.аod.rs/', 'www.aod.rs'], // кириллическая «а»
-		['https://www.aоd.rs/', 'www.aod.rs'], // кириллическая «о»
+		['https://www.аod.rs/', 'www.aod.rs'],
+		['https://www.aоd.rs/', 'www.aod.rs'],
 		['https://аоd.rs/', 'aod.rs'],
 		['https://www.nbs.rѕ/', 'nbs.rs'],
-		['https://www.роsted.co.rs/', 'www.posted.co.rs'], // кириллические «р», «о»
-		['https://www.posted.сo.rs/', 'www.posted.co.rs'], // кириллическая «с»
+		['https://www.роsted.co.rs/', 'www.posted.co.rs'],
+		['https://www.posted.сo.rs/', 'www.posted.co.rs'],
 		['https://www.nbѕ.rs/', 'nbs.rs'],
-		['https://www.aοd.rs/', 'www.aod.rs'], // греческая омикрон
+		['https://www.aοd.rs/', 'www.aod.rs'],
 	]) {
 		const r = bad(url, 'idn');
 		assert.match(r.message, /похоже на/, url);
@@ -172,6 +171,15 @@ test('kind: official только у госорганов, судов, банк�
 	}
 });
 
+test('слабый домен не поднимается до reference или reliable_media', () => {
+	assert.match(checkSource({ url: 'https://t.me/Altadef50k/1', kind: 'reference' }, REG).join(), /kind: reference/);
+	assert.match(checkSource({ url: 'https://t.me/Altadef50k/1', kind: 'reliable_media' }, REG).join(), /kind: reliable_media/);
+	assert.match(checkSource({ url: 'https://alta.smolevich.com/x', kind: 'reliable_media' }, REG).join(), /kind: reliable_media/);
+	assert.deepEqual(checkSource({ url: 'https://www.danas.rs/x', kind: 'reliable_media' }, REG), []);
+	assert.deepEqual(checkSource({ url: 'https://www.nbs.rs/sr/', kind: 'reference' }, REG), []);
+	assert.deepEqual(checkSource({ url: 'https://t.me/Altadef50k/1', kind: 'unverified' }, REG), []);
+});
+
 test('похожие легитимные домены из реестра не путаются между собой', () => {
 	ok('https://aks.org.rs/');
 	ok('https://akv.org.rs/');
@@ -208,13 +216,12 @@ test('ложных срабатываний нет: весь текущий ко
 	if (dist.files) assert.deepEqual(dist.errors, []);
 });
 
-// Мутации: 20 реальных ссылок сайта, каждая испорчена — все должны падать.
 const MUTATORS = [
-	(h) => h.replace(/[ao]/, (c) => (c === 'a' ? 'а' : 'о')), // кириллическая а/о
-	(h) => h.replace(/[ao](?=[^ao]*$)/, (c) => (c === 'a' ? 'α' : 'ο')), // греческие альфа/омикрон
+	(h) => h.replace(/[ao]/, (c) => (c === 'a' ? 'а' : 'о')), // Cyrillic
+	(h) => h.replace(/[ao](?=[^ao]*$)/, (c) => (c === 'a' ? 'α' : 'ο')), // Greek
 	(h) => `${h}.evil.com`,
 	(h) => h.replace(/\.([a-z]+)$/, '-$1.com'),
-	(h) => h.replace(/([a-z])\./, '$1$1.'), // двойная буква
+	(h) => h.replace(/([a-z])\./, '$1$1.'),
 	(h) => h.replace(/[ao]/, (c) => (c === 'a' ? '4' : '0')),
 	(h) => `${h}.`,
 	(h) => h.replace(/\.rs$/, '.co'),

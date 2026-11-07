@@ -1,20 +1,19 @@
-# Реестр доверенных доменов сайта. Ссылка на домен не из этого списка роняет CI
-# (scripts/check-sources.mjs). Файл под CODEOWNERS: новый домен = ревью владельца.
+# Trusted domains for site links; any other domain fails CI (scripts/check-sources.mjs).
+# Under CODEOWNERS so a new domain always gets owner review.
 #
-# Поля записи:
-#   domain   — регистрируемый домен;
-#   name     — официальное название организации и по-русски, что это за организация;
-#   category — official-rs-gov | court | bank | regulator (только они дают kind: official),
-#              reference (правовые базы, издатели, палаты, ассоциации, платформы),
-#              press, archive, social, own (сам сайт), tech;
-#   proof    — откуда известно, что домен принадлежит этой организации;
-#   hosts    — точные хосты; "*" — домен и любой его поддомен (только у доменов с одним владельцем,
-#              никогда на публичных суффиксах вроде gov.rs, org.rs, co.rs);
-#   paths    — разрешённые префиксы путей (обязательно для платформ, где страницы пишут пользователи);
-#   http_ok  — хосты, которым разрешён http (сайт не отвечает по https);
-#   archive  — wayback | archive-ph: ссылка ведёт в архив, проверяется вложенный адрес.
+# Fields:
+#   domain   - registrable domain;
+#   name     - official organisation name plus what it is;
+#   category - official-rs-gov | court | bank | regulator (only these allow kind: official),
+#              reference, press, archive, social, own (this site), tech;
+#   proof    - evidence the domain belongs to the organisation;
+#   hosts    - exact hosts; "*" = domain and any subdomain, only for single-owner domains,
+#              never for public suffixes such as gov.rs, org.rs, co.rs;
+#   paths    - allowed path prefixes, required on platforms with user-generated pages;
+#   http_ok  - hosts allowed over http because they do not serve https;
+#   archive  - wayback | archive-ph: the archived URL is checked instead.
 
-# --- Государственные органы Сербии ---
+# --- Serbian government ---
 - domain: aod.rs
   name: "Agencija za osiguranje depozita — Агентство по страхованию вкладов Сербии (выплачивает застрахованные вклады, ведёт банкротство банков)"
   category: official-rs-gov
@@ -63,23 +62,23 @@
   proof: "WHOIS RNIDS, регистрант: Grad Beograd - Gradska uprava - Sluzba za informisanje; проверено 07.11.2026"
   hosts: [www.beograd.rs]
 
-# --- Суды ---
+# --- Courts ---
 - domain: sud.rs
   name: "Portal sudova Srbije — домен судебной власти Сербии (поддомены — отдельные суды)"
   category: court
   proof: "WHOIS RNIDS, регистрант: Ministarstvo pravde; проверено 07.11.2026"
   hosts: ["*"]
-  # 443 закрыт, http отвечает 302 (проверено 07.11.2026).
+  # Port 443 is closed, http answers 302 (checked 2026-11-07).
   http_ok: [www.bg.pr.sud.rs]
 
-# --- Регулятор ---
+# --- Regulator ---
 - domain: nbs.rs
   name: "Narodna banka Srbije — Национальный банк Сербии (центробанк и надзор за банками)"
   category: regulator
   proof: "WHOIS RNIDS, регистрант: NARODNA BANKA SRBIJE; проверено 07.11.2026"
   hosts: ["*"]
 
-# --- Банки ---
+# --- Banks ---
 - domain: altabanka.rs
   name: "ALTA banka a.d. Beograd — банк ALTA (в банкротстве)"
   category: bank
@@ -98,7 +97,7 @@
   proof: "Корпоративный домен группы, указан на https://www.unicreditgroup.eu; встречается только внутри ссылок веб-архива"
   hosts: [gss.unicreditgroup.eu]
 
-# --- Справочные источники ---
+# --- Reference ---
 - domain: crhov.rs
   name: "Centralni registar, depo i kliring hartija od vrednosti — Центральный реестр ценных бумаг Сербии"
   category: reference
@@ -148,7 +147,7 @@
   hosts: [github.com]
   paths: [/Smolevich/]
 
-# --- СМИ ---
+# --- Press ---
 - domain: biznis.rs
   name: "Biznis.rs — деловое издание Сербии"
   category: press
@@ -185,7 +184,7 @@
   proof: "WHOIS RNIDS, регистрант: POLITIKA NOVINE I MAGAZINI PNM DOO BEOGRAD; проверено 07.11.2026"
   hosts: [www.politika.rs]
 
-# --- Архивы ---
+# --- Archives ---
 - domain: web.archive.org
   name: "Internet Archive Wayback Machine — веб-архив некоммерческой организации Internet Archive"
   category: archive
@@ -200,7 +199,7 @@
   hosts: [archive.ph]
   archive: archive-ph
 
-# --- Платформы и соцсети: только перечисленные страницы ---
+# --- Platforms and social: listed pages only ---
 - domain: t.me
   name: "Telegram — мессенджер; разрешены только перечисленные каналы и чаты"
   category: social
@@ -235,14 +234,14 @@
   hosts: [docs.google.com]
   paths: [/spreadsheets/]
 
-# --- Сам сайт ---
+# --- This site ---
 - domain: smolevich.com
   name: "alta.smolevich.com — этот сайт (скриншоты ответов AOD и служебные страницы)"
   category: own
   proof: "Адрес сайта в astro.config.mjs (site), репозиторий github.com/Smolevich/alta-bankruptcy"
   hosts: [alta.smolevich.com]
 
-# --- Технические ---
+# --- Technical ---
 - domain: google.com
   name: "Google — карты и справка Google"
   category: tech
