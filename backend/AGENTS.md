@@ -38,8 +38,21 @@ and pages are in Russian; issues and PRs may be in English, Serbian or Russian.
   `queues.py` visitors' queue marks for the Poštanska branch map on `/vyplata/` (`POST /api/queue`
   `{branch_id, state: none|few|full|outside, comment?}`, no personal data; one mark per branch per IP hash
   per 15 min and 60 per hour; accepted from 1 h before opening until 1 h after closing (`PRE_OPEN`/`POST_CLOSE`, mirrored by `PRE_OPEN_MIN`/`POST_CLOSE_MIN` in `src/lib/branch-hours.mjs`), Belgrade time, per branch hours in
-  `data/postanska_branch_hours.json` (otherwise 403 `{"error": "closed", "reports_from", "days_ahead", "weekday"}`); `GET /api/queue` — the most frequent state per branch over the last 2 hours;
-  the optional comment is scrubbed, kept for moderation at `/admin/queue` and never published).
+  `data/postanska_branch_hours.json` (otherwise 403 `{"error": "closed", "reports_from", "days_ahead", "weekday"}`).
+  Anti-stuffing: the body may carry `device_id` (random, from the browser's localStorage; stored only as a
+  salted hash in `voter`, otherwise `voter` is the IP hash) and `lat`/`lng` (sent only when the browser
+  already has location permission). The server turns coordinates into `near` (≤ `NEAR_M` = 500 m from
+  the branch, coordinates in `data/postanska_branch_coords.json`, a copy of
+  `src/data/postanska-branches-extra.json` checked by a test) and never stores or logs them.
+  `GET /api/queue` `{state, count, minutes_ago, sure}` per branch over the last 2 hours: people, not
+  marks — only each voter's latest mark counts; if any voter was near, the state comes from near voters,
+  otherwise from everyone; `sure` only when ≥ 2 different voters chose the shown state and at least one
+  of them was near (the site shows «не точно» otherwise). The optional comment is scrubbed, kept for
+  moderation and never published. `/admin/queue`: JSON with `source` (voter hash) and `near` for the
+  monitors and the terminal; a browser (Accept: text/html, no token) gets a page (`static/queue-admin.js`,
+  token in sessionStorage) with the last 2 hours grouped by source and «снять все отметки этого
+  источника» → `POST /admin/queue/source/{source}/hide` (all its marks to `spam`). `voter` is wiped with
+  `ip_hash` after 30 days).
   `cases.py` the «Что просили в вашем случае» block on the stats page: filter by account
   (personal / ИП / both at once — «both» counts in both) and residence permit; documents per bank
   counted in distinct people (IP hash, never rendered), opened-vs-refused split, official rules and

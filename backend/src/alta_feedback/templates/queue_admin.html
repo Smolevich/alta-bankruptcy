@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Отметки очереди — админка{% endblock %}
+{% block robots %}noindex, nofollow{% endblock %}
+{% block beacon %}{% endblock %}
+{% block main_class %}adm-main{% endblock %}
+{% block head %}
+<style>
+  main.adm-main { max-width: 1100px; padding: 16px 12px 40px; }
+  .login { display: flex; gap: 8px; flex-wrap: wrap; }
+  .login input { flex: 1 1 220px; }
+  button { width: auto; margin: 0; min-height: 40px; padding: 0 14px; font-size: 15px; }
+  .msg { font-size: 14px; margin: 8px 0; }
+  .rows { display: grid; gap: 8px; }
+  .src { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; font-size: 14px; display: grid; gap: 6px; }
+  .src-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; }
+  .src code { overflow-wrap: anywhere; }
+  .src ul { margin: 0; padding-left: 18px; }
+  .near { color: var(--accent); font-weight: 600; }
+  .muted { color: var(--muted); }
+</style>
+{% endblock %}
+{% block content %}
+<h1>Отметки очереди за 2 часа</h1>
+<p class="muted">Сгруппированы по источнику — хэшу браузера (или хэша IP, если браузер не прислал свой номер). «Рядом» — отмечал не дальше 500 м от отделения; координаты не хранятся.</p>
+<form class="card login" id="login">
+  <label for="token" style="flex-basis: 100%; margin: 0">Админ-токен<span class="hint">Хранится только в этой вкладке и уходит в заголовке запроса</span></label>
+  <input type="password" id="token" autocomplete="off" required>
+  <button type="submit">Войти</button>
+</form>
+<p class="msg" id="msg" aria-live="polite"></p>
+<div class="rows" id="rows"></div>
+<script src="/static/queue-admin.js"></script>
+{% endblock %}
