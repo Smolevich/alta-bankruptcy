@@ -292,7 +292,9 @@ async def queue_public(request: Request) -> JSONResponse:
     rows = request.app.state.store.fresh_queue_reports(now - queues.FRESH)
     return JSONResponse(
         # 30 с в Cloudflare: в день выплат карту открывают тысячи раз, свежесть в полминуты не важна.
-        {"branches": queues.summarize(rows, now)}, headers={"Cache-Control": "public, max-age=30"}
+        # now — часы сервера для клиента: у телефона часы могут врать, а часы работы и отметки считаем по ним.
+        {"branches": queues.summarize(rows, now), "now": now.isoformat(timespec="seconds")},
+        headers={"Cache-Control": "public, max-age=30"},
     )
 
 

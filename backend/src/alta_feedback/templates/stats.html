@@ -136,17 +136,13 @@
     letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted);
   }
   /* Общий вид поля; select и date без скрипта выглядят так же, только со стрелкой браузера внутри. */
-  .filters select, .filters input[type=date], .combo-input, .date {
-    display: block; width: 100%; min-width: 0; max-width: 100%; margin: 0; height: 46px;
-    font: inherit; font-size: 16px; font-weight: 400; line-height: 1.2; color: var(--ink); background: #fff;
-    border: 1px solid #c9bfa8; border-radius: 4px; padding: 0 12px;
+  .filters select, .filters input[type=date], .filters .combo-input, .date {
+    display: block; width: 100%; min-width: 0; max-width: 100%; margin: 0; height: 48px;
+    font: inherit; font-size: 16px; font-weight: 400; line-height: 1.2; color: var(--ink); background-color: #fff;
+    border: 1px solid var(--line); border-radius: 12px; padding: 0 14px;
     transition: border-color 0.15s, box-shadow 0.15s;
   }
-  .filters select {
-    -webkit-appearance: none; appearance: none; padding-right: 36px;
-    background-image: linear-gradient(45deg, transparent 50%, var(--ink) 50%), linear-gradient(135deg, var(--ink) 50%, transparent 50%);
-    background-position: calc(100% - 19px) 52%, calc(100% - 14px) 52%; background-size: 5px 5px; background-repeat: no-repeat;
-  }
+  .filters select { padding-right: 44px; }
   .filters input[type=date] { -webkit-appearance: none; appearance: none; }
   .filters select:hover, .combo-input:hover, .date:hover { border-color: var(--ink); }
   .filters select:focus, .filters input[type=date]:focus, .combo-input:focus, .date:focus-within {
@@ -229,10 +225,7 @@
   .case { margin-top: 26px; }
   .case-form { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; align-items: end; margin: 0 0 10px; }
   .case-form label { display: block; margin: 0 0 6px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
-  .case-form select {
-    display: block; width: 100%; min-width: 0; height: 46px; margin: 0; padding: 0 10px; font: inherit; font-size: 16px;
-    color: var(--ink); background: #fff; border: 1px solid #c9bfa8; border-radius: 4px;
-  }
+  .case-form select { display: block; width: 100%; min-width: 0; }
   .case-form button { grid-column: 1 / -1; width: auto; margin: 0; min-height: 44px; border-radius: 4px; font-weight: 700; }
   .case-lead { color: var(--muted); font-size: 14px; line-height: 1.5; margin: 0 0 10px; }
   .case-lead b { color: var(--ink); }
@@ -271,7 +264,7 @@
     .stats-card h1 { font-size: 35px; }
     .filters { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px 12px; padding: 18px; align-items: end; }
     .field, .field:has(input[type=date]) { grid-column: span 2; }
-    .filters select, .filters input[type=date], .combo-input, .date { height: 44px; font-size: 15px; }
+    .filters select, .filters input[type=date], .filters .combo-input, .date { height: 48px; font-size: 15px; }
     .combo-option { min-height: 38px; font-size: 15px; }
     .filter-actions { grid-column: span 2; flex-wrap: nowrap; margin: 0; }
     .filter-actions button { min-height: 44px; padding: 0 14px; }
