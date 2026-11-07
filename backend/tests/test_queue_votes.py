@@ -64,10 +64,6 @@ def test_without_near_marks_state_comes_from_all_but_is_not_sure():
     assert (result["state"], result["count"], result["sure"]) == ("full", 3, False)
 
 
-def test_tie_goes_to_latest_state():
-    assert shown(vote("a", "full", 60), vote("b", "none", 30))["state"] == "none"
-
-
 @pytest.mark.parametrize(("meters", "near"), [(0, True), (490, True), (510, False), (3000, False)])
 def test_near_means_within_500_metres(meters, near):
     lat, lng = queues.branch_coords()[BRANCH]
@@ -90,3 +86,30 @@ def test_branch_coords_copy_matches_site_data():
 
 def test_every_branch_has_coordinates():
     assert queues.branch_ids() <= queues.branch_coords().keys()
+
+
+def test_tie_nearby_is_mixed_not_the_fresher_state():
+    summary = shown(vote("a", "few", 30, near=True), vote("b", "full", 5, near=True))
+    assert (summary["state"], summary["sure"]) == ("mixed", False)
+
+
+def test_tie_lists_votes_per_state():
+    summary = shown(vote("a", "few", 30, near=True), vote("b", "full", 5, near=True))
+    assert summary["split"] == {"few": 1, "full": 1}
+
+
+def test_majority_of_two_over_one_wins():
+    assert shown(vote("a", "full", 30), vote("b", "full", 20), vote("c", "none", 5))["state"] == "full"
+
+
+def test_far_tie_is_settled_by_a_single_near_vote():
+    far = [vote("a", "few", 30), vote("b", "full", 20)]
+    assert shown(*far, vote("c", "none", 25, near=True))["state"] == "none"
+
+
+def test_far_tie_without_near_votes_is_mixed():
+    assert shown(vote("a", "few", 30), vote("b", "full", 5))["state"] == "mixed"
+
+
+def test_clear_state_has_no_split():
+    assert "split" not in shown(vote("a", "few", 30), vote("b", "few", 5))

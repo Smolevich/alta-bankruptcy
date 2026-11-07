@@ -50,7 +50,7 @@ const T = {
 		note: 'Размер — наша оценка по фото Google Карт, не данные банка. Загрузка — данные Google «Обычно в это время», это не очередь на выплату. В маленьких отделениях очередь может быть на улице — возьмите воду и перекус. Срок подачи — три года.',
 		size: 'Размер',
 		sizes: { small: 'маленькое', medium: 'среднее', large: 'большое' },
-		sizeNote: 'наша оценка по фото',
+		sizeNote: 'наша оценка', sizeBy: 'наша оценка по', sizePhotos: 'фото отделения в Google Maps',
 		busy: 'Обычно людно',
 		busyWd: 'будни',
 		busySat: 'суббота',
@@ -94,7 +94,7 @@ const T = {
 		note: 'Size is our estimate from Google Maps photos, not bank data. Busyness is Google’s “Popular times” data, not the payout queue. In small branches the queue may be outside — bring water and a snack. The filing deadline is three years.',
 		size: 'Size',
 		sizes: { small: 'small', medium: 'medium', large: 'large' },
-		sizeNote: 'our estimate from photos',
+		sizeNote: 'our estimate', sizeBy: 'our estimate from', sizePhotos: 'branch photos in Google Maps',
 		busy: 'Usually busy',
 		busyWd: 'weekdays',
 		busySat: 'Saturday',
@@ -138,7 +138,7 @@ const T = {
 		note: 'Veličina je naša procena prema fotografijama sa Google mapa, a ne podatak banke. Opterećenost su Google podaci „Obično u ovo vreme”, to nije red za isplatu. U malim ekspoziturama red može biti na ulici — ponesite vodu i užinu. Rok za podnošenje zahteva je tri godine.',
 		size: 'Veličina',
 		sizes: { small: 'mala', medium: 'srednja', large: 'velika' },
-		sizeNote: 'naša procena prema fotografijama',
+		sizeNote: 'naša procena', sizeBy: 'naša procena prema', sizePhotos: 'fotografijama ekspoziture u Google mapama',
 		busy: 'Obično gužva',
 		busyWd: 'radnim danom',
 		busySat: 'subotom',
@@ -183,6 +183,13 @@ const esc = (v: string) => v.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&l
 type Extra = (typeof EXTRA)[keyof typeof EXTRA];
 const extraOf = (id: string): Extra | undefined => (EXTRA as Record<string, Extra>)[id];
 const sizeText = (e?: Extra) => (e?.size ? T.sizes[e.size as 'small' | 'medium' | 'large'] : null);
+// Без ссылки на фото подпись не обещает фото, которого на странице нет.
+const sizeLine = (e: Extra | undefined, url: string): string => {
+	const size = sizeText(e);
+	if (!size) return '';
+	const tail = url ? `${esc(T.sizeBy)} <a href="${esc(url)}" target="_blank" rel="noopener">${esc(T.sizePhotos)}<span class="sr-only"> (${esc(T.newTab)})</span></a>` : `(${esc(T.sizeNote)})`;
+	return `${esc(T.size)}: ${esc(size)}${url ? ' — ' : ' '}${tail}`;
+};
 function busyText(e?: Extra): string | null {
 	if (!e?.peak) return null;
 	return `${T.busyWd} ${e.peak}` + (e.peak_saturday ? `, ${T.busySat} ${e.peak_saturday}` : '');
@@ -239,7 +246,7 @@ const points = [
 	.map((p) => ({
 		id: p.id, lat: extraOf(p.id)!.lat, lng: extraOf(p.id)!.lng, city: p.city, cityName: CITIES[p.city][lang], name: p.name, addr: p.addr,
 		note: ADDR_NOTE[p.id] ? `${T.bankSite}: ${ADDR_NOTE[p.id]}` : '', wd: p.hours, sat: p.sat, gmaps: extraOf(p.id)!.maps_url ?? '', chart: chart(extraOf(p.id)), code: p.code, tag: p.id === S.sifra ? S.oznaka : '',
-		sz: sizeText(extraOf(p.id)) ? `${T.size}: ${sizeText(extraOf(p.id))} (${T.sizeNote})` : '', busy: busyText(extraOf(p.id)) ? `${T.busy}: ${busyText(extraOf(p.id))}` : '',
+		sz: sizeLine(extraOf(p.id), extraOf(p.id)!.maps_url ?? `https://www.google.com/maps/dir/?api=1&destination=${extraOf(p.id)!.lat},${extraOf(p.id)!.lng}`), busy: busyText(extraOf(p.id)) ? `${T.busy}: ${busyText(extraOf(p.id))}` : '',
 	}));
 const STATES = ['none', 'few', 'full', 'outside'] as const;
 const BANK = '<svg viewBox="0 0 24 24" aria-hidden="true" class="q-bank"><path d="M12 2 2 7v2h20V7L12 2zm-7 9v7h3v-7H5zm5.5 0v7h3v-7h-3zM16 11v7h3v-7h-3zM2 20v2h20v-2H2z" fill="currentColor"/></svg>';
@@ -346,7 +353,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 													)}
 													<p class="bl-hours">{T.weekdays} {r.wd} · {T.saturday} {r.sat} · <span class="branch-code">{T.code} {r.id}</span></p>
 													{ADDR_NOTE[r.id] && <p class="bl-extra">{T.bankSite}: {ADDR_NOTE[r.id]}</p>}
-													{sizeText(extraOf(r.id)) && <p class="bl-extra">{T.size}: {sizeText(extraOf(r.id))} ({T.sizeNote})</p>}
+													{sizeText(extraOf(r.id)) && <p class="bl-extra" set:html={sizeLine(extraOf(r.id), gmapsOf(r, k))} />}
 													{busyText(extraOf(r.id)) && <p class="bl-extra">{T.busy}: {busyText(extraOf(r.id))}</p>}
 													{noData(r.id) && <p class="bl-extra bl-nodata">{T.noData}</p>}
 													<p class="bl-extra f-free" hidden></p>
@@ -380,6 +387,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 						<li><i class="q-mini q-mini-few q-mini-fill"></i>{QT.lFill}</li>
 						<li><i class="q-mini q-mini-few q-mini-ring"></i>{QT.lRing}</li>
 						<li><i class="q-mini q-mini-unknown"></i>{QT.lGrey}</li>
+						<li><i class="q-mini q-mini-mixed"></i>{QT.lMixed}</li>
 						<li><i class="q-mini q-mini-closed"></i>{QT.lLock}</li>
 					</ul>
 					<p>{QT.lNote}</p>
@@ -402,7 +410,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 <script>
 	import { attachVoice, voiceSupported } from '../scripts/voice';
 	import { branchStatus, canReport, parseRange, reportsFrom } from '../lib/branch-hours.mjs';
-	import { statusTone, weekTiles } from '../lib/branch-card.mjs';
+	import { MIXED, splitText, statusTone, weekTiles } from '../lib/branch-card.mjs';
 	import { belgradeParts, clockOffset } from '../lib/server-clock.mjs';
 
 	type Info = { el: HTMLDetailsElement; li: HTMLElement; city: string; size: string; wd: number[]; sat: number[] };
@@ -417,7 +425,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 	// (public/vendor/maplibre, public/map): сторонние скрипты и тайлы CSP сайта не пускает.
 
 	type Pt = { id: string; lat: number; lng: number; city: string; cityName: string; name: string; addr: string; note: string; wd: string; sat: string; gmaps: string; chart: string; code: string; tag: string; sz: string; busy: string };
-	type Mark = { state: string; count: number; minutes_ago: number; sure?: boolean };
+	type Mark = { state: string; count: number; minutes_ago: number; sure?: boolean; split?: Record<string, number> };
 	type Tx = Record<string, any>;
 	type Hours = { open: boolean; text: string; preOpen: boolean; reportsAt: string; next: string };
 	type Card = { tone: string; icon: string; title: string; sub: string; canMark: boolean; markWhen: string; marksWhen: string; closed: boolean; later: boolean; inside: boolean };
@@ -443,6 +451,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 		few: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="7" r="4" fill="currentColor"/><path d="M4 21a8 8 0 0 1 16 0z" fill="currentColor"/></svg>',
 		full: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="8" r="3.3" fill="currentColor"/><circle cx="16.5" cy="8" r="3.3" fill="currentColor"/><path d="M1.5 20a6.5 6.5 0 0 1 13 0zM10 20a6.5 6.5 0 0 1 12.5 0z" fill="currentColor"/></svg>',
 		outside: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4.5L14 2v19zm11-17h3v17h-3zM11 12.5a1 1 0 1 0 0 .01z" fill="currentColor"/></svg>',
+		mixed: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9h14M5 15h14M16 4 8 20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>',
 		unknown: '', closed: LOCK_SVG,
 	};
 	// Контурные иконки карточки в духе Lucide, свои пути — без иконочных пакетов.
@@ -658,6 +667,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			const when = `${hhmm(reportsFrom(opens))} ${dayWord}`;
 			return { tone, icon, title: tx.stClosed, sub, canMark: mark, markWhen: when, marksWhen: when, closed: true, later: false, inside: mark };
 		}
+		const splitLine = (m: Mark) => splitText(m.split, tx.split, tx.splitTail);
 		const ago = (m: number) => (m >= 60 ? `${Math.floor(m / 60)}${tx.h} ${m % 60}${tx.min.charAt(0)}` : `${m}${tx.min.charAt(0)}`);
 
 		// ---------- пины ----------
@@ -673,7 +683,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 		function pinLabel(p: Pt): string {
 			const m = marks[p.id];
 			const st = pinState(p);
-			const what = m ? tx.pinMarks.replace('%s', tx.states[m.state]).replace('%n', nMarks(m.count)).replace('%m', String(m.minutes_ago)) + (sure(m) ? '' : `, ${tx.unsure}`) : st === 'closed' ? tx.pinClosed : tx.pinNone;
+			const what = m ? tx.pinMarks.replace('%s', tx.states[m.state]).replace('%n', nMarks(m.count)).replace('%m', String(m.minutes_ago)) + (m.state === MIXED ? `, ${splitLine(m)}` : sure(m) ? '' : `, ${tx.unsure}`) : st === 'closed' ? tx.pinClosed : tx.pinNone;
 			return `${p.name}. ${what}. ${tx.open}`;
 		}
 		function paintPins() {
@@ -697,6 +707,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			const m = marks[p.id];
 			if (!hoursOf(p).open && !hoursOf(p).preOpen) return 100;
 			if (m && sure(m)) return STATES.indexOf(m.state);
+			if (m?.state === MIXED) return 5;
 			return m ? 10 : 20;
 		}
 		function busyNow(id: string): number {
@@ -740,8 +751,10 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			dot.dataset.q = st;
 			dot.dataset.sure = sure(m) ? '1' : '0';
 			dot.innerHTML = GLYPH[st] ?? '';
-			const verdict = m ? `${tx.states[m.state]} · ${nMarks(m.count)}, ${m.minutes_ago} ${tx.min}${sure(m) ? '' : ` — ${tx.unsure}`} · ` : '';
-			i.el.querySelector('.bl-status')!.textContent = verdict + rowHours(p);
+			const verdict = !m ? '' : m.state === MIXED ? `${tx.states[m.state]} · ${splitLine(m)} · ` : `${tx.states[m.state]} · ${nMarks(m.count)}, ${m.minutes_ago} ${tx.min}${sure(m) ? '' : ` — ${tx.unsure}`} · `;
+			const status = i.el.querySelector<HTMLElement>('.bl-status')!;
+			status.textContent = verdict + rowHours(p);
+			status.dataset.wrap = m?.state === MIXED ? '1' : '0';
 			i.el.querySelector('.bl-far')!.textContent = me ? distText(distM(me, p)) : '';
 			const on = p.id === current || p.id === picked;
 			i.el.classList.toggle('is-selected', on);
@@ -795,6 +808,10 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			const anyOpen = pts.some((x) => { const h = hoursOf(x); return h.open || h.preOpen; });
 			reportBtn.dataset.closed = anyOpen ? '0' : '1';
 			if (anyOpen) reportBtn.removeAttribute('aria-describedby'); else reportBtn.setAttribute('aria-describedby', 'q-msg');
+			// Кнопка скрыта, пока всё закрыто, поэтому причину и время открытия показываем сразу, а не после нажатия.
+			const closedMsg = tx.closedAll.replace('%t', hoursOf(pts[0]).reportsAt).replace('%s', hoursOf(pts[0]).next);
+			if (!anyOpen) msg.textContent = closedMsg;
+			else if (msg.textContent === closedMsg) msg.textContent = '';
 			box.querySelector<HTMLElement>('.bc-near')!.hidden = !me;
 		}
 		// Раскрыли строку: пин подсвечен и в центре карты, ?b= запомнен; открытая карточка другого отделения закрывается.
@@ -879,7 +896,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 				<details class="q-acc q-details"${moreOpen ?? !narrow() ? ' open' : ''}><summary><span>${esc(tx.details)}</span>${ICON('chevron')}</summary>
 					<div class="q-details-body">
 					<p class="q-lbl">${esc(tx.hLabel)}</p>${weekHtml(p)}
-					${p.sz ? `<p>${esc(p.sz)}</p>` : ''}${p.busy ? `<p>${esc(p.busy)}</p>` : ''}
+					${p.sz ? `<p>${p.sz}</p>` : ''}${p.busy ? `<p>${esc(p.busy)}</p>` : ''}
 					${p.chart ? `<p class="q-lbl">${esc(tx.googleSum)}</p>${p.chart}<p class="q-google-note">${esc(tx.googleNote)}</p>` : ''}
 					<p class="q-foot">${ICON('info')}<span>${esc(tx.foot)} <button type="button" class="q-legend-link">${esc(tx.legend)}</button></span></p>
 					</div>
@@ -922,7 +939,8 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 					const t = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Belgrade', hour: 'numeric', minute: '2-digit', hourCycle: 'h23' }).format(new Date(nowMs() - m.minutes_ago * 60000));
 					sub = tx.qDoor.replace('%n', nMarks(m.count)).replace('%t', t);
 				} else sub = (ok ? tx.qSure : tx.qAgo).replace('%n', nMarks(m.count)).replace('%m', String(m.minutes_ago));
-				if (!ok) sub += ` · ${tx.unsure}`;
+				if (m.state === MIXED) sub = splitLine(m);
+				else if (!ok) sub += ` · ${tx.unsure}`;
 			} else sub = c.closed && !c.canMark ? tx.qFrom.replace('%t', c.marksWhen.split(' ')[0]).replace('%s', c.marksWhen.split(' ').slice(1).join(' ')).trim() : tx.qNobody;
 			const st = m ? m.state : 'unknown';
 			return `<p class="q-line q-queue" data-sure="${ok ? 1 : 0}"><i class="q-dot" data-q="${st}" data-sure="${ok ? 1 : 0}">${GLYPH[st] ?? ''}</i><span><b>${esc(tx.qLabel)}:</b> ${esc(title)} · ${esc(sub)}</span></p>`;
@@ -1050,6 +1068,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			const more = card.querySelector<HTMLDetailsElement>('.q-details');
 			// «Полностью» раскрывает «Подробнее», «кратко» снова сворачивает — иначе в кратком листе нужна прокрутка.
 			if (more && narrow()) { more.open = pos === 'full'; moreOpen = pos === 'full'; }
+			if (pos === 'full') card.scrollTop = 0;
 			if (pos === 'half') mapAboveSheet();
 			const grip = card.querySelector('.q-grip');
 			grip?.setAttribute('aria-label', pos === 'full' ? tx.collapse : tx.expand);
@@ -1281,7 +1300,10 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 		});
 		card.addEventListener('toggle', (ev) => {
 			const d = ev.target as HTMLDetailsElement;
-			if (d.classList?.contains('q-details')) moreOpen = d.open;
+			if (!d.classList?.contains('q-details')) return;
+			moreOpen = d.open;
+			// Раскрытое «Подробнее» не должно уводить лист вниз: сводка остаётся сверху, подробности под ней.
+			if (d.open && narrow()) card.scrollTop = 0;
 		}, true);
 		listBox.addEventListener('toggle', (ev) => {
 			const d = ev.target as HTMLDetailsElement;
