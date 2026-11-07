@@ -266,3 +266,16 @@
   category: tech
   proof: "Домен из документации Cloudflare Web Analytics (https://developers.cloudflare.com/web-analytics/)"
   hosts: [static.cloudflareinsights.com]
+
+# --- Local self-government (cities that filed claims in the ALTA bankruptcy) ---
+- domain: vranje.org.rs
+  name: "Grad Vranje — Город Врање, официальный сайт города (самоидентификация: «Званична презентација града»)"
+  category: official-rs-gov
+  proof: "WHOIS RNIDS, регистрант: Opstina Vranje; на сайте «Званична презентација града»; проверено 07.11.2026"
+  hosts: [vranje.org.rs]
+
+- domain: gradleskovac.org
+  name: "Grad Leskovac — Город Лесковац, официальный сайт города (самоидентификация: «званични сајт града Лесковца»)"
+  category: official-rs-gov
+  proof: "Сайт сам описывает себя как «званични сајт града Лесковца» (schema.org description); домен .org, WHOIS-регистрант скрыт; проверено 07.11.2026"
+  hosts: [gradleskovac.org, novi.gradleskovac.org]
