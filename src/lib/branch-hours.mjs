@@ -32,3 +32,15 @@ export function branchStatus(wd, sat, day, min) {
 	}
 	return { state: 'closed', closedAt: today ? today[1] : null, nextDay: null, opensAt: null, tomorrow: false };
 }
+
+// Отметки очереди принимаем, пока открыто и за час до открытия (люди собираются у двери).
+export const PRE_OPEN_MIN = 60;
+
+/** Можно ли сейчас отметить очередь: открыто или до открытия осталось не больше часа. */
+export function canReport(status, min) {
+	if (status.state === 'open') return true;
+	return status.state === 'later' && status.opensAt - min <= PRE_OPEN_MIN;
+}
+
+/** Во сколько откроются отметки: за час до открытия. */
+export const reportsFrom = (opensAt) => Math.max(opensAt - PRE_OPEN_MIN, 0);
