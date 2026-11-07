@@ -2,7 +2,7 @@
 // Подстановки: %n — число с формой слова, %m — минуты, %s — готовая строка, %t — время чч:мм, %d — день недели.
 const ru = {
 	title: 'Очереди в отделениях Poštanska', tabMap: 'Карта', tabList: 'Список', city: 'Город',
-	report: 'Я стою в очереди здесь — отметить', reportHint: 'Сколько людей перед вами — поможет другим понять, стоит ли ехать.', closedAll: 'Сейчас все отделения закрыты — отметить очередь пока нельзя. Можно будет с %t, отделения откроются %s.', finding: 'Ищем ближайшее отделение…',
+	report: 'Я в очереди — найти моё отделение', reportHint: 'Сколько людей перед вами — поможет другим понять, стоит ли ехать.', closedAll: 'Сейчас все отделения закрыты — отметить очередь пока нельзя. Можно будет с %t, отделения откроются %s.', finding: 'Ищем ближайшее отделение…',
 	privacy: 'Место нужно, только чтобы понять, рядом ли вы с отделением. Координаты мы не храним.',
 	geoOff: 'Не видим, где вы. Найдите своё отделение в списке ниже и нажмите «Отметить» в его строке.',
 	scale: 'За 2 часа: %n в %m', scaleInvite: 'Будете в отделении — отметьте очередь, это займёт секунду.',
@@ -47,7 +47,7 @@ type QueueText = typeof ru;
 
 const en: QueueText = {
 	title: 'Queues at Poštanska branches', tabMap: 'Map', tabList: 'List', city: 'City',
-	report: 'I am in the queue here — report it', reportHint: 'How many people are ahead of you — it helps others decide whether to come.', closedAll: 'All branches are closed now, so reports are off. You can report from %t; branches open %s.', finding: 'Finding the nearest branch…',
+	report: 'I’m in the queue — find my branch', reportHint: 'How many people are ahead of you — it helps others decide whether to come.', closedAll: 'All branches are closed now, so reports are off. You can report from %t; branches open %s.', finding: 'Finding the nearest branch…',
 	privacy: 'We use your location only to tell whether you are near the branch. We do not store coordinates.',
 	geoOff: 'We cannot see where you are. Find your branch in the list below and tap “Report” in its row.',
 	scale: 'Last 2 hours: %n at %m', scaleInvite: 'At a branch? Report the queue — it takes a second.',
@@ -90,7 +90,7 @@ noMarksShort: 'No reports',
 
 const sr: QueueText = {
 	title: 'Redovi u ekspoziturama Poštanske štedionice', tabMap: 'Mapa', tabList: 'Spisak', city: 'Grad',
-	report: 'Stojim u redu ovde — označi', reportHint: 'Koliko ljudi je ispred vas — pomaže drugima da odluče da li da dođu.', closedAll: 'Sve ekspoziture su sada zatvorene, pa označavanje nije moguće. Moguće je od %t, ekspoziture se otvaraju %s.', finding: 'Tražimo najbližu ekspozituru…',
+	report: 'U redu sam — nađi moju ekspozituru', reportHint: 'Koliko ljudi je ispred vas — pomaže drugima da odluče da li da dođu.', closedAll: 'Sve ekspoziture su sada zatvorene, pa označavanje nije moguće. Moguće je od %t, ekspoziture se otvaraju %s.', finding: 'Tražimo najbližu ekspozituru…',
 	privacy: 'Lokacija nam treba samo da vidimo da li ste blizu ekspoziture. Koordinate ne čuvamo.',
 	geoOff: 'Ne vidimo gde ste. Pronađite svoju ekspozituru na spisku ispod i dodirnite „Označi” u njenom redu.',
 	scale: 'Za 2 sata: %n u %m', scaleInvite: 'Kad budete u ekspozituri, označite red — traje sekundu.',
