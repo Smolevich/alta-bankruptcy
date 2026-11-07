@@ -274,13 +274,14 @@ async def queue_submit(request: Request) -> JSONResponse:
     if solved is None:
         return JSONResponse({"error": "pow"}, status_code=400)
     ip_hash = ip_hash_of(request)
-    if store.queue_report_since(ip_hash, report.branch_id, now - queues.SAME_BRANCH_GAP):
+    # Лимит на отделение — по человеку: двое на Wi-Fi отделения не должны блокировать друг друга.
+    voter = hash_ip(f"device:{report.device_id}", request.app.state.ip_salt) if report.device_id else ip_hash
+    if store.queue_report_since(voter, report.branch_id, now - queues.SAME_BRANCH_GAP):
         return JSONResponse({"error": "rate_limit", "scope": "branch"}, status_code=429)
     if store.recent_from(ip_hash, now, RATE_WINDOW, table="queue_reports") >= queues.PER_HOUR_LIMIT:
         return JSONResponse({"error": "rate_limit", "scope": "ip"}, status_code=429)
     if not store.claim_challenge(solved.challenge, solved.expires_at, now):
         return JSONResponse({"error": "pow"}, status_code=400)
-    voter = hash_ip(f"device:{report.device_id}", request.app.state.ip_salt) if report.device_id else ip_hash
     store.add_queue_report(report, ip_hash, request.headers.get("user-agent", "")[:UA_MAX], now, voter)
     store.forget_old_traces(now - TRACE_TTL)
     return JSONResponse({"ok": True}, status_code=201)

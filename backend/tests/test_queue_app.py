@@ -77,6 +77,18 @@ def test_other_visitor_can_mark_same_branch(client):
     assert mark(client, ip="198.51.100.9", state="full").status_code == 201
 
 
+def test_two_devices_on_one_network_can_mark_same_branch(client):
+    mark(client, device_id="device-aaaa-0000-0001")
+    assert mark(client, device_id="device-bbbb-0000-0002", state="full").status_code == 201
+
+
+def test_same_device_marking_same_branch_again_is_refused(client):
+    mark(client, device_id="device-aaaa-0000-0001")
+    assert mark(client, ip="198.51.100.9", device_id="device-aaaa-0000-0001").json() == {
+        "error": "rate_limit", "scope": "branch"
+    }
+
+
 def fill_hour(client: TestClient, count: int, ip: str = "203.0.113.5") -> None:
     """Отметки с одного адреса 20–50 минут назад: старше запрета на то же отделение, внутри часа."""
     store = client.app.state.store
