@@ -66,3 +66,12 @@ git -C ~/pet-projects/infra show ea66818:fleet/hardening/cloudflared/config.yml 
    `fleet/hardening/cloudflared.md`).
 4. ~~Заархивировать `Smolevich/alta-feedback`~~ — сделано 03.11.2026; его environment `production`
    и переменные `VAULT_*` ничего не делают (Actions у архива не запускаются).
+
+## Подложка карты (R2)
+
+`/map/serbia.pmtiles` (50 МБ) сервис отдаёт из бакета R2 `alta-map` по S3 API с пробросом Range
+(`backend/src/alta_feedback/map_tiles.py`), в git файла нет. Ключи бакета (токен только на этот бакет,
+Object Read & Write) лежат в Vault `secret/alta-feedback/r2_map`; деплой бэкенда кладёт их в `.env` как
+`R2_MAP_*` (путь — переменная репозитория `VAULT_R2_MAP_PATH`). Без ключей маршрут отвечает 503.
+Cloudflare не кэширует `.pmtiles` по расширению: нужно правило кэша на зоне для этого пути
+(Eligible for cache, Edge TTL — по заголовкам origin). Заменили файл в бакете — сбросить кэш этого URL.

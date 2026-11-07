@@ -49,6 +49,8 @@ from alta_feedback.branches import BRANCH_MAX, NOT_SURE, branch_options, city_ke
 from alta_feedback.cases import CASES, VNZH, case_banks, criteria, criteria_checked, parse_case_filter
 from alta_feedback.cf_access import HEADER as ACCESS_HEADER
 from alta_feedback.cf_access import AccessConfig, AccessKeys, admin_email, config_from_env
+from alta_feedback.map_tiles import R2Source, TilesSource, tiles_endpoint
+from alta_feedback.map_tiles import config_from_env as r2_config_from_env
 from alta_feedback.nbs import ASSETS, METRICS, SOURCE_URL, snapshot
 from alta_feedback.pow import CHALLENGE_TTL, Challenge, create_challenge, derive_key, verify_payload
 from alta_feedback.site import (
@@ -873,10 +875,13 @@ def create_app(
     access: AccessConfig | None = None,
     access_keys: AccessKeys | None = None,
     clock: Callable[[], datetime] | None = None,
+    tiles: TilesSource | None = None,
 ) -> Starlette:
     site = site_dir or Path(os.environ.get("SITE_DIR", DEFAULT_SITE_DIR))
     data = data_dir or Path(os.environ.get("DATA_DIR", "data"))
     aod_public = archive_root(data) / "public"
+    r2 = r2_config_from_env(os.environ)
+    tiles = tiles or (R2Source(r2) if r2 else None)
     page_routes = [
         Route("/", home, methods=["GET"]),
         Route("/fix", form_page, methods=["GET"]),
@@ -895,6 +900,7 @@ def create_app(
         Route("/account/spasibo", account_thanks, methods=["GET"]),
         Route("/account/stats", account_stats_page, methods=["GET"]),
         Route("/static/{name}", static_script, methods=["GET"]),
+        Route("/map/serbia.pmtiles", tiles_endpoint(tiles), methods=["GET", "HEAD"]),
         Route("/api/accounts/public", public_accounts, methods=["GET"]),
         Route("/api/queue", queue_public, methods=["GET"]),
         Route("/api/queue", queue_submit, methods=["POST"]),
