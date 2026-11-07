@@ -400,6 +400,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 <script>
 	import { attachVoice, voiceSupported } from '../scripts/voice';
 	import { branchStatus, canReport, parseRange, reportsFrom } from '../lib/branch-hours.mjs';
+	import { QUEUE_LEVELS, queueLevel, statusTone, weekTiles } from '../lib/branch-card.mjs';
 
 	type Info = { el: HTMLElement; city: string; size: string; wd: number[]; sat: number[] };
 	const nums = (v?: string) => (v ? v.split(',').map(Number) : []);
@@ -463,6 +464,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 	type Mark = { state: string; count: number; minutes_ago: number };
 	type Tx = Record<string, any>;
 	type Hours = { open: boolean; text: string; preOpen: boolean; reportsAt: string; next: string };
+	type Card = { tone: string; icon: string; title: string; sub: string; canMark: boolean; markWhen: string; marksWhen: string; closed: boolean; later: boolean };
 	type Phase = 'idle' | 'pending' | 'hold' | 'sending' | 'error' | 'done' | 'limit';
 
 	const STATES = ['none', 'few', 'full', 'outside'];
@@ -485,6 +487,22 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 		outside: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4.5L14 2v19zm11-17h3v17h-3zM11 12.5a1 1 0 1 0 0 .01z" fill="currentColor"/></svg>',
 		unknown: '', closed: LOCK_SVG,
 	};
+	// Контурные иконки карточки в духе Lucide, свои пути — без иконочных пакетов.
+	const ICON_PATHS: Record<string, string> = {
+		lock: '<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+		check: '<circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/>',
+		sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+		clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+		users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M21.5 20a6.5 6.5 0 0 0-4-6"/>',
+		navigation: '<path d="M3 11 21 3l-8 18-2-8z"/>',
+		plus: '<path d="M12 5v14M5 12h14"/>',
+		chart: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+		info: '<circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/>',
+		chevron: '<path d="m6 9 6 6 6-6"/>',
+		x: '<path d="M6 6l12 12M18 6 6 18"/>',
+		alert: '<path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
+	};
+	const ICON = (name: string) => `<svg class="q-ic" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICON_PATHS[name]}</svg>`;
 	const esc = (v: string) => v.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
 	const pad = (n: number) => String(n).padStart(2, '0');
 	const hhmm = (min: number) => `${Math.floor(min / 60)}:${pad(min % 60)}`;
@@ -572,7 +590,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 		const plural = new Intl.PluralRules(lang === 'sr' ? 'sr-Latn' : lang);
 		const form = (n: number, forms: string[]) => { const c = plural.select(n); return forms[c === 'one' ? 0 : c === 'few' ? 1 : 2]; };
 		const nMarks = (n: number) => `${n} ${form(n, tx.marks)}`;
-		const dur = (min: number) => (min >= 60 ? `${Math.floor(min / 60)} ${tx.h} ${min % 60} ${tx.min}` : `${min} ${tx.min}`);
+		const dur = (min: number) => (min >= 60 ? `${Math.floor(min / 60)} ${tx.h}` + (min % 60 ? ` ${min % 60} ${tx.min}` : '') : `${min} ${tx.min}`);
 		const distText = (m: number) => (m < 1000 ? `${Math.round(m / 10) * 10} ${tx.m}` : `${(m / 1000).toLocaleString(lang === 'en' ? 'en' : lang === 'sr' ? 'sr-Latn' : 'ru', { maximumFractionDigits: 1 })} ${tx.km}`);
 		const narrow = () => root.clientWidth <= 560;
 
@@ -584,6 +602,8 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 		let sheet: 'half' | 'full' = 'half';
 		let chooser: { title: string; ids: string[] } | null = null;
 		let hint: string | null = null;
+		// Карточка, в которой нажали «Отметить очередь»: в ней вместо ряда кнопок — выбор состояния.
+		let asking: string | null = null;
 		let map: any = null;
 		let lib: any = null;
 		const pins = new Map<string, HTMLButtonElement>();
@@ -611,25 +631,29 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			const text = st.closedAt === null ? tx.closedOff.replace('%s', next) : tx.closedDay.replace('%t', hhmm(st.closedAt)).replace('%s', next);
 			return { open: false, text, preOpen: false, reportsAt: hhmm(reportsFrom(opens)), next };
 		}
-		// Расписание недели одной строкой; сегодняшний день выделен, отдельной строкой «Сегодня» не повторяется.
-		function scheduleHtml(p: Pt, day: number): string {
-			const part = (label: string, hours: string, on: boolean) => {
-				const t = `${esc(label)} ${esc(hours)}`;
-				return on ? `<strong>${t}</strong>` : t;
-			};
-			return [
-				part(tx.schedWd, rangeText(p.wd), day >= 1 && day <= 5),
-				part(tx.schedSat, range(p.sat) ? rangeText(p.sat) : tx.schedClosed, day === 6),
-				part(tx.schedSun, tx.schedClosed, day === 0),
-			].join(' · ');
-		}
 		const sure = (m?: Mark) => Boolean(m && !stale && m.count >= 2 && m.minutes_ago <= SURE_MINUTES);
 		const pinState = (p: Pt) => (!hoursOf(p).open && !marks[p.id] ? 'closed' : marks[p.id]?.state ?? 'unknown');
-		function trust(m?: Mark): string {
-			if (!m) return tx.empty;
-			if (m.count === 1) return tx.unsureOne.replace('%m', String(m.minutes_ago));
-			if (m.minutes_ago > SURE_MINUTES) return tx.old.replace('%s', dur(m.minutes_ago));
-			return tx.sure.replace('%n', nMarks(m.count)).replace('%m', String(m.minutes_ago));
+		// Всё для блока статуса и кнопки отметки — из того же branchStatus, что и строки списка.
+		function cardState(p: Pt): Card {
+			const { day, min } = belgradeNow();
+			const st = branchStatus(range(p.wd), range(p.sat), day, min);
+			const { tone, icon } = statusTone(st);
+			const mark = canReport(st, min);
+			if (st.state === 'open') {
+				const sub = st.left <= 60 ? tx.stClosesIn.replace('%m', String(st.left)) : tx.stLeft.replace('%s', dur(st.left));
+				return { tone, icon, title: tx.stOpen.replace('%t', hhmm(st.closesAt)), sub, canMark: true, markWhen: '', marksWhen: '', closed: false, later: false };
+			}
+			if (st.state === 'later') {
+				const sub = tx.stIn.replace('%s', dur(st.opensAt - min)) + (mark ? ` · ${tx.stDoor}` : '');
+				const when = hhmm(reportsFrom(st.opensAt));
+				return { tone, icon, title: tx.stLater.replace('%t', hhmm(st.opensAt)), sub, canMark: mark, markWhen: when, marksWhen: when, closed: false, later: true };
+			}
+			const opens = st.opensAt ?? 480;
+			const dayWord = st.tomorrow ? tx.tomorrow : tx.onDay.replace('%d', tx.days[st.nextDay ?? 1]);
+			const next = st.tomorrow ? tx.opensTomorrow.replace('%t', hhmm(opens)) : tx.opensOn.replace('%d', tx.days[st.nextDay ?? 1]).replace('%t', hhmm(opens));
+			const sub = tx.stNext.replace('%s', next) + (st.closedAt !== null ? ` · ${tx.stToday.replace('%t', hhmm(st.closedAt))}` : '');
+			const when = `${hhmm(reportsFrom(opens))} ${dayWord}`;
+			return { tone, icon, title: tx.stClosed, sub, canMark: false, markWhen: when, marksWhen: when, closed: true, later: false };
 		}
 		const ago = (m: number) => (m >= 60 ? `${Math.floor(m / 60)}${tx.h} ${m % 60}${tx.min.charAt(0)}` : `${m}${tx.min.charAt(0)}`);
 
@@ -711,9 +735,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 		}
 
 		// ---------- карточка ----------
-		function reportBlock(p: Pt, h: Hours): string {
-			if (!h.open && !h.preOpen) return `<p class="q-closed-note">${esc(tx.closedMarks.replace('%t', h.reportsAt))}</p>`;
-			const pre = !h.open ? `<p class="q-pre">${esc(tx.preOpen)}</p>` : '';
+		function reportBlock(p: Pt): string {
 			const since = Date.now() - sentAt(p.id);
 			const r = rep?.id === p.id ? rep : null;
 			if (r?.phase === 'done' || ((!r || r.phase === 'idle') && since < REPEAT_MS)) {
@@ -738,7 +760,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			const ask = since < REPEAT_MS * 8 && sentAt(p.id) ? tx.askAgain : tx.ask;
 			const picks = STATES.map((k) => `<button type="button" class="q-pick" data-state="${k}"${r?.pick === k ? ' aria-pressed="true"' : ''}>${GLYPH[k]}<span class="q-long">${esc(tx.states[k])}</span><span class="q-short">${esc(tx.short[k])}</span></button>`).join('');
 			const err = r?.phase === 'error' ? `<p class="q-err" role="alert">${esc(r.error)}</p>` : '';
-			return `${pre}<p class="q-ask">${esc(ask)}</p><div class="q-picks">${picks}</div>${err}`;
+			return `<p class="q-ask">${esc(ask)}</p><div class="q-picks">${picks}</div>${err}<button type="button" class="q-ask-cancel">${esc(tx.cancel)}</button>`;
 		}
 		function chooserHtml(): string {
 			const rows = chooser!.ids.map((id) => {
@@ -748,41 +770,75 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			}).join('');
 			return `${head(chooser!.title)}<div class="q-card-body"><ul class="q-rows q-choose">${rows}</ul></div>`;
 		}
-		function head(title: string): string {
+		function head(title: string, addr = ''): string {
 			const toggle = `<button type="button" class="q-grip" aria-label="${esc(sheet === 'full' ? tx.collapse : tx.expand)}"><i></i></button>`;
-			return `<div class="q-card-head">${toggle}<button type="button" class="q-back">${esc(tx.back)}</button><h3 tabindex="-1">${esc(title)}</h3><button type="button" class="q-x" aria-label="${esc(tx.close)}">✕</button></div>`;
+			const back = chooser ? `<button type="button" class="q-back">${esc(tx.back)}</button>` : '';
+			const sub = addr ? `<p class="q-addr">${esc(addr)}</p>` : '';
+			return `<div class="q-card-head">${toggle}${back}<div class="q-title"><h3 tabindex="-1">${esc(title)}</h3>${sub}</div><button type="button" class="q-x" aria-label="${esc(tx.close)}">${ICON('x')}</button></div>`;
 		}
+		// Адрес без почтового индекса: «Vase Čarapića 18, Beograd».
+		const shortAddr = (addr: string) => addr.replace(/,\s*\d{5}\s+/, ', ');
 		function cardHtml(p: Pt): string {
-			const m = marks[p.id];
-			const h = hoursOf(p);
-			const st = m?.state ?? 'unknown';
+			const c = cardState(p);
 			const far = me ? distM(me, p) : null;
 			const near = hint ?? '';
-			const route = p.gmaps || `https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}`;
-			const { day } = belgradeNow();
-			const google = p.chart ? `<details class="q-google"><summary>${esc(tx.googleSum)}</summary>${p.chart}<p class="q-google-note">${esc(tx.googleNote)}</p></details>` : `<p class="q-google-none">${esc(tx.googleNone)}</p>`;
-			return `${head(p.name)}<div class="q-card-body">
+			const staleLine = stale ? `<p class="q-stale">${ICON('alert')}<span>${esc(note.textContent ?? '')}</span></p>` : '';
+			const google = p.chart ? `<details class="q-acc q-google"><summary>${ICON('chart')}<span>${esc(tx.googleSum)}</span>${ICON('chevron')}</summary>${p.chart}<p class="q-google-note">${esc(tx.googleNote)}</p></details>` : '';
+			return `${head(p.name, shortAddr(p.addr))}<div class="q-card-body">
+				${staleLine}
 				${near ? `<p class="q-near">${near}</p>` : ''}
 				${far !== null ? `<p class="q-far">${esc(tx.far.replace('%s', distText(far)))}</p>` : ''}
-				<p class="q-addr q-full-only">${esc(p.addr)}</p>${p.note ? `<p class="q-full-only q-muted">${esc(p.note)}</p>` : ''}
-				<p class="q-hours" data-open="${h.open ? 1 : 0}">${esc(h.text)}</p>
-				<p class="q-full-only q-muted q-schedule">${scheduleHtml(p, day)}</p>
+				${p.note ? `<p class="q-muted">${esc(p.note)}</p>` : ''}
+				<div class="q-status" data-tone="${c.tone}" role="status"><span class="q-status-ic">${ICON(c.icon)}</span><div><p class="q-status-t">${esc(c.title)}</p><p class="q-status-s">${esc(c.sub)}</p></div></div>
 				${verdictHtml(p)}
-				<div class="q-report-box">${reportBlock(p, h)}</div>
-				<div class="q-full-only">${google}</div>
-				<a class="q-route" href="${esc(route)}" target="_blank" rel="noopener">${esc(tx.route)}</a>
-				<p class="q-disclaimer q-full-only">${esc(tx.disclaimer)}</p>
+				<div class="q-block q-full-only"><div class="q-block-head"><span class="q-block-ic">${ICON('clock')}</span><p class="q-lbl">${esc(tx.hLabel)}</p></div>${weekHtml(p)}</div>
+				<div class="q-report-box">${actionsHtml(p, c)}</div>
+				<div class="q-full-only q-more">${google}
+				<p class="q-foot">${ICON('info')}<span>${esc(tx.foot)} <button type="button" class="q-legend-link">${esc(tx.legend)}</button></span></p></div>
 			</div>`;
+		}
+		function weekHtml(p: Pt): string {
+			const tiles = weekTiles(range(p.wd), range(p.sat), belgradeNow().day).map((d) => {
+				const name = tx.days[d.day].charAt(0).toUpperCase() + tx.days[d.day].slice(1);
+				return `<li class="q-day"${d.today ? ' data-today' : ''}${d.hours ? '' : ' data-off'}><b>${esc(name)}</b><span>${d.hours ?? '—'}</span></li>`;
+			}).join('');
+			return `<ul class="q-week">${tiles}</ul>`;
+		}
+		// Ряд «Маршрут | Отметить очередь»; после нажатия отметки на его месте — выбор состояния и таймер.
+		function actionsHtml(p: Pt, c: Card): string {
+			const route = p.gmaps || `https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}`;
+			const routeBtn = `<a class="q-route" href="${esc(route)}" target="_blank" rel="noopener">${ICON('navigation')}<span>${esc(tx.route)}</span></a>`;
+			const r = rep?.id === p.id ? rep : null;
+			const recent = Date.now() - sentAt(p.id) < REPEAT_MS;
+			if (c.canMark && (asking === p.id || (r && r.phase !== 'idle') || recent)) {
+				return `${reportBlock(p)}<div class="q-actions q-actions-1">${routeBtn}</div>`;
+			}
+			const off = c.canMark ? '' : ' disabled aria-disabled="true"';
+			const line = c.canMark ? tx.markHint : tx.markFrom.replace('%t', c.markWhen.split(' ')[0]).replace('%s', c.later ? '' : c.markWhen.split(' ').slice(1).join(' ')).trim();
+			return `<div class="q-actions">${routeBtn}<button type="button" class="q-mark"${off}>${ICON('plus')}<span>${esc(tx.mark)}</span></button></div><p class="q-mark-note">${esc(line)}</p>`;
 		}
 		function verdictHtml(p: Pt): string {
 			const m = marks[p.id];
-			const st = m?.state ?? 'unknown';
-			return `<p class="q-verdict" data-q="${st}" data-sure="${sure(m) ? 1 : 0}">${m ? `${GLYPH[st]}${esc(tx.states[st])}` : ''}</p><p class="q-trust">${esc(trust(m))}</p>`;
+			const c = cardState(p);
+			const ok = sure(m);
+			let title = tx.qNone, sub = '';
+			if (m) {
+				title = tx.states[m.state];
+				if (c.later) {
+					const t = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Belgrade', hour: 'numeric', minute: '2-digit', hourCycle: 'h23' }).format(new Date(Date.now() - m.minutes_ago * 60000));
+					sub = tx.qDoor.replace('%n', nMarks(m.count)).replace('%t', t);
+				} else sub = (ok ? tx.qSure : tx.qAgo).replace('%n', nMarks(m.count)).replace('%m', String(m.minutes_ago));
+				if (!ok) sub += ` · ${tx.unsure}`;
+			} else sub = c.closed ? tx.qFrom.replace('%t', c.marksWhen.split(' ')[0]).replace('%s', c.marksWhen.split(' ').slice(1).join(' ')).trim() : tx.qNobody;
+			const level = m ? queueLevel(m.state) : 0;
+			const segs = QUEUE_LEVELS.map((k, i) => `<i data-q="${k}"${i < level ? ' data-on' : ''}></i>`).join('');
+			return `<div class="q-block q-queue" data-sure="${ok ? 1 : 0}"><div class="q-block-head"><span class="q-block-ic">${ICON('users')}</span><div class="q-block-txt"><p class="q-lbl">${esc(tx.qLabel)}</p>
+				<p class="q-verdict">${esc(title)}</p><p class="q-trust">${esc(sub)}</p></div></div>
+				<div class="q-meter" aria-hidden="true">${segs}</div><p class="q-meter-lbl" aria-hidden="true"><span>${esc(tx.qFree)}</span><span>${esc(tx.qOut)}</span></p></div>`;
 		}
 		function updateVerdict() {
-			const v = card.querySelector('.q-verdict');
+			const v = card.querySelector('.q-queue');
 			if (!v || !current) return;
-			card.querySelector('.q-trust')?.remove();
 			v.outerHTML = verdictHtml(point(current)!);
 		}
 		function render(focus = false) {
@@ -804,7 +860,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			if (!current) return;
 			const box = card.querySelector<HTMLElement>('.q-report-box');
 			if (!box) return render();
-			box.innerHTML = reportBlock(point(current)!, hoursOf(point(current)!));
+			box.innerHTML = actionsHtml(point(current)!, cardState(point(current)!));
 			wireCard();
 		}
 		function wireCard() {
@@ -830,6 +886,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			current = id;
 			chooser = null;
 			hint = opts.hint ?? null;
+			if (asking !== id) asking = null;
 			if (citySel.value !== p.city) { citySel.value = p.city; store.set('q-city', p.city); renderLists(); }
 			if (map) showTab('map');
 			if (!rep || rep.id !== id) rep = { id, phase: 'idle', pick: '', comment: '', error: '', timer: 0, pow: null };
@@ -852,6 +909,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			current = null;
 			chooser = null;
 			hint = null;
+			asking = null;
 			sheet = 'half';
 			paintPins();
 			render();
@@ -907,6 +965,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			rollback(rep.id);
 			rep.phase = 'idle';
 			rep.pick = '';
+			asking = null;
 			renderReport();
 		}
 		// Уход со страницы во время таймера: отправляем сразу, keepalive доносит запрос после закрытия вкладки.
@@ -1058,6 +1117,14 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			if (t.closest('.q-back')) return closeCard();
 			if (t.closest('.q-grip')) return setSheet(sheet === 'full' ? 'half' : 'full');
 			if (t.closest('.q-other')) return openChooser(tx.which, [...pts].sort((a, b) => distM(me!, a) - distM(me!, b)).slice(0, 3).map((p) => p.id));
+			const mk = t.closest<HTMLButtonElement>('.q-mark');
+			if (mk) { if (mk.disabled || !current) return; asking = current; if (narrow()) sheet = 'full'; return render(); }
+			if (t.closest('.q-ask-cancel')) { asking = null; if (rep?.phase === 'error') rep.phase = 'idle'; return renderReport(); }
+			if (t.closest('.q-legend-link')) {
+				const lg = root.querySelector<HTMLDetailsElement>('.qmap-legend');
+				if (lg) { lg.open = true; lg.scrollIntoView({ block: 'nearest', behavior: reduced() ? 'auto' : 'smooth' }); }
+				return;
+			}
 			const pick = t.closest<HTMLButtonElement>('.q-pick');
 			if (pick) return choose(pick.dataset.state!);
 			if (t.closest('.q-cancel')) return cancel();
