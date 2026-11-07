@@ -27,7 +27,7 @@ from starlette.responses import (
 )
 from starlette.routing import Mount, Route
 
-from alta_feedback import casebook, proposals, uploads
+from alta_feedback import casebook, proposals, queues, uploads
 from alta_feedback.accounts import (
     ACCOUNT_STATUSES,
     ACCOUNT_TYPES,
@@ -250,6 +250,35 @@ async def submit(request: Request) -> Response:
     store.forget_old_traces(now - TRACE_TTL)
     query = urlencode({"s": suggestion.section_id}) if suggestion.section_id else ""
     return RedirectResponse(f"/spasibo?{query}" if query else "/spasibo", status_code=303)
+
+
+async def queue_submit(request: Request) -> JSONResponse:
+    """Отметка «какая сейчас очередь» с карты отделений: без полей о человеке, без формы."""
+    try:
+        data = await request.json()
+    except ValueError:
+        data = None
+    report, error = queues.parse_report(data)
+    if report is None:
+        return JSONResponse({"error": error}, status_code=400)
+    store: Store = request.app.state.store
+    now = datetime.now(UTC)
+    ip_hash = ip_hash_of(request)
+    too_soon = store.queue_report_since(ip_hash, report.branch_id, now - queues.SAME_BRANCH_GAP)
+    hourly = store.recent_from(ip_hash, now, RATE_WINDOW, table="queue_reports")
+    if too_soon or hourly >= queues.PER_HOUR_LIMIT:
+        return JSONResponse({"error": "rate_limit"}, status_code=429)
+    store.add_queue_report(report, ip_hash, request.headers.get("user-agent", "")[:UA_MAX], now)
+    store.forget_old_traces(now - TRACE_TTL)
+    return JSONResponse({"ok": True}, status_code=201)
+
+
+async def queue_public(request: Request) -> JSONResponse:
+    now = datetime.now(UTC)
+    rows = request.app.state.store.fresh_queue_reports(now - queues.FRESH)
+    return JSONResponse(
+        {"branches": queues.summarize(rows, now)}, headers={"Cache-Control": "no-store"}
+    )
 
 
 async def thanks(request: Request) -> HTMLResponse:
@@ -855,6 +884,13 @@ def create_app(
         Route("/account/stats", account_stats_page, methods=["GET"]),
         Route("/static/{name}", static_script, methods=["GET"]),
         Route("/api/accounts/public", public_accounts, methods=["GET"]),
+        Route("/api/queue", queue_public, methods=["GET"]),
+        Route("/api/queue", queue_submit, methods=["POST"]),
+        Route("/admin/queue", admin_list("queue_reports", queues.STATUSES), methods=["GET"]),
+        Route(
+            "/admin/queue/{id:int}/status",
+            admin_set_status("queue_reports", queues.STATUSES), methods=["POST"],
+        ),
         Route("/admin/accounts", admin_list("accounts", ACCOUNT_STATUSES), methods=["GET"]),
         Route(
             "/admin/accounts/{id:int}/status",
