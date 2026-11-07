@@ -33,13 +33,17 @@ export function branchStatus(wd, sat, day, min) {
 	return { state: 'closed', closedAt: today ? today[1] : null, nextDay: null, opensAt: null, tomorrow: false };
 }
 
-// Отметки очереди принимаем, пока открыто и за час до открытия (люди собираются у двери).
+// Окно приёма отметок: час до открытия (люди собираются у двери) и час после закрытия (отделение
+// закрывается не ровно в срок, а часы могут продлить). Зеркало на сервере: PRE_OPEN/POST_CLOSE в
+// backend/src/alta_feedback/queues.py, равенство проверяет scripts/branch-hours.test.mjs.
 export const PRE_OPEN_MIN = 60;
+export const POST_CLOSE_MIN = 60;
 
-/** Можно ли сейчас отметить очередь: открыто или до открытия осталось не больше часа. */
+/** Можно ли сейчас отметить очередь: открыто, час до открытия или час после закрытия. */
 export function canReport(status, min) {
 	if (status.state === 'open') return true;
-	return status.state === 'later' && status.opensAt - min <= PRE_OPEN_MIN;
+	if (status.state === 'later') return status.opensAt - min <= PRE_OPEN_MIN;
+	return status.state === 'closed' && status.closedAt !== null && min - status.closedAt < POST_CLOSE_MIN;
 }
 
 /** Во сколько откроются отметки: за час до открытия. */

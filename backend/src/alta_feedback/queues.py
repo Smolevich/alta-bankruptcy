@@ -3,7 +3,8 @@
 Отметка — одно из четырёх состояний «глазами», без чисел и без персональных данных.
 Список отделений — data/postanska_branch_ids.json, часы работы — data/postanska_branch_hours.json
 (копии шифр и часов из src/data/postanska-branches.json, сверяет тест). Отметки принимаем в том же окне,
-что и кнопка на сайте (canReport в src/lib/branch-hours.mjs): за час до открытия и до закрытия, по Белграду.
+что и кнопка на сайте (canReport в src/lib/branch-hours.mjs):
+от часа до открытия до часа после закрытия, по Белграду.
 Комментарий хранится для модерации и публично не показывается.
 """
 
@@ -27,6 +28,8 @@ SAME_BRANCH_GAP = timedelta(minutes=15)
 PER_HOUR_LIMIT = 60
 # Люди собираются у двери до открытия — отметки принимаем за час.
 PRE_OPEN = 60
+# Отделение закрывается не ровно в срок, а часы могут продлить — принимаем ещё час после закрытия.
+POST_CLOSE = 60
 HOURS_RE = re.compile(r"(\d{1,2})[.:](\d{2})h?\s*-\s*(\d{1,2})[.:](\d{2})")
 # Телефон или почта в комментарии: такие отметки не принимаем, чтобы не копить контакты.
 CONTACT = re.compile(r"@|\d[\d\s()+-]{5,}\d")
@@ -76,7 +79,7 @@ def closed_until(branch_id: str, local: datetime) -> Closed | None:
         return None
     minute = local.hour * 60 + local.minute
     today = hours_on(local.weekday(), wd, sat)
-    if today and today[0] - PRE_OPEN <= minute < today[1]:
+    if today and today[0] - PRE_OPEN <= minute < today[1] + POST_CLOSE:
         return None
     for ahead in range(8):
         day = (local.weekday() + ahead) % 7

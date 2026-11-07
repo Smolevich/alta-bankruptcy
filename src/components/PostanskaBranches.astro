@@ -464,7 +464,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 	type Mark = { state: string; count: number; minutes_ago: number };
 	type Tx = Record<string, any>;
 	type Hours = { open: boolean; text: string; preOpen: boolean; reportsAt: string; next: string };
-	type Card = { tone: string; icon: string; title: string; sub: string; canMark: boolean; markWhen: string; marksWhen: string; closed: boolean; later: boolean };
+	type Card = { tone: string; icon: string; title: string; sub: string; canMark: boolean; markWhen: string; marksWhen: string; closed: boolean; later: boolean; inside: boolean };
 	type Phase = 'idle' | 'pending' | 'hold' | 'sending' | 'error' | 'done' | 'limit';
 
 	const STATES = ['none', 'few', 'full', 'outside'];
@@ -641,19 +641,19 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			const mark = canReport(st, min);
 			if (st.state === 'open') {
 				const sub = st.left <= 60 ? tx.stClosesIn.replace('%m', String(st.left)) : tx.stLeft.replace('%s', dur(st.left));
-				return { tone, icon, title: tx.stOpen.replace('%t', hhmm(st.closesAt)), sub, canMark: true, markWhen: '', marksWhen: '', closed: false, later: false };
+				return { tone, icon, title: tx.stOpen.replace('%t', hhmm(st.closesAt)), sub, canMark: true, markWhen: '', marksWhen: '', closed: false, later: false, inside: false };
 			}
 			if (st.state === 'later') {
 				const sub = tx.stIn.replace('%s', dur(st.opensAt - min)) + (mark ? ` · ${tx.stDoor}` : '');
 				const when = hhmm(reportsFrom(st.opensAt));
-				return { tone, icon, title: tx.stLater.replace('%t', hhmm(st.opensAt)), sub, canMark: mark, markWhen: when, marksWhen: when, closed: false, later: true };
+				return { tone, icon, title: tx.stLater.replace('%t', hhmm(st.opensAt)), sub, canMark: mark, markWhen: when, marksWhen: when, closed: false, later: true, inside: false };
 			}
 			const opens = st.opensAt ?? 480;
 			const dayWord = st.tomorrow ? tx.tomorrow : tx.onDay.replace('%d', tx.days[st.nextDay ?? 1]);
 			const next = st.tomorrow ? tx.opensTomorrow.replace('%t', hhmm(opens)) : tx.opensOn.replace('%d', tx.days[st.nextDay ?? 1]).replace('%t', hhmm(opens));
 			const sub = tx.stNext.replace('%s', next) + (st.closedAt !== null ? ` · ${tx.stToday.replace('%t', hhmm(st.closedAt))}` : '');
 			const when = `${hhmm(reportsFrom(opens))} ${dayWord}`;
-			return { tone, icon, title: tx.stClosed, sub, canMark: false, markWhen: when, marksWhen: when, closed: true, later: false };
+			return { tone, icon, title: tx.stClosed, sub, canMark: mark, markWhen: when, marksWhen: when, closed: true, later: false, inside: mark };
 		}
 		const ago = (m: number) => (m >= 60 ? `${Math.floor(m / 60)}${tx.h} ${m % 60}${tx.min.charAt(0)}` : `${m}${tx.min.charAt(0)}`);
 
@@ -814,7 +814,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 				return `${reportBlock(p)}<div class="q-actions q-actions-1">${routeBtn}</div>`;
 			}
 			const off = c.canMark ? '' : ' disabled aria-disabled="true"';
-			const line = c.canMark ? tx.markHint : tx.markFrom.replace('%t', c.markWhen.split(' ')[0]).replace('%s', c.later ? '' : c.markWhen.split(' ').slice(1).join(' ')).trim();
+			const line = c.inside ? tx.markInside : c.canMark ? tx.markHint : tx.markFrom.replace('%t', c.markWhen.split(' ')[0]).replace('%s', c.later ? '' : c.markWhen.split(' ').slice(1).join(' ')).trim();
 			return `<div class="q-actions">${routeBtn}<button type="button" class="q-mark"${off}>${ICON('plus')}<span>${esc(tx.mark)}</span></button></div><p class="q-mark-note">${esc(line)}</p>`;
 		}
 		function verdictHtml(p: Pt): string {
@@ -829,7 +829,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 					sub = tx.qDoor.replace('%n', nMarks(m.count)).replace('%t', t);
 				} else sub = (ok ? tx.qSure : tx.qAgo).replace('%n', nMarks(m.count)).replace('%m', String(m.minutes_ago));
 				if (!ok) sub += ` · ${tx.unsure}`;
-			} else sub = c.closed ? tx.qFrom.replace('%t', c.marksWhen.split(' ')[0]).replace('%s', c.marksWhen.split(' ').slice(1).join(' ')).trim() : tx.qNobody;
+			} else sub = c.closed && !c.canMark ? tx.qFrom.replace('%t', c.marksWhen.split(' ')[0]).replace('%s', c.marksWhen.split(' ').slice(1).join(' ')).trim() : tx.qNobody;
 			const level = m ? queueLevel(m.state) : 0;
 			const segs = QUEUE_LEVELS.map((k, i) => `<i data-q="${k}"${i < level ? ' data-on' : ''}></i>`).join('');
 			return `<div class="q-block q-queue" data-sure="${ok ? 1 : 0}"><div class="q-block-head"><span class="q-block-ic">${ICON('users')}</span><div class="q-block-txt"><p class="q-lbl">${esc(tx.qLabel)}</p>
