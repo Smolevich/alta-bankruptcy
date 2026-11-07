@@ -4,6 +4,7 @@
 import LIST from '../data/postanska-branches.json';
 import EXTRA from '../data/postanska-branches-extra.json';
 import { type Lang } from '../i18n';
+import { QUEUE_TEXT } from './postanska-queue-text';
 
 const { lang = 'ru' } = Astro.props as { lang?: Lang };
 
@@ -70,21 +71,6 @@ const T = {
 		fNote: 'Свободнее обычного в этот час — относительно пика самого отделения, а не сравнение отделений между собой.',
 		fShown: 'Показано отделений: %n', fLabel: 'Фильтры отделений', fReset: 'Сбросить', noData: 'нет данных Google', freeAt: 'в этот час %p% от пика',
 		estimate: 'оценка',
-		qTitle: 'Poštanska — очереди в отделениях', qTabMap: 'Карта', qTabList: 'Список', qCity: 'Город',
-		qLegend: 'Очередь сейчас (по отметкам посетителей)',
-		qStates: { none: 'Очереди нет', few: 'Несколько человек внутри', full: 'Полный зал', outside: 'Очередь на улице' },
-		qNoMarks: 'нет отметок за 2 часа',
-		qReport: 'Сообщить об очереди',
-		qCaption: 'Отметки оставляют посетители, без регистрации. На карте — отметки за последние 2 часа; серый — отметок нет. Это не данные банка и не точные цифры.',
-		qAsk: 'Какая очередь сейчас?', qComment: 'Комментарий (необязательно, до 140 знаков, без телефонов и почты; публично не показываем)',
-		qSent: 'Спасибо, отметка учтена.', qLimit: 'Вы уже отмечали это отделение недавно — повторно можно через 15 минут.',
-		qError: 'Не удалось отправить. Попробуйте ещё раз.', qBadComment: 'Уберите из комментария телефон или почту.',
-		qMarks: 'отметок: %n, обновлено %m мин назад',
-		qGoogle: 'Обычно людно по данным Google (не очередь на выплату)',
-		qPick: 'Выберите отделение на карте или в списке — в карточке будут кнопки.',
-		qGeo: 'Ищем ближайшее отделение по геолокации. Координаты остаются в браузере и никуда не отправляются.',
-		qGeoFail: 'Геолокация недоступна. Выберите отделение на карте или в списке.',
-		qCoop: { windowsHelpText: 'Ctrl + колесо — масштаб карты', macHelpText: '⌘ + колесо — масштаб карты', mobileHelpText: 'Двигайте карту двумя пальцами' },
 	},
 	en: {
 		source: 'Source: AOD list',
@@ -125,21 +111,6 @@ const T = {
 		fNote: 'Quieter than usual at this hour — relative to the branch’s own peak, not a comparison between branches.',
 		fShown: 'Branches shown: %n', fLabel: 'Branch filters', fReset: 'Reset', noData: 'no Google data', freeAt: 'at this hour %p% of peak',
 		estimate: 'estimate',
-		qTitle: 'Poštanska — queues at branches', qTabMap: 'Map', qTabList: 'List', qCity: 'City',
-		qLegend: 'Queue now (from visitors’ reports)',
-		qStates: { none: 'No queue', few: 'A few people inside', full: 'Hall is full', outside: 'Queue outside' },
-		qNoMarks: 'no reports in 2 hours',
-		qReport: 'Report the queue',
-		qCaption: 'Reports come from visitors, no sign-up. The map shows reports from the last 2 hours; grey means no reports. This is not bank data and not exact figures.',
-		qAsk: 'What is the queue now?', qComment: 'Comment (optional, up to 140 characters, no phone numbers or emails; not shown publicly)',
-		qSent: 'Thank you, your report is counted.', qLimit: 'You reported this branch recently — you can report again in 15 minutes.',
-		qError: 'Could not send. Please try again.', qBadComment: 'Remove the phone number or email from the comment.',
-		qMarks: 'reports: %n, updated %m min ago',
-		qGoogle: 'Usually busy per Google (not the payout queue)',
-		qPick: 'Pick a branch on the map or in the list — its card has the buttons.',
-		qGeo: 'Finding the nearest branch by your location. The coordinates stay in your browser and are not sent anywhere.',
-		qGeoFail: 'Location is unavailable. Pick a branch on the map or in the list.',
-		qCoop: { windowsHelpText: 'Ctrl + scroll to zoom the map', macHelpText: '⌘ + scroll to zoom the map', mobileHelpText: 'Use two fingers to move the map' },
 	},
 	sr: {
 		source: 'Izvor: spisak AOD',
@@ -180,23 +151,10 @@ const T = {
 		fNote: 'Slobodnije nego obično u ovaj sat — u odnosu na vrhunac same ekspoziture, a ne poređenje ekspozitura međusobno.',
 		fShown: 'Prikazano ekspozitura: %n', fLabel: 'Filteri ekspozitura', fReset: 'Poništi', noData: 'nema Google podataka', freeAt: 'u ovaj sat %p% vrhunca',
 		estimate: 'procena',
-		qTitle: 'Poštanska — redovi u ekspoziturama', qTabMap: 'Mapa', qTabList: 'Spisak', qCity: 'Grad',
-		qLegend: 'Red sada (prema oznakama posetilaca)',
-		qStates: { none: 'Nema reda', few: 'Nekoliko ljudi unutra', full: 'Puna sala', outside: 'Red na ulici' },
-		qNoMarks: 'nema oznaka u poslednja 2 sata',
-		qReport: 'Prijavi red',
-		qCaption: 'Oznake ostavljaju posetioci, bez registracije. Na mapi su oznake iz poslednja 2 sata; sivo — nema oznaka. Ovo nisu podaci banke niti tačni brojevi.',
-		qAsk: 'Kakav je red sada?', qComment: 'Komentar (nije obavezno, do 140 znakova, bez telefona i e-pošte; ne objavljujemo ga)',
-		qSent: 'Hvala, oznaka je uračunata.', qLimit: 'Nedavno ste označili ovu ekspozituru — ponovo možete za 15 minuta.',
-		qError: 'Slanje nije uspelo. Pokušajte ponovo.', qBadComment: 'Uklonite telefon ili e-poštu iz komentara.',
-		qMarks: 'oznaka: %n, ažurirano pre %m min',
-		qGoogle: 'Obično gužva prema Google podacima (nije red za isplatu)',
-		qPick: 'Izaberite ekspozituru na mapi ili u spisku — u kartici su dugmad.',
-		qGeo: 'Tražimo najbližu ekspozituru prema lokaciji. Koordinate ostaju u pregledaču i nigde se ne šalju.',
-		qGeoFail: 'Lokacija nije dostupna. Izaberite ekspozituru na mapi ili u spisku.',
-		qCoop: { windowsHelpText: 'Ctrl + točkić — zumiranje mape', macHelpText: '⌘ + točkić — zumiranje mape', mobileHelpText: 'Pomerajte mapu sa dva prsta' },
 	},
 }[lang];
+
+const QT = QUEUE_TEXT[lang];
 
 function cityKey(naziv: string): string {
 	const key = naziv.replace(/^EKSPOZITURA /, '').replace(/ \d+.*$/, '');
@@ -247,15 +205,6 @@ const fa = (id: string, city: string) => ({
 const noData = (id: string) => !histOf(id);
 
 type Point = { id: string; name: string; addr: string; hours: string; sat: string; code: string; city: string };
-// Постоянная часть карточки на карте; состояние очереди и кнопки дорисовывает скрипт.
-function details(b: Point, e: Extra): string {
-	const busy = busyText(e);
-	return [
-		ADDR_NOTE[b.id] ? `<p>${T.bankSite}: ${ADDR_NOTE[b.id]}</p>` : '',
-		`<p>${T.weekdays} ${esc(b.hours)}, ${T.saturday} ${esc(b.sat)}</p>`,
-		busy ? `<p class="q-google">${esc(T.qGoogle)}: ${busy}</p>` : '',
-	].join('');
-}
 
 const groups = new Map<string, Branch[]>();
 for (const b of LIST.ekspoziture) {
@@ -266,15 +215,22 @@ const order = [...FIRST, ...[...groups.keys()].filter((k) => !FIRST.includes(k))
 const slug = (k: string) => `otdeleniya-${CITIES[k].latin.toLowerCase().normalize('NFD').replace(/[^a-z ]/g, '').replace(/ /g, '-')}`;
 const S = LIST.specijalizovana;
 const SPECIAL_PT: Point = { id: S.sifra, name: S.naziv, addr: `${S.ulicaIBroj}, ${S.pttBroj} ${CITIES.BEOGRAD.latin}`, hours: S.radnoVremeRadnimDanom, sat: S.radnoVremeSubotom, code: S.sifra, city: 'BEOGRAD' };
+// Всё, что нужно карточке и списку очередей: часы — строками из PDF AOD, график Google — готовым SVG.
 const points = [
 	SPECIAL_PT,
 	...LIST.ekspoziture.map((b) => ({ id: b.sifra, name: b.naziv.replace(/^EKSPOZITURA /, ''), addr: `${b.ulicaIBroj}, ${b.pttBroj} ${CITIES[cityKey(b.naziv)].latin}`, hours: b.radnoVremeRadnimDanom, sat: b.radnoVremeSubotom, code: b.sifra, city: cityKey(b.naziv) })),
 ]
 	.filter((p) => extraOf(p.id))
-	.map((p) => ({ id: p.id, lat: extraOf(p.id)!.lat, lng: extraOf(p.id)!.lng, city: p.city, name: p.name, addr: p.addr, gmaps: extraOf(p.id)!.maps_url, html: details(p, extraOf(p.id)!) }));
+	.map((p) => ({
+		id: p.id, lat: extraOf(p.id)!.lat, lng: extraOf(p.id)!.lng, city: p.city, cityName: CITIES[p.city][lang], name: p.name, addr: p.addr,
+		note: ADDR_NOTE[p.id] ? `${T.bankSite}: ${ADDR_NOTE[p.id]}` : '', wd: p.hours, sat: p.sat, gmaps: extraOf(p.id)!.maps_url ?? '', chart: chart(extraOf(p.id)),
+	}));
 const STATES = ['none', 'few', 'full', 'outside'] as const;
-const qText = { states: T.qStates, noMarks: T.qNoMarks, marks: T.qMarks, ask: T.qAsk, comment: T.qComment, sent: T.qSent, limit: T.qLimit, error: T.qError, badComment: T.qBadComment, gmaps: T.gmaps, pick: T.qPick, geo: T.qGeo, geoFail: T.qGeoFail, coop: T.qCoop, report: T.qReport };
 const BANK = '<svg viewBox="0 0 24 24" aria-hidden="true" class="q-bank"><path d="M12 2 2 7v2h20V7L12 2zm-7 9v7h3v-7H5zm5.5 0v7h3v-7h-3zM16 11v7h3v-7h-3zM2 20v2h20v-2H2z" fill="currentColor"/></svg>';
+const VOICE_LANG = { ru: 'ru-RU', en: 'en-US', sr: 'sr-RS' }[lang];
+// Строки списка до загрузки скрипта: имя и часы; состояние очереди дорисует скрипт.
+const rowsOf = (city: string) => points.filter((p) => p.city === city);
+const hoursLine = (p: (typeof points)[number]) => `${T.weekdays} ${p.wd}, ${T.saturday} ${p.sat}`;
 const styleUrl = `/map/style-${lang}.json`;
 const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST.url };
 ---
@@ -287,35 +243,59 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 	</p>
 	<p class="branches-total">{T.total(LIST.ekspoziture.length + 1, groups.size)}</p>
 
-	<section class="qmap" data-points={JSON.stringify(points)} data-text={JSON.stringify(qText)} data-style={styleUrl} aria-label={T.qTitle}>
+	<section class="qmap" id="otdeleniya-karta" data-points={JSON.stringify(points)} data-text={JSON.stringify(QT)} data-style={styleUrl} data-lang={lang} data-voice-lang={VOICE_LANG} aria-label={QT.title}>
 		<header class="qmap-head">
-			<p class="qmap-title"><Fragment set:html={BANK} /><span>{T.qTitle}</span></p>
+			<p class="qmap-title"><Fragment set:html={BANK} /><span>{QT.title}</span></p>
 			<div class="qmap-tabs" role="tablist">
-				<button type="button" role="tab" aria-selected="true" data-tab="map">{T.qTabMap}</button>
-				<button type="button" role="tab" aria-selected="false" data-tab="list">{T.qTabList}</button>
+				<button type="button" role="tab" aria-selected="true" data-tab="map">{QT.tabMap}</button>
+				<button type="button" role="tab" aria-selected="false" data-tab="list">{QT.tabList}</button>
 			</div>
 		</header>
 		<div class="qmap-body">
-			<aside class="qmap-panel">
-				<label class="qmap-city">{T.qCity}
+			<div class="qmap-panel">
+				<label class="qmap-city">{QT.city}
 					<select class="q-city">
-						{order.map((k) => <option value={k} selected={k === 'BEOGRAD'}>{CITIES[k][lang]}</option>)}
+						{order.map((k) => <option value={k} selected={k === 'BEOGRAD'}>{CITIES[k][lang]} ({(groups.get(k)?.length ?? 0) + (k === 'BEOGRAD' ? 1 : 0)})</option>)}
 					</select>
 				</label>
-				<details class="qmap-legend" open>
-					<summary>{T.qLegend}</summary>
-					<ul>
-						{STATES.map((st) => <li><i class={`q-dot q-${st}`}></i>{T.qStates[st]}</li>)}
-						<li><i class="q-dot q-unknown"></i>{T.qNoMarks}</li>
-					</ul>
-				</details>
-				<button type="button" class="q-report"><span aria-hidden="true">+</span> {T.qReport}</button>
+				<button type="button" class="q-report"><Fragment set:html={'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="currentColor"/><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/></svg>'} /><span class="q-report-text">{QT.report}</span></button>
+				<p class="q-privacy">{QT.privacy}</p>
 				<p class="q-msg" aria-live="polite"></p>
-				<p class="qmap-caption">{T.qCaption}</p>
-			</aside>
+				<p class="q-scale"></p>
+				<ul class="q-plist q-rows">
+					{rowsOf('BEOGRAD').map((p) => <li><button type="button" data-id={p.id}><i class="q-dot"></i><span><strong>{p.name}</strong><small>{hoursLine(p)}</small></span></button></li>)}
+				</ul>
+			</div>
 			<div class="qmap-view">
-				<div class="qmap-canvas" role="region" aria-label={T.mapLabel}></div>
-				<ul class="qmap-list" hidden></ul>
+				<div class="qmap-canvas" role="region" aria-label={QT.mapAria}><p class="qmap-loading">{QT.loading}</p></div>
+				<div class="qmap-listview" hidden>
+					<p class="q-allclosed" hidden></p>
+					<div class="q-sort" role="group" aria-label={QT.sort} hidden>
+						<button type="button" data-sort="near">{QT.near}</button>
+						<button type="button" data-sort="free" aria-pressed="true">{QT.free}</button>
+					</div>
+					<p class="q-cityempty" hidden>{QT.cityEmpty}</p>
+					<ul class="qmap-list q-rows">
+						{rowsOf('BEOGRAD').map((p) => <li><button type="button" data-id={p.id}><i class="q-dot"></i><span><strong>{p.name}</strong><small>{hoursLine(p)}</small></span></button></li>)}
+					</ul>
+				</div>
+				<button type="button" class="q-stub" hidden><span class="q-stub-grip" aria-hidden="true"></span><span class="q-stub-text">{QT.stub}</span></button>
+			</div>
+			<div class="q-card" role="region" aria-label={QT.card} hidden></div>
+			<div class="qmap-foot">
+				<p class="q-note" hidden></p>
+				<details class="qmap-legend">
+					<summary>{QT.legend}</summary>
+					<ul>
+						{STATES.map((st) => <li><i class={`q-mini q-mini-${st}`}></i>{QT.states[st]}</li>)}
+						<li><i class="q-mini q-mini-few q-mini-fill"></i>{QT.lFill}</li>
+						<li><i class="q-mini q-mini-few q-mini-ring"></i>{QT.lRing}</li>
+						<li><i class="q-mini q-mini-unknown"></i>{QT.lGrey}</li>
+						<li><i class="q-mini q-mini-closed"></i>{QT.lLock}</li>
+					</ul>
+					<p>{QT.lNote}</p>
+				</details>
+				<p class="qmap-caption">{QT.disclaimer}</p>
 			</div>
 		</div>
 	</section>
@@ -417,6 +397,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 </div>
 
 <script>
+	import { attachVoice, voiceSupported } from '../scripts/voice';
 
 	type Info = { el: HTMLElement; city: string; size: string; wd: number[]; sat: number[] };
 	const nums = (v?: string) => (v ? v.split(',').map(Number) : []);
@@ -473,25 +454,80 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 		});
 	}
 
-	// Карта очередей: MapLibre, подложка и шрифты с нашего же адреса (public/vendor/maplibre, public/map).
-	// Ни тайлов, ни скриптов со сторонних серверов: так требует CSP сайта.
-	type Pt = { id: string; lat: number; lng: number; city: string; name: string; addr: string; gmaps: string; html: string };
-	type Mark = { state: string; count: number; minutes_ago: number };
-	type Text = {
-		states: Record<string, string>; noMarks: string; marks: string; ask: string; comment: string; sent: string; limit: string;
-		error: string; badComment: string; gmaps: string; pick: string; geo: string; geoFail: string; coop: Record<string, string>; report: string;
-	};
-	const STATE_ORDER = ['none', 'few', 'full', 'outside'];
-	const BANK_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 2 7v2h20V7L12 2zm-7 9v7h3v-7H5zm5.5 0v7h3v-7h-3zM16 11v7h3v-7h-3zM2 20v2h20v-2H2z" fill="currentColor"/></svg>';
-	const escHtml = (v: string) => v.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+	// Карта очередей Poštanska (ТЗ ux-spec, этап 1). MapLibre, подложка и шрифты — с нашего адреса
+	// (public/vendor/maplibre, public/map): сторонние скрипты и тайлы CSP сайта не пускает.
 
-	async function fetchMarks(): Promise<Record<string, Mark>> {
-		try {
-			const r = await fetch('/api/queue', { cache: 'no-store' });
-			return r.ok ? (await r.json()).branches ?? {} : {};
-		} catch {
-			return {};
+	type Pt = { id: string; lat: number; lng: number; city: string; cityName: string; name: string; addr: string; note: string; wd: string; sat: string; gmaps: string; chart: string };
+	type Mark = { state: string; count: number; minutes_ago: number };
+	type Tx = Record<string, any>;
+	type Hours = { open: boolean; text: string; preOpen: boolean; reportsAt: string; opensMon: boolean; opensAt: string };
+	type Phase = 'idle' | 'pending' | 'hold' | 'sending' | 'error' | 'done' | 'limit';
+
+	const STATES = ['none', 'few', 'full', 'outside'];
+	const SURE_MINUTES = 45;
+	const UNDO_MS = 5000;
+	const REPEAT_MS = 15 * 60 * 1000;
+	const GEO_MIN_M = 150;
+	const GEO_SECOND_M = 250;
+	const POLL_MS = 120000;
+	const CONTACT = /@|\d[\d\s()+-]{5,}\d/;
+	const BANK_PATH = 'M12 2 2 7v2h20V7L12 2zm-7 9v7h3v-7H5zm5.5 0v7h3v-7h-3zM16 11v7h3v-7h-3zM2 20v2h20v-2H2z';
+	const LOCK_PATH = 'M7 10V7a5 5 0 0 1 10 0v3h1.5v11h-13V10H7zm2 0h6V7a3 3 0 0 0-6 0v3z';
+	const LOCK_SVG = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${LOCK_PATH}" fill="currentColor"/></svg>`;
+	// Глифы состояний: галочка, один человек, группа, дверь — чтобы цвет не был единственным признаком.
+	const GLYPH: Record<string, string> = {
+		none: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12.5 9.5 18 20 6.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+		few: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="7" r="4" fill="currentColor"/><path d="M4 21a8 8 0 0 1 16 0z" fill="currentColor"/></svg>',
+		full: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="8" r="3.3" fill="currentColor"/><circle cx="16.5" cy="8" r="3.3" fill="currentColor"/><path d="M1.5 20a6.5 6.5 0 0 1 13 0zM10 20a6.5 6.5 0 0 1 12.5 0z" fill="currentColor"/></svg>',
+		outside: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4.5L14 2v19zm11-17h3v17h-3zM11 12.5a1 1 0 1 0 0 .01z" fill="currentColor"/></svg>',
+		unknown: '', closed: LOCK_SVG,
+	};
+	const esc = (v: string) => v.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+	const pad = (n: number) => String(n).padStart(2, '0');
+	const hhmm = (min: number) => `${Math.floor(min / 60)}:${pad(min % 60)}`;
+	const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+	const store = {
+		get: (k: string) => { try { return window.localStorage.getItem(k); } catch { return null; } },
+		set: (k: string, v: string) => { try { window.localStorage.setItem(k, v); } catch { /* приватный режим */ } },
+	};
+
+	function distM(a: { lat: number; lng: number }, b: { lat: number; lng: number }): number {
+		const r = Math.PI / 180;
+		const x = (b.lng - a.lng) * r * Math.cos(((a.lat + b.lat) / 2) * r);
+		return Math.hypot(x, (b.lat - a.lat) * r) * 6371000;
+	}
+
+	// Время по Белграду, а не по часам телефона: человек может смотреть карту из другой страны.
+	function belgradeNow(): { day: number; min: number } {
+		const parts = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Belgrade', weekday: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date());
+		const get = (t: string) => parts.find((p) => p.type === t)?.value ?? '';
+		const day = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].indexOf(get('weekday'));
+		return { day, min: Number(get('hour')) * 60 + Number(get('minute')) };
+	}
+	// «08:00-15:00» и «8.00h - 15.00h» — оба вида записи из PDF AOD.
+	function range(text: string): [number, number] | null {
+		const m = text.match(/(\d{1,2})[.:](\d{2})h?\s*-\s*(\d{1,2})[.:](\d{2})/);
+		return m ? [Number(m[1]) * 60 + Number(m[2]), Number(m[3]) * 60 + Number(m[4])] : null;
+	}
+	const rangeText = (text: string) => { const r = range(text); return r ? `${hhmm(r[0])}–${hhmm(r[1])}` : text; };
+
+	async function solvePow(): Promise<string> {
+		const r = await fetch('/account/challenge', { cache: 'no-store', credentials: 'omit' });
+		if (!r.ok) throw new Error(`challenge ${r.status}`);
+		const task = await r.json();
+		const enc = new TextEncoder();
+		const hex = (b: ArrayBuffer) => [...new Uint8Array(b)].map((x) => x.toString(16).padStart(2, '0')).join('');
+		for (let start = 0; start <= task.maxnumber; start += 500) {
+			const nums: number[] = [];
+			for (let n = start; n < Math.min(start + 500, task.maxnumber + 1); n += 1) nums.push(n);
+			const hashes = await Promise.all(nums.map(async (n) => hex(await crypto.subtle.digest('SHA-256', enc.encode(task.salt + n)))));
+			const i = hashes.indexOf(task.challenge);
+			if (i >= 0) {
+				const body = { algorithm: task.algorithm, challenge: task.challenge, number: nums[i], salt: task.salt, signature: task.signature };
+				return btoa(JSON.stringify(body));
+			}
 		}
+		throw new Error('pow');
 	}
 
 	function loadLib(): Promise<any> {
@@ -507,217 +543,612 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			s.onerror = reject;
 			document.head.appendChild(s);
 		});
-		const url = base + 'maplibre-gl.mjs';
-		return Promise.all([import(/* @vite-ignore */ url), pm]).then(([lib]) => lib);
+		return Promise.all([import(/* @vite-ignore */ base + 'maplibre-gl.mjs'), pm]).then(([lib]) => lib);
 	}
 
-	function distKm(a: { lat: number; lng: number }, b: { lat: number; lng: number }): number {
-		const r = Math.PI / 180;
-		const x = (b.lng - a.lng) * r * Math.cos(((a.lat + b.lat) / 2) * r);
-		return Math.hypot(x, (b.lat - a.lat) * r) * 6371;
+	function hasWebGL(): boolean {
+		try {
+			const c = document.createElement('canvas');
+			return Boolean(c.getContext('webgl2') || c.getContext('webgl'));
+		} catch {
+			return false;
+		}
 	}
 
-	async function initQueueMap(root: HTMLElement) {
+	function initQueue(root: HTMLElement) {
 		const pts: Pt[] = JSON.parse(root.dataset.points ?? '[]');
-		const tx: Text = JSON.parse(root.dataset.text ?? '{}');
-		const citySel = root.querySelector<HTMLSelectElement>('.q-city')!;
-		const msg = root.querySelector<HTMLElement>('.q-msg')!;
-		const list = root.querySelector<HTMLElement>('.qmap-list')!;
-		const canvas = root.querySelector<HTMLElement>('.qmap-canvas')!;
+		const tx: Tx = JSON.parse(root.dataset.text ?? '{}');
+		const lang = root.dataset.lang ?? 'ru';
+		const $ = <T extends HTMLElement>(sel: string) => root.querySelector<T>(sel)!;
+		const citySel = $<HTMLSelectElement>('.q-city');
+		const card = $('.q-card');
+		const canvas = $('.qmap-canvas');
+		const listView = $('.qmap-listview');
+		const list = $('.qmap-list');
+		const plist = $('.q-plist');
+		const stub = $<HTMLButtonElement>('.q-stub');
+		const msg = $('.q-msg');
+		const note = $('.q-note');
+		const reportBtn = $<HTMLButtonElement>('.q-report');
+		const plural = new Intl.PluralRules(lang === 'sr' ? 'sr-Latn' : lang);
+		const form = (n: number, forms: string[]) => { const c = plural.select(n); return forms[c === 'one' ? 0 : c === 'few' ? 1 : 2]; };
+		const nMarks = (n: number) => `${n} ${form(n, tx.marks)}`;
+		const dur = (min: number) => (min >= 60 ? `${Math.floor(min / 60)} ${tx.h} ${min % 60} ${tx.min}` : `${min} ${tx.min}`);
+		const distText = (m: number) => (m < 1000 ? `${Math.round(m / 10) * 10} ${tx.m}` : `${(m / 1000).toLocaleString(lang === 'en' ? 'en' : lang === 'sr' ? 'sr-Latn' : 'ru', { maximumFractionDigits: 1 })} ${tx.km}`);
+		const narrow = () => root.clientWidth <= 560;
+
 		let marks: Record<string, Mark> = {};
+		let stale = false;
+		let me: { lat: number; lng: number } | null = null;
+		let sort: 'free' | 'near' = 'free';
 		let current: string | null = null;
+		let sheet: 'half' | 'full' = 'half';
+		let chooser: { title: string; ids: string[] } | null = null;
+		let hint: string | null = null;
+		let map: any = null;
+		let lib: any = null;
+		const pins = new Map<string, HTMLButtonElement>();
+		const optimistic = new Map<string, Mark | undefined>();
+		// Отметка в работе: выбор, таймер отмены и решение PoW — одно на открытую карточку.
+		let rep: { id: string; phase: Phase; pick: string; comment: string; error: string; timer: number; pow: Promise<string> | null } | null = null;
 
-		const stateOf = (id: string) => marks[id]?.state ?? 'unknown';
-		const markLine = (id: string) =>
-			marks[id] ? tx.marks.replace('%n', String(marks[id].count)).replace('%m', String(marks[id].minutes_ago)) : tx.noMarks;
+		const point = (id: string) => pts.find((p) => p.id === id);
+		const sentAt = (id: string) => Number(store.get(`q-sent-${id}`) || 0);
 
-		function card(p: Pt): string {
-			const st = stateOf(p.id);
-			const badge = marks[p.id] ? `<span class="q-badge q-${st}">${escHtml(tx.states[st])}</span>` : '';
-			const buttons = STATE_ORDER.map((k) => `<button type="button" class="q-pick q-${k}" data-state="${k}">${escHtml(tx.states[k])}</button>`).join('');
-			return `<div class="q-card" data-id="${p.id}">
-				<p class="q-card-name">${BANK_SVG}<strong>${escHtml(p.name)}</strong></p>
-				<p class="q-card-addr">${escHtml(p.addr)}</p>
-				${badge}<p class="q-card-upd">${escHtml(markLine(p.id))}</p>
-				<div class="q-card-info">${p.html}</div>
-				<p class="q-ask">${escHtml(tx.ask)}</p>
-				<div class="q-picks">${buttons}</div>
-				<details class="q-more"><summary>${escHtml(tx.comment)}</summary><input type="text" class="q-comment" maxlength="140"></details>
-				<p class="q-card-msg" aria-live="polite"></p>
-				<a class="q-gmaps" href="${escHtml(p.gmaps)}" target="_blank" rel="noopener">${escHtml(tx.gmaps)} ↗</a>
+		function hoursOf(p: Pt): Hours {
+			const { day, min } = belgradeNow();
+			const wd = range(p.wd), sat = range(p.sat);
+			const today = day === 0 ? null : day === 6 ? sat : wd;
+			const base = { preOpen: false, reportsAt: '', opensMon: false, opensAt: '' };
+			if (today && min >= today[0] && min < today[1]) {
+				const left = today[1] - min;
+				const text = left <= 60 ? tx.closesIn.replace('%m', String(left)) : tx.openUntil.replace('%t', hhmm(today[1])).replace('%s', dur(left));
+				return { ...base, open: true, text };
+			}
+			let opens: number | null = null, mon = false;
+			if (today && min < today[0]) opens = today[0];
+			else if (day >= 1 && day <= 4 && wd) opens = wd[0];
+			else if (day === 5 && sat) opens = sat[0];
+			else { opens = wd?.[0] ?? 480; mon = true; }
+			const before = !mon && today && min < today[0] ? today[0] - min : Infinity;
+			const at = hhmm(opens);
+			return {
+				open: false, preOpen: before <= 60, reportsAt: hhmm(Math.max(opens - 60, 0)), opensMon: mon, opensAt: at,
+				text: (mon ? tx.closedMon : tx.closedAt).replace('%t', at),
+			};
+		}
+		const sure = (m?: Mark) => Boolean(m && !stale && m.count >= 2 && m.minutes_ago <= SURE_MINUTES);
+		const pinState = (p: Pt) => (!hoursOf(p).open && !marks[p.id] ? 'closed' : marks[p.id]?.state ?? 'unknown');
+		function trust(m?: Mark): string {
+			if (!m) return tx.empty;
+			if (m.count === 1) return tx.unsureOne.replace('%m', String(m.minutes_ago));
+			if (m.minutes_ago > SURE_MINUTES) return tx.old.replace('%s', dur(m.minutes_ago));
+			return tx.sure.replace('%n', nMarks(m.count)).replace('%m', String(m.minutes_ago));
+		}
+		const ago = (m: number) => (m >= 60 ? `${Math.floor(m / 60)}${tx.h} ${m % 60}${tx.min.charAt(0)}` : `${m}${tx.min.charAt(0)}`);
+
+		// ---------- пины ----------
+		function pinHtml(p: Pt): string {
+			const st = pinState(p);
+			const m = marks[p.id];
+			const icon = st === 'closed' ? LOCK_PATH : BANK_PATH;
+			// Капля 32×42, остриё — в нижней точке; иконка внутри SVG, чтобы масштабироваться вместе с каплей.
+			return `<svg class="q-drop" viewBox="0 0 32 42" aria-hidden="true"><path class="q-drop-body" d="M16 42C16 42 2.5 26.5 2.5 15.5a13.5 13.5 0 0 1 27 0C29.5 26.5 16 42 16 42z"/><svg x="8" y="7.5" width="16" height="16" viewBox="0 0 24 24"><path class="q-drop-ico" d="${icon}"/></svg></svg>`
+				+ (m ? `<span class="q-pin-ago">${esc(ago(m.minutes_ago))}</span>` : '')
+				+ `<span class="q-pin-name">${esc(p.name)}</span>`;
+		}
+		function pinLabel(p: Pt): string {
+			const m = marks[p.id];
+			const st = pinState(p);
+			const what = m ? tx.pinMarks.replace('%s', tx.states[m.state]).replace('%n', nMarks(m.count)).replace('%m', String(m.minutes_ago)) + (sure(m) ? '' : `, ${tx.unsure}`) : st === 'closed' ? tx.pinClosed : tx.pinNone;
+			return `${p.name}. ${what}. ${tx.open}`;
+		}
+		function paintPins() {
+			pins.forEach((el, id) => {
+				const p = point(id)!;
+				// Только data-атрибуты: класс maplibregl-marker (position: absolute) трогать нельзя — иначе пины уплывают.
+				el.dataset.q = pinState(p);
+				el.dataset.sure = sure(marks[id]) ? '1' : '0';
+				el.toggleAttribute('data-selected', id === current);
+				el.style.zIndex = id === current ? '3' : '';
+				el.setAttribute('aria-label', pinLabel(p));
+				el.innerHTML = pinHtml(p);
+			});
+		}
+
+		// ---------- список ----------
+		function rank(p: Pt): number {
+			const m = marks[p.id];
+			if (!hoursOf(p).open && !hoursOf(p).preOpen) return 100;
+			if (m && sure(m)) return STATES.indexOf(m.state);
+			return m ? 10 : 20;
+		}
+		function rowHtml(p: Pt): string {
+			const m = marks[p.id];
+			const h = hoursOf(p);
+			const st = pinState(p);
+			const verdict = m ? `${tx.states[m.state]} · ${nMarks(m.count)}, ${m.minutes_ago} ${tx.min}${sure(m) ? '' : ` — ${tx.unsure}`}` : tx.noMarksShort;
+			const far = me ? `<em>${distText(distM(me, p))}</em>` : '';
+			return `<li><button type="button" data-id="${p.id}"><i class="q-dot" data-q="${st}" data-sure="${sure(m) ? 1 : 0}">${GLYPH[st] ?? ''}</i><span><strong>${esc(p.name)}</strong>${far}<small>${esc(verdict)}</small><small>${esc(h.text)}</small></span></button></li>`;
+		}
+		function sortedRows(): { open: Pt[]; closed: Pt[] } {
+			const rows = pts.filter((p) => p.city === citySel.value);
+			const by = (a: Pt, b: Pt) => {
+				if (sort === 'near' && me) return distM(me, a) - distM(me, b);
+				return rank(a) - rank(b) || (me ? distM(me, a) - distM(me, b) : a.name.localeCompare(b.name));
+			};
+			const open = rows.filter((p) => rank(p) < 100).sort(by);
+			const closed = rows.filter((p) => rank(p) >= 100).sort(by);
+			return { open, closed };
+		}
+		function renderLists() {
+			const { open, closed } = sortedRows();
+			const html = open.map(rowHtml).join('') + (closed.length ? `<li class="q-sep">${esc(tx.closedNow)}</li>` + closed.map(rowHtml).join('') : '');
+			list.innerHTML = html;
+			plist.innerHTML = html;
+			const rows = pts.filter((p) => p.city === citySel.value);
+			const n = rows.reduce((s, p) => s + (marks[p.id]?.count ?? 0), 0);
+			const b = rows.filter((p) => marks[p.id]).length;
+			$('.q-cityempty').hidden = n > 0;
+			$('.q-scale').textContent = n < 10 ? tx.scaleInvite : tx.scale.replace('%n', nMarks(n)).replace('%m', `${b} ${form(b, tx.branches)}`);
+			const all = $('.q-allclosed');
+			if (!open.length && rows.length) {
+				const h = hoursOf(rows[0]);
+				all.textContent = tx.allClosed.replace('%s', (h.opensMon ? tx.opensMon : tx.opensAt).replace('%t', h.opensAt));
+				all.hidden = false;
+			} else all.hidden = true;
+			$('.q-sort').hidden = !me;
+			root.querySelectorAll<HTMLButtonElement>('[data-sort]').forEach((x) => x.setAttribute('aria-pressed', String(x.dataset.sort === sort)));
+		}
+
+		// ---------- карточка ----------
+		function reportBlock(p: Pt, h: Hours): string {
+			if (!h.open && !h.preOpen) return `<p class="q-closed-note">${esc(tx.closedMarks.replace('%t', h.reportsAt))}</p>`;
+			const pre = !h.open ? `<p class="q-pre">${esc(tx.preOpen)}</p>` : '';
+			const since = Date.now() - sentAt(p.id);
+			const r = rep?.id === p.id ? rep : null;
+			if (r?.phase === 'done' || ((!r || r.phase === 'idle') && since < REPEAT_MS)) {
+				const left = Math.max(REPEAT_MS - since, 0);
+				const mmss = `${Math.floor(left / 60000)}:${pad(Math.floor((left % 60000) / 1000))}`;
+				const top = r?.phase === 'done'
+					? `<p><strong>✓ ${esc(tx.thanks)}</strong></p><p>${esc(tx.seen.replace('%s', p.cityName))}</p>`
+					: `<p><strong>✓ ${esc(tx.marked.replace('%m', String(Math.floor(since / 60000))))}</strong></p>`;
+				return `<div class="q-done" aria-live="polite">${top}<p class="q-again">${esc(tx.again.replace('%s', mmss))}</p></div>`;
+			}
+			if (r?.phase === 'limit') return `<p class="q-limit" aria-live="polite">${esc(r.error)}</p>`;
+			if (r && (r.phase === 'pending' || r.phase === 'hold' || r.phase === 'sending')) {
+				const mic = voiceSupported ? `<button type="button" class="q-mic" hidden><span>${esc(tx.voice.start)}</span></button>` : '';
+				return `<div class="q-undo" aria-live="polite">
+					<p class="q-undo-what">${esc(tx.sending.replace('%s', tx.states[r.pick]))}${reduced() ? ` · ${esc(tx.inSec)}` : ''}</p>
+					<div class="q-undo-row"><span class="q-bar"><i data-run="${r.phase === 'pending' ? 1 : 0}"></i></span><button type="button" class="q-cancel">${esc(tx.cancel)}</button></div>
+					<div class="q-comment-row"><input type="text" class="q-comment" maxlength="140" placeholder="${esc(tx.comment)}" aria-label="${esc(tx.comment)}" value="${esc(r.comment)}">${mic}</div>
+					<p class="q-comment-note">${esc(tx.commentNote)}</p><p class="q-voice-status"></p>
+					${r.phase === 'hold' ? `<button type="button" class="q-send">${esc(tx.send)}</button>` : ''}
+				</div>`;
+			}
+			const ask = since < REPEAT_MS * 8 && sentAt(p.id) ? tx.askAgain : tx.ask;
+			const picks = STATES.map((k) => `<button type="button" class="q-pick" data-state="${k}"${r?.pick === k ? ' aria-pressed="true"' : ''}>${GLYPH[k]}<span class="q-long">${esc(tx.states[k])}</span><span class="q-short">${esc(tx.short[k])}</span></button>`).join('');
+			const err = r?.phase === 'error' ? `<p class="q-err" role="alert">${esc(r.error)}</p>` : '';
+			return `${pre}<p class="q-ask">${esc(ask)}</p><div class="q-picks">${picks}</div>${err}`;
+		}
+		function chooserHtml(): string {
+			const rows = chooser!.ids.map((id) => {
+				const p = point(id)!;
+				const far = me ? `<em>${distText(distM(me, p))}</em>` : '';
+				return `<li><button type="button" data-id="${id}"><span><strong>${esc(p.name)}</strong>${far}<small>${esc(p.addr)}</small></span></button></li>`;
+			}).join('');
+			return `${head(chooser!.title)}<div class="q-card-body"><ul class="q-rows q-choose">${rows}</ul></div>`;
+		}
+		function head(title: string): string {
+			const toggle = `<button type="button" class="q-grip" aria-label="${esc(sheet === 'full' ? tx.collapse : tx.expand)}"><i></i></button>`;
+			return `<div class="q-card-head">${toggle}<button type="button" class="q-back">${esc(tx.back)}</button><h3 tabindex="-1">${esc(title)}</h3><button type="button" class="q-x" aria-label="${esc(tx.close)}">✕</button></div>`;
+		}
+		function cardHtml(p: Pt): string {
+			const m = marks[p.id];
+			const h = hoursOf(p);
+			const st = m?.state ?? 'unknown';
+			const far = me ? distM(me, p) : null;
+			const near = hint ?? '';
+			const route = p.gmaps || `https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}`;
+			const { day } = belgradeNow();
+			const todayHours = day === 0 ? '—' : rangeText(day === 6 ? p.sat : p.wd);
+			const google = p.chart ? `<details class="q-google"><summary>${esc(tx.googleSum)}</summary>${p.chart}<p class="q-google-note">${esc(tx.googleNote)}</p></details>` : `<p class="q-google-none">${esc(tx.googleNone)}</p>`;
+			return `${head(p.name)}<div class="q-card-body">
+				${near ? `<p class="q-near">${near}</p>` : ''}
+				${far !== null ? `<p class="q-far">${esc(tx.far.replace('%s', distText(far)))}</p>` : ''}
+				<p class="q-addr q-full-only">${esc(p.addr)}</p>${p.note ? `<p class="q-full-only q-muted">${esc(p.note)}</p>` : ''}
+				<p class="q-hours" data-open="${h.open ? 1 : 0}">${esc(h.text)}</p>
+				<p class="q-full-only q-muted">${esc(tx.today.replace('%d', tx.days[day]).replace('%s', todayHours))}<br>${esc(tx.satSun.replace('%s', rangeText(p.sat)))}</p>
+				${verdictHtml(p)}
+				<div class="q-report-box">${reportBlock(p, h)}</div>
+				<div class="q-full-only">${google}</div>
+				<a class="q-route" href="${esc(route)}" target="_blank" rel="noopener">${esc(tx.route)}</a>
+				<p class="q-disclaimer q-full-only">${esc(tx.disclaimer)}</p>
 			</div>`;
 		}
-
-		function renderList() {
-			const rows = pts.filter((p) => p.city === citySel.value);
-			list.innerHTML = rows
-				.map((p) => `<li><button type="button" data-id="${p.id}"><i class="q-dot q-${stateOf(p.id)}"></i><span><strong>${escHtml(p.name)}</strong><br>${escHtml(p.addr)}<br><small>${marks[p.id] ? escHtml(tx.states[stateOf(p.id)]) + ' · ' : ''}${escHtml(markLine(p.id))}</small></span></button></li>`)
-				.join('');
+		function verdictHtml(p: Pt): string {
+			const m = marks[p.id];
+			const st = m?.state ?? 'unknown';
+			return `<p class="q-verdict" data-q="${st}" data-sure="${sure(m) ? 1 : 0}">${m ? `${GLYPH[st]}${esc(tx.states[st])}` : ''}</p><p class="q-trust">${esc(trust(m))}</p>`;
 		}
-
-		const lib = await loadLib();
-		const pmtiles = (window as any).pmtiles;
-		lib.addProtocol('pmtiles', new pmtiles.Protocol().tile);
-		const map = new lib.Map({
-			container: canvas,
-			style: root.dataset.style,
-			center: [20.46, 44.81],
-			zoom: 11,
-			maxZoom: 17,
-			attributionControl: false,
-			cooperativeGestures: true,
-			locale: { 'CooperativeGesturesHandler.WindowsHelpText': tx.coop.windowsHelpText, 'CooperativeGesturesHandler.MacHelpText': tx.coop.macHelpText, 'CooperativeGesturesHandler.MobileHelpText': tx.coop.mobileHelpText },
-		});
-		map.addControl(new lib.NavigationControl({ showCompass: false }), 'top-right');
-		map.addControl(new lib.GeolocateControl({ positionOptions: { enableHighAccuracy: true } }), 'top-right');
-		map.addControl(new lib.ScaleControl({ unit: 'metric' }), 'bottom-right');
-		map.addControl(new lib.AttributionControl({ compact: false }), 'bottom-left');
-
-		const popup = new lib.Popup({ maxWidth: '290px', className: 'q-popup', anchor: 'bottom', offset: 20, focusAfterOpen: false });
-		const pins = new Map<string, { marker: any; el: HTMLElement }>();
-		for (const p of pts) {
-			const el = document.createElement('button');
-			el.type = 'button';
-			el.className = 'q-pin';
-			el.setAttribute('aria-label', p.name);
-			el.addEventListener('click', (ev) => {
-				ev.stopPropagation();
-				openCard(p.id);
-			});
-			pins.set(p.id, { marker: new lib.Marker({ element: el, anchor: 'left', offset: [-16, 0] }).setLngLat([p.lng, p.lat]).addTo(map), el });
+		function updateVerdict() {
+			const v = card.querySelector('.q-verdict');
+			if (!v || !current) return;
+			card.querySelector('.q-trust')?.remove();
+			v.outerHTML = verdictHtml(point(current)!);
 		}
-
-		function paintPins() {
-			pins.forEach(({ el }, id) => {
-				const st = stateOf(id);
-				const m = marks[id];
-				// className целиком стёр бы maplibregl-marker (position: absolute), и пины уплывали бы при зуме.
-				el.classList.remove(...[...el.classList].filter((c) => /^q-(?!pin)/.test(c)));
-				el.classList.add(`q-${st}`);
-				el.innerHTML = `<span class="q-pin-ico">${BANK_SVG}</span>` + (m ? `<span class="q-pin-tag">${escHtml(tx.states[st])}${m.count > 1 ? ` · ${m.count}` : ''}</span>` : '');
-			});
-		}
-
-		function openCard(id: string) {
-			const p = pts.find((x) => x.id === id);
-			if (!p) return;
-			current = id;
-			if (citySel.value !== p.city) {
-				citySel.value = p.city;
-				renderList();
+		function render(focus = false) {
+			if (!current && !chooser) {
+				card.hidden = true;
+				root.removeAttribute('data-card');
+				stub.hidden = !narrow();
+				return;
 			}
-			showTab('map');
-			popup.setLngLat([p.lng, p.lat]).setHTML(card(p)).addTo(map);
-			// Пин уводим вниз, чтобы карточка над ним поместилась в окно карты.
-			map.easeTo({ center: [p.lng, p.lat], zoom: Math.max(map.getZoom(), 14), offset: [0, canvas.clientHeight * 0.4] });
+			card.hidden = false;
+			stub.hidden = true;
+			root.dataset.card = sheet;
+			card.innerHTML = chooser ? chooserHtml() : cardHtml(point(current!)!);
+			wireCard();
+			if (focus) card.querySelector<HTMLElement>('h3')?.focus({ preventScroll: true });
+		}
+		// Перерисовать только блок отметки: поле комментария и микрофон при этом живут, пока идёт таймер.
+		function renderReport() {
+			if (!current) return;
+			const box = card.querySelector<HTMLElement>('.q-report-box');
+			if (!box) return render();
+			box.innerHTML = reportBlock(point(current)!, hoursOf(point(current)!));
+			wireCard();
+		}
+		function wireCard() {
+			const bar = card.querySelector<HTMLElement>('.q-bar i[data-run="1"]');
+			if (bar && !reduced()) requestAnimationFrame(() => requestAnimationFrame(() => bar.classList.add('go')));
+			const input = card.querySelector<HTMLInputElement>('.q-comment');
+			const mic = card.querySelector<HTMLButtonElement>('.q-mic');
+			if (input && mic && rep) {
+				attachVoice({ button: mic, label: mic.querySelector('span'), status: card.querySelector('.q-voice-status'), box: input, lang: root.dataset.voiceLang ?? 'ru-RU', texts: tx.voice, onStart: hold });
+			}
 		}
 
+		function easeToPin(p: Pt) {
+			if (!map) return;
+			const bottom = narrow() ? card.getBoundingClientRect().height : 0;
+			// Сдвиг вместо padding: padding в MapLibre копится между вызовами, а нужен ровно центр видимой над листом части.
+			map.easeTo({ center: [p.lng, p.lat], zoom: Math.max(map.getZoom(), 15), offset: [0, -bottom / 2 + 20], duration: reduced() ? 0 : 500 });
+		}
+		function openCard(id: string, opts: { focus?: boolean; hint?: string } = {}) {
+			const p = point(id);
+			if (!p) return;
+			if (rep && rep.id !== id && rep.phase !== 'done') flush();
+			current = id;
+			chooser = null;
+			hint = opts.hint ?? null;
+			if (citySel.value !== p.city) { citySel.value = p.city; store.set('q-city', p.city); renderLists(); }
+			if (map) showTab('map');
+			if (!rep || rep.id !== id) rep = { id, phase: 'idle', pick: '', comment: '', error: '', timer: 0, pow: null };
+			// Задачу от ботов решаем сразу, пока человек читает карточку, — тап по варианту не ждёт.
+			if (!rep.pow) { rep.pow = solvePow(); rep.pow.catch(() => { if (rep) rep.pow = null; }); }
+			paintPins();
+			render(opts.focus !== false);
+			easeToPin(p);
+		}
+		function openChooser(title: string, ids: string[]) {
+			current = null;
+			chooser = { title, ids };
+			sheet = 'half';
+			paintPins();
+			render(true);
+		}
+		function closeCard() {
+			const was = current;
+			if (rep && rep.phase !== 'done') flush();
+			current = null;
+			chooser = null;
+			hint = null;
+			sheet = 'half';
+			paintPins();
+			render();
+			const back = was ? (narrow() ? pins.get(was) : plist.querySelector<HTMLElement>(`[data-id="${was}"]`)) : null;
+			back?.focus({ preventScroll: true });
+		}
+		function setSheet(pos: 'half' | 'full') {
+			sheet = pos;
+			root.dataset.card = pos;
+			const grip = card.querySelector('.q-grip');
+			grip?.setAttribute('aria-label', pos === 'full' ? tx.collapse : tx.expand);
+			const p = current ? point(current) : null;
+			if (p) window.setTimeout(() => easeToPin(p), reduced() ? 0 : 260);
+		}
+
+		// ---------- отметка ----------
+		function choose(state: string) {
+			if (!rep || !current) return;
+			window.clearTimeout(rep.timer);
+			const p = point(current)!;
+			if (CONTACT.test(rep.comment)) { rep.phase = 'error'; rep.error = tx.badComment; return renderReport(); }
+			rep.pick = state;
+			rep.phase = 'pending';
+			// Пин перекрашиваем сразу, при ошибке вернём как было.
+			if (!optimistic.has(p.id)) optimistic.set(p.id, marks[p.id]);
+			const was = optimistic.get(p.id);
+			marks[p.id] = { state, count: (was?.count ?? 0) + 1, minutes_ago: 0 };
+			paintPins();
+			updateVerdict();
+			renderReport();
+			rep.timer = window.setTimeout(send, UNDO_MS);
+		}
+		function hold() {
+			if (!rep || rep.phase !== 'pending') return;
+			window.clearTimeout(rep.timer);
+			rep.phase = 'hold';
+			const bar = card.querySelector<HTMLElement>('.q-bar i');
+			bar?.classList.remove('go');
+			bar?.setAttribute('data-run', '0');
+			if (!card.querySelector('.q-send')) card.querySelector('.q-undo')?.insertAdjacentHTML('beforeend', `<button type="button" class="q-send">${esc(tx.send)}</button>`);
+		}
+		function rollback(id: string) {
+			if (!optimistic.has(id)) return;
+			const was = optimistic.get(id);
+			if (was) marks[id] = was; else delete marks[id];
+			optimistic.delete(id);
+			paintPins();
+			updateVerdict();
+		}
+		function cancel() {
+			if (!rep) return;
+			window.clearTimeout(rep.timer);
+			rollback(rep.id);
+			rep.phase = 'idle';
+			rep.pick = '';
+			renderReport();
+		}
+		// Уход со страницы во время таймера: отправляем сразу, keepalive доносит запрос после закрытия вкладки.
+		function flush() {
+			if (!rep || (rep.phase !== 'pending' && rep.phase !== 'hold')) return;
+			window.clearTimeout(rep.timer);
+			void send(true);
+		}
+		async function send(leaving = false) {
+			const r = rep;
+			if (!r || !r.pick) return;
+			window.clearTimeout(r.timer);
+			r.phase = 'sending';
+			const id = r.id;
+			let altcha = '';
+			try { altcha = r.pow ? await r.pow : await solvePow(); } catch { /* сервер ответит 400, покажем ошибку сети */ }
+			let status = 0, body: any = {};
+			try {
+				const res = await fetch('/api/queue', {
+					method: 'POST', keepalive: true, headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ branch_id: id, state: r.pick, comment: r.comment, altcha }),
+				});
+				status = res.status;
+				body = await res.json().catch(() => ({}));
+			} catch { /* сеть */ }
+			if (leaving) return;
+			r.pow = null;
+			if (status === 201) {
+				store.set(`q-sent-${id}`, String(Date.now()));
+				optimistic.delete(id);
+				r.phase = 'done';
+				window.setTimeout(() => void refresh(), 31000);
+			} else {
+				rollback(id);
+				r.pow = solvePow();
+				r.pow.catch(() => { r.pow = null; });
+				if (status === 429) {
+					r.phase = body.scope === 'ip' ? 'error' : 'limit';
+					if (body.scope === 'ip') r.error = tx.limitIp;
+					else {
+						const at = sentAt(id) || Date.now();
+						const left = Math.max(1, Math.ceil((REPEAT_MS - (Date.now() - at)) / 60000));
+						const t = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Belgrade', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date(at));
+						r.error = tx.limitBranch.replace('%t', t).replace('%m', String(left));
+					}
+				} else if (String(body.error ?? '').startsWith('comment')) { r.phase = 'error'; r.error = tx.badComment; }
+				else { r.phase = 'error'; r.error = tx.netError; }
+			}
+			if (current === id) renderReport();
+		}
+
+		// ---------- данные ----------
+		async function refresh() {
+			try {
+				const res = await fetch('/api/queue');
+				if (!res.ok) throw new Error(String(res.status));
+				const fresh = (await res.json()).branches ?? {};
+				optimistic.forEach((_, id) => { if (marks[id]) fresh[id] = marks[id]; });
+				marks = fresh;
+				stale = false;
+				note.hidden = true;
+				store.set('q-updated', String(Date.now()));
+			} catch {
+				// Отметки оставляем, но все пины — «не точно», и говорим, на какое время данные.
+				stale = true;
+				const at = Number(store.get('q-updated')) || Date.now();
+				note.textContent = tx.stale.replace('%t', new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date(at)));
+				note.hidden = false;
+			}
+			paintPins();
+			renderLists();
+			if (current && (!rep || rep.phase === 'idle' || rep.phase === 'done' || rep.phase === 'limit')) render();
+		}
+
+		// ---------- геолокация ----------
+		function locate() {
+			const text = reportBtn.querySelector('.q-report-text')!;
+			const fallback = () => {
+				text.textContent = tx.report;
+				reportBtn.removeAttribute('aria-busy');
+				msg.textContent = tx.geoOff;
+				const ids = pts.filter((p) => p.city === citySel.value).sort((a, b) => a.name.localeCompare(b.name)).map((p) => p.id);
+				openChooser(tx.noGeo, ids);
+			};
+			if (!navigator.geolocation) return fallback();
+			text.textContent = tx.finding;
+			reportBtn.setAttribute('aria-busy', 'true');
+			navigator.geolocation.getCurrentPosition(
+				(pos) => {
+					text.textContent = tx.report;
+					reportBtn.removeAttribute('aria-busy');
+					msg.textContent = '';
+					me = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+					sort = 'near';
+					const near = [...pts].sort((a, b) => distM(me!, a) - distM(me!, b));
+					const limit = Math.max(GEO_MIN_M, pos.coords.accuracy || 0);
+					const d0 = distM(me, near[0]);
+					const d1 = near[1] ? distM(me, near[1]) : Infinity;
+					renderLists();
+					if (d0 <= limit && d1 > GEO_SECOND_M && pos.coords.accuracy <= GEO_MIN_M) {
+						openCard(near[0].id, { hint: `${esc(tx.nearYou.replace('%s', distText(d0)))} <button type="button" class="q-other">${esc(tx.other)}</button>` });
+					} else openChooser(tx.which, near.slice(0, 3).map((p) => p.id));
+				},
+				fallback,
+				{ enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 },
+			);
+		}
+
+		// ---------- вкладки и события ----------
+		function showTab(tab: string) {
+			root.querySelectorAll<HTMLButtonElement>('[data-tab]').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === tab)));
+			listView.hidden = tab !== 'list';
+			canvas.hidden = tab !== 'map';
+			if (tab === 'map') map?.resize();
+		}
+		root.querySelectorAll<HTMLButtonElement>('[data-tab]').forEach((b) => b.addEventListener('click', () => showTab(b.dataset.tab!)));
+		root.querySelectorAll<HTMLButtonElement>('[data-sort]').forEach((b) => b.addEventListener('click', () => { sort = b.dataset.sort as 'near' | 'free'; renderLists(); }));
+		citySel.addEventListener('change', () => {
+			store.set('q-city', citySel.value);
+			if (current) closeCard();
+			renderLists();
+			fitCity();
+		});
+		reportBtn.addEventListener('click', locate);
+		stub.addEventListener('click', () => showTab('list'));
+		root.addEventListener('click', (ev) => {
+			const t = ev.target as HTMLElement;
+			const row = t.closest<HTMLButtonElement>('.q-rows button[data-id]');
+			if (row) return openCard(row.dataset.id!);
+			if (t.closest('.q-x')) return closeCard();
+			if (t.closest('.q-back')) return closeCard();
+			if (t.closest('.q-grip')) return setSheet(sheet === 'full' ? 'half' : 'full');
+			if (t.closest('.q-other')) return openChooser(tx.which, [...pts].sort((a, b) => distM(me!, a) - distM(me!, b)).slice(0, 3).map((p) => p.id));
+			const pick = t.closest<HTMLButtonElement>('.q-pick');
+			if (pick) return choose(pick.dataset.state!);
+			if (t.closest('.q-cancel')) return cancel();
+			if (t.closest('.q-send')) {
+				if (rep && CONTACT.test(rep.comment)) { cancel(); rep.phase = 'error'; rep.error = tx.badComment; return renderReport(); }
+				return void send();
+			}
+		});
+		root.addEventListener('input', (ev) => {
+			const t = ev.target as HTMLInputElement;
+			if (t.classList.contains('q-comment') && rep) rep.comment = t.value;
+		});
+		root.addEventListener('focusin', (ev) => { if ((ev.target as HTMLElement).classList.contains('q-comment')) hold(); });
+		root.addEventListener('keydown', (ev) => { if (ev.key === 'Escape' && (current || chooser)) closeCard(); });
+		window.addEventListener('pagehide', flush);
+		document.addEventListener('visibilitychange', () => {
+			if (document.visibilityState === 'hidden') flush();
+			else void refresh();
+		});
+
+		// Лист тянется за шапку: вверх — «полностью», вниз — «кратко», из «кратко» вниз — закрыть.
+		let dragY: number | null = null;
+		card.addEventListener('pointerdown', (ev) => {
+			if (!narrow() || !(ev.target as HTMLElement).closest('.q-card-head')) return;
+			dragY = ev.clientY;
+		});
+		window.addEventListener('pointerup', (ev) => {
+			if (dragY === null) return;
+			const dy = ev.clientY - dragY;
+			dragY = null;
+			if (dy < -40) setSheet('full');
+			else if (dy > 40) (sheet === 'full' ? setSheet('half') : closeCard());
+		});
+
+		// ---------- карта ----------
 		function fitCity() {
+			if (!map || !lib) return;
 			const rows = pts.filter((p) => p.city === citySel.value);
 			if (!rows.length) return;
 			const b = new lib.LngLatBounds();
 			rows.forEach((p) => b.extend([p.lng, p.lat]));
 			map.fitBounds(b, { padding: 50, maxZoom: 14, duration: 0 });
 		}
-
-		function showTab(tab: string) {
-			root.querySelectorAll<HTMLButtonElement>('[data-tab]').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === tab)));
-			list.hidden = tab !== 'list';
-			canvas.hidden = tab !== 'map';
-			if (tab === 'map') map.resize();
+		function noMap() {
+			root.dataset.nomap = '';
+			root.querySelector<HTMLElement>('[data-tab="map"]')!.hidden = true;
+			msg.textContent = tx.noMap;
+			showTab('list');
 		}
-
-		async function refresh() {
-			marks = await fetchMarks();
-			paintPins();
-			renderList();
-			if (current && popup.isOpen()) {
-				const p = pts.find((x) => x.id === current);
-				if (p) popup.setHTML(card(p));
-			}
-		}
-
-		root.querySelectorAll<HTMLButtonElement>('[data-tab]').forEach((b) => b.addEventListener('click', () => showTab(b.dataset.tab!)));
-		citySel.addEventListener('change', () => {
-			popup.remove();
-			renderList();
-			fitCity();
-		});
-		list.addEventListener('click', (ev) => {
-			const b = (ev.target as HTMLElement).closest<HTMLButtonElement>('button[data-id]');
-			if (b) openCard(b.dataset.id!);
-		});
-
-		// «Сообщить об очереди»: открытая карточка — сразу к кнопкам; иначе ближайшее отделение по геолокации.
-		// Координаты используются только здесь, в браузере, и на сервер не уходят.
-		root.querySelector('.q-report')!.addEventListener('click', () => {
-			if (current && popup.isOpen()) {
-				popup.getElement()?.querySelector<HTMLElement>('.q-pick')?.focus();
-				return;
-			}
-			if (!navigator.geolocation) {
-				msg.textContent = tx.geoFail;
-				return;
-			}
-			msg.textContent = tx.geo;
-			navigator.geolocation.getCurrentPosition(
-				(pos) => {
-					const me = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-					const near = [...pts].sort((a, b) => distKm(me, a) - distKm(me, b))[0];
-					msg.textContent = '';
-					if (near) openCard(near.id);
-				},
-				() => {
-					msg.textContent = tx.geoFail + ' ' + tx.pick;
-				},
-				{ enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 },
-			);
-		});
-
-		document.addEventListener('click', async (ev) => {
-			const b = (ev.target as HTMLElement).closest<HTMLButtonElement>('.q-card .q-pick');
-			if (!b) return;
-			const box = b.closest<HTMLElement>('.q-card')!;
-			const out = box.querySelector<HTMLElement>('.q-card-msg')!;
-			const comment = box.querySelector<HTMLInputElement>('.q-comment')?.value ?? '';
-			box.querySelectorAll<HTMLButtonElement>('.q-pick').forEach((x) => (x.disabled = true));
-			let text = tx.error;
+		async function startMap() {
+			if (!hasWebGL()) return noMap();
 			try {
-				const r = await fetch('/api/queue', {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ branch_id: box.dataset.id, state: b.dataset.state, comment }),
-				});
-				const body = await r.json().catch(() => ({}));
-				if (r.status === 201) text = tx.sent;
-				else if (r.status === 429) text = tx.limit;
-				else if (String(body.error).startsWith('comment')) text = tx.badComment;
+				lib = await loadLib();
 			} catch {
-				/* сеть: остаётся tx.error */
+				return noMap();
 			}
-			if (text === tx.sent) await refresh();
-			const live = popup.getElement()?.querySelector<HTMLElement>('.q-card-msg') ?? out;
-			live.textContent = text;
-			popup.getElement()?.querySelectorAll<HTMLButtonElement>('.q-pick').forEach((x) => (x.disabled = text === tx.sent));
-		});
+			lib.addProtocol('pmtiles', new (window as any).pmtiles.Protocol().tile);
+			try {
+				map = new lib.Map({
+					container: canvas, style: root.dataset.style, center: [20.46, 44.81], zoom: 11, maxZoom: 17,
+					attributionControl: false, cooperativeGestures: true,
+					locale: { 'CooperativeGesturesHandler.WindowsHelpText': tx.coop.windowsHelpText, 'CooperativeGesturesHandler.MacHelpText': tx.coop.macHelpText, 'CooperativeGesturesHandler.MobileHelpText': tx.coop.mobileHelpText },
+				});
+			} catch {
+				return noMap();
+			}
+			canvas.querySelector('.qmap-loading')?.remove();
+			map.addControl(new lib.NavigationControl({ showCompass: false }), 'top-right');
+			map.addControl(new lib.GeolocateControl({ positionOptions: { enableHighAccuracy: true } }), 'top-right');
+			map.addControl(new lib.ScaleControl({ unit: 'metric' }), 'bottom-right');
+			map.addControl(new lib.AttributionControl({ compact: false }), 'bottom-left');
+			for (const p of pts) {
+				const el = document.createElement('button');
+				el.type = 'button';
+				el.classList.add('q-pin');
+				el.addEventListener('click', (ev) => { ev.stopPropagation(); openCard(p.id, { focus: false }); });
+				// anchor 'bottom': остриё капли — нижняя середина элемента — стоит ровно на координате.
+				new lib.Marker({ element: el, anchor: 'bottom' }).setLngLat([p.lng, p.lat]).addTo(map);
+				pins.set(p.id, el);
+			}
+			const near = () => root.toggleAttribute('data-near', map.getZoom() >= 15);
+			map.on('zoom', near);
+			map.on('click', (e: any) => { if (!(e.originalEvent?.target as HTMLElement)?.closest?.('.q-pin') && current) closeCard(); });
+			// Открытая по ссылке ?b= карточка важнее обзора города.
+			map.on('load', () => (current ? easeToPin(point(current)!) : fitCity()));
+			fitCity();
+			near();
+			paintPins();
+			if (current) easeToPin(point(current)!);
+		}
 
-		// На узком экране легенда свёрнута, чтобы карта была видна сразу.
-		if (root.clientWidth <= 560) root.querySelector('.qmap-legend')?.removeAttribute('open');
-		map.on('load', fitCity);
-		fitCity();
-		await refresh();
-		window.setInterval(refresh, 120000);
+		// ---------- старт ----------
+		const savedCity = store.get('q-city');
+		if (savedCity && [...citySel.options].some((o) => o.value === savedCity)) citySel.value = savedCity;
+		renderLists();
+		render();
+		const wanted = new URLSearchParams(location.search).get('b');
+		if (wanted && point(wanted)) openCard(wanted, { focus: false });
+		let started = false;
+		const io = new IntersectionObserver((entries) => {
+			if (started || !entries.some((e) => e.isIntersecting)) return;
+			started = true;
+			io.disconnect();
+			void refresh();
+			window.setInterval(() => { if (document.visibilityState === 'visible') void refresh(); }, POLL_MS);
+			void startMap();
+		}, { rootMargin: '400px' });
+		io.observe(root);
+		// Таймер «обновить можно через мм:сс» в открытой карточке.
+		window.setInterval(() => {
+			const again = card.querySelector('.q-again');
+			if (!again || !current) return;
+			if (Date.now() - sentAt(current) >= REPEAT_MS) { if (rep) rep.phase = 'idle'; renderReport(); }
+			else renderReport();
+		}, 1000);
+		new ResizeObserver(() => { if (!current && !chooser) stub.hidden = !narrow(); }).observe(root);
 	}
 
-	document.querySelectorAll<HTMLElement>('.qmap').forEach((root) => {
-		const io = new IntersectionObserver(
-			(entries) => {
-				if (!entries.some((e) => e.isIntersecting)) return;
-				io.disconnect();
-				initQueueMap(root);
-			},
-			{ rootMargin: '300px' },
-		);
-		io.observe(root);
-	});
+	document.querySelectorAll<HTMLElement>('.qmap').forEach(initQueue);
 </script>

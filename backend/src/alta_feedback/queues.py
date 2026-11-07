@@ -21,7 +21,8 @@ HIDDEN_STATUSES = ("rejected", "test", "spam")
 COMMENT_MAX = 140
 FRESH = timedelta(hours=2)
 SAME_BRANCH_GAP = timedelta(minutes=15)
-PER_HOUR_LIMIT = 12
+# Общий Wi-Fi в отделении и CGNAT у мобильных операторов: десятки людей за одним адресом.
+PER_HOUR_LIMIT = 60
 # Телефон или почта в комментарии: такие отметки не принимаем, чтобы не копить контакты.
 CONTACT = re.compile(r"@|\d[\d\s()+-]{5,}\d")
 
