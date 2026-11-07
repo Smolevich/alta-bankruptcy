@@ -1,7 +1,7 @@
 ---
 // Источники и дата сверки под каждой страницей: читатель видит, на чём держится текст.
 import Default from '@astrojs/starlight/components/Footer.astro';
-import { LOCALE_TAG, UI, href, langOf } from '../i18n';
+import { formatDate, UI, href, langOf } from '../i18n';
 import { opensInNewTab } from '../links';
 import { viewerSrc } from '../data/pdfs';
 import PdfDialog from './PdfDialog.astro';
@@ -10,10 +10,10 @@ const lang = langOf(Astro.locals.starlightRoute.lang);
 const t = UI[lang];
 
 const data = Astro.locals.starlightRoute.entry.data as {
-	sources?: { title: string; url: string; kind: 'official' | 'reliable_media' | 'unverified'; date: Date }[];
+	sources?: { title: string; url: string; kind: 'official' | 'reliable_media' | 'unverified' | 'reference' | 'own'; date: Date; copy?: string }[];
 	checked?: Date;
 };
-const fmt = (d: Date) => d.toLocaleDateString(LOCALE_TAG[lang], { timeZone: 'UTC' });
+const fmt = (d: Date) => formatDate(d, lang);
 ---
 
 {
@@ -27,7 +27,15 @@ const fmt = (d: Date) => d.toLocaleDateString(LOCALE_TAG[lang], { timeZone: 'UTC
 				{data.sources.map((s) => (
 					<li>
 						<span class={`kind kind-${s.kind}`}>{t[s.kind]}</span>
-						<a href={s.url} target={opensInNewTab(s.url) ? '_blank' : undefined} rel="noopener" data-pdf={viewerSrc(s.url)}>{s.title}</a>
+						<span>
+							<a href={s.url} target={opensInNewTab(s.url) ? '_blank' : undefined} rel="noopener" data-pdf={viewerSrc(s.url)}>{s.title}</a>
+							{s.copy && (
+								<>
+									{' · '}
+									<a class="src-copy" href={s.copy} target="_blank" rel="noopener" data-pdf={s.copy.startsWith('/docs/') ? s.copy : undefined}>{t.sourceCopy}</a>
+								</>
+							)}
+						</span>
 						<time>{fmt(s.date)}</time>
 					</li>
 				))}

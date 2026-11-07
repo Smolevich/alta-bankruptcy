@@ -1,30 +1,56 @@
 ---
 title: "What to save: statements and documents"
-description: "Which ALTA documents and statements to save now, how to export them from the web banking and your mailbox, what sole traders and companies should do, and why statement emails are best kept whole."
-checked: 2026-11-03
+description: "ALTA web banking is closed: which documents and statements to gather without it (email, SMS, paper), what sole traders and companies should do, and why statement emails are best kept whole."
+checked: 2026-11-05
 sources:
   - { title: "Law on Deposit Insurance, art. 16", url: "https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2015/14/2/reg", kind: official, date: 2026-11-01 }
   - { title: "AOD: procedure for paying out insured deposits, section VIII", url: "https://www.aod.rs/uploads/dokumenti/osigdepoz/pravniokvir/cir/16_pravniokvir.pdf", kind: official, date: 2026-11-01 }
   - { title: "AOD: deposit insurance questions and answers", url: "https://www.aod.rs/clan/osigdepoz/pitanja_odgovori", kind: official, date: 2026-11-01 }
   - { title: "ALTA website: web banking login (individuals)", url: "https://online.altabanka.rs/Retail", kind: official, date: 2026-11-01 }
   - { title: "ALTA website: web banking login (companies and sole traders)", url: "https://online.altabanka.rs/Corporate", kind: official, date: 2026-11-01 }
+  - { title: "ALTA in bankruptcy website: administrator's notice that electronic services no longer work and accounts are closed", url: "https://altabanka.rs/", kind: official, date: 2026-11-05 }
+  - { title: "AOD: notice of the start of the insured deposit payout, ALTA banka, 06.11.2026 (PDF)", url: "https://www.aod.rs/uploads/dokumenti/altabanka/Obave%C5%A1tenje_o_po%C4%8Detku_isplate_OD_6nov2026.pdf", kind: official, date: 2026-11-06 }
 ---
 
 import Shot from '../../../components/Shot.astro';
+import Collapsible from '../../../components/Collapsible.astro';
 
-<aside class="save-tip not-content">
-<strong>If web banking still opens, save now</strong>
-<p>All statements in PDF, plus screenshots of the home page, deposits and balances with a visible date (a clock in the frame). Screenshot steps are below; sole traders have a separate block at the end.</p>
-</aside>
+## Now: web banking and the app do not work
 
-The ALTA web banking may stop working at any moment. You will need the statements if the paying bank's calculation does not match and for a claim above €50,000. The steps below come from depositors' experience and may go out of date: the bank's servers sometimes respond and sometimes do not.
+The ALTA web banking (online.altabanka.rs) no longer opens. On 05.11.2026 the browser showed «online.altabanka.rs refused to connect» (ERR_CONNECTION_REFUSED): the bank's server refuses the connection. The ALTA mobile app does not work either (checked 05.11.2026). After you enter the PIN it shows «Error — URLSessionTask failed with error: Could not connect to the server.» You will need statements in two cases: if the paying bank's calculation does not match yours, and for a claim above €50,000.
+
+<div class="shot-pair not-content">
+<Shot lang="en" name="kabinet-zakryt" alt="Browser says «This site can’t be reached: online.altabanka.rs refused to connect»" w={390} h={844} narrow>Browser opening online.altabanka.rs on 05.11.2026: the bank's server refuses the connection (ERR_CONNECTION_REFUSED).</Shot>
+<Shot lang="en" name="prilozhenie-oshibka" alt="ALTA app, PIN screen: error window «URLSessionTask failed with error: Could not connect to the server.»" w={416} h={900} narrow>ALTA mobile app, 05.11.2026: error «Could not connect to the server» on the PIN screen.</Shot>
+</div>
+
+The bank in bankruptcy says on its website: «Платне услуге и електронски сервиси банке више нису у функцији и сви рачуни клијената су затворени» (payment and electronic services no longer work and all client accounts are closed; [altabanka.rs](https://altabanka.rs/), checked 05.11.2026). New statements cannot be downloaded now, so rely on what you have already saved.
 
 The payout is calculated from the balance on the day bankruptcy was opened (03.11.2026), with interest up to that day ([Law on Deposit Insurance, art. 16 para. 1](https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2015/14/2/reg)). So you need both the contracts and the balances with dates.
 
-## What to save
+### What to do without statements
+
+- Gather what you already have: contracts, ALTA statement emails in your mailbox ([how to keep an email whole](#pisma)), bank SMS messages with balances, paper receipts, old PDFs and screenshots.
+- For the payout up to €50,000 the paying bank needs a photo ID and the original deposit document: a contract, a savings book, a «картица текућег динарског или девизног рачуна» (card of a dinar or foreign-currency current account) or another document from the AOD list ([AOD notice, 06.11.2026](https://www.aod.rs/uploads/dokumenti/altabanka/Obave%C5%A1tenje_o_po%C4%8Detku_isplate_OD_6nov2026.pdf)) ([what to bring](/en/vyplata/)). No contract: [what to do](/en/vyplata/#net-dogovora).
+- For a court claim above €50,000: contracts, account and deposit numbers, and statements with the balance on the latest available date ([how to file a claim](/en/trebovanie/)). You state the amount in the claim yourself: the principal and, separately, the interest; AOD then checks it ([Bankruptcy Law, art. 111](https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2009/104/25/reg)).
+
+<span id="bez-kabineta"></span>
+
+ALTA sent statements to the e-mail registered at the bank: search your mailbox for those emails. Save the bank's SMS messages about balances and paper receipts. Bank support no longer works: the bank is in bankruptcy, its services are off and accounts are closed. Questions on the payout: AOD (011/7358 661, depozit@aod.rs) and Poštanska (011/2020 292, aodisplata2026@posted.co.rs); on claims: AOD, the bank's administrator ([bank website](https://www.altabanka.rs/), [AOD](https://www.aod.rs/)).
+
+<span id="pisma"></span>
+
+## Keep statement emails whole
+
+Our advice: keep the monthly emails from ALTA whole, not only the PDF attachment. In Gmail: the message menu “Download message” gives you an .eml file. The original email usually carries the bank's digital signature (DKIM), which confirms the email came from the bank. A PDF attachment on its own does not prove that.
+
+<Collapsible title="Archive: what we advised saving from web banking (not working since 05.11)">
+
+#### What to save
 
 - Your passport, and your residence permit if you have one. The paying bank needs a photo ID ([AOD procedure, section VIII](https://www.aod.rs/uploads/dokumenti/osigdepoz/pravniokvir/cir/16_pravniokvir.pdf)).
-- Current and foreign-currency account agreements and the deposit agreement; if there is no paper copy, a PDF from your mailbox or a photo.
+- Current and foreign-currency account agreements and the deposit agreement; if there is no paper copy, a PDF from your mailbox or a photo (for the payout up to €50,000 these do not replace the original).
+- Unused ALTA cheques, if you have any: they are handed in at ALTA banka in bankruptcy, and the settlement confirmation is the basis for paying the withheld part of the insured amount ([AOD notice, 06.11.2026](https://www.aod.rs/uploads/dokumenti/altabanka/Obave%C5%A1tenje_o_po%C4%8Detku_isplate_OD_6nov2026.pdf)).
 - A screenshot of the web banking home page (“Početna”): all accounts with numbers and balances. The most useful picture if nothing else opens.
 - Each deposit (“Depoziti”): a screenshot of the whole “Detalji depozita” page, with the deposit number, amount, rate and balance.
 - PDF statements for each account, dinar and foreign-currency separately, from the day the account was opened or at least for 2026.
@@ -32,7 +58,11 @@ The payout is calculated from the balance on the day bankruptcy was opened (03.1
 - Account details (“Detalji računa”), cards (“Kartice”) and loans (“Krediti”): keep the loan balance, because a loan is not forgiven in bankruptcy.
 - Screenshots with the date visible (the phone or computer clock in the frame). Keep them off your phone: in the cloud or your mailbox.
 
-## How to export statements from the web banking
+</Collapsible>
+
+<Collapsible title="Archive: how statements were downloaded from web banking (not working since 05.11)">
+
+#### How to export statements from the web banking
 
 1. Find your login (“Korisničko ime”). In the ALTA mobile app: profile (person icon), the “My data” tab, the “Username” field. Do not confuse it with “User's Full Name” (a name with a space): the login is “Username”.
 2. Get the code without logging in to the app: the “Token” tab at the bottom, “OTP Authorization”. An 8-digit one-time code appears and is valid for 10 minutes.
@@ -42,33 +72,33 @@ The payout is calculated from the balance on the day bankruptcy was opened (03.1
    <Shot lang="en" name="login" alt="ALTA web banking login page: login and mToken fields and the Prijavi se button" w={560} h={350}>The login page. Your login (“Korisničko ime”) in the first field, the code (“mToken”) in the second, then “Prijavi se”. The fields and the button are outlined; what was typed is covered.</Shot>
 4. On the left “Računi”, “Izvodi po računu”. Choose the account at the top (dinar and foreign-currency separately). In “Po datumu” set the period and save the “PDF”. About 6 months are returned at a time, so export in pieces.
    <Shot lang="en" name="izvodi" alt="Izvodi po računu section: period, PDF and XLS buttons, list of statements" w={560} h={238}>“Računi”, “Izvodi po računu”. Outlined: the period (“Od dana”, “Do dana”) with the red arrow, the “PDF” and “XLS” buttons for the whole period, and “PDF” on a single statement. Account numbers and dates are covered.</Shot>
-5. On the left “Depoziti”: open each deposit and take a screenshot of the whole “Detalji depozita” page (batch number, amount, rate, balance), with the date visible.
+5. On the left “Depoziti”: open each deposit and take a screenshot of the whole “Detalji depozita” page (deposit account number, amount, rate, balance), with the date visible.
    <Shot lang="en" name="depoziti" alt="Depoziti section, Detalji depozita page with the deposit details" w={560} h={238}>“Depoziti” in the left menu (outlined), then “Detalji depozita”. Batch number, amount, rate and balance are covered.</Shot>
 6. A section may answer “Dogodila se nepoznata greška”: wait a minute and open it again. A PDF sometimes lands in “Downloads” without a download window.
 
-If you have no access: look for ALTA emails in your mailbox (statements go to the e-mail registered at the bank), save the bank's SMS messages about balances and paper receipts. Bank support: +381 11 22 05 500, info@altabanka.rs (may not answer now).
+</Collapsible>
 
-## Keep statement emails whole
+<Collapsible title="Archive: statements for sole traders and companies via Corporate and OfficeBanking (not checked after 05.11)">
 
-Our advice: keep the monthly emails from ALTA whole, not only the PDF attachment. In Gmail: the message menu “Download message” gives you an .eml file. The original email usually carries the bank's digital signature (DKIM), which confirms the email came from the bank. A PDF attachment on its own does not prove that.
-
-## If you are a sole trader or a company
+#### If you are a sole trader or a company
 
 Sole traders and companies log in differently, and many have no web access. Below is depositors' experience, not a bank instruction: it is not confirmed that login, synchronisation and export still work after the licence was revoked. If it does not go through, save at least a screenshot of the screen with your accounts.
 
-### Corporate web banking
+##### Corporate web banking
 
 Address: [online.altabanka.rs/Corporate](https://online.altabanka.rs/Corporate). It was enabled at a branch, so many do not have it. Easy to check: look for a personal/business profile switch in the app. If you have it, do the same as for personal web banking: the code from the app (business profile), log in, statements for each account.
 
-### OfficeBanking and a card reader
+##### OfficeBanking and a card reader
 
 You need a Windows computer: put the “eBanking” card into the USB reader, open ALTA OfficeBanking and enter the card PIN. After logging in press “Synchronise” (“Синхронизовать”) at once, or the program shows balances as of your last login.
 
 <Shot lang="en" name="ip-card" alt="ALTA eBanking card with a chip and a USB smart-card reader" w={560} h={746} narrow>The “eBanking” card (a certificate, not a payment card) and the reader. The number on the card is covered: do not publish it.</Shot>
-<Shot lang="en" name="ip-officebanking" alt="ALTA OfficeBanking: list of accounts, the Synchronise button outlined" w={560} h={420}>After logging in press “Синхронизовать” (Synchronise, outlined) at once: otherwise balances are shown as of the last login, here 24.02.2025. Account numbers and amounts are covered.</Shot>
-<Shot lang="en" name="ip-vypiski" alt="OfficeBanking: All statements on the left, list of statements by date on the right, Export button" w={560} h={420}>On the left “Все выписки” (All statements), on the right a list by date (87 here). Select rows and press “Экспортировать” (Export, outlined): the statements are saved as a file. Account numbers and amounts are covered.</Shot>
+<Shot lang="en" name="ip-officebanking" alt="ALTA OfficeBanking: list of accounts, the Synchronise button outlined" w={560} h={420}>After logging in press “Синхронизовать” (Synchronise, outlined) at once: otherwise balances are shown as of the last login, here 24.02.2025. Screenshot from the Russian-language version of the app. Account numbers and amounts are covered.</Shot>
+<Shot lang="en" name="ip-vypiski" alt="OfficeBanking: All statements on the left, list of statements by date on the right, Export button" w={560} h={420}>On the left “Все выписки” (All statements), on the right a list by date (87 here). Select rows and press “Экспортировать” (Export, outlined): the statements are saved as a file. Screenshot from the Russian-language version of the app. Account numbers and amounts are covered.</Shot>
 
 Your accountant may have had access too: ask them to export statements as well. Save the same as for personal accounts: statements for each account, October transactions, balances, loans and unexecuted payments.
+
+</Collapsible>
 
 ## Do not send statements to anyone
 

@@ -1,0 +1,11 @@
+---
+// Сворачиваемый блок для устаревшего, но сохранённого текста (архив инструкций). Свёрнут по умолчанию.
+const { title, open = false } = Astro.props as { title: string; open?: boolean };
+---
+
+<details class="collapsible" open={open}>
+	<summary>{title}</summary>
+	<div class="collapsible-body">
+		<slot />
+	</div>
+</details>

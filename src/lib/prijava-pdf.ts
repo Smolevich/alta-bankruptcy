@@ -45,6 +45,23 @@ const v = (s: string, blank = BLANK): Run => ({ t: s.trim() || blank, b: true })
 // В образце после даты стоит точка («од ____ . године»): у сербской даты она своя, вторую не добавляем.
 const dated = (s: string, blank = `${BLANK}.`): Run => v(s.trim() && !s.trim().endsWith('.') ? `${s.trim()}.` : s, blank);
 
+// Слово без пробелов шире строки (длинный номер счёта, склеенное название) иначе вылезло бы за поле:
+// режем его по символам на куски, каждый из которых помещается в строку.
+function splitLong(t: string, f: PDFFont, width: number): { t: string; f: PDFFont }[] {
+	if (/^\s+$/.test(t) || f.widthOfTextAtSize(t, SIZE) <= width) return [{ t, f }];
+	const parts: { t: string; f: PDFFont }[] = [];
+	let cur = '';
+	for (const ch of t) {
+		if (cur && f.widthOfTextAtSize(cur + ch, SIZE) > width) {
+			parts.push({ t: cur, f });
+			cur = '';
+		}
+		cur += ch;
+	}
+	if (cur) parts.push({ t: cur, f });
+	return parts;
+}
+
 class Writer {
 	page!: PDFPage;
 	y = 0;
@@ -74,7 +91,7 @@ class Writer {
 		const words: { t: string; f: PDFFont }[] = [];
 		for (const r of runs) {
 			const f = r.b ? this.fonts.bold : this.fonts.regular;
-			for (const w of r.t.split(/(\s+)/)) if (w) words.push({ t: w, f });
+			for (const w of r.t.split(/(\s+)/)) if (w) words.push(...splitLong(w, f, width));
 		}
 		const lines: { t: string; f: PDFFont }[][] = [[]];
 		let cur = 0;

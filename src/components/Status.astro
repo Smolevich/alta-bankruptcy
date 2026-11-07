@@ -2,12 +2,13 @@
 // Крупный блок «Сейчас»: текущая стадия и рельса из всех стадий.
 // На телефоне рельса сжата до текущей стадии, чтобы первый шаг главной был на первом экране.
 import { getEntry } from 'astro:content';
-import { LOCALE_TAG, UI, href, type Lang } from '../i18n';
+import { formatDate, UI, href, type Lang } from '../i18n';
 
 const { lang = 'ru' } = Astro.props as { lang?: Lang };
 const t = UI[lang];
 const status = (await getEntry('status', 'current'))!.data;
-const fmt = (d: Date) => d.toLocaleDateString(LOCALE_TAG[lang], { timeZone: 'UTC' });
+// sr-Latn уже ставит точку после года («3. 11. 2026.»), а фраза ниже добавляет свою.
+const fmt = (d: Date) => formatDate(d, lang);
 ---
 
 <section class="status not-content" aria-labelledby="status-h">
@@ -19,7 +20,7 @@ const fmt = (d: Date) => d.toLocaleDateString(LOCALE_TAG[lang], { timeZone: 'UTC
 		<p class="status-label" id="status-h">{t.statusNow} {status.stage}</p>
 		<p class="status-headline">{status.headline[lang]}</p>
 		<p class="status-note">{status.note[lang]}</p>
-		<p class="status-checked">{t.checkedOn} {fmt(status.checkedAt)}. <span class="status-update">{t.statusUpdate}</span> <a class="rail-more" href={href(lang, '/procedura/')}>{t.allStages}: {status.stages.length} →</a></p>
+		<p class="status-checked">{t.checkedOn} {fmt(status.checkedAt).replace(/\.$/, '')}. <span class="status-update">{t.statusUpdate}</span> <a class="rail-more" href={href(lang, '/procedura/')}>{t.allStages}: {status.stages.length} →</a></p>
 	</div>
 	<ol class="rail" aria-label={t.allStages}>
 		{

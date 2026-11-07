@@ -34,9 +34,9 @@ export const LINKS: LinkCard[] = [
 		group: 'chats',
 		title: { ru: 'Раздел про ALTA в чате @srb_guide', en: 'ALTA section in the @srb_guide chat', sr: 'Odeljak o ALTA banci u četu @srb_guide' },
 		what: {
-			ru: 'Для тех, у кого меньше 50 000 €: отдельная ветка про ALTA в чате «гайда Олега».',
-			en: 'For people with less than €50,000: a separate ALTA thread in the “Oleg’s guide” chat.',
-			sr: 'Za one sa manje od 50.000 €: posebna tema o ALTA banci u četu „Olegovog vodiča“.',
+			ru: 'Для тех, у кого меньше 50 000 €: отдельная ветка про ALTA в чате @srb_guide.',
+			en: 'For people with less than €50,000: a separate ALTA thread in the @srb_guide chat.',
+			sr: 'Za one sa manje od 50.000 €: posebna tema o ALTA banci u četu @srb_guide.',
 		},
 		kind: 'unverified',
 		url: 'https://t.me/srb_guide/352309',
@@ -58,14 +58,14 @@ export const LINKS: LinkCard[] = [
 		group: 'help',
 		title: { ru: 'Белград: DC Loža, продукты и вещи', en: 'Belgrade: DC Loža, food and goods', sr: 'Beograd: DC Loža, hrana i stvari' },
 		what: {
-			ru: 'Принимают и раздают продукты, детское питание, корм для животных, бытовую химию. Белград, Dalmatinska 84L (вход со стороны Ivankovačka), с 02.11 по 07.11.2026: пн и вт 11:00–00:00, ср 11:00–18:00, чт и пт 11:00–17:00, сб 11:00–15:00. Хотите помочь волонтёром — пишите в бот.',
-			en: 'They accept and give out food, baby food, pet food and household items. Belgrade, Dalmatinska 84L (entrance from Ivankovačka), 02.11 to 07.11.2026: Mon and Tue 11:00–00:00, Wed 11:00–18:00, Thu and Fri 11:00–17:00, Sat 11:00–15:00. Volunteers should write to the bot.',
-			sr: 'Primaju i dele hranu, hranu za bebe, hranu za životinje i kućnu hemiju. Beograd, Dalmatinska 84L (ulaz sa strane Ivankovačke), od 02.11. do 07.11.2026: pon i uto 11:00–00:00, sre 11:00–18:00, čet i pet 11:00–17:00, sub 11:00–15:00. Volonteri pišu botu.',
+			ru: 'Принимают и раздают продукты, детское питание, корм для животных, бытовую химию. Белград, Dalmatinska 84L (вход со стороны Ivankovačka), акция объявлена с 02.11 по 07.11.2026; часы работы и продление — в канале t.me/dcloza. Хотите помочь волонтёром — пишите в бот.',
+			en: 'They accept and give out food, baby food, pet food and household items. Belgrade, Dalmatinska 84L (entrance from Ivankovačka), the drive was announced for 02.11 to 07.11.2026; opening hours and any extension are in the t.me/dcloza channel. Volunteers should write to the bot.',
+			sr: 'Primaju i dele hranu, hranu za bebe, hranu za životinje i kućnu hemiju. Beograd, Dalmatinska 84L (ulaz sa strane Ivankovačke), akcija je najavljena od 02.11. do 07.11.2026; radno vreme i eventualno produženje su na kanalu t.me/dcloza. Volonteri pišu botu.',
 		},
 		kind: 'unverified',
 		url: 'https://t.me/dcloza',
 		label: 't.me/dcloza',
-		extra: { url: 'https://maps.app.goo.gl/krKnvr2Qv7YLFV2b7', label: { ru: 'Карта', en: 'Map', sr: 'Mapa' } },
+		extra: { url: 'https://maps.google.com/maps?q=DC+Lo%C5%BEa,+%D0%94%D0%B0%D0%BB%D0%BC%D0%B0%D1%82%D0%B8%D0%BD%D1%81%D0%BA%D0%B0+84L,+%D0%91%D0%B5%D0%BE%D0%B3%D1%80%D0%B0%D0%B4+11000&ftid=0x475a7b323372eab3:0x7a48d3f35c96fc1b', label: { ru: 'Карта', en: 'Map', sr: 'Mapa' } },
 	},
 	{
 		group: 'help',
@@ -131,7 +131,7 @@ export const LINKS: LinkCard[] = [
 	},
 	{
 		group: 'tools',
-		title: { ru: 'Где открыть счёт для выплаты: статистика', en: 'Where to open an account for the payout: statistics', sr: 'Gde otvoriti račun za isplatu: statistika' },
+		title: { ru: 'Где открыть счёт для выплаты: статистика', en: 'Where to open an account for the payout: statistics (in Russian)', sr: 'Gde otvoriti račun za isplatu: statistika (na ruskom)' },
 		what: {
 			ru: 'В каких банках вкладчикам удалось открыть счёт: личный, ИП или бизнес.',
 			en: 'At which banks depositors managed to open a personal account and a sole-trader or business account.',

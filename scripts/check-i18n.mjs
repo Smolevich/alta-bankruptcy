@@ -24,7 +24,7 @@ const norm = (v) => JSON.stringify(v);
 
 function sourcesKey(data) {
 	const date = (d) => (d instanceof Date ? d.toISOString().slice(0, 10) : String(d));
-	return norm((data.sources ?? []).map((s) => [s.url, s.kind, date(s.date)]));
+	return norm((data.sources ?? []).map((s) => [s.url, s.kind, date(s.date), s.copy ?? null]));
 }
 
 function compare(group, files) {
@@ -64,6 +64,9 @@ for (const lang of LANGS) {
 	for (const f of readdirSync(join(NEWS, lang))) (news[f] ??= {})[lang] = join(NEWS, lang, f);
 }
 for (const [name, files] of Object.entries(news)) compare(`news/${name}`, files);
+
+// Перевода интерфейса Starlight для sr-Latn нет в комплекте: без своего файла /sr/ показывает меню по-русски.
+if (!existsSync('src/content/i18n/sr-Latn.json')) errors.push('нет src/content/i18n/sr-Latn.json: интерфейс /sr/ будет по-русски');
 
 if (errors.length) {
 	console.error(errors.map((e) => `✗ ${e}`).join('\n'));

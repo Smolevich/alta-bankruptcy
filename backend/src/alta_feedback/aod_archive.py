@@ -141,15 +141,15 @@ def archive_files(root: Path) -> Iterator[Path]:
         yield from (p for p in sorted((root / sub).glob("*.pdf")) if p.is_file())
 
 
-def backup(root: Path, backup_dir: Path, day: str) -> Path:
-    """Архив целиком в <backup_dir>/<day>.tar.gz для ночной копии в R2.
+def backup(root: Path, backup_dir: Path, day: str, files: list[Path] | None = None) -> Path:
+    """Архив целиком (или files внутри root) в <backup_dir>/<day>.tar.gz для ночной копии в R2.
 
     Новый tar — только если в архиве появилось что-то новее прошлого; иначе прошлый
     просто «освежается», чтобы недельная проверка бэкапов видела, что задача жива.
     """
     backup_dir.mkdir(mode=0o700, parents=True, exist_ok=True)
     previous = max(backup_dir.glob("*.tar.gz"), key=lambda p: p.stat().st_mtime, default=None)
-    files = list(archive_files(root))
+    files = list(archive_files(root)) if files is None else files
     if previous and all(p.stat().st_mtime <= previous.stat().st_mtime for p in files):
         previous.touch()
         return previous

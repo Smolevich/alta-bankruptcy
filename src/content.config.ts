@@ -1,23 +1,34 @@
 import { defineCollection, z } from 'astro:content';
 import { file, glob } from 'astro/loaders';
-import { docsLoader } from '@astrojs/starlight/loaders';
-import { docsSchema } from '@astrojs/starlight/schema';
+import { docsLoader, i18nLoader } from '@astrojs/starlight/loaders';
+import { docsSchema, i18nSchema } from '@astrojs/starlight/schema';
 
 // Правило сайта «нет источника — нет правки» зашито в схему: страница или новость
 // без хотя бы одного источника не соберётся.
-export const SOURCE_KINDS = ['official', 'reliable_media', 'unverified'] as const;
+// official — только госорганы, суды, банки и регуляторы; правовые базы, издатели, палаты — reference;
+// own — материалы самого сайта. Какой kind допустим для домена, проверяет scripts/check-sources.mjs.
+export const SOURCE_KINDS = ['official', 'reliable_media', 'unverified', 'reference', 'own'] as const;
 
 const source = z.object({
 	title: z.string().min(1),
 	url: z.string().url(),
 	kind: z.enum(SOURCE_KINDS),
 	date: z.coerce.date(),
+	// Официальные сайты удаляют и переносят файлы: рядом с оригиналом — наша копия PDF
+	// (/docs/…) или снимок страницы в веб-архиве.
+	copy: z
+		.string()
+		.regex(/^(\/docs\/|https:\/\/web\.archive\.org\/web\/|https:\/\/archive\.ph\/)/, 'Копия: /docs/… или ссылка на веб-архив')
+		.optional(),
 });
 // Строка на трёх языках: пропуск любого языка ломает сборку.
 const loc = z.object({ ru: z.string(), en: z.string(), sr: z.string() });
 const sources = z.array(source).min(1, 'Нужен хотя бы один источник');
 
 export const collections = {
+	// Для sr-Latn у Starlight нет своего перевода интерфейса: без src/content/i18n/sr-Latn.json
+	// меню, поиск и подписи якорей на /sr/ падают в язык корня — русский.
+	i18n: defineCollection({ loader: i18nLoader(), schema: i18nSchema() }),
 	docs: defineCollection({
 		loader: docsLoader(),
 		schema: docsSchema({
@@ -33,7 +44,7 @@ export const collections = {
 		schema: z.object({
 			title: z.string().min(1),
 			date: z.coerce.date(),
-			publisher: z.enum(['aod', 'nbs', 'bank', 'court']),
+			publisher: z.enum(['aod', 'nbs', 'bank', 'postanska', 'court']),
 			summary: z.string().min(20).max(900),
 			// Порядок среди новостей одного дня: больше — выше.
 			order: z.number().default(0),

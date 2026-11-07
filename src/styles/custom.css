@@ -132,6 +132,8 @@ html, body { overflow-x: clip; }
 .faq summary { cursor: pointer; font-weight: 700; }
 .faq p { margin: 0.5rem 0 0; }
 .faq p.faq-more { font-size: 0.9rem; overflow-wrap: anywhere; }
+/* Ссылки под ответом не в markdown-контенте: без этого они браузерные синие и фиолетовые. */
+.faq a, .faq a:visited { color: var(--sl-color-text-accent); }
 .faq-open summary { list-style: none; cursor: default; pointer-events: none; }
 .faq-open summary::-webkit-details-marker { display: none; }
 .faq-all { margin-top: 0.75rem; font-weight: 700; }
@@ -143,11 +145,14 @@ html, body { overflow-x: clip; }
 .sources ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.35rem; }
 .sources li { display: grid; grid-template-columns: auto 1fr auto; gap: 0.5rem; align-items: baseline; margin: 0; }
 .sources a { overflow-wrap: anywhere; }
+.sources .src-copy { font-size: 0.8rem; color: #5a5448; }
 .sources time { color: #5a5448; font-size: 0.8rem; white-space: nowrap; }
 .kind { font-size: 0.7rem; padding: 0.05rem 0.4rem; border-radius: 3px; border: 1px solid; white-space: nowrap; }
 .kind-official { color: var(--ok); }
 .kind-reliable_media { color: #7a5a00; }
 .kind-unverified { color: var(--seal); }
+.kind-reference { color: #3d5a80; }
+.kind-own { color: #5a5448; }
 @media (max-width: 520px) {
 	.sources li { grid-template-columns: 1fr auto; }
 	.sources .kind { grid-column: 1 / -1; justify-self: start; }
@@ -170,7 +175,7 @@ html, body { overflow-x: clip; }
 .flow-title { font: 700 1rem/1.2 var(--serif); overflow-wrap: anywhere; hyphens: auto; }
 .flow-blurb { margin: 0.35rem 0 0.7rem; font-size: 0.85rem; line-height: 1.35; color: #5a5448; }
 .flow-go { margin-top: auto; font-size: 0.8rem; font-weight: 700; color: var(--seal); }
-.flow-route { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-bottom: 1.4rem; }
+.flow-route { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-bottom: 1.4rem; }
 .flow-route li:not(:last-child)::after { content: '→'; position: absolute; right: -1.05rem; top: 1.1rem; width: 1rem; text-align: center; font-weight: 700; color: var(--seal); }
 .flow-all .flow-tile { border-top-width: 2px; box-shadow: none; }
 .flow-all .flow-tile-safe { border-top-width: 5px; }
@@ -275,10 +280,12 @@ html, body { overflow-x: clip; }
 .save-tip { margin: 1rem 0 1.5rem; padding: 0.8rem 1rem; border: 2px solid var(--seal); background: var(--seal-soft); border-radius: 4px; }
 .save-tip strong { display: block; margin-bottom: 0.3rem; color: var(--seal); }
 .save-tip p { margin: 0.3rem 0 0; }
+.save-tip a, .save-tip a:visited { color: var(--seal); }
 .shot-row { display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-start; }
 
 /* ---- «Не юридическая консультация» сверху страниц с правовыми сроками ---- */
 .legal-note { display: block; margin: 0 0 1.2rem; padding: 0.5rem 0.8rem; border-left: 3px solid var(--ink); background: #fffdf7; font-size: 0.88rem; color: #3d4652; }
+.bank-note { padding-left: 0.7rem; border-left: 3px solid var(--seal); font-size: 0.92rem; color: #3d4652; }
 
 /* ---- Страница «Адвокат»: путь из четырёх шагов, две колонки, схема объединения, чек-лист ---- */
 .adv-lead { font-size: 1.05rem; }
@@ -332,4 +339,175 @@ html, body { overflow-x: clip; }
 	.adv-team { padding: 0.8rem 0.5rem; }
 	.adv-team-row { gap: 0.4rem; }
 	.adv-team-p { font-size: 0.74rem; padding: 0.45rem 0.3rem; }
+}
+
+/* ---- Два скриншота рядом: одинаковая высота, по центру; на телефоне друг под другом ---- */
+.shot-pair { display: flex; justify-content: center; align-items: flex-start; gap: 1.5rem; margin: 1rem 0 1.4rem; }
+.shot-pair .shot { margin: 0; max-width: none; width: min-content; }
+.shot-pair .shot img { height: 26rem; width: auto; max-width: none; }
+@media (max-width: 640px) {
+	.shot-pair { flex-direction: column; align-items: center; }
+	.shot-pair .shot img { height: 24rem; }
+}
+
+/* ---- Collapsible.astro: архив неактуальных инструкций ---- */
+.collapsible { margin: 1rem 0; border: 1px solid var(--line); border-radius: 6px; background: #fffdf7; }
+.collapsible > summary { cursor: pointer; padding: 0.7rem 1rem; font-weight: 600; color: #4a4538; }
+.collapsible[open] > summary { border-bottom: 1px solid var(--line); }
+.collapsible-body { padding: 0.2rem 1rem 0.8rem; }
+
+/* ---- BankAssets.astro: таблица активов; на телефоне строки становятся карточками ---- */
+.assets { width: 100%; margin: 1rem 0 0.4rem; border-collapse: collapse; background: #fffdf7; font-size: 0.93rem; }
+.assets caption { text-align: left; font: 700 1.05rem/1.3 var(--serif); padding-bottom: 0.4rem; }
+.assets th, .assets td { padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--line); vertical-align: top; text-align: left; }
+.assets td { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.assets thead th { border-bottom: 2px solid var(--ink); font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em; }
+.assets thead th:not(:first-child) { text-align: right; }
+.assets tbody th { font-weight: 700; }
+.assets-note { display: block; margin-top: 0.15rem; font-weight: 400; font-size: 0.84rem; color: #5a5448; }
+.assets tfoot th, .assets tfoot td { border-top: 2px solid var(--ink); border-bottom: 0; font-weight: 700; }
+.assets-src { font-size: 0.85rem; color: #5a5448; }
+.assets-src a { color: var(--seal); }
+@media (max-width: 640px) {
+	.assets, .assets tbody, .assets tfoot, .assets tr, .assets th, .assets td { display: block; }
+	.assets thead { display: none; }
+	.assets caption { display: block; width: 100%; }
+	.assets tr { margin: 0 0 0.6rem; padding: 0.6rem 0.8rem; border: 1px solid var(--line); border-left: 4px solid var(--ink); border-radius: 3px; background: #fffdf7; }
+	.assets tfoot tr { border-left-color: var(--seal); }
+	.assets th, .assets td, .assets tfoot th, .assets tfoot td { padding: 0; border: 0; }
+	.assets tbody th, .assets tfoot th { margin-bottom: 0.35rem; }
+	.assets td { display: flex; justify-content: space-between; gap: 1rem; text-align: right; }
+	.assets td::before { content: attr(data-label); color: #5a5448; font-weight: 400; text-align: left; }
+	.assets { background: none; }
+}
+
+/* ---- Страница «Что есть у банка»: блок «коротко» сверху ---- */
+.assets-lead { margin: 0 0 1.2rem; padding: 0.8rem 1rem; background: #fffdf7; border: 2px solid var(--ink); border-radius: 4px; box-shadow: 4px 4px 0 var(--seal-soft); }
+.assets-lead ul { margin: 0; padding-left: 1.1rem; }
+.assets-lead li { margin: 0 0 0.3rem; }
+
+/* ---- Отделения Poštanska для выплаты (PostanskaBranches.astro): карточки, без широкой таблицы ---- */
+.branches { margin: 1rem 0 1.6rem; }
+.branches a { color: var(--sl-color-text-accent); }
+.branches p { margin: 0 0 0.6rem; }
+.branches-src { font-size: 0.88rem; color: #5a5448; overflow-wrap: anywhere; }
+.branches-total { font-weight: 700; }
+.branch { box-sizing: border-box; padding: 0.7rem 0.85rem; background: #fffdf7; border: 1px solid var(--line); border-left: 4px solid var(--line); border-radius: 3px; min-width: 0; }
+.branch h4 { margin: 0 0 0.2rem; font-size: 1rem; line-height: 1.3; overflow-wrap: anywhere; }
+.branch .branch-addr { margin: 0 0 0.35rem; font-size: 0.95rem; overflow-wrap: anywhere; }
+.branch-code { font-weight: 400; font-size: 0.78rem; color: #5a5448; white-space: nowrap; }
+.branch-hours { display: grid; grid-template-columns: auto 1fr; gap: 0.1rem 0.6rem; margin: 0 0 0.1rem; font-size: 0.88rem; }
+.branch-hours dt { color: #5a5448; }
+.branch-hours dd { margin: 0; font-variant-numeric: tabular-nums; }
+.branch-map { display: inline-block; font-weight: 700; font-size: 0.9rem; padding: 0.25rem 0 0; }
+.branch-special { margin: 0 0 1rem; border-left-color: var(--seal); background: #fff8f5; }
+.branch .branch-tag { margin: 0; font-weight: 700; color: var(--seal); font-size: 0.9rem; }
+.branch .branch-tag-orig { margin: 0; font-size: 0.75rem; color: #5a5448; font-style: italic; }
+.branch .branch-tag-note { margin: 0 0 0.3rem; font-size: 0.8rem; color: #5a5448; }
+.branch-cities { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0 0 1rem; }
+.branch-cities a { padding: 0.35rem 0.6rem; border: 1px solid var(--line); border-radius: 3px; background: #fffdf7; font-size: 0.88rem; text-decoration: none; }
+.branch-cities a span, .branch-n { color: #5a5448; font-weight: 400; }
+.branch-city { scroll-margin-top: 5rem; }
+.branch-city h3 { margin: 1.2rem 0 0.5rem; font-size: 1.15rem; }
+.branch-city ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.6rem; grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); }
+.branch-city li { margin: 0 !important; }
+.branches-phones { margin-top: 1rem !important; font-size: 0.88rem; }
+
+/* Карта отделений и строки «размер / обычно людно» */
+.branches-note { font-size: 0.9rem; padding: 0.6rem 0.8rem; background: #fffdf7; border: 1px solid var(--line); border-left: 4px solid var(--seal); border-radius: 3px; }
+.branch .branch-extra { margin: 0 0 0.25rem; font-size: 0.88rem; }
+/* График загрузки по часам в карточках */
+.hist { margin: 0.4rem 0 0.3rem; max-width: 16rem; }
+.hist-lbl { font-size: 0.78rem; color: #5a5448; margin-top: 0.25rem; }
+.hist-svg { display: block; width: 100%; height: auto; color: #5a5448; }
+.hist-svg .bar { fill: var(--sl-color-text-accent, #9b2c22); }
+.hist-svg .axis { stroke: currentColor; stroke-width: 0.5; opacity: 0.5; }
+.hist-svg .tick { fill: currentColor; font-size: 7px; }
+.hist-note { margin: 0.25rem 0 0 !important; font-size: 0.75rem; line-height: 1.3; color: #5a5448; }
+:root[data-theme='dark'] .hist-svg, :root[data-theme='dark'] .hist-lbl, :root[data-theme='dark'] .hist-note { color: #cfc9b8; }
+
+/* Фильтры отделений */
+.branches [hidden] { display: none !important; }
+.branch-filters { display: flex; flex-wrap: wrap; gap: 0.5rem 0.9rem; align-items: flex-end; margin: 0 0 0.8rem; padding: 0.6rem 0.8rem; background: #fffdf7; border: 1px solid var(--line); border-radius: 3px; }
+.branch-filters label { display: flex; flex-direction: column; gap: 0.15rem; font-size: 0.82rem; color: #5a5448; min-width: 0; }
+.branch-filters select, .branch-filters button { font: inherit; font-size: 0.92rem; padding: 0.3rem 0.4rem; border: 1px solid var(--line); border-radius: 3px; background: #fff; color: var(--ink); max-width: 100%; }
+.branch-filters button { cursor: pointer; font-weight: 700; color: var(--seal); }
+.branch-filters fieldset { display: flex; flex-wrap: wrap; gap: 0.4rem 0.7rem; margin: 0; padding: 0; border: 0; min-width: 0; }
+.branch-filters legend { font-size: 0.82rem; color: #5a5448; padding: 0; margin-bottom: 0.15rem; }
+.branch-filters .f-note, .branch-filters .f-count { flex-basis: 100%; margin: 0 !important; font-size: 0.82rem; color: #5a5448; }
+.branch.f-hl { border-left-color: var(--ok); }
+.branch .f-free { color: var(--ok); font-weight: 700; }
+.branch .branch-nodata { color: #5a5448; font-style: italic; }
+@media (max-width: 600px) { .branch-filters label, .branch-filters fieldset { flex: 1 1 8rem; } }
+
+/* ---- Карта очередей Poštanska (PostanskaBranches.astro, MapLibre) ---- */
+/* Палитра сайта (бумага, чернила, печать); цвета загрузки — смысловые, приглушены под неё, текст на них ≥ 4.5:1. */
+.qmap { --q-muted: #5a5448; --q-none: var(--ok); --q-few: #d9b44a; --q-few-ink: #2b2200; --q-full: #b5541c; --q-outside: var(--seal); --q-unknown: #8a8478;
+	container-type: inline-size; margin: 0 0 1.2rem; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; background: #fbf8f0; color: var(--ink); box-shadow: 6px 6px 0 var(--seal-soft); font-family: var(--sl-font-system); }
+.qmap p { margin: 0; }
+.qmap-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem 1rem; padding: 0.7rem 1rem; border-bottom: 1px solid var(--line); background: #fffdf7; }
+.qmap-title { font-family: var(--serif); display: flex; align-items: center; gap: 0.55rem; font-weight: 700; font-size: 1.05rem; line-height: 1.25; min-width: 0; }
+.qmap-title svg { width: 1.6rem; height: 1.6rem; flex: none; color: var(--seal); }
+.qmap-tabs { display: flex; gap: 0.3rem; }
+.qmap-tabs button { font: inherit; font-size: 0.95rem; padding: 0.4rem 0.9rem; border: 1px solid transparent; border-radius: 3px; background: transparent; color: var(--q-muted); cursor: pointer; }
+.qmap-tabs button[aria-selected='true'] { background: #fbf8f0; border-color: var(--line); color: var(--ink); font-weight: 700; box-shadow: inset 0 -2px 0 var(--seal); }
+.qmap-body { display: grid; grid-template-columns: 13rem minmax(0, 1fr); }
+.qmap-panel { display: flex; flex-direction: column; gap: 0.9rem; padding: 1rem; min-width: 0; }
+.qmap-city { display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.9rem; color: var(--q-muted); }
+.qmap-city select { font: inherit; font-size: 1rem; padding: 0.5rem 0.6rem; border-radius: 3px; border: 1px solid var(--line); background: #fff; color: var(--ink); max-width: 100%; }
+.qmap-legend summary { color: var(--ink); font-weight: 700; font-size: 0.92rem; cursor: pointer; }
+.qmap-legend ul { list-style: none; margin: 0.5rem 0 0; padding: 0; display: grid; gap: 0.45rem; font-size: 0.9rem; }
+.qmap-legend li { display: flex; align-items: center; gap: 0.55rem; margin: 0; }
+.q-dot { display: inline-block; flex: none; width: 0.95rem; height: 0.95rem; border-radius: 50%; background: var(--q-unknown); }
+.q-dot.q-none, .q-pin.q-none .q-pin-ico, .q-badge.q-none { background: var(--q-none); }
+.q-dot.q-few, .q-pin.q-few .q-pin-ico, .q-badge.q-few { background: var(--q-few); }
+.q-dot.q-full, .q-pin.q-full .q-pin-ico, .q-badge.q-full { background: var(--q-full); }
+.q-dot.q-outside, .q-pin.q-outside .q-pin-ico, .q-badge.q-outside { background: var(--q-outside); }
+.q-report { font: inherit; font-weight: 700; font-size: 0.98rem; padding: 0.7rem 0.9rem; border: 0; border-radius: 3px; background: var(--seal); color: #fff; cursor: pointer; text-align: left; }
+.q-report span { font-size: 1.2rem; margin-right: 0.3rem; }
+.q-report:hover { background: #6f1d16; }
+.q-msg { font-size: 0.85rem; color: var(--seal); }
+.q-msg:empty { display: none; }
+.qmap-caption { margin-top: auto !important; font-size: 0.8rem; line-height: 1.35; color: var(--q-muted); }
+.qmap-view { position: relative; min-width: 0; height: 34rem; background: #f2efe9; }
+.qmap-canvas { height: 100%; }
+.qmap-list { list-style: none; margin: 0; padding: 0.6rem; height: 100%; box-sizing: border-box; overflow-y: auto; color: var(--ink); }
+.qmap-list li { margin: 0 0 0.4rem !important; }
+.qmap-list button { display: flex; gap: 0.6rem; align-items: flex-start; width: 100%; text-align: left; font: inherit; font-size: 0.92rem; padding: 0.6rem 0.7rem; border: 1px solid var(--line); border-radius: 3px; background: #fffdf7; color: inherit; cursor: pointer; }
+.qmap-list .q-dot { margin-top: 0.2rem; }
+.qmap-list small { color: #5a5448; }
+.q-pin { display: flex; align-items: center; padding: 0; border: 0; background: none; cursor: pointer; }
+.q-pin-ico { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--q-unknown); color: #fff; border: 2px solid #fffdf7; box-shadow: 0 1px 4px rgba(27, 36, 48, 0.35); }
+.q-pin-ico svg { width: 17px; height: 17px; }
+.q-pin-tag { margin-left: -6px; padding: 0.15rem 0.5rem 0.15rem 0.6rem; border-radius: 0 999px 999px 0; background: #fffdf7; color: var(--ink); border: 1px solid var(--line); border-left: 0; font-size: 0.8rem; font-weight: 700; white-space: nowrap; box-shadow: 0 1px 4px rgba(27, 36, 48, 0.2); }
+.q-popup .maplibregl-popup-content { padding: 0.85rem 0.9rem 0.8rem; border: 1px solid var(--line); border-radius: 4px; background: #fffdf7; box-shadow: 4px 4px 0 var(--seal-soft); font-family: var(--sl-font-system); color: var(--ink); }
+.q-popup .maplibregl-popup-tip { border-top-color: #fffdf7; border-bottom-color: #fffdf7; }
+.q-popup .maplibregl-popup-close-button { display: grid; place-items: center; min-width: 32px; min-height: 32px; padding: 0; font-size: 1.3rem; line-height: 1; color: var(--ink); background: none; border: 0; }
+.q-popup .maplibregl-popup-close-button:hover { background: var(--seal-soft); }
+.q-card p { margin: 0 0 0.35rem; font-size: 0.88rem; line-height: 1.35; }
+.q-card-name { font-family: var(--serif); display: flex; align-items: center; gap: 0.4rem; padding-right: 1rem; font-size: 0.98rem !important; }
+.q-card-name svg { width: 1.2rem; height: 1.2rem; flex: none; color: var(--seal); }
+.q-card-addr, .q-card-upd, .q-card-info p { color: var(--q-muted); }
+.q-badge { display: inline-block; margin: 0.1rem 0 0.35rem; padding: 0.2rem 0.6rem; border-radius: 999px; color: #fff; font-size: 0.82rem; font-weight: 700; }
+.q-badge.q-few { color: var(--q-few-ink); }
+.q-ask { font-weight: 700; color: var(--ink) !important; margin-top: 0.5rem !important; }
+.q-picks { display: grid; grid-template-columns: 1fr 1fr; gap: 0.35rem; }
+.q-pick { font: inherit; font-size: 0.82rem; font-weight: 700; line-height: 1.2; padding: 0.5rem 0.4rem; border: 0; border-radius: 3px; color: #fff; cursor: pointer; }
+.q-pick.q-none { background: var(--q-none); } .q-pick.q-few { background: var(--q-few); color: var(--q-few-ink); } .q-pick.q-full { background: var(--q-full); } .q-pick.q-outside { background: var(--q-outside); }
+.q-pick:disabled { opacity: 0.55; cursor: default; }
+.q-more { margin: 0.4rem 0 0; font-size: 0.8rem; color: var(--q-muted); }
+.q-more input { box-sizing: border-box; width: 100%; margin-top: 0.3rem; font: inherit; font-size: 0.9rem; padding: 0.35rem 0.45rem; border: 1px solid var(--line); border-radius: 3px; background: #fff; color: var(--ink); }
+.q-card-msg { margin-top: 0.4rem !important; font-weight: 700; color: var(--ink) !important; }
+.q-card-msg:empty { display: none; }
+.q-gmaps { display: block; margin-top: 0.35rem; padding: 0.55rem; border-radius: 3px; background: var(--ink); color: #fff !important; text-align: center; font-weight: 700; font-size: 0.88rem; text-decoration: none; }
+.qmap .maplibregl-ctrl-attrib { font-size: 0.72rem; }
+@container (max-width: 560px) {
+	.qmap-body { grid-template-columns: minmax(0, 1fr); min-height: 0; }
+	.qmap-panel { gap: 0.6rem; padding: 0.75rem; }
+	.qmap-legend ul { grid-template-columns: 1fr 1fr; font-size: 0.82rem; }
+	.qmap-caption { font-size: 0.76rem; }
+	.qmap-view { height: 31rem; }
+	.q-card-info, .q-card-addr { display: none; }
+	.qmap-tabs { width: 100%; }
+	.qmap-tabs button { flex: 1; }
 }

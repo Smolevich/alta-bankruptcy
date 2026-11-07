@@ -1,0 +1,95 @@
+---
+title: "Что есть у банка"
+description: "Какое имущество было у ALTA banka по её последней публичной отчётности (31.12.2025 и 30.06.2026): деньги, кредиты, здания и земля, дочерние компании, последние покупки. Суммы в динарах и евро со ссылками на страницы PDF."
+checked: 2026-11-05
+sources:
+  - { title: "Сайт банка: раскрытие информации за I полугодие 2026", url: "https://altabanka.rs/static/uploads/2026/09/Objavljivanje-podataka-i-informacija_01.01.2026.-30.06.2026.pdf", kind: official, date: 2026-10-31, copy: "/docs/alta-2026-h1-objavljivanje.pdf" }
+  - { title: "Сайт банка: годовой отчёт 2025 с заключением аудитора", url: "https://altabanka.rs/static/uploads/2026/04/Alta-banka_Izvestaj-revizora_2025_Final-potpisan.pdf", kind: official, date: 2026-10-31, copy: "/docs/alta-2025-izvestaj-revizora.pdf" }
+  - { title: "Сайт банка: годовой отчёт 2024 с заключением аудитора", url: "https://altabanka.rs/static/uploads/2025/04/Alta-banka_Izvestaj-revizora_2024_Final-potpisan.pdf", kind: official, date: 2026-10-31, copy: "/docs/alta-2024-izvestaj-revizora.pdf" }
+  - { title: "Сайт банка: раскрытие информации за 2025", url: "https://altabanka.rs/static/uploads/2026/05/Objavljivanje-podataka-i-informacija_01.01.2025.-31.12.2025.pdf", kind: official, date: 2026-10-31, copy: "/docs/alta-2025-objavljivanje.pdf" }
+  - { title: "APR: публичный реестр финансовых отчётов, баланс ALTA BANKA AD BEOGRAD на 31.12.2025", url: "https://fin.apr.gov.rs/JavnaPretraga/Home/Index", kind: official, date: 2026-10-31, copy: "/docs/alta-2025-bilans-stanja.pdf" }
+  - { title: "Нацбанк: средний курс динара на 30.06.2026", url: "https://webappcenter.nbs.rs/ExchangeRateWebApp/ExchangeRate/IndexByDate?isSearchExecuted=true&Date=30.06.2026.&ExchangeRateListTypeID=3", kind: official, date: 2026-11-05, copy: "https://archive.ph/tjbdp" }
+  - { title: "Нацбанк: средний курс динара на 31.12.2025", url: "https://webappcenter.nbs.rs/ExchangeRateWebApp/ExchangeRate/IndexByDate?isSearchExecuted=true&Date=31.12.2025.&ExchangeRateListTypeID=3", kind: official, date: 2026-11-05, copy: "https://archive.ph/Idart" }
+  - { title: "Нацбанк: средний курс динара на 31.12.2024", url: "https://webappcenter.nbs.rs/ExchangeRateWebApp/ExchangeRate/IndexByDate?isSearchExecuted=true&Date=31.12.2024.&ExchangeRateListTypeID=3", kind: official, date: 2026-11-05, copy: "https://archive.ph/U1PD9" }
+  - { title: "Нацбанк: средний курс динара на 29.12.2023", url: "https://webappcenter.nbs.rs/ExchangeRateWebApp/ExchangeRate/IndexByDate?isSearchExecuted=true&Date=29.12.2023.&ExchangeRateListTypeID=3", kind: official, date: 2026-11-05, copy: "https://archive.ph/7QuQP" }
+  - { title: "Нацбанк: сообщение об отзыве лицензии, 30.10.2026", url: "https://www.nbs.rs/sr/scripts/showcontent/index.html?id=21849", kind: official, date: 2026-11-05, copy: "https://web.archive.org/web/20261105214810/https://www.nbs.rs/sr/scripts/showcontent/index.html?id=21849" }
+  - { title: "Закон о банкротстве и ликвидации банков и страховых компаний, ст. 16", url: "https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2015/14/3/reg", kind: official, date: 2026-11-05, copy: "https://archive.ph/oRzzn" }
+  - { title: "Город Белград: ранний публичный просмотр изменений плана детального регулирования для части Блока 32", url: "https://www.beograd.rs/lat/gradski-oglasi-i-konkursi/a114511/Rani-javni-uvid-za-potrebe-izrade-Izmena-i-dopuna-plana-detaljne-regulacije-za-deo-bloka-32-Novi-Beograd.html", kind: official, date: 2026-11-05, copy: "https://web.archive.org/web/20261105214642/https://www.beograd.rs/lat/gradski-oglasi-i-konkursi/a114511/Rani-javni-uvid-za-potrebe-izrade-Izmena-i-dopuna-plana-detaljne-regulacije-za-deo-bloka-32-Novi-Beograd.html" }
+  - { title: "N1: Zaha Hadid Architects и Bureau Cube Partners проектируют Alta kulu", url: "https://n1info.rs/biznis/alta-banka-kula-novi-beograd-zaha-hadid/", kind: reliable_media, date: 2025-10-07, copy: "https://web.archive.org/web/20261105214411/https://n1info.rs/biznis/alta-banka-kula-novi-beograd-zaha-hadid/" }
+  - { title: "Biznis.rs: «Pripremljen planski osnov za Alta kulu kod Merkatora visoku 125 metara»", url: "https://biznis.rs/vesti/srbija/pripremljen-planski-osnov-za-alta-kulu-kod-merkatora-visoku-125-metara/", kind: reliable_media, date: 2026-06-30, copy: "https://web.archive.org/web/20261105214535/https://biznis.rs/vesti/srbija/pripremljen-planski-osnov-za-alta-kulu-kod-merkatora-visoku-125-metara/" }
+---
+
+import BankAssets from '../../components/BankAssets.astro';
+
+<div class="assets-lead">
+<ul>
+<li>Здесь цифры из документов самого банка: годового отчёта за 2025 год с заключением аудитора и раскрытия информации на 30.06.2026. Копии всех документов лежат на этом сайте: ссылка «копия» в списке источников внизу.</li>
+<li>Эти цифры — на даты отчётов, до отзыва лицензии 30.10.2026. Нацбанк в сообщении об отзыве написал, что в предыдущий период финансовое положение банка значительно ухудшилось ([NBS, 30.10.2026](https://www.nbs.rs/sr/scripts/showcontent/index.html?id=21849)). Сколько имущества у банка на дату банкротства, в опубликованных документах на 05.11.2026 нет.</li>
+<li>По закону AOD в течение 60 дней составляет опись имущества банка и начальный баланс банкротства, а затем раз в квартал публикует отчёт на своём сайте ([ст. 16](https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2015/14/3/reg), [сроки](/procedura/)).</li>
+<li>Суммы в динарах — как в отчётах. Евро — по среднему курсу Нацбанка на дату отчёта: 117,3697 на 30.06.2026, [117,2820](https://webappcenter.nbs.rs/ExchangeRateWebApp/ExchangeRate/IndexByDate?isSearchExecuted=true&Date=31.12.2025.&ExchangeRateListTypeID=3) на 31.12.2025, [117,0149](https://webappcenter.nbs.rs/ExchangeRateWebApp/ExchangeRate/IndexByDate?isSearchExecuted=true&Date=31.12.2024.&ExchangeRateListTypeID=3) на 31.12.2024, [117,1737](https://webappcenter.nbs.rs/ExchangeRateWebApp/ExchangeRate/IndexByDate?isSearchExecuted=true&Date=29.12.2023.&ExchangeRateListTypeID=3) на 31.12.2023 (курсовой лист от 29.12.2023). Копии курсовых листов в веб-архиве: [30.06.2026](https://archive.ph/tjbdp), [31.12.2025](https://archive.ph/Idart), [31.12.2024](https://archive.ph/U1PD9), [29.12.2023](https://archive.ph/7QuQP).</li>
+</ul>
+</div>
+
+## Всё имущество на 30.06.2026
+
+Всего активов — 214 931 млн динаров (≈1 831 млн €). Обязательств — 187 063 млн динаров (≈1 594 млн €), из них вкладов и других обязательств перед клиентами — 172 045 млн (≈1 466 млн €) ([с. 12](/docs/alta-2026-h1-objavljivanje.pdf#page=12)).
+
+<BankAssets />
+
+Кредиты клиентам и деньги в кассе и в Нацбанке — 88 % активов. Здания, земля, оборудование и дочерние компании вместе — 3,5 %.
+
+## Деньги
+
+- **Наличные в кассе на 31.12.2025 — 53 817 млн динаров (≈459 млн €)**: 38 931 млн в динарах и 14 886 млн в валюте (примечание 17, [с. 94](/docs/alta-2025-izvestaj-revizora.pdf#page=94)). Годом раньше — 41 572 млн (там же).
+- Строка баланса «Наличные и средства в центральном банке» на 31.12.2025 — 90 497 млн динаров ([баланс, с. 1](/docs/alta-2025-bilans-stanja.pdf#page=1)), на 30.06.2026 — 83 467 млн ([с. 12](/docs/alta-2026-h1-objavljivanje.pdf#page=12)).
+- Ценные бумаги на 31.12.2025 — 1 087 млн динаров, из них облигации и казначейские векселя Сербии — 923 млн (примечание 18, [с. 94](/docs/alta-2025-izvestaj-revizora.pdf#page=94)).
+
+## Недвижимость
+
+На 31.12.2025, примечание 22 ([с. 100](/docs/alta-2025-izvestaj-revizora.pdf#page=100)–[101](/docs/alta-2025-izvestaj-revizora.pdf#page=101)):
+
+| Что | млн динаров | ≈ млн € |
+|---|---|---|
+| Свои здания | 770,7 | 6,6 |
+| Земля | 617,7 | 5,3 |
+| Взятое в лизинг (аренда помещений, машины) | 759,1 | 6,5 |
+| Оборудование и прочие основные средства | 656,9 | 5,6 |
+| **Всего основных средств** | **2 804,3** | **23,9** |
+
+- Здания и землю оценил независимый оценщик на 31.12.2025; зданий под ипотекой у банка нет ([с. 101](/docs/alta-2025-izvestaj-revizora.pdf#page=101)).
+- Право пользования по аренде помещений — 755,0 млн динаров; годом раньше — 172,0 млн (там же). Это аренда офисных помещений у других владельцев, договоры в основном на 5 лет (там же).
+- Сдаваемая в аренду недвижимость — 102,6 млн: часть офисного здания (сдано 247,18 м²) — 71,3 млн и жилая недвижимость — 31,2 млн (примечание 23, там же).
+- Головной офис — Bulevar Zorana Đinđića 121, Новый Белград; ещё 17 отделений ([с. 13](/docs/alta-2025-izvestaj-revizora.pdf#page=13)). Перечня зданий и участков банка в отчёте нет.
+- На 30.06.2026 здания, земля и оборудование — 4 534 млн динаров ([с. 12](/docs/alta-2026-h1-objavljivanje.pdf#page=12)), на 1 730 млн (≈14,7 млн €) больше, чем на 31.12.2025 ([баланс, с. 1](/docs/alta-2025-bilans-stanja.pdf#page=1)). Что добавилось, в раскрытии на 30.06.2026 не сказано.
+
+## Покупки и связанные лица
+
+- **ALTA banka a.d. Bitola (бывшая Stopanska banka a.d. Bitola).** 16.10.2025 банк купил 88,29 %, к 31.12.2025 доля — 93,29 %. Вложение — 2 608,3 млн динаров (≈22,2 млн €) ([с. 13](/docs/alta-2025-izvestaj-revizora.pdf#page=13), [с. 100](/docs/alta-2025-izvestaj-revizora.pdf#page=100)).
+- **ALTA Leasing d.o.o. Beograd (бывшая Vantage leasing).** 11.07.2024 банк получил 100 %; вложение — 273,8 млн динаров (≈2,3 млн €) (там же).
+- **Кредиты связанным лицам** — акционеру, руководству и другим связанным с банком лицам (примечание 32; суммы за вычетом резервов):
+
+| На дату | млн динаров | ≈ млн € |
+|---|---|---|
+| 31.12.2023 | 1 014,9 | 8,7 |
+| 31.12.2024 | 6 400,0 | 54,7 |
+| 31.12.2025 | 10 984,3 | 93,7 |
+
+  Из 10 984,3 млн на 31.12.2025: 2 260,9 млн — кредиты акционеру (единственный акционер банка — ALTA GROUP doo Beograd, [с. 13](/docs/alta-2025-izvestaj-revizora.pdf#page=13)), 127,1 млн — руководству банка, 8 596,3 млн — «прочим связанным лицам» ([с. 113](/docs/alta-2025-izvestaj-revizora.pdf#page=113); 2023 год — [отчёт 2024, с. 111](/docs/alta-2024-izvestaj-revizora.pdf#page=111)).
+- **Крупные риски** (каждый больше 10 % капитала) в сумме — 293,48 % регуляторного капитала на 31.12.2025; предел, который банк сам себе установил, — 380 % ([раскрытие за 2025, с. 22](/docs/alta-2025-objavljivanje.pdf#page=22)).
+
+## Как имущество оценят в банкротстве
+
+По закону ([ст. 16](https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2015/14/3/reg)):
+
+- в описи и начальном балансе банкротства каждое имущество показывают по двум стоимостям — книжной и ликвидационной (ч. 3);
+- ликвидационную стоимость оценивает судебный эксперт или лицензированный аудитор (ч. 3);
+- вместе с описью AOD передаёт суду отчёт об активах банка, включая вложения в другие компании, и о крупных сделках банка за 180 дней до банкротства (ч. 2);
+- раз в квартал AOD обновляет и публикует на своём сайте отчёт о состоянии банкротной массы (ч. 5).
+
+Цифры этой страницы — книжная стоимость из отчётов банка. Ликвидационной стоимости в опубликованных документах на 05.11.2026 нет.
+
+## В документах не раскрыто
+
+1. **Кому принадлежат здание и участок головного офиса.** Город Белград провёл ранний публичный просмотр изменений плана детального регулирования для части Блока 32 в Новом Белграде с 29.06 по 17.07.2026 ([объявление города](https://www.beograd.rs/lat/gradski-oglasi-i-konkursi/a114511/Rani-javni-uvid-za-potrebe-izrade-Izmena-i-dopuna-plana-detaljne-regulacije-za-deo-bloka-32-Novi-Beograd.html); материалы плана по ссылке из объявления на 05.11.2026 недоступны). По данным Biznis.rs от 30.06.2026 (со ссылкой на Gradnja.rs и Beta), план охватывает около 2,1 га между Bulevar Zorana Đinđića и Bulevar umetnosti, где сейчас стоит здание Alta banka, и предусматривает здание высотой до 125 м; проект ведут для компании Alta Real Estate ([Biznis.rs, 30.06.2026](https://biznis.rs/vesti/srbija/pripremljen-planski-osnov-za-alta-kulu-kod-merkatora-visoku-125-metara/)). По данным N1 от 07.10.2025, проект Alta kule на месте нынешнего здания банка заказала Alta banka ([N1, 07.10.2025](https://n1info.rs/biznis/alta-banka-kula-novi-beograd-zaha-hadid/)). Чьи здание и участок — банка или другой компании, — в отчётах банка не сказано.
+2. **Что добавилось к основным средствам за I полугодие 2026** (+1 730 млн динаров).
+3. **Кто «прочие связанные лица»** с кредитами на 8 596,3 млн динаров на 31.12.2025: в отчёте только общая сумма.

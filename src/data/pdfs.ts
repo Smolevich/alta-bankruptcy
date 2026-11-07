@@ -28,10 +28,30 @@ const EXTRA_COPIES: Record<string, string> = {
 		'aod-2014-02-06-uputstvo-prijava-potrazivanja.pdf',
 	'http://www.bg.pr.sud.rs/docs/dokument_03112026_104425437.pdf':
 		'privredni-sud-2026-11-03-resenje-10-st-275-2026.pdf',
+	'http://www.bg.pr.sud.rs/files/files/Saopstenje(1).pdf':
+		'privredni-sud-2026-11-06-saopstenje-alta.pdf',
+	'https://www.aod.rs/uploads/dokumenti/kvartalniizvestaj/Univerzal%20banka_1%20kvartal%202026.pdf':
+		'aod-univerzal-2026-q1-kvartalni-izvestaj.pdf',
 	'https://web.archive.org/web/20160830213118/http://aod.rs/pdf/2014-02-06-obavestenje-o-nacinu-izmirivanja.pdf':
 		'aod-2014-02-06-obavestenje-izmirivanje-obaveza.pdf',
+	'https://nbs.rs/export/sites/NBS_site/documents/propisi/zakoni/zastita_korisnika_finansijskih_usluga_2025.pdf':
+		'nbs-2025-zakon-zastita-korisnika-finansijskih-usluga.pdf',
+	'https://www.aod.rs/uploads/dokumenti/altabanka/uputstvo_novi_ra%C4%8Dun_6_11_2026.pdf':
+		'aod-2026-11-06-uputstvo-izmirenje-obaveza-krediti.pdf',
+	'https://www.aod.rs/uploads/dokumenti/altabanka/Obave%C5%A1tenje_o_po%C4%8Detku_isplate_OD_6nov2026.pdf':
+		'aod-2026-11-06-obavestenje-pocetak-isplate.pdf',
+	'https://www.aod.rs/uploads/dokumenti/altabanka/Spisak.pdf':
+		'aod-2026-11-06-spisak-ekspozitura-postanska.pdf',
+	'https://www.aod.rs/uploads/dokumenti/altabanka/FZI_20261106.pdf':
+		'aod-2026-11-06-poziv-mali-investitori-fzi.pdf',
+	'https://www.aod.rs/uploads/dokumenti/pravnareg/40_pravnareg.pdf':
+		'aod-zahtev-isplata-zasticenog-potrazivanja.pdf',
 	'https://www.javnidug.gov.rs/static/uploads/Lista%20ovlascenih%20ucesnika_cir.pdf':
 		'uprava-za-javni-dug-2025-05-lista-ovlascenih-ucesnika.pdf',
+	'https://www.posted.co.rs/korisno/doc/Tarifa/Tarifa-naknada-za-usluge-u-radu-sa-fizickim-licima.pdf':
+		'postanska-2026-tarifa-fizicka-lica.pdf',
+	'https://www.posted.co.rs/korisno/doc/PUN/PUN_Devizni_tekuci_racuni.pdf':
+		'postanska-2025-pregled-naknada-devizni-tekuci-racun-rezidenta.pdf',
 };
 
 // AOD выложил бланки только в Word: в просмотре показываем нашу PDF-копию,

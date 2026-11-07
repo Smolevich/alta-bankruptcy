@@ -16,7 +16,9 @@ DEFAULT_SITE_DIR = Path("/var/www/alta-bankruptcy")
 SITE_CSP = (
     "default-src 'none'; "
     "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://static.cloudflareinsights.com; "
-    "style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; "
+    "style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; "
+    # Карта отделений: MapLibre рисует в своём модульном воркере с нашего же адреса.
+    "worker-src 'self' blob:; "
     "connect-src 'self' https://cloudflareinsights.com; "
     "form-action 'self'; frame-ancestors 'none'; base-uri 'none'"
 )
@@ -33,6 +35,18 @@ REVALIDATE = "no-cache"
 # Копия документа AOD под своим именем не меняется (новая версия оригинала ложится рядом), но
 # манифест могут перевести на другую — поэтому сутки, а не immutable.
 ARCHIVE_CACHE = "public, max-age=86400"
+CONDITIONAL_HEADERS = {b"if-none-match", b"if-modified-since"}
+
+
+def without_conditionals_on_range(scope: Scope) -> Scope:
+    """Starlette на Range с If-None-Match отвечает 304 вместо 206, и pmtiles у повторного
+    посетителя падает («HTTP Byte Serving»): кусок файла всегда отдаём целиком (RFC 9110
+    разрешает игнорировать условные заголовки)."""
+    headers = scope.get("headers", [])
+    if not any(name == b"range" for name, _ in headers):
+        return scope
+    kept = [(name, value) for name, value in headers if name not in CONDITIONAL_HEADERS]
+    return {**scope, "headers": kept}
 
 
 class SiteFiles(StaticFiles):
@@ -44,7 +58,7 @@ class SiteFiles(StaticFiles):
         return
 
     async def get_response(self, path: str, scope: Scope):
-        response = await super().get_response(path, scope)
+        response = await super().get_response(path, without_conditionals_on_range(scope))
         response.headers["Content-Security-Policy"] = PDF_CSP if path.endswith(".pdf") else SITE_CSP
         cache = IMMUTABLE if path.startswith("_astro/") and response.status_code == 200 else REVALIDATE
         response.headers["Cache-Control"] = cache

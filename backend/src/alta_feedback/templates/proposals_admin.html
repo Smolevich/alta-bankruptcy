@@ -53,6 +53,13 @@
   .save { display: flex; gap: 10px; align-items: center; }
   .saved { font-size: 13px; color: var(--ok); }
   .saved.err { color: var(--danger); }
+  .edit label.check { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+  .edit label.check input { width: auto; margin: 0; }
+  .case-text { margin: 6px 0 0; overflow-wrap: anywhere; white-space: pre-line; }
+  .case-text b { color: var(--muted); font-weight: 600; }
+  .thumbs { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .thumbs img { width: 96px; height: 96px; object-fit: cover; border-radius: 6px; border: 1px solid var(--line); cursor: zoom-in; background: var(--nav); }
+  .thumbs button { min-height: 96px; width: 96px; padding: 0 6px; font-size: 13px; }
   [hidden] { display: none !important; }
   @media (min-width: 900px) {
     .row { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 18px; }
@@ -62,7 +69,7 @@
 {% block main_class %}adm-main{% endblock %}
 {% block content %}
 <div class="bar">
-  <h1>Предложения</h1>
+  <h1 id="heading">Предложения</h1>
   <span class="count" id="count" hidden>новых: <b id="new-count">0</b> · всего: <span id="total">0</span></span>
 </div>
 
@@ -77,10 +84,19 @@
 <div id="panel" hidden>
   <div class="bar">
     <div class="tools">
+      <label for="kind" style="margin: 0">Тип</label>
+      <select id="kind">
+        <option value="material">{{ c.tab_material }}</option>
+        <option value="case">Кейсы</option>
+      </select>
       <label for="filter" style="margin: 0">Статус</label>
       <select id="filter">
         <option value="">все</option>
         {% for code in statuses %}<option value="{{ code }}">{{ t.statuses.get(code, "спам (скрыто)") }}</option>{% endfor %}
+      </select>
+      <select id="case-filter" aria-label="Статус кейса" hidden>
+        <option value="">все</option>
+        {% for code in case_statuses %}<option value="{{ code }}">{{ case_status_labels[code] }}</option>{% endfor %}
       </select>
       <button type="button" class="ghost" id="reload">Обновить</button>
     </div>
@@ -130,7 +146,34 @@
     </section>
   </article>
 </template>
-<script type="application/json" id="labels">{{ {"targets": t.targets} | tojson }}</script>
+<template id="case-tpl">
+  <article class="row">
+    <div>
+      <h3 data-f="category"></h3>
+      <div class="meta" data-f="meta"></div>
+      <div class="contact"><span>Контакт:</span> <span data-f="contact"></span></div>
+      <p class="case-text" data-f="summary"></p>
+      <p class="case-text"><b>Подавали:</b> <span data-f="filed"></span></p>
+      <p class="case-text"><b>Результат:</b> <span data-f="result"></span></p>
+      <p class="case-text" data-f="own"></p>
+      <ul class="src" data-f="sources"></ul>
+      <div class="thumbs" data-f="files"></div>
+    </div>
+    <form class="edit">
+      <label>Статус
+        <select name="status">
+          {% for code in case_statuses %}<option value="{{ code }}">{{ case_status_labels[code] }}</option>{% endfor %}
+        </select>
+      </label>
+      <label class="check"><input type="checkbox" name="published"> Опубликовать в ленте «Кейсы» (нужен статус «принят»)</label>
+      <label class="check"><input type="checkbox" name="files_published"> Показывать в ленте фото и PDF</label>
+      <label>Ссылка автора на свою страницу<span class="hint">Публикуется вместе с кейсом; сотрите, если не подходит</span><input type="text" name="own_url" inputmode="url" maxlength="{{ url_max }}" placeholder="https://…"></label>
+      <label>Комментарий (не публикуется)<textarea name="comment" maxlength="{{ comment_max }}"></textarea></label>
+      <div class="save"><button type="submit">Сохранить</button><button type="button" class="ghost" data-f="delete">Удалить</button><span class="saved" data-f="saved"></span></div>
+    </form>
+  </article>
+</template>
+<script type="application/json" id="labels">{{ {"targets": t.targets, "categories": c.categories, "case_statuses": case_status_labels} | tojson }}</script>
 <script src="/static/richtext.js"></script>
 <script src="/static/proposals-admin.js"></script>
 {% endblock %}

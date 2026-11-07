@@ -1,0 +1,95 @@
+---
+title: "What the bank owns"
+description: "What ALTA banka owned according to its latest public reports (31.12.2025 and 30.06.2026): cash, loans, buildings and land, subsidiaries, recent purchases. Amounts in dinars and euros with links to the PDF pages."
+checked: 2026-11-05
+sources:
+  - { title: "Bank website: public disclosures for H1 2026", url: "https://altabanka.rs/static/uploads/2026/09/Objavljivanje-podataka-i-informacija_01.01.2026.-30.06.2026.pdf", kind: official, date: 2026-10-31, copy: "/docs/alta-2026-h1-objavljivanje.pdf" }
+  - { title: "Bank website: annual report 2025 with the auditor’s opinion", url: "https://altabanka.rs/static/uploads/2026/04/Alta-banka_Izvestaj-revizora_2025_Final-potpisan.pdf", kind: official, date: 2026-10-31, copy: "/docs/alta-2025-izvestaj-revizora.pdf" }
+  - { title: "Bank website: annual report 2024 with the auditor’s opinion", url: "https://altabanka.rs/static/uploads/2025/04/Alta-banka_Izvestaj-revizora_2024_Final-potpisan.pdf", kind: official, date: 2026-10-31, copy: "/docs/alta-2024-izvestaj-revizora.pdf" }
+  - { title: "Bank website: public disclosures for 2025", url: "https://altabanka.rs/static/uploads/2026/05/Objavljivanje-podataka-i-informacija_01.01.2025.-31.12.2025.pdf", kind: official, date: 2026-10-31, copy: "/docs/alta-2025-objavljivanje.pdf" }
+  - { title: "APR: public register of financial statements, ALTA BANKA AD BEOGRAD balance sheet at 31.12.2025", url: "https://fin.apr.gov.rs/JavnaPretraga/Home/Index", kind: official, date: 2026-10-31, copy: "/docs/alta-2025-bilans-stanja.pdf" }
+  - { title: "National Bank of Serbia: middle exchange rate of the dinar on 30.06.2026", url: "https://webappcenter.nbs.rs/ExchangeRateWebApp/ExchangeRate/IndexByDate?isSearchExecuted=true&Date=30.06.2026.&ExchangeRateListTypeID=3", kind: official, date: 2026-11-05, copy: "https://archive.ph/tjbdp" }
+  - { title: "National Bank of Serbia: middle exchange rate of the dinar on 31.12.2025", url: "https://webappcenter.nbs.rs/ExchangeRateWebApp/ExchangeRate/IndexByDate?isSearchExecuted=true&Date=31.12.2025.&ExchangeRateListTypeID=3", kind: official, date: 2026-11-05, copy: "https://archive.ph/Idart" }
+  - { title: "National Bank of Serbia: middle exchange rate of the dinar on 31.12.2024", url: "https://webappcenter.nbs.rs/ExchangeRateWebApp/ExchangeRate/IndexByDate?isSearchExecuted=true&Date=31.12.2024.&ExchangeRateListTypeID=3", kind: official, date: 2026-11-05, copy: "https://archive.ph/U1PD9" }
+  - { title: "National Bank of Serbia: middle exchange rate of the dinar on 29.12.2023", url: "https://webappcenter.nbs.rs/ExchangeRateWebApp/ExchangeRate/IndexByDate?isSearchExecuted=true&Date=29.12.2023.&ExchangeRateListTypeID=3", kind: official, date: 2026-11-05, copy: "https://archive.ph/7QuQP" }
+  - { title: "National Bank of Serbia: statement on the licence revocation, 30.10.2026", url: "https://www.nbs.rs/sr/scripts/showcontent/index.html?id=21849", kind: official, date: 2026-11-05, copy: "https://web.archive.org/web/20261105214810/https://www.nbs.rs/sr/scripts/showcontent/index.html?id=21849" }
+  - { title: "Law on Bankruptcy and Liquidation of Banks and Insurance Companies, art. 16", url: "https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2015/14/3/reg", kind: official, date: 2026-11-05, copy: "https://archive.ph/oRzzn" }
+  - { title: "City of Belgrade: early public review of amendments to the detailed regulation plan for part of Block 32", url: "https://www.beograd.rs/lat/gradski-oglasi-i-konkursi/a114511/Rani-javni-uvid-za-potrebe-izrade-Izmena-i-dopuna-plana-detaljne-regulacije-za-deo-bloka-32-Novi-Beograd.html", kind: official, date: 2026-11-05, copy: "https://web.archive.org/web/20261105214642/https://www.beograd.rs/lat/gradski-oglasi-i-konkursi/a114511/Rani-javni-uvid-za-potrebe-izrade-Izmena-i-dopuna-plana-detaljne-regulacije-za-deo-bloka-32-Novi-Beograd.html" }
+  - { title: "N1: Zaha Hadid Architects and Bureau Cube Partners design the Alta kula", url: "https://n1info.rs/biznis/alta-banka-kula-novi-beograd-zaha-hadid/", kind: reliable_media, date: 2025-10-07, copy: "https://web.archive.org/web/20261105214411/https://n1info.rs/biznis/alta-banka-kula-novi-beograd-zaha-hadid/" }
+  - { title: "Biznis.rs: «Pripremljen planski osnov za Alta kulu kod Merkatora visoku 125 metara»", url: "https://biznis.rs/vesti/srbija/pripremljen-planski-osnov-za-alta-kulu-kod-merkatora-visoku-125-metara/", kind: reliable_media, date: 2026-06-30, copy: "https://web.archive.org/web/20261105214535/https://biznis.rs/vesti/srbija/pripremljen-planski-osnov-za-alta-kulu-kod-merkatora-visoku-125-metara/" }
+---
+
+import BankAssets from '../../../components/BankAssets.astro';
+
+<div class="assets-lead">
+<ul>
+<li>The figures come from the bank's own documents: the 2025 annual report with the auditor's opinion and the public disclosures at 30.06.2026. Copies of all documents are kept on this site: the «copy» link in the source list below.</li>
+<li>These figures are as of the report dates, before the licence was revoked on 30.10.2026. In its revocation statement the National Bank wrote that the bank's financial position had deteriorated significantly in the preceding period ([NBS, 30.10.2026](https://www.nbs.rs/sr/scripts/showcontent/index.html?id=21849)). How much the bank owns at the date of bankruptcy is not in any published document as of 05.11.2026.</li>
+<li>By law AOD makes an inventory of the bank's assets and an opening bankruptcy balance sheet within 60 days, then publishes a report on its website every quarter ([art. 16](https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2015/14/3/reg), [timeline](/en/procedura/)).</li>
+<li>Dinar amounts are as in the reports. Euros at the National Bank middle rate on the report date: 117.3697 on 30.06.2026, [117.2820](https://webappcenter.nbs.rs/ExchangeRateWebApp/ExchangeRate/IndexByDate?isSearchExecuted=true&Date=31.12.2025.&ExchangeRateListTypeID=3) on 31.12.2025, [117.0149](https://webappcenter.nbs.rs/ExchangeRateWebApp/ExchangeRate/IndexByDate?isSearchExecuted=true&Date=31.12.2024.&ExchangeRateListTypeID=3) on 31.12.2024, [117.1737](https://webappcenter.nbs.rs/ExchangeRateWebApp/ExchangeRate/IndexByDate?isSearchExecuted=true&Date=29.12.2023.&ExchangeRateListTypeID=3) on 31.12.2023 (rate list of 29.12.2023). Copies of the rate lists in a web archive: [30.06.2026](https://archive.ph/tjbdp), [31.12.2025](https://archive.ph/Idart), [31.12.2024](https://archive.ph/U1PD9), [29.12.2023](https://archive.ph/7QuQP).</li>
+</ul>
+</div>
+
+## All assets at 30.06.2026
+
+Total assets: RSD 214,931 million (≈ €1,831 million). Liabilities: RSD 187,063 million (≈ €1,594 million), of which deposits and other liabilities to customers RSD 172,045 million (≈ €1,466 million) ([p. 12](/docs/alta-2026-h1-objavljivanje.pdf#page=12)).
+
+<BankAssets lang="en" />
+
+Loans to customers and cash on hand and at the National Bank make up 88% of assets. Buildings, land, equipment and subsidiaries together: 3.5%.
+
+## Cash
+
+- **Cash on hand at 31.12.2025: RSD 53,817 million (≈ €459 million)**: 38,931 million in dinars and 14,886 million in foreign currency (note 17, [p. 94](/docs/alta-2025-izvestaj-revizora.pdf#page=94)). A year earlier: 41,572 million (same page).
+- The balance sheet line «Cash and funds at the central bank» at 31.12.2025: RSD 90,497 million ([balance sheet, p. 1](/docs/alta-2025-bilans-stanja.pdf#page=1)); at 30.06.2026: 83,467 million ([p. 12](/docs/alta-2026-h1-objavljivanje.pdf#page=12)).
+- Securities at 31.12.2025: RSD 1,087 million, of which Serbian government bonds and treasury bills 923 million (note 18, [p. 94](/docs/alta-2025-izvestaj-revizora.pdf#page=94)).
+
+## Real estate
+
+At 31.12.2025, note 22 ([p. 100](/docs/alta-2025-izvestaj-revizora.pdf#page=100)–[101](/docs/alta-2025-izvestaj-revizora.pdf#page=101)):
+
+| What | RSD m | ≈ € m |
+|---|---|---|
+| Own buildings | 770.7 | 6.6 |
+| Land | 617.7 | 5.3 |
+| Leased (premises, cars) | 759.1 | 6.5 |
+| Equipment and other fixed assets | 656.9 | 5.6 |
+| **Total fixed assets** | **2,804.3** | **23.9** |
+
+- Buildings and land were valued by an independent valuer at 31.12.2025; the bank has no buildings under mortgage ([p. 101](/docs/alta-2025-izvestaj-revizora.pdf#page=101)).
+- Right of use of leased premises: RSD 755.0 million, up from 172.0 million a year earlier (same page). These are office premises leased from other owners, mostly for 5 years (same page).
+- Property let to tenants: 102.6 million: part of an office building (247.18 m² let), 71.3 million, and residential property, 31.2 million (note 23, same page).
+- Head office: Bulevar Zorana Đinđića 121, New Belgrade, plus 17 branches ([p. 13](/docs/alta-2025-izvestaj-revizora.pdf#page=13)). The report has no list of the bank's buildings and plots.
+- At 30.06.2026 buildings, land and equipment stood at RSD 4,534 million ([p. 12](/docs/alta-2026-h1-objavljivanje.pdf#page=12)), 1,730 million (≈ €14.7 million) more than at 31.12.2025 ([balance sheet, p. 1](/docs/alta-2025-bilans-stanja.pdf#page=1)). The disclosures at 30.06.2026 do not say what was added.
+
+## Purchases and related parties
+
+- **ALTA banka a.d. Bitola (formerly Stopanska banka a.d. Bitola).** On 16.10.2025 the bank bought 88.29%; at 31.12.2025 its stake was 93.29%. Investment: RSD 2,608.3 million (≈ €22.2 million) ([p. 13](/docs/alta-2025-izvestaj-revizora.pdf#page=13), [p. 100](/docs/alta-2025-izvestaj-revizora.pdf#page=100)).
+- **ALTA Leasing d.o.o. Beograd (formerly Vantage leasing).** On 11.07.2024 the bank acquired 100%; investment RSD 273.8 million (≈ €2.3 million) (same pages).
+- **Loans to related parties**: the shareholder, management and other parties related to the bank (note 32; net of provisions):
+
+| At | RSD m | ≈ € m |
+|---|---|---|
+| 31.12.2023 | 1,014.9 | 8.7 |
+| 31.12.2024 | 6,400.0 | 54.7 |
+| 31.12.2025 | 10,984.3 | 93.7 |
+
+  Of the 10,984.3 million at 31.12.2025: 2,260.9 million are loans to the shareholder (the bank's sole shareholder is ALTA GROUP doo Beograd, [p. 13](/docs/alta-2025-izvestaj-revizora.pdf#page=13)), 127.1 million to the bank's management, 8,596.3 million to "other related parties" ([p. 113](/docs/alta-2025-izvestaj-revizora.pdf#page=113); 2023 from the [2024 report, p. 111](/docs/alta-2024-izvestaj-revizora.pdf#page=111)).
+- **Large exposures** (each above 10% of capital) totalled 293.48% of regulatory capital at 31.12.2025; the limit the bank set for itself is 380% ([2025 disclosures, p. 22](/docs/alta-2025-objavljivanje.pdf#page=22)).
+
+## How the assets will be valued in bankruptcy
+
+Under the law ([art. 16](https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2015/14/3/reg)):
+
+- the inventory and the opening bankruptcy balance sheet show every asset at two values, book and liquidation (para. 3);
+- the liquidation value is assessed by a court expert or a licensed auditor (para. 3);
+- together with the inventory AOD sends the court a report on the bank's assets, including investments in other companies, and on the bank's significant transactions in the 180 days before bankruptcy (para. 2);
+- every quarter AOD updates and publishes on its website a report on the state of the bankruptcy estate (para. 5).
+
+The figures on this page are book values from the bank's reports. No liquidation value is in any published document as of 05.11.2026.
+
+## Not disclosed in the documents
+
+1. **Who owns the head office building and plot.** The City of Belgrade held an early public review of amendments to the detailed regulation plan for part of Block 32 in New Belgrade from 29.06 to 17.07.2026 ([city notice](https://www.beograd.rs/lat/gradski-oglasi-i-konkursi/a114511/Rani-javni-uvid-za-potrebe-izrade-Izmena-i-dopuna-plana-detaljne-regulacije-za-deo-bloka-32-Novi-Beograd.html); the plan materials linked from the notice are unavailable as of 05.11.2026). According to Biznis.rs of 30.06.2026 (citing Gradnja.rs and Beta), the plan covers about 2.1 ha between Bulevar Zorana Đinđića and Bulevar umetnosti, currently occupied by the Alta banka building, and provides for a building up to 125 m high; the project is being developed for the company Alta Real Estate ([Biznis.rs, 30.06.2026](https://biznis.rs/vesti/srbija/pripremljen-planski-osnov-za-alta-kulu-kod-merkatora-visoku-125-metara/)). According to N1 of 07.10.2025, Alta banka commissioned the Alta kula design on the site of the bank's current building ([N1, 07.10.2025](https://n1info.rs/biznis/alta-banka-kula-novi-beograd-zaha-hadid/)). Whether the building and plot belong to the bank or to another company, the bank's reports do not say.
+2. **What was added to fixed assets in H1 2026** (+RSD 1,730 million).
+3. **Who the "other related parties" are**, with loans of RSD 8,596.3 million at 31.12.2025: the report gives only the total.

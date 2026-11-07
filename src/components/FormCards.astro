@@ -4,7 +4,7 @@
 import { AOD_FORMS, AOD_FORMS_PAGE, type FormKey } from '../data/aod-forms';
 import { UI, type Lang } from '../i18n';
 
-// fill: на странице есть форма PrijavaForm (#zapolnit), у бланка требования появляется кнопка к ней.
+// fill: на странице есть редактор DocEditor бланка (#zapolnit), у бланка требования появляется кнопка к ней.
 const { forms, lang = 'ru', fields = true, fill = false } = Astro.props as { forms: FormKey[]; lang?: Lang; fields?: boolean; fill?: boolean };
 const t = UI[lang];
 ---
@@ -28,7 +28,7 @@ const t = UI[lang];
 							<div class="form-actions">
 								<a class="form-btn" {...view}>
 									{t.forms.open}
-									<span class="form-btn-note">PDF, {f.pages} {t.forms.pages}</span>
+									<span class="form-btn-note">PDF, {f.pages} {f.pages === 1 ? t.forms.page : t.forms.pages}</span>
 								</a>
 								<a class="form-btn form-btn-2" href={`/docs/${f.file}.${f.word}`} download>
 									{t.forms.word}

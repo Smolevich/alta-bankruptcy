@@ -2,15 +2,18 @@
 title: "ALTA bankruptcy: what depositors should do now"
 description: "Where the ALTA bank bankruptcy procedure stands, what depositors with more than €50,000 should do, the claim deadline and the latest official news from AOD and the National Bank of Serbia."
 tableOfContents: false
-checked: 2026-11-04
+checked: 2026-11-06
 sources:
+  - { title: "NBS: loans of ALTA banka in bankruptcy and ALTA GROUP DOO Beograd — different accounts, 06.11.2026 (Serbian)", url: "https://www.nbs.rs/sr_RS/scripts/showcontent/index.html?id=21884", kind: official, date: 2026-11-06 }
+  - { title: "AOD: list of Banka Poštanska štedionica branches for collecting the insured amount, 06.11.2026 (PDF)", url: "https://www.aod.rs/uploads/dokumenti/altabanka/Spisak.pdf", kind: official, date: 2026-11-06 }
+  - { title: "AOD: notice of the start of the insured deposit payout, ALTA banka, 06.11.2026 (PDF)", url: "https://www.aod.rs/uploads/dokumenti/altabanka/Obave%C5%A1tenje_o_po%C4%8Detku_isplate_OD_6nov2026.pdf", kind: official, date: 2026-11-06 }
   - { title: "APR: business register, ALTA BANKA AD BEOGRAD - U STEČAJU (reg. no. 07074433), decision of 03.11.2026", url: "https://pretraga.apr.gov.rs/search", kind: official, date: 2026-11-03 }
   - { title: "AOD: \"Oduzeta dozvola za rad Alta banci\"", url: "https://www.aod.rs/clan/vest/vest_forma/137", kind: official, date: 2026-10-31 }
   - { title: "National Bank: licence revocation announcement", url: "https://www.nbs.rs/sr/scripts/showcontent/index.html?id=21849", kind: official, date: 2026-10-30 }
   - { title: "AOD: court opened bankruptcy, paying bank is Poštanska štedionica (Serbian)", url: "https://www.aod.rs/clan/vest/vest_forma/139", kind: official, date: 2026-11-03 }
   - { title: "Law on Bankruptcy and Liquidation of Banks, art. 7, 8, 9, 16, 17, 19, 20, 22", url: "https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2015/14/3/reg", kind: official, date: 2026-11-01 }
   - { title: "Law on Deposit Insurance, art. 16 and 17", url: "https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2015/14/2/reg", kind: official, date: 2026-11-01 }
-  - { title: "Bankruptcy Law, art. 101", url: "https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2009/104/25/reg", kind: official, date: 2026-11-03 }
+  - { title: "Bankruptcy Law, art. 54, 101", url: "https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2009/104/25/reg", kind: official, date: 2026-11-03 }
   - { title: "AOD: insured deposit payout procedure (04.11.2015)", url: "https://www.aod.rs/uploads/dokumenti/osigdepoz/pravniokvir/cir/16_pravniokvir.pdf", kind: official, date: 2015-11-04 }
   - { title: "AOD: loan payments and safe-deposit boxes, Univerzal banka, 06.02.2014 (web archive)", url: "https://web.archive.org/web/20160830213118/http://aod.rs/pdf/2014-02-06-obavestenje-o-nacinu-izmirivanja.pdf", kind: official, date: 2014-02-06 }
   - { title: "Commercial Court in Belgrade: electronic notice board", url: "http://www.bg.pr.sud.rs/index.php?prf=con&id=56", kind: official, date: 2026-11-03 }
@@ -20,6 +23,7 @@ sources:
   - { title: "AOD: questions and answers on deposit insurance", url: "https://www.aod.rs/clan/osigdepoz/pitanja_odgovori", kind: official, date: 2026-11-03 }
   - { title: "AOD: questions and answers on bankruptcy and liquidation", url: "https://www.aod.rs/clan/stecajlikv/pitanja_odgovori", kind: official, date: 2026-11-03 }
   - { title: "AOD: forms for ALTA depositors (claim template, authorisation forms)", url: "https://www.aod.rs/clan/altabanka/obrasci_altabanka", kind: official, date: 2026-11-04 }
+  - { title: "ALTA in bankruptcy website: administrator's notice that electronic services no longer work and accounts are closed", url: "https://altabanka.rs/", kind: official, date: 2026-11-05 }
 ---
 
 import Status from '../../../components/Status.astro';
@@ -30,16 +34,16 @@ import Shot from '../../../components/Shot.astro';
 
 <Status lang="en" />
 
-For ALTA depositors with more than €50,000: AOD repays up to €50,000; the rest comes back only through the bank's bankruptcy, on a claim you file yourself.
+For ALTA depositors with more than €50,000. AOD repays up to €50,000. The rest comes back only through the bank's bankruptcy, and you have to file a claim with the court yourself.
 
 ## Most asked right now
 
 <Faq open items={[
-  { id: "sud-seychas", q: "Can I file my claim with the court yet?", a: "No, it is too early: file after the bankruptcy notice is published in the Official Gazette (Službeni glasnik). The deadline is 90 days from publication of the notice in the Official Gazette (Službeni glasnik) (court decision 10 Ст 275/2026, item IV). The count starts only after publication; until it is published, the deadline does not run (art. 7 of the Law on Bankruptcy and Liquidation of Banks). There is nothing to do right now.", more: [["Where to find the notice", "/en/trebovanie/#glasnik"], ["Law, art. 7", "https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2015/14/3/reg"]] },
-  { id: "postanska", q: "Should I rush to Poštanska now?", a: "No. By 6 November AOD will announce the payout start date and the branches of the paying bank. Payouts start no later than 7 working days after the court decision, and you can collect the money for 3 years (art. 16 of the Law on Deposit Insurance).", more: [["AOD announcement, 03.11", "https://www.aod.rs/clan/vest/vest_forma/139"], ["Law on Deposit Insurance", "https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2015/14/2/reg"]] },
-  { id: "ip", q: "Personal account and sole-trader account: one limit or two?", a: "Two: the €50,000 limit applies separately to the individual and to the same person as a sole trader. AOD confirmed this in writing on 02.11.2026. Sole traders and micro, small and medium-sized companies are paid only by transfer to an account (AOD procedure, section VIII).", more: [["AOD letters", "/en/trebovanie/#aod-otvety"]] },
+  { id: "sud-seychas", q: "Can I file my claim with the court yet?", a: "No, not yet. You can file once the bankruptcy notice appears in the Official Gazette (Službeni glasnik). From that day you have 90 days (court decision 10 St 275/2026, item IV). Until the notice appears, the deadline does not run (art. 7 of the Law on Bankruptcy and Liquidation of Banks). There is nothing to do right now.", more: [["Where to find the notice", "/en/trebovanie/#glasnik"], ["Law, art. 7", "https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2015/14/3/reg"]] },
+  { id: "postanska", q: "Should I rush to Poštanska now?", a: "Not before 13.11. On 06.11 AOD announced that the payout of up to €50,000 starts on 13.11.2026 at the Poštanska branches designated for ALTA depositors, during working hours. AOD published the branch list on 06.11. The list has 54 branches in 13 cities. One of them, in Belgrade (Kraljice Marije 3), is marked “specialised, for payout only” (SPECIJALIZOVANA EKSPOZITURA SAMO ZA ISPLATU). What this mark means is not clear from the AOD document; we are waiting for clarification. Addresses and hours are on «How to get the insured amount up to €50,000», section «Poštanska branches». You can apply until 03.11.2029. What to bring (individual, sole trader, company): see «How to get the insured amount up to €50,000».", more: [["AOD branch list (PDF)", "https://www.aod.rs/uploads/dokumenti/altabanka/Spisak.pdf"], ["AOD notice, 06.11 (PDF)", "https://www.aod.rs/uploads/dokumenti/altabanka/Obave%C5%A1tenje_o_po%C4%8Detku_isplate_OD_6nov2026.pdf"], ["AOD announcement, 03.11", "https://www.aod.rs/clan/vest/vest_forma/139"]] },
+  { id: "ip", q: "Personal account and sole-trader account: one limit or two?", a: "Two: the €50,000 limit applies separately to the individual and to the same person as a sole trader. AOD confirmed this in writing on 02.11.2026. Sole traders and micro, small and medium-sized companies are paid only by transfer to an account (AOD procedure, section VIII).", more: [["AOD letters", "/en/vyplata/#aod-otvety"]] },
   { id: "zayavlenie-50", q: "Do I need to file an application anywhere to get up to €50,000?", a: "Not with the court. At a branch of the paying bank, staff show you how your amount was calculated and print the payout request; you sign it if you agree. If you disagree with the amount or the currency, you file a complaint (AOD, questions and answers).", more: [["AOD: questions and answers", "https://www.aod.rs/clan/osigdepoz/pitanja_odgovori"]] },
-  { id: "advokat", q: "Do I need a lawyer?", a: "The law does not require one: a creditor can draft the claim alone, using AOD's template or in free form (AOD). A lawyer can help with the Serbian text and the interest calculation, but this does not change your rank or payout share: everyone in the first rank gets the same share (art. 20 of the Law on Bankruptcy and Liquidation of Banks).", more: [["AOD: questions and answers", "https://www.aod.rs/clan/stecajlikv/pitanja_odgovori"], ["Stay safe: avoid scams", "/en/bezopasnost/"]] },
+  { id: "advokat", q: "Do I need a lawyer?", a: "The law does not require one: a creditor can draft the claim alone, using AOD's template or in free form (AOD). A lawyer can help with the Serbian text and the interest calculation, but this does not change your rank or payout share: everyone in rank I gets the same share (art. 20 of the Law on Bankruptcy and Liquidation of Banks; art. 54 para. 3 of the Bankruptcy Law).", more: [["AOD: questions and answers", "https://www.aod.rs/clan/stecajlikv/pitanja_odgovori"], ["Stay safe: avoid scams", "/en/bezopasnost/"]] },
 ]} />
 
 <p class="faq-all">These are the most frequent questions. The full list is in the <a href="/en/voprosy/">Questions and answers</a> section: sole traders, currency, power of attorney, loans, safe boxes →</p>
@@ -50,18 +54,18 @@ The court opened ALTA's bankruptcy on 03.11.2026. What comes next, by law and by
 
 <div class="next-steps">
 
-1. **By 6.11: AOD announces the payout.** Within 3 working days of the court decision AOD must announce the payout start date and where payouts happen ([Law on Deposit Insurance, art. 16(8)](https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2015/14/2/reg)). The paying bank is already known: Banka Poštanska štedionica ([AOD, 03.11](https://www.aod.rs/clan/vest/vest_forma/139)). Watch [aod.rs](https://www.aod.rs/).
-2. **Up to €50,000: at a Poštanska branch, within 3 years.** Payouts start no later than 7 working days after the court decision; you can collect the money within 3 years (art. 16(8)–(9)). Dinar deposits are paid in dinars, foreign-currency deposits in euros (art. 17). Bring your ID card (foreigners: passport) and an ALTA document for the deposit: contract, savings book or account card ([AOD procedure, section VIII](https://www.aod.rs/uploads/dokumenti/osigdepoz/pravniokvir/cir/16_pravniokvir.pdf)). Sole traders and companies are paid only by transfer to an account in Serbia. If you disagree with the amount, write to AOD (art. 17(3)). Step by step: [«How to get the insured amount up to €50,000»](/en/vyplata/).
-3. **Above €50,000: a claim to the court, 90 days.** The deadline is in the court decision (10 Ст 275/2026, item IV) and runs from publication in the Official Gazette, not from 3 November ([Law on Bankruptcy of Banks, art. 7](https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2015/14/3/reg)). File it in writing with Privredni sud u Beogradu, Masarikova 2 ([court website](http://www.bg.pr.sud.rs/)). What to write: AOD's 2026 template, [the form and what to fill in](/en/trebovanie/#obrazac). What the Official Gazette is and where to find the notice: [here](/en/trebovanie/#glasnik). More: [“Claim”](/en/trebovanie/).
-4. **A loan with ALTA: keep paying; a safe-deposit box: wait for AOD.** What clients owe the bank is part of the bank's estate, which the administrator collects ([Bankruptcy Law, art. 101](https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2009/104/25/reg)). In 2014, three days after the court decision, AOD published the account for Univerzal banka loan payments and how box holders could collect their items ([AOD notice, 2014](https://web.archive.org/web/20160830213118/http://aod.rs/pdf/2014-02-06-obavestenje-o-nacinu-izmirivanja.pdf)). For ALTA, AOD will announce the details.
-5. **First months: inventory and claim review.** Within 60 days AOD takes an inventory of the bank's assets, then publishes a quarterly report on aod.rs (art. 16). AOD reviews claims for up to 6 months after the filing deadline, then within 60 days the court approves the list (art. 17). The creditors' committee has 5 members chosen by the judge on AOD's proposal, taking claim sizes into account; a bank bankruptcy has no creditors' assembly (art. 8 and 22).
-6. **Payments above €50,000: by priority class, no deadline.** First AOD recovers the insurance it paid out and the procedure costs, then the first class is paid: individuals, sole traders, micro, small and medium companies, all at the same percentage (art. 19–20). At Univerzal the first payment came after 6 years 7 months. More: [“Procedure”](/en/procedura/).
+1. **AOD has announced the date: payout of up to €50,000 from 13.11.2026.** Per AOD's notice of 06.11.2026 ([PDF](https://www.aod.rs/uploads/dokumenti/altabanka/Obave%C5%A1tenje_o_po%C4%8Detku_isplate_OD_6nov2026.pdf)), Banka Poštanska štedionica pays at the branches designated for ALTA depositors, during normal working hours. On 06.11 AOD published the [list of branches](https://www.aod.rs/uploads/dokumenti/altabanka/Spisak.pdf). The list has 54 branches in 13 cities. One of them, in Belgrade (Kraljice Marije 3), is marked “specialised, for payout only” (SPECIJALIZOVANA EKSPOZITURA SAMO ZA ISPLATU). What this mark means is not clear from the AOD document; we are waiting for clarification. Addresses and hours: [«How to get the insured amount»](/en/vyplata/#otdeleniya).
+2. **Up to €50,000: at a Poštanska branch, until 03.11.2029.** Dinar deposits are paid in dinars, foreign-currency deposits in euros at the middle rate of 03.11.2026 ([AOD, 06.11.2026](https://www.aod.rs/uploads/dokumenti/altabanka/Obave%C5%A1tenje_o_po%C4%8Detku_isplate_OD_6nov2026.pdf)). Bring a valid identity document (foreigners: passport) and the original deposit document: contract, savings book or account card. Sole traders and companies are paid only by transfer to an account in Serbia; they also need the OP form and, if someone other than the registered representative comes, an authorisation on the company letterhead. If someone else goes for an individual: an authorisation certified by a notary, dated no earlier than the day the licence was revoked (30.10.2026); authorisations issued before the revocation cannot be used ([AOD, forms](https://www.aod.rs/clan/altabanka/obrasci_altabanka)). If you disagree with the amount, file a complaint with AOD or Poštanska. Checklist for individuals, sole traders and companies: [«How to get the insured amount up to €50,000»](/en/vyplata/#chto-vzyat).
+3. **Above €50,000: a claim to the court, 90 days.** The 90 days run from the day the notice appears in the Official Gazette, not from 3 November. The court decision says so (10 St 275/2026, item IV), and so does the law ([Law on Bankruptcy of Banks, art. 7](https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2015/14/3/reg)). File it in writing with Privredni sud u Beogradu, Masarikova 2 ([court website](http://www.bg.pr.sud.rs/)). You can write it on [AOD's template](/en/trebovanie/#obrazac). [Where to find the notice](/en/trebovanie/#glasnik). More: [“Claim”](/en/trebovanie/).
+4. **A loan with ALTA: keep paying; a safe-deposit box: wait for AOD.** What clients owe the bank is part of the bank's estate, which the administrator collects ([Bankruptcy Law, art. 101](https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2009/104/25/reg)). In 2014, three days after the court decision, AOD published the account for Univerzal banka loan payments and how box holders could collect their items ([AOD notice, 2014](https://web.archive.org/web/20160830213118/http://aod.rs/pdf/2014-02-06-obavestenje-o-nacinu-izmirivanja.pdf)). For ALTA, AOD announced the account on 06.11: pay to the dinar account of ALTA in bankruptcy held at the NBS, no. 780-282-42 and enter the loan account number in the «poziv na broj» field ([AOD instruction, 06.11.2026](https://www.aod.rs/uploads/dokumenti/altabanka/uputstvo_novi_ra%C4%8Dun_6_11_2026.pdf)). If your loan is with ALTA GROUP DOO Beograd (not the bank): account 200-3408551901000-45 at Poštanska štedionica, loan account number in «poziv na broj»; these are two different legal entities, pay only to these two accounts ([NBS, 06.11.2026](https://www.nbs.rs/sr_RS/scripts/showcontent/index.html?id=21884)). Our tip: which of the two entities your loan is with is stated in your loan agreement.
+5. **First months: inventory and claim review.** Within 60 days AOD takes an inventory of the bank's assets, then publishes a quarterly report on aod.rs (art. 16). AOD reviews claims for up to 6 months after the filing deadline, then within 60 days the court approves the list (art. 17). The creditors' committee has 5 members (exceptionally more, on a reasoned proposal by AOD), chosen by the judge on AOD's proposal, taking claim sizes into account; a bank bankruptcy has no creditors' assembly (art. 8 and 22).
+6. **Payments above €50,000: by payment rank, no deadline.** First AOD recovers the insurance it paid out and the procedure costs, then rank I is paid: individuals, sole traders, micro, small and medium companies, all at the same percentage (art. 19–20 of the Law on Bankruptcy and Liquidation of Banks; art. 54 para. 3 of the Bankruptcy Law). At Univerzal the first payment came after 6 years 7 months. More: [“Procedure”](/en/procedura/).
 
 </div>
 
 <div class="court-case">
 
-**How to check the case at the court yourself.** Case number: **10 Ст 275/2026** (on the portal you enter Ст / 275 / 2026). Confirmation: the decision of the Business Registers Agency (APR) of 03.11.2026 entering the opening of ALTA's bankruptcy in the register; it cites the court decision opening bankruptcy “Посл.бр. 10 Ст. 275/2026 од 03.11.2026”.
+**How to check the case at the court yourself.** Case number: **10 St 275/2026** (on the portal you enter Ст / 275 / 2026). Confirmation: the decision of the Business Registers Agency (APR) of 03.11.2026 entering the opening of ALTA's bankruptcy in the register; it cites the court decision opening bankruptcy “Посл.бр. 10 Ст. 275/2026 од 03.11.2026”.
 
 **How to check in the APR register.** Open the [APR search](https://pretraga.apr.gov.rs/search) (“Oбjедињена претрага”), press “Матични број” (registration number), type 07074433 and press Enter. The result is “ALTA BANKA AD BEOGRAD - U STEČAJU”, status “У стечају” (in bankruptcy). Click the name: under “Законски заступници” (legal representatives) you see “РС - Агенција за осигурање депозита”, function “стечајни управник” (bankruptcy administrator); under “Одлуке регистратора” for 2026 there is the APR decision of 03.11.2026 (БДСЛ 18465/2026).
 
@@ -95,10 +99,15 @@ The decision itself, naming the bank, is posted on the court's [electronic notic
 <div class="steps3">
 <div>
 
-### 1. <span class="today">Today: save statements and screenshots from ALTA web banking while it still opens</span>
+### 1. <span class="today">Today: save the statements and documents you already have</span>
 
-- PDF statements for every account;
-- a screenshot of the web banking home page ("Početna") with the date visible;
+<aside class="save-tip not-content">
+<strong>ALTA web banking no longer works</strong>
+<p>The bank in bankruptcy says: «Платне услуге и електронски сервиси банке више нису у функцији и сви рачуни клијената су затворени» (payment and electronic services no longer work and all client accounts are closed; <a href="https://altabanka.rs/">altabanka.rs</a>, checked 05.11.2026). Without web banking, use your agreements, the bank's statement emails and SMS messages about balances: <a href="/en/vypiski/#bez-kabineta">what to save without web banking</a>.</p>
+</aside>
+
+- PDF statements you managed to download;
+- the bank's statement emails and SMS messages about balances;
 - your account and deposit agreements.
 
 You don't need to file anything yet.
@@ -110,7 +119,7 @@ You don't need to file anything yet.
 
 ### 2. When to file the claim
 
-You file the claim for the amount above €50,000 in writing with the bankruptcy court. The deadline is in the court's decision of 03.11.2026 opening bankruptcy: 90 days from the day its notice appears in the Official Gazette (Službeni glasnik) (10 Ст 275/2026, item IV). Until the notice appears, the deadline does not run. Don't wait for the €50,000 payout first: the deadline runs regardless.
+You file the claim for the amount above €50,000 in writing with the bankruptcy court. You have 90 days. The count starts when the bankruptcy notice appears in the Official Gazette (Službeni glasnik) (court decision of 03.11.2026, 10 St 275/2026, item IV). Until the notice appears, the deadline does not run. Don't wait for the €50,000 payout: the deadline runs regardless.
 
 <small>More: [claim above €50,000](/en/trebovanie/)</small>
 
@@ -119,7 +128,7 @@ You file the claim for the amount above €50,000 in writing with the bankruptcy
 
 ### 3. What to expect
 
-About 8 to 12 months after bankruptcy opens, it should be clear how much the bank owes depositors above the limit. There is no payout deadline: money is paid as the bank's assets are sold. At Univerzal banka (2014) the first payment above the limit came after 6 years 7 months (09.2020). Once payouts above the limit begin, send AOD your payment details: at Univerzal, money was not transferred without them.
+How much the bank owes depositors above the limit will be clear after the claims review: AOD has up to 6 months after the filing period ends, then the court holds a hearing no later than 60 days after that ([Law on Bankruptcy and Liquidation of Banks, art. 17](https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2015/14/3/reg)). There is no payout deadline: money is paid as the bank's assets are sold. At Univerzal banka (2014) the first payment above the limit came after 6 years 7 months (09.2020). Once payouts above the limit begin, payment details will be needed: before the first distribution at Univerzal (2020), the bank in bankruptcy (administered by AOD) asked creditors to send a copy of their ID card, account number and phone.
 
 <small>More: [how it went with Univerzal](/en/kak-bylo/)</small>
 
@@ -149,9 +158,9 @@ All announcements from AOD, the National Bank and the bank's website are on the 
 
 ## Up to €50,000: AOD pays
 
-This part comes from the state deposit insurance fund, and you don't file anything in court: the paying bank is Banka Poštanska štedionica (03.11.2026); AOD will announce the payout start date and branches by 6 November. See the [official AOD announcement](https://www.aod.rs/clan/vest/vest_forma/137) and the [AOD questions and answers](https://www.aod.rs/clan/osigdepoz/pitanja_odgovori).
+This part comes from the state deposit insurance fund, and you don't file anything in court. The paying bank is Banka Poštanska štedionica (AOD, 03.11.2026). It signed the payout contract with AOD on 05.11. The payout starts on 13.11.2026 and you can apply until 03.11.2029 ([AOD notice, 06.11.2026](https://www.aod.rs/uploads/dokumenti/altabanka/Obave%C5%A1tenje_o_po%C4%8Detku_isplate_OD_6nov2026.pdf)); what to bring: [checklist](/en/vyplata/#chto-vzyat). See the [official AOD announcement](https://www.aod.rs/clan/vest/vest_forma/137) and the [AOD questions and answers](https://www.aod.rs/clan/osigdepoz/pitanja_odgovori).
 
-Managed to open a new account at another bank? Tell other depositors where, in an [anonymous form](/account), and see [what others reported](/account/stats).
+Managed to open a new account at another bank? Tell other depositors where, in an [anonymous form](/account), and see [what others reported](/account/stats) (both pages are in Russian).
 
 ## All sections
 

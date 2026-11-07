@@ -1,0 +1,204 @@
+---
+// Лента «Кейсы»: карточки берутся в браузере из /api/cases/public (только принятые и опубликованные
+// админом). Сайт статичный, кейсы приходят после сборки — поэтому не при сборке, а запросом.
+import { href, type Lang } from '../i18n';
+
+const { lang = 'ru' } = Astro.props as { lang?: Lang };
+
+const T = {
+	ru: {
+		share: 'Поделиться своим кейсом',
+		loading: 'Загружаем кейсы…',
+		empty: 'Пока нет опубликованных кейсов. Поделитесь своим — он появится здесь после проверки.',
+		failed: 'Не удалось загрузить кейсы. Обновите страницу чуть позже.',
+		filed: 'Что подавали',
+		result: 'Результат',
+		verified: 'Подтверждено источником',
+		personal: 'Личный опыт',
+		own: 'Подробнее у автора',
+		photo: 'Фото документа к кейсу',
+		pdf: 'Документ PDF',
+		swipe: 'Листайте вбок →',
+		count: 'Кейсов: ',
+	},
+	en: {
+		share: 'Share your case',
+		loading: 'Loading cases…',
+		empty: 'No published cases yet. Share yours — it appears here after a check.',
+		failed: 'Could not load the cases. Reload the page a bit later.',
+		filed: 'What was filed',
+		result: 'Result',
+		verified: 'Confirmed by a source',
+		personal: 'Personal experience',
+		own: 'More from the author',
+		photo: 'Photo of a document for the case',
+		pdf: 'PDF document',
+		swipe: 'Swipe sideways →',
+		count: 'Cases: ',
+	},
+	sr: {
+		share: 'Podelite svoj slučaj',
+		loading: 'Učitavamo slučajeve…',
+		empty: 'Još nema objavljenih slučajeva. Podelite svoj — pojaviće se ovde posle provere.',
+		failed: 'Slučajevi nisu učitani. Osvežite stranicu malo kasnije.',
+		filed: 'Šta je podneto',
+		result: 'Rezultat',
+		verified: 'Potvrđeno izvorom',
+		personal: 'Lično iskustvo',
+		own: 'Više kod autora',
+		photo: 'Fotografija dokumenta uz slučaj',
+		pdf: 'PDF dokument',
+		swipe: 'Prevucite u stranu →',
+		count: 'Slučajeva: ',
+	},
+}[lang];
+
+const formUrl = `${href(lang, '/predlozheniya/')}?type=case`;
+---
+
+<div class="case-feed not-content" data-lang={lang} data-t={JSON.stringify(T)}>
+	<p class="case-cta"><a class="case-share" href={formUrl}>{T.share} →</a></p>
+	<p class="case-status" role="status">{T.loading}</p>
+	<p class="case-swipe" hidden>{T.swipe}</p>
+	<div class="case-list" hidden></div>
+	<noscript><p class="case-status">{T.failed}</p></noscript>
+</div>
+
+<script>
+	type CaseFile = { url: string; kind: 'image' | 'pdf' };
+	type CaseCard = {
+		id: number; category: string; summary: string; filed: string; result: string; date: string;
+		source_url: string; own_url: string; files: CaseFile[];
+	};
+	type Feed = { items: CaseCard[]; labels: { category: Record<string, Record<string, string>> } };
+
+	const el = <K extends keyof HTMLElementTagNameMap>(tag: K, cls?: string, text?: string) => {
+		const node = document.createElement(tag);
+		if (cls) node.className = cls;
+		if (text) node.textContent = text;
+		return node;
+	};
+	const external = (url: string, text: string) => {
+		const a = el('a', undefined, text);
+		a.href = url; a.target = '_blank'; a.rel = 'noopener nofollow';
+		return a;
+	};
+	const day = (iso: string) => `${iso.slice(8, 10)}.${iso.slice(5, 7)}.${iso.slice(0, 4)}`;
+
+	function card(item: CaseCard, t: Record<string, string>, categories: Record<string, string>) {
+		const article = el('article', 'case');
+		const top = el('div', 'case-top');
+		top.append(el('span', 'case-cat', categories[item.category] || item.category));
+		const time = el('time', 'case-date', day(item.date));
+		time.dateTime = item.date;
+		top.append(time);
+		article.append(top, el('p', 'case-sum', item.summary));
+		const facts = el('dl', 'case-facts');
+		if (item.filed) facts.append(el('dt', undefined, t.filed), el('dd', undefined, item.filed));
+		facts.append(el('dt', undefined, t.result), el('dd', undefined, item.result));
+		article.append(facts);
+		if (item.files.length) {
+			const photos = el('div', 'case-photos');
+			for (const file of item.files) {
+				const a = external(file.url, '');
+				if (file.kind === 'image') {
+					const img = el('img');
+					img.src = file.url; img.alt = t.photo; img.loading = 'lazy'; img.decoding = 'async';
+					a.append(img);
+				} else {
+					a.className = 'case-pdf'; a.textContent = t.pdf;
+				}
+				photos.append(a);
+			}
+			article.append(photos);
+		}
+		const mark = el('p', item.source_url ? 'case-mark verified' : 'case-mark');
+		mark.append(item.source_url ? external(item.source_url, `✓ ${t.verified}`) : t.personal);
+		article.append(mark);
+		if (item.own_url) {
+			const own = el('p', 'case-own');
+			own.append(external(item.own_url, `${t.own} ↗`));
+			article.append(own);
+		}
+		return article;
+	}
+
+	async function mount(root: HTMLElement) {
+		const t = JSON.parse(root.dataset.t || '{}') as Record<string, string>;
+		const lang = root.dataset.lang || 'ru';
+		const status = root.querySelector<HTMLElement>('.case-status')!;
+		const list = root.querySelector<HTMLElement>('.case-list')!;
+		const swipe = root.querySelector<HTMLElement>('.case-swipe')!;
+		let feed: Feed;
+		try {
+			const response = await fetch('/api/cases/public', { cache: 'no-store', credentials: 'omit' });
+			if (!response.ok) throw new Error(String(response.status));
+			feed = await response.json();
+		} catch {
+			status.textContent = t.failed;
+			return;
+		}
+		if (!feed.items.length) {
+			status.textContent = t.empty;
+			return;
+		}
+		const categories = feed.labels.category[lang] || feed.labels.category.ru;
+		list.replaceChildren(...feed.items.map((item) => card(item, t, categories)));
+		status.textContent = `${t.count}${feed.items.length}`;
+		list.hidden = false;
+		swipe.hidden = feed.items.length < 2;
+	}
+
+	document.querySelectorAll<HTMLElement>('.case-feed').forEach(mount);
+</script>
+
+<!-- Карточки строит скрипт, у них нет атрибутов scoped-стилей Astro: стили глобальные, под .case-feed. -->
+<style is:global>
+	.case-feed { margin: 1.25rem 0 2rem; }
+	.case-feed .case-cta { margin: 0 0 1rem; }
+	.case-feed .case-share {
+		display: inline-block; padding: 0.55rem 1rem; border-radius: 999px; background: var(--sl-color-accent);
+		color: #fff; font-weight: 600; text-decoration: none;
+	}
+	.case-feed .case-share:hover { filter: brightness(1.08); color: #fff; }
+	.case-feed .case-status { color: var(--sl-color-gray-3); font-size: 0.95rem; margin: 0 0 0.6rem; }
+	.case-feed .case-swipe { font-size: 0.85rem; color: var(--sl-color-gray-3); margin: 0 0 0.4rem; }
+	/* Телефон: лента листается пальцем, карточка встаёт по центру. Без библиотек — только scroll-snap. */
+	.case-feed .case-list {
+		display: flex; gap: 0.75rem; overflow-x: auto; overscroll-behavior-x: contain;
+		scroll-snap-type: x mandatory; padding: 0.25rem 0.1rem 0.9rem; -webkit-overflow-scrolling: touch;
+	}
+	.case-feed .case-list[hidden] { display: none; }
+	.case-feed .case {
+		flex: 0 0 86%; scroll-snap-align: center; display: flex; flex-direction: column; gap: 0.5rem;
+		min-width: 0; padding: 0.9rem 1rem; background: #fffdf7; border: 1px solid var(--line, #d9d2c0);
+		border-left: 4px solid var(--sl-color-accent); border-radius: 3px;
+	}
+	.case-feed .case-top { display: flex; justify-content: space-between; gap: 0.5rem; align-items: baseline; }
+	.case-feed .case-cat { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: var(--sl-color-accent); }
+	.case-feed .case-date { font-size: 0.85rem; color: var(--sl-color-gray-3); white-space: nowrap; }
+	.case-feed .case-sum { margin: 0; font-size: 1rem; line-height: 1.45; overflow-wrap: anywhere; }
+	.case-feed .case-facts { margin: 0; font-size: 0.9rem; display: grid; gap: 0.15rem; }
+	.case-feed .case-facts dt { font-weight: 700; color: var(--sl-color-gray-2); }
+	.case-feed .case-facts dd { margin: 0 0 0.35rem; overflow-wrap: anywhere; }
+	.case-feed .case-photos { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+	.case-feed .case-photos img {
+		width: 4.5rem; height: 4.5rem; object-fit: cover; border-radius: 4px; border: 1px solid var(--line, #d9d2c0); display: block;
+	}
+	.case-feed .case-pdf {
+		display: grid; place-items: center; width: 4.5rem; height: 4.5rem; font-size: 0.8rem; font-weight: 600;
+		border: 1px solid var(--line, #d9d2c0); border-radius: 4px; text-align: center; text-decoration: none;
+	}
+	.case-feed .case-mark { margin: auto 0 0; font-size: 0.85rem; font-weight: 600; color: var(--sl-color-gray-3); }
+	.case-feed .case-mark.verified a { color: #2d6a4f; }
+	.case-feed .case-own { margin: 0; font-size: 0.9rem; }
+	.case-feed .case-own a, .case-feed .case-pdf { color: var(--sl-color-accent); }
+	@media (min-width: 50rem) {
+		.case-feed .case-list {
+			display: grid; grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr)); overflow: visible;
+			scroll-snap-type: none; padding: 0;
+		}
+		.case-feed .case { scroll-snap-align: none; }
+		.case-feed .case-swipe { display: none; }
+	}
+</style>
