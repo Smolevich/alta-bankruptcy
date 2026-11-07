@@ -398,6 +398,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 
 <script>
 	import { attachVoice, voiceSupported } from '../scripts/voice';
+	import { branchStatus, parseRange } from '../lib/branch-hours.mjs';
 
 	type Info = { el: HTMLElement; city: string; size: string; wd: number[]; sat: number[] };
 	const nums = (v?: string) => (v ? v.split(',').map(Number) : []);
@@ -460,7 +461,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 	type Pt = { id: string; lat: number; lng: number; city: string; cityName: string; name: string; addr: string; note: string; wd: string; sat: string; gmaps: string; chart: string };
 	type Mark = { state: string; count: number; minutes_ago: number };
 	type Tx = Record<string, any>;
-	type Hours = { open: boolean; text: string; preOpen: boolean; reportsAt: string; opensMon: boolean; opensAt: string };
+	type Hours = { open: boolean; text: string; preOpen: boolean; reportsAt: string; next: string };
 	type Phase = 'idle' | 'pending' | 'hold' | 'sending' | 'error' | 'done' | 'limit';
 
 	const STATES = ['none', 'few', 'full', 'outside'];
@@ -504,11 +505,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 		const day = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].indexOf(get('weekday'));
 		return { day, min: Number(get('hour')) * 60 + Number(get('minute')) };
 	}
-	// «08:00-15:00» и «8.00h - 15.00h» — оба вида записи из PDF AOD.
-	function range(text: string): [number, number] | null {
-		const m = text.match(/(\d{1,2})[.:](\d{2})h?\s*-\s*(\d{1,2})[.:](\d{2})/);
-		return m ? [Number(m[1]) * 60 + Number(m[2]), Number(m[3]) * 60 + Number(m[4])] : null;
-	}
+	const range = (text: string) => parseRange(text);
 	const rangeText = (text: string) => { const r = range(text); return r ? `${hhmm(r[0])}–${hhmm(r[1])}` : text; };
 
 	async function solvePow(): Promise<string> {
@@ -597,25 +594,32 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 
 		function hoursOf(p: Pt): Hours {
 			const { day, min } = belgradeNow();
-			const wd = range(p.wd), sat = range(p.sat);
-			const today = day === 0 ? null : day === 6 ? sat : wd;
-			const base = { preOpen: false, reportsAt: '', opensMon: false, opensAt: '' };
-			if (today && min >= today[0] && min < today[1]) {
-				const left = today[1] - min;
-				const text = left <= 60 ? tx.closesIn.replace('%m', String(left)) : tx.openUntil.replace('%t', hhmm(today[1])).replace('%s', dur(left));
-				return { ...base, open: true, text };
+			const st = branchStatus(range(p.wd), range(p.sat), day, min);
+			if (st.state === 'open') {
+				const text = st.left <= 60 ? tx.closesIn.replace('%m', String(st.left)) : tx.openUntil.replace('%t', hhmm(st.closesAt)).replace('%s', dur(st.left));
+				return { open: true, text, preOpen: false, reportsAt: '', next: '' };
 			}
-			let opens: number | null = null, mon = false;
-			if (today && min < today[0]) opens = today[0];
-			else if (day >= 1 && day <= 4 && wd) opens = wd[0];
-			else if (day === 5 && sat) opens = sat[0];
-			else { opens = wd?.[0] ?? 480; mon = true; }
-			const before = !mon && today && min < today[0] ? today[0] - min : Infinity;
+			if (st.state === 'later') {
+				const at = hhmm(st.opensAt);
+				return { open: false, text: tx.laterToday.replace('%t', at), preOpen: st.opensAt - min <= 60, reportsAt: hhmm(Math.max(st.opensAt - 60, 0)), next: tx.opensToday.replace('%t', at) };
+			}
+			const opens = st.opensAt ?? 480;
 			const at = hhmm(opens);
-			return {
-				open: false, preOpen: before <= 60, reportsAt: hhmm(Math.max(opens - 60, 0)), opensMon: mon, opensAt: at,
-				text: (mon ? tx.closedMon : tx.closedAt).replace('%t', at),
+			const next = st.tomorrow ? tx.opensTomorrow.replace('%t', at) : tx.opensOn.replace('%d', tx.days[st.nextDay ?? 1]).replace('%t', at);
+			const text = st.closedAt === null ? tx.closedOff.replace('%s', next) : tx.closedDay.replace('%t', hhmm(st.closedAt)).replace('%s', next);
+			return { open: false, text, preOpen: false, reportsAt: hhmm(Math.max(opens - 60, 0)), next };
+		}
+		// Расписание недели одной строкой; сегодняшний день выделен, отдельной строкой «Сегодня» не повторяется.
+		function scheduleHtml(p: Pt, day: number): string {
+			const part = (label: string, hours: string, on: boolean) => {
+				const t = `${esc(label)} ${esc(hours)}`;
+				return on ? `<strong>${t}</strong>` : t;
 			};
+			return [
+				part(tx.schedWd, rangeText(p.wd), day >= 1 && day <= 5),
+				part(tx.schedSat, range(p.sat) ? rangeText(p.sat) : tx.schedClosed, day === 6),
+				part(tx.schedSun, tx.schedClosed, day === 0),
+			].join(' · ');
 		}
 		const sure = (m?: Mark) => Boolean(m && !stale && m.count >= 2 && m.minutes_ago <= SURE_MINUTES);
 		const pinState = (p: Pt) => (!hoursOf(p).open && !marks[p.id] ? 'closed' : marks[p.id]?.state ?? 'unknown');
@@ -694,7 +698,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			const all = $('.q-allclosed');
 			if (!open.length && rows.length) {
 				const h = hoursOf(rows[0]);
-				all.textContent = tx.allClosed.replace('%s', (h.opensMon ? tx.opensMon : tx.opensAt).replace('%t', h.opensAt));
+				all.textContent = tx.allClosed.replace('%s', h.next);
 				all.hidden = false;
 			} else all.hidden = true;
 			$('.q-sort').hidden = !me;
@@ -751,14 +755,13 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			const near = hint ?? '';
 			const route = p.gmaps || `https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}`;
 			const { day } = belgradeNow();
-			const todayHours = day === 0 ? '—' : rangeText(day === 6 ? p.sat : p.wd);
 			const google = p.chart ? `<details class="q-google"><summary>${esc(tx.googleSum)}</summary>${p.chart}<p class="q-google-note">${esc(tx.googleNote)}</p></details>` : `<p class="q-google-none">${esc(tx.googleNone)}</p>`;
 			return `${head(p.name)}<div class="q-card-body">
 				${near ? `<p class="q-near">${near}</p>` : ''}
 				${far !== null ? `<p class="q-far">${esc(tx.far.replace('%s', distText(far)))}</p>` : ''}
 				<p class="q-addr q-full-only">${esc(p.addr)}</p>${p.note ? `<p class="q-full-only q-muted">${esc(p.note)}</p>` : ''}
 				<p class="q-hours" data-open="${h.open ? 1 : 0}">${esc(h.text)}</p>
-				<p class="q-full-only q-muted">${esc(tx.today.replace('%d', tx.days[day]).replace('%s', todayHours))}<br>${esc(tx.satSun.replace('%s', rangeText(p.sat)))}</p>
+				<p class="q-full-only q-muted q-schedule">${scheduleHtml(p, day)}</p>
 				${verdictHtml(p)}
 				<div class="q-report-box">${reportBlock(p, h)}</div>
 				<div class="q-full-only">${google}</div>
