@@ -1045,7 +1045,8 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			if (t.classList.contains('q-comment') && rep) rep.comment = t.value;
 		});
 		root.addEventListener('focusin', (ev) => { if ((ev.target as HTMLElement).classList.contains('q-comment')) hold(); });
-		root.addEventListener('keydown', (ev) => { if (ev.key === 'Escape' && (current || chooser)) closeCard(); });
+		// Esc с любого места страницы: карточка, открытая по ссылке ?b=, фокуса не получает.
+		document.addEventListener('keydown', (ev) => { if (ev.key === 'Escape' && (current || chooser)) closeCard(); });
 		window.addEventListener('pagehide', flush);
 		document.addEventListener('visibilitychange', () => {
 			if (document.visibilityState === 'hidden') flush();
