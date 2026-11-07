@@ -151,6 +151,8 @@ html, body { overflow-x: clip; }
 .kind-official { color: var(--ok); }
 .kind-reliable_media { color: #7a5a00; }
 .kind-unverified { color: var(--seal); }
+.kind-reference { color: #3d5a80; }
+.kind-own { color: #5a5448; }
 @media (max-width: 520px) {
 	.sources li { grid-template-columns: 1fr auto; }
 	.sources .kind { grid-column: 1 / -1; justify-self: start; }

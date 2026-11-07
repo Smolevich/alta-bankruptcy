@@ -5,7 +5,9 @@ import { docsSchema, i18nSchema } from '@astrojs/starlight/schema';
 
 // Правило сайта «нет источника — нет правки» зашито в схему: страница или новость
 // без хотя бы одного источника не соберётся.
-export const SOURCE_KINDS = ['official', 'reliable_media', 'unverified'] as const;
+// official — только госорганы, суды, банки и регуляторы; правовые базы, издатели, палаты — reference;
+// own — материалы самого сайта. Какой kind допустим для домена, проверяет scripts/check-sources.mjs.
+export const SOURCE_KINDS = ['official', 'reliable_media', 'unverified', 'reference', 'own'] as const;
 
 const source = z.object({
 	title: z.string().min(1),

@@ -9,6 +9,8 @@
     "preview": "astro preview",
     "astro": "astro",
     "check:i18n": "node scripts/check-i18n.mjs",
+    "check:sources": "node scripts/check-sources.mjs",
+    "test:scripts": "node --test scripts/*.test.mjs",
     "check": "npm run check:i18n && npm run build"
   },
   "dependencies": {

@@ -14,7 +14,13 @@ npm run check        # translations check + build (schema, internal links)
 
 - **No source, no edit.** Every page and news item has `sources` (title, url, kind, date) and
   `checked` in the frontmatter; the build fails without them (`src/content.config.ts`).
-  `kind`: `official` | `reliable_media` | `unverified`. Unverified claims are not published.
+  `kind`: `official` (state bodies, courts, banks, the regulator only) | `reference` (legal databases,
+  publishers, bar chambers, associations) | `own` (this site) | `reliable_media` | `unverified`.
+  Unverified claims are not published.
+- **External links only to trusted domains.** Every URL (sources, text, components, built `dist/`)
+  must be on a domain listed in `src/data/trusted-domains.yaml` (with `name` and `proof`), https only,
+  no shorteners; short `archive.ph/<id>` only as `copy` of a verified source.
+  `npm run check:sources [-- --dist]` checks it; the registry is under CODEOWNERS.
 - **Three languages move together.** A fact changed in one language is changed in the other
   two in the same PR (or the PR says "translation lags"). `scripts/check-i18n.mjs` checks that
   all three versions exist and that their `sources` and external links are identical.

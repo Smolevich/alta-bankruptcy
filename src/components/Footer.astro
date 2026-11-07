@@ -10,7 +10,7 @@ const lang = langOf(Astro.locals.starlightRoute.lang);
 const t = UI[lang];
 
 const data = Astro.locals.starlightRoute.entry.data as {
-	sources?: { title: string; url: string; kind: 'official' | 'reliable_media' | 'unverified'; date: Date; copy?: string }[];
+	sources?: { title: string; url: string; kind: 'official' | 'reliable_media' | 'unverified' | 'reference' | 'own'; date: Date; copy?: string }[];
 	checked?: Date;
 };
 const fmt = (d: Date) => formatDate(d, lang);

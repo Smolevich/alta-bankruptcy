@@ -1,0 +1,269 @@
+# Реестр доверенных доменов сайта. Ссылка на домен не из этого списка роняет CI
+# (scripts/check-sources.mjs). Файл под CODEOWNERS: новый домен = ревью владельца.
+#
+# Поля записи:
+#   domain   — регистрируемый домен;
+#   name     — официальное название организации и по-русски, что это за организация;
+#   category — official-rs-gov | court | bank | regulator (только они дают kind: official),
+#              reference (правовые базы, издатели, палаты, ассоциации, платформы),
+#              press, archive, social, own (сам сайт), tech;
+#   proof    — откуда известно, что домен принадлежит этой организации;
+#   hosts    — точные хосты; "*" — домен и любой его поддомен (только у доменов с одним владельцем,
+#              никогда на публичных суффиксах вроде gov.rs, org.rs, co.rs);
+#   paths    — разрешённые префиксы путей (обязательно для платформ, где страницы пишут пользователи);
+#   http_ok  — хосты, которым разрешён http (сайт не отвечает по https);
+#   archive  — wayback | archive-ph: ссылка ведёт в архив, проверяется вложенный адрес.
+
+# --- Государственные органы Сербии ---
+- domain: aod.rs
+  name: "Agencija za osiguranje depozita — Агентство по страхованию вкладов Сербии (выплачивает застрахованные вклады, ведёт банкротство банков)"
+  category: official-rs-gov
+  proof: "WHOIS RNIDS (whois.rnids.rs), регистрант: Agencija za Osiguranje Depozita; проверено 07.11.2026"
+  hosts: [aod.rs, www.aod.rs]
+
+- domain: pravno-informacioni-sistem.rs
+  name: "Pravno-informacioni sistem Republike Srbije — официальная правовая информационная система Сербии (тексты законов)"
+  category: official-rs-gov
+  proof: "WHOIS RNIDS, регистрант: JP Službeni glasnik (государственное издательство официального вестника); проверено 07.11.2026"
+  hosts: [pravno-informacioni-sistem.rs, reg.pravno-informacioni-sistem.rs]
+
+- domain: apr.gov.rs
+  name: "Agencija za privredne registre — Агентство хозяйственных реестров Сербии (реестр компаний и финансовых отчётов)"
+  category: official-rs-gov
+  proof: "Зона gov.rs выдаётся только органам власти Сербии (WHOIS RNIDS: регистрант RNIDS, домен в правительственной зоне); проверено 07.11.2026"
+  hosts: [pretraga.apr.gov.rs, fin.apr.gov.rs]
+
+- domain: purs.gov.rs
+  name: "Poreska uprava Republike Srbije — Налоговая администрация Сербии"
+  category: official-rs-gov
+  proof: "Зона gov.rs выдаётся только органам власти Сербии (WHOIS RNIDS); проверено 07.11.2026"
+  hosts: [purs.gov.rs, www.purs.gov.rs]
+
+- domain: mup.gov.rs
+  name: "Ministarstvo unutrašnjih poslova Republike Srbije — МВД Сербии"
+  category: official-rs-gov
+  proof: "Зона gov.rs выдаётся только органам власти Сербии (WHOIS RNIDS); проверено 07.11.2026"
+  hosts: [www.mup.gov.rs]
+
+- domain: ravnopravnost.gov.rs
+  name: "Poverenik za zaštitu ravnopravnosti — Уполномоченный по защите равноправия Сербии"
+  category: official-rs-gov
+  proof: "Зона gov.rs выдаётся только органам власти Сербии (WHOIS RNIDS); проверено 07.11.2026"
+  hosts: [ravnopravnost.gov.rs]
+
+- domain: javnidug.gov.rs
+  name: "Uprava za javni dug — Управление государственного долга Минфина Сербии"
+  category: official-rs-gov
+  proof: "Зона gov.rs выдаётся только органам власти Сербии (WHOIS RNIDS); проверено 07.11.2026"
+  hosts: [www.javnidug.gov.rs]
+
+- domain: beograd.rs
+  name: "Grad Beograd — официальный сайт города Белграда"
+  category: official-rs-gov
+  proof: "WHOIS RNIDS, регистрант: Grad Beograd - Gradska uprava - Sluzba za informisanje; проверено 07.11.2026"
+  hosts: [www.beograd.rs]
+
+# --- Суды ---
+- domain: sud.rs
+  name: "Portal sudova Srbije — домен судебной власти Сербии (поддомены — отдельные суды)"
+  category: court
+  proof: "WHOIS RNIDS, регистрант: Ministarstvo pravde; проверено 07.11.2026"
+  hosts: ["*"]
+  # 443 закрыт, http отвечает 302 (проверено 07.11.2026).
+  http_ok: [www.bg.pr.sud.rs]
+
+# --- Регулятор ---
+- domain: nbs.rs
+  name: "Narodna banka Srbije — Национальный банк Сербии (центробанк и надзор за банками)"
+  category: regulator
+  proof: "WHOIS RNIDS, регистрант: NARODNA BANKA SRBIJE; проверено 07.11.2026"
+  hosts: ["*"]
+
+# --- Банки ---
+- domain: altabanka.rs
+  name: "ALTA banka a.d. Beograd — банк ALTA (в банкротстве)"
+  category: bank
+  proof: "WHOIS RNIDS, регистрант: ALTA BANKA AD BEOGRAD; проверено 07.11.2026"
+  hosts: ["*"]
+
+- domain: posted.co.rs
+  name: "Banka Poštanska štedionica a.d. Beograd — государственный банк «Почтовая сберкасса», банк-выплатчик"
+  category: bank
+  proof: "WHOIS RNIDS, регистрант: BANKA POŠTANSKA ŠTEDIONICA A.D.; проверено 07.11.2026"
+  hosts: [www.posted.co.rs]
+
+- domain: unicreditgroup.eu
+  name: "UniCredit Group — банковская группа UniCredit (сайт с обзорами прессы)"
+  category: bank
+  proof: "Корпоративный домен группы, указан на https://www.unicreditgroup.eu; встречается только внутри ссылок веб-архива"
+  hosts: [gss.unicreditgroup.eu]
+
+# --- Справочные источники ---
+- domain: crhov.rs
+  name: "Centralni registar, depo i kliring hartija od vrednosti — Центральный реестр ценных бумаг Сербии"
+  category: reference
+  proof: "WHOIS RNIDS, регистрант: CENTRALNI REGISTAR HOV AD BEOGRAD; проверено 07.11.2026"
+  hosts: [www.crhov.rs]
+
+- domain: paragraf.rs
+  name: "Paragraf Lex d.o.o. — коммерческая правовая база Сербии"
+  category: reference
+  proof: "WHOIS RNIDS, регистрант: PARAGRAF LEX DOO Sremska Kamenica; проверено 07.11.2026"
+  hosts: [www.paragraf.rs]
+
+- domain: slglasnik.com
+  name: "JP Službeni glasnik — государственное издательство официального вестника Сербии"
+  category: reference
+  proof: "WHOIS скрыт; главная https://www.slglasnik.com называет себя «Службени гласник» и ведёт на pravno-informacioni-sistem.rs, чей регистрант по WHOIS RNIDS — JP Službeni glasnik; проверено 07.11.2026"
+  hosts: [www.slglasnik.com]
+
+- domain: aks.org.rs
+  name: "Advokatska komora Srbije — Адвокатская палата Сербии (реестр адвокатов)"
+  category: reference
+  proof: "WHOIS RNIDS, регистрант: Advokatska Komora Srbije; проверено 07.11.2026"
+  hosts: [aks.org.rs, imenik.aks.org.rs]
+
+- domain: akbgd.org.rs
+  name: "Advokatska komora Beograda — Адвокатская палата Белграда"
+  category: reference
+  proof: "WHOIS RNIDS, регистрант: Advokatska komora Beograd; проверено 07.11.2026"
+  hosts: [akbgd.org.rs]
+
+- domain: akv.org.rs
+  name: "Advokatska komora Vojvodine — Адвокатская палата Воеводины"
+  category: reference
+  proof: "WHOIS RNIDS, регистрант: Advokatska komora Vojvodine; проверено 07.11.2026"
+  hosts: [akv.org.rs]
+
+- domain: ubs-asb.com
+  name: "Udruženje banaka Srbije (Association of Serbian Banks) — Ассоциация банков Сербии"
+  category: reference
+  proof: "WHOIS скрыт; https://www.ubs-asb.com/en называет себя Association of Serbian Banks, контакт usb@ubs-asb.com; проверено 07.11.2026"
+  hosts: [www.ubs-asb.com]
+
+- domain: github.com
+  name: "GitHub — хостинг кода; разрешены только репозитории владельца сайта"
+  category: reference
+  proof: "Общеизвестный домен GitHub, Inc.; аккаунт Smolevich — владелец этого репозитория"
+  hosts: [github.com]
+  paths: [/Smolevich/]
+
+# --- СМИ ---
+- domain: biznis.rs
+  name: "Biznis.rs — деловое издание Сербии"
+  category: press
+  proof: "WHOIS RNIDS, регистрант: INFO BIZNIS.RS DOO Beograd-Vračar; проверено 07.11.2026"
+  hosts: [biznis.rs]
+
+- domain: n1info.rs
+  name: "N1 Srbija — телеканал и новостной сайт"
+  category: press
+  proof: "WHOIS RNIDS, регистрант: Adria News sarl; проверено 07.11.2026"
+  hosts: [n1info.rs]
+
+- domain: kurir.rs
+  name: "Kurir — ежедневная газета (раздел Biznis)"
+  category: press
+  proof: "WHOIS RNIDS, регистрант: MONDO INC DOO BEOGRAD; проверено 07.11.2026"
+  hosts: [biznis.kurir.rs]
+
+- domain: rtv.rs
+  name: "Radio-televizija Vojvodine — общественный вещатель Воеводины"
+  category: press
+  proof: "WHOIS RNIDS, регистрант: RUV Radio Televizija Vojvodine; проверено 07.11.2026"
+  hosts: [www.rtv.rs]
+
+- domain: danas.rs
+  name: "Danas — ежедневная газета"
+  category: press
+  proof: "WHOIS RNIDS, регистрант: Dan Graf d.o.o.; проверено 07.11.2026"
+  hosts: [www.danas.rs]
+
+- domain: politika.rs
+  name: "Politika — ежедневная газета"
+  category: press
+  proof: "WHOIS RNIDS, регистрант: POLITIKA NOVINE I MAGAZINI PNM DOO BEOGRAD; проверено 07.11.2026"
+  hosts: [www.politika.rs]
+
+# --- Архивы ---
+- domain: web.archive.org
+  name: "Internet Archive Wayback Machine — веб-архив некоммерческой организации Internet Archive"
+  category: archive
+  proof: "Общеизвестный сервис Internet Archive (https://archive.org); формат ссылки /web/<время>/<адрес>"
+  hosts: [web.archive.org]
+  archive: wayback
+
+- domain: archive.ph
+  name: "archive.today (archive.ph) — сервис снимков веб-страниц"
+  category: archive
+  proof: "Общеизвестный сервис снимков archive.today; короткие ссылки допускаются только как copy проверенного источника"
+  hosts: [archive.ph]
+  archive: archive-ph
+
+# --- Платформы и соцсети: только перечисленные страницы ---
+- domain: t.me
+  name: "Telegram — мессенджер; разрешены только перечисленные каналы и чаты"
+  category: social
+  proof: "Общеизвестный домен коротких ссылок Telegram (https://telegram.org)"
+  hosts: [t.me]
+  paths: [/Altadef50k, /altabank_closed, /srb_guide, /volonteri_common, /dcloza]
+
+- domain: telegra.ph
+  name: "Telegraph — платформа публикаций Telegram; разрешена только инструкция вкладчика"
+  category: social
+  proof: "Общеизвестная платформа Telegram для публикаций"
+  hosts: [telegra.ph]
+  paths: [/Kak-otkryt-schyot-v-serbskom-banke-esli-otkazali-zhaloba-v-Narodnyj-bank-Serbii-NBS-11-02-2]
+
+- domain: instagram.com
+  name: "Instagram — соцсеть; разрешён только аккаунт инициативы вкладчиков"
+  category: social
+  proof: "WHOIS: Registrant Organization Instagram LLC; проверено 07.11.2026"
+  hosts: [www.instagram.com]
+  paths: [/alta50kplus]
+
+- domain: milovanovic.rs
+  name: "Milovanović i partneri — сайт адвокатского товарищества, частная практика"
+  category: social
+  proof: "WHOIS RNIDS: регистрант — физическое лицо (Individual), владелец не раскрыт; поэтому только kind: unverified; проверено 07.11.2026"
+  hosts: [www.milovanovic.rs]
+
+- domain: docs.google.com
+  name: "Google Docs — таблицы Google; разрешены только опубликованные таблицы"
+  category: social
+  proof: "Общеизвестный домен Google LLC"
+  hosts: [docs.google.com]
+  paths: [/spreadsheets/]
+
+# --- Сам сайт ---
+- domain: smolevich.com
+  name: "alta.smolevich.com — этот сайт (скриншоты ответов AOD и служебные страницы)"
+  category: own
+  proof: "Адрес сайта в astro.config.mjs (site), репозиторий github.com/Smolevich/alta-bankruptcy"
+  hosts: [alta.smolevich.com]
+
+# --- Технические ---
+- domain: google.com
+  name: "Google — карты и справка Google"
+  category: tech
+  proof: "Общеизвестный домен Google LLC"
+  hosts: [www.google.com, maps.google.com, support.google.com]
+  paths: [/maps, /business]
+
+- domain: openstreetmap.org
+  name: "OpenStreetMap — открытая карта (тайлы и атрибуция)"
+  category: tech
+  proof: "Общеизвестный домен OpenStreetMap Foundation (https://osmfoundation.org)"
+  hosts: [www.openstreetmap.org, tile.openstreetmap.org]
+
+- domain: schema.org
+  name: "Schema.org — словарь разметки структурированных данных"
+  category: tech
+  proof: "Общеизвестный домен проекта Schema.org"
+  hosts: [schema.org]
+
+- domain: cloudflareinsights.com
+  name: "Cloudflare Web Analytics — скрипт веб-аналитики Cloudflare"
+  category: tech
+  proof: "Домен из документации Cloudflare Web Analytics (https://developers.cloudflare.com/web-analytics/)"
+  hosts: [static.cloudflareinsights.com]

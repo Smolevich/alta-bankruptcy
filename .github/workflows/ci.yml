@@ -30,8 +30,20 @@ jobs:
       # Сборка падает, если у страницы или новости нет `sources`/`checked` (схема в
       # src/content.config.ts) или если внутренняя ссылка или якорь ведёт в никуда
       # (starlight-links-validator). Внешние сайты не проверяем: они могут лежать.
+      # Каждая внешняя ссылка — на домен из src/data/trusted-domains.yaml: только https, без гомоглифов,
+      # punycode, логина@, портов и сокращателей; kind: official — только у госорганов, судов, банков.
+      - name: Source links are on trusted domains
+        run: npm run check:sources
+
       - name: Build (schema and internal links)
         run: npm run build
+
+      # Собранный сайт: ловит автоссылки (голый «www.aod.rs» в тексте становится http-ссылкой).
+      - name: Built site links are on trusted domains
+        run: npm run check:sources -- --dist
+
+      - name: Link checker tests
+        run: npm run test:scripts
 
       - name: Site has the files the server relies on
         run: |

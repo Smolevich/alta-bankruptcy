@@ -5,6 +5,8 @@
 /package-lock.json @Smolevich @ivankoriakovskii
 /astro.config.mjs @Smolevich @ivankoriakovskii
 /scripts/ @Smolevich @ivankoriakovskii
+# Реестр доверенных доменов: без ревью новый домен пришёл бы в том же PR, что и ссылка на него.
+/src/data/trusted-domains.yaml @Smolevich @ivankoriakovskii
 /backend/deploy/ @Smolevich @ivankoriakovskii
 /backend/pyproject.toml @Smolevich @ivankoriakovskii
 /backend/uv.lock @Smolevich @ivankoriakovskii
