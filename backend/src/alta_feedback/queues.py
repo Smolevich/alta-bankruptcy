@@ -1,8 +1,10 @@
 """Отметки посетителей об очереди в отделениях Poštanska (карта на /vyplata/).
 
 Отметка — одно из четырёх состояний «глазами», без чисел и без персональных данных.
-Список отделений — data/postanska_branch_ids.json (копия шифр из src/data/postanska-branches.json,
-сверяет тест). Комментарий хранится для модерации и публично не показывается.
+Список отделений — data/postanska_branch_ids.json, часы работы — data/postanska_branch_hours.json
+(копии шифр и часов из src/data/postanska-branches.json, сверяет тест). Отметки принимаем в том же окне,
+что и кнопка на сайте (canReport в src/lib/branch-hours.mjs): за час до открытия и до закрытия, по Белграду.
+Комментарий хранится для модерации и публично не показывается.
 """
 
 import json
@@ -23,6 +25,9 @@ FRESH = timedelta(hours=2)
 SAME_BRANCH_GAP = timedelta(minutes=15)
 # Общий Wi-Fi в отделении и CGNAT у мобильных операторов: десятки людей за одним адресом.
 PER_HOUR_LIMIT = 60
+# Люди собираются у двери до открытия — отметки принимаем за час.
+PRE_OPEN = 60
+HOURS_RE = re.compile(r"(\d{1,2})[.:](\d{2})h?\s*-\s*(\d{1,2})[.:](\d{2})")
 # Телефон или почта в комментарии: такие отметки не принимаем, чтобы не копить контакты.
 CONTACT = re.compile(r"@|\d[\d\s()+-]{5,}\d")
 
@@ -31,6 +36,55 @@ CONTACT = re.compile(r"@|\d[\d\s()+-]{5,}\d")
 def branch_ids() -> frozenset[str]:
     raw = files("alta_feedback").joinpath("data/postanska_branch_ids.json").read_text("utf-8")
     return frozenset(json.loads(raw))
+
+
+type Hours = tuple[int, int]
+
+
+def parse_hours(text: str | None) -> Hours | None:
+    """«08:00-15:00» и «8.00h - 15.00h» из PDF AOD → минуты от полуночи."""
+    m = HOURS_RE.search(text or "")
+    return (int(m[1]) * 60 + int(m[2]), int(m[3]) * 60 + int(m[4])) if m else None
+
+
+@cache
+def branch_hours() -> dict[str, tuple[Hours | None, Hours | None]]:
+    raw = json.loads(files("alta_feedback").joinpath("data/postanska_branch_hours.json").read_text("utf-8"))
+    return {code: (parse_hours(wd), parse_hours(sat)) for code, (wd, sat) in raw.items()}
+
+
+def hours_on(weekday: int, wd: Hours | None, sat: Hours | None) -> Hours | None:
+    """weekday как у datetime: 0 — пн … 6 — вс."""
+    if weekday == 6:
+        return None
+    return sat if weekday == 5 else wd
+
+
+@dataclass(frozen=True)
+class Closed:
+    """Отметки закрыты; откроются в reports_from (чч:мм) через days_ahead дней, weekday — 0 пн … 6 вс."""
+
+    reports_from: str
+    days_ahead: int
+    weekday: int
+
+
+def closed_until(branch_id: str, local: datetime) -> Closed | None:
+    """None — отметку можно принять; у отделения без часов в данных не мешаем."""
+    wd, sat = branch_hours().get(branch_id, (None, None))
+    if wd is None and sat is None:
+        return None
+    minute = local.hour * 60 + local.minute
+    today = hours_on(local.weekday(), wd, sat)
+    if today and today[0] - PRE_OPEN <= minute < today[1]:
+        return None
+    for ahead in range(8):
+        day = (local.weekday() + ahead) % 7
+        hours = hours_on(day, wd, sat)
+        if hours and (ahead or minute < hours[0] - PRE_OPEN):
+            start = max(hours[0] - PRE_OPEN, 0)
+            return Closed(f"{start // 60}:{start % 60:02d}", ahead, day)
+    return None
 
 
 @dataclass(frozen=True)

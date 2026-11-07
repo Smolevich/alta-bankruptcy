@@ -4,6 +4,7 @@ import hmac
 import json
 import os
 from collections.abc import Awaitable, Callable
+from dataclasses import asdict
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from urllib.parse import urlencode
@@ -263,6 +264,10 @@ async def queue_submit(request: Request) -> JSONResponse:
         return JSONResponse({"error": error}, status_code=400)
     store: Store = request.app.state.store
     now = datetime.now(UTC)
+    # Закрытое отделение отвечает раньше проверки PoW: задачу не тратим, человеку сразу говорим, когда можно.
+    closed = queues.closed_until(report.branch_id, request.app.state.clock().astimezone(LOCAL_TZ))
+    if closed is not None:
+        return JSONResponse({"error": "closed", **asdict(closed)}, status_code=403)
     solved = verify_payload(request.app.state.pow_key, str(data.get("altcha") or ""), now)
     if solved is None:
         return JSONResponse({"error": "pow"}, status_code=400)
@@ -867,6 +872,7 @@ def create_app(
     site_dir: Path | None = None,
     access: AccessConfig | None = None,
     access_keys: AccessKeys | None = None,
+    clock: Callable[[], datetime] | None = None,
 ) -> Starlette:
     site = site_dir or Path(os.environ.get("SITE_DIR", DEFAULT_SITE_DIR))
     data = data_dir or Path(os.environ.get("DATA_DIR", "data"))
@@ -920,6 +926,8 @@ def create_app(
     if not app.state.ip_salt:
         raise RuntimeError("IP_SALT не задан: без соли хэш IP подбирается перебором")
     app.state.pow_key = derive_key(app.state.ip_salt)
+    # Часы для окна приёма отметок очереди: в тестах подменяются, чтобы не зависеть от времени прогона.
+    app.state.clock = clock or (lambda: datetime.now(UTC))
     app.state.pow_max_number = pow_max_number
     app.state.site_dir = site
     app.state.data_dir = data
