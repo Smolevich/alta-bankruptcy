@@ -29,8 +29,17 @@ def test_last_minute_before_closing_is_accepted():
     assert closed_until(BRANCH, at(11, 16, 59)) is None
 
 
-def test_closing_minute_is_refused_until_tomorrow():
-    assert closed_until(BRANCH, at(11, 17)) == Closed("7:00", 1, 3)
+def test_hour_after_closing_is_still_accepted():
+    assert closed_until(BRANCH, at(11, 17)) is None
+    assert closed_until(BRANCH, at(11, 17, 59)) is None
+
+
+def test_an_hour_after_closing_is_refused_until_tomorrow():
+    assert closed_until(BRANCH, at(11, 18)) == Closed("7:00", 1, 3)
+
+
+def test_saturday_hour_after_one_is_accepted():
+    assert closed_until(BRANCH, at(7, 13, 59)) is None
 
 
 def test_saturday_after_one_waits_for_monday():
