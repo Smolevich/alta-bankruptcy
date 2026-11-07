@@ -42,6 +42,9 @@ jobs:
       - name: Built site links are on trusted domains
         run: npm run check:sources -- --dist
 
+      - name: Anchors are ASCII and old anchors still resolve
+        run: node scripts/check-anchors.mjs dist
+
       - name: Link checker tests
         run: npm run test:scripts
 

@@ -6,7 +6,7 @@ import type { DocSpec } from '../../lib/doc-editor/spec';
 
 export const prijava = {
 	id: 'prijava',
-	anchor: 'zapolnit',
+	anchor: 'fill-in',
 	text: 'prijava',
 	fileName: 'prijava-potrazivanja.pdf',
 	fonts: { regular: regularUrl, bold: boldUrl },

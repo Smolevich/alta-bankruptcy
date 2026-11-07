@@ -4,7 +4,7 @@
 import { AOD_FORMS, AOD_FORMS_PAGE, type FormKey } from '../data/aod-forms';
 import { UI, type Lang } from '../i18n';
 
-// fill: на странице есть редактор DocEditor бланка (#zapolnit), у бланка требования появляется кнопка к ней.
+// fill: на странице есть редактор DocEditor бланка (#fill-in), у бланка требования появляется кнопка к ней.
 const { forms, lang = 'ru', fields = true, fill = false } = Astro.props as { forms: FormKey[]; lang?: Lang; fields?: boolean; fill?: boolean };
 const t = UI[lang];
 ---
@@ -34,7 +34,7 @@ const t = UI[lang];
 									{t.forms.word}
 								</a>
 								{fill && key === 'prijava' && (
-									<a class="form-btn" href="#zapolnit">
+									<a class="form-btn" href="#fill-in">
 										{t.forms.fill}
 									</a>
 								)}

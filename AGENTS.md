@@ -21,6 +21,11 @@ npm run check        # translations check + build (schema, internal links)
   must be on a domain listed in `src/data/trusted-domains.yaml` (with `name` and `proof`), https only,
   no shorteners; short `archive.ph/<id>` only as `copy` of a verified source.
   `npm run check:sources [-- --dist]` checks it; the registry is under CODEOWNERS.
+- **Anchors are short English ASCII.** Heading ids and anchors are short English ASCII, identical
+  across ru/en/sr; never Cyrillic or percent-encoded. Heading ids come from `src/heading-ids.mjs`
+  (by heading order, the build fails if the count differs). Renaming an anchor requires adding
+  old→new to `public/anchor-redirects.json` (`/anchor-redirect.js` sends old links there).
+  CI fails on non-ASCII ids and on redirects to missing ids (`scripts/check-anchors.mjs`).
 - **Three languages move together.** A fact changed in one language is changed in the other
   two in the same PR (or the PR says "translation lags"). `scripts/check-i18n.mjs` checks that
   all three versions exist and that their `sources` and external links are identical.

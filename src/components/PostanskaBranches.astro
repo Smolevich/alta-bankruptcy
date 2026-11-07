@@ -212,7 +212,7 @@ for (const b of LIST.ekspoziture) {
 	groups.set(k, [...(groups.get(k) ?? []), b]);
 }
 const order = [...FIRST, ...[...groups.keys()].filter((k) => !FIRST.includes(k)).sort((a, b) => CITIES[a][lang].localeCompare(CITIES[b][lang], lang))];
-const slug = (k: string) => `otdeleniya-${CITIES[k].latin.toLowerCase().normalize('NFD').replace(/[^a-z ]/g, '').replace(/ /g, '-')}`;
+const slug = (k: string) => `branches-${CITIES[k].latin.toLowerCase().normalize('NFD').replace(/[^a-z ]/g, '').replace(/ /g, '-')}`;
 const S = LIST.specijalizovana;
 const SPECIAL_PT: Point = { id: S.sifra, name: S.naziv, addr: `${S.ulicaIBroj}, ${S.pttBroj} ${CITIES.BEOGRAD.latin}`, hours: S.radnoVremeRadnimDanom, sat: S.radnoVremeSubotom, code: S.sifra, city: 'BEOGRAD' };
 // Всё, что нужно карточке и списку очередей: часы — строками из PDF AOD, график Google — готовым SVG.
@@ -243,7 +243,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 	</p>
 	<p class="branches-total">{T.total(LIST.ekspoziture.length + 1, groups.size)}</p>
 
-	<section class="qmap" id="otdeleniya-karta" data-points={JSON.stringify(points)} data-text={JSON.stringify(QT)} data-style={styleUrl} data-lang={lang} data-voice-lang={VOICE_LANG} aria-label={QT.title}>
+	<section class="qmap" id="branches-map" data-points={JSON.stringify(points)} data-text={JSON.stringify(QT)} data-style={styleUrl} data-lang={lang} data-voice-lang={VOICE_LANG} aria-label={QT.title}>
 		<header class="qmap-head">
 			<p class="qmap-title"><Fragment set:html={BANK} /><span>{QT.title}</span></p>
 			<div class="qmap-tabs" role="tablist">
