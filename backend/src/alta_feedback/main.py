@@ -263,11 +263,16 @@ async def queue_submit(request: Request) -> JSONResponse:
         return JSONResponse({"error": error}, status_code=400)
     store: Store = request.app.state.store
     now = datetime.now(UTC)
+    solved = verify_payload(request.app.state.pow_key, str(data.get("altcha") or ""), now)
+    if solved is None:
+        return JSONResponse({"error": "pow"}, status_code=400)
     ip_hash = ip_hash_of(request)
-    too_soon = store.queue_report_since(ip_hash, report.branch_id, now - queues.SAME_BRANCH_GAP)
-    hourly = store.recent_from(ip_hash, now, RATE_WINDOW, table="queue_reports")
-    if too_soon or hourly >= queues.PER_HOUR_LIMIT:
-        return JSONResponse({"error": "rate_limit"}, status_code=429)
+    if store.queue_report_since(ip_hash, report.branch_id, now - queues.SAME_BRANCH_GAP):
+        return JSONResponse({"error": "rate_limit", "scope": "branch"}, status_code=429)
+    if store.recent_from(ip_hash, now, RATE_WINDOW, table="queue_reports") >= queues.PER_HOUR_LIMIT:
+        return JSONResponse({"error": "rate_limit", "scope": "ip"}, status_code=429)
+    if not store.claim_challenge(solved.challenge, solved.expires_at, now):
+        return JSONResponse({"error": "pow"}, status_code=400)
     store.add_queue_report(report, ip_hash, request.headers.get("user-agent", "")[:UA_MAX], now)
     store.forget_old_traces(now - TRACE_TTL)
     return JSONResponse({"ok": True}, status_code=201)
@@ -277,7 +282,8 @@ async def queue_public(request: Request) -> JSONResponse:
     now = datetime.now(UTC)
     rows = request.app.state.store.fresh_queue_reports(now - queues.FRESH)
     return JSONResponse(
-        {"branches": queues.summarize(rows, now)}, headers={"Cache-Control": "no-store"}
+        # 30 с в Cloudflare: в день выплат карту открывают тысячи раз, свежесть в полминуты не важна.
+        {"branches": queues.summarize(rows, now)}, headers={"Cache-Control": "public, max-age=30"}
     )
 
 

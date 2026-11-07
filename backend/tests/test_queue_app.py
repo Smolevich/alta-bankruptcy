@@ -7,6 +7,8 @@ from starlette.testclient import TestClient
 
 from alta_feedback import queues
 from alta_feedback.main import create_app
+from alta_feedback.pow import Challenge, encode_payload, solve
+from alta_feedback.validate import hash_ip
 
 TOKEN = "admin-secret"
 AUTH = {"Authorization": f"Bearer {TOKEN}"}
@@ -15,11 +17,18 @@ SITE_LIST = Path(__file__).parents[2] / "src/data/postanska-branches.json"
 
 @pytest.fixture
 def client(tmp_path) -> TestClient:
-    return TestClient(create_app(data_dir=tmp_path, admin_token=TOKEN, ip_salt="salt"))
+    return TestClient(create_app(data_dir=tmp_path, admin_token=TOKEN, ip_salt="salt", pow_max_number=50))
+
+
+def solved_pow(client: TestClient) -> str:
+    data = client.get("/account/challenge").json()
+    fields = ("algorithm", "challenge", "salt", "signature")
+    challenge = Challenge(*(data[k] for k in fields), data["maxnumber"])
+    return encode_payload(challenge, solve(challenge))
 
 
 def mark(client: TestClient, ip: str = "203.0.113.5", **fields):
-    body = {"branch_id": "715", "state": "outside", **fields}
+    body = {"branch_id": "715", "state": "outside", "altcha": solved_pow(client), **fields}
     return client.post("/api/queue", json=body, headers={"CF-Connecting-IP": ip})
 
 
@@ -63,10 +72,57 @@ def test_other_visitor_can_mark_same_branch(client):
     assert mark(client, ip="198.51.100.9", state="full").status_code == 201
 
 
-def test_hourly_limit_across_branches(client):
-    ids = sorted(queues.branch_ids())[: queues.PER_HOUR_LIMIT + 1]
-    codes = [mark(client, branch_id=i).status_code for i in ids]
-    assert codes[-1] == 429
+def fill_hour(client: TestClient, count: int, ip: str = "203.0.113.5") -> None:
+    """Отметки с одного адреса 20–50 минут назад: старше запрета на то же отделение, внутри часа."""
+    store = client.app.state.store
+    ip_hash = hash_ip(ip, "salt")
+    ids = sorted(queues.branch_ids() - {"715"})
+    now = datetime.now(UTC)
+    for n in range(count):
+        report = queues.QueueReport(ids[n % len(ids)], "few", "")
+        store.add_queue_report(report, ip_hash, "test", now - timedelta(minutes=20 + n % 30))
+
+
+def test_shared_network_can_mark_sixty_times_an_hour(client):
+    fill_hour(client, 59)
+    assert mark(client).status_code == 201
+
+
+def test_sixty_first_mark_from_one_network_is_refused(client):
+    fill_hour(client, 60)
+    assert mark(client).json() == {"error": "rate_limit", "scope": "ip"}
+
+
+def test_same_branch_limit_says_branch(client):
+    mark(client)
+    assert mark(client, state="none").json()["scope"] == "branch"
+
+
+def test_mark_without_pow_is_refused(client):
+    assert mark(client, altcha="").status_code == 400
+
+
+def test_mark_with_wrong_pow_number_is_refused(client):
+    data = client.get("/account/challenge").json()
+    fields = ("algorithm", "challenge", "salt", "signature")
+    challenge = Challenge(*(data[k] for k in fields), data["maxnumber"])
+    wrong = (solve(challenge) + 1) % (challenge.maxnumber + 1)
+    assert mark(client, altcha=encode_payload(challenge, wrong)).status_code == 400
+
+
+def test_pow_solution_works_only_once(client):
+    payload = solved_pow(client)
+    mark(client, altcha=payload)
+    assert mark(client, ip="198.51.100.9", altcha=payload).status_code == 400
+
+
+def test_refused_mark_does_not_reach_map(client):
+    mark(client, altcha="")
+    assert public(client) == {}
+
+
+def test_public_queue_is_cached_for_30_seconds(client):
+    assert client.get("/api/queue").headers["cache-control"] == "public, max-age=30"
 
 
 def test_raw_ip_is_not_stored(client):
