@@ -1002,7 +1002,12 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 				rollback(id);
 				r.pow = solvePow();
 				r.pow.catch(() => { r.pow = null; });
-				if (status === 429) {
+				if (status === 403 && body.error === 'closed') {
+					// Сервер решает по своим часам: на телефоне со сбитым временем кнопка могла оказаться активной.
+					const when = body.days_ahead === 0 ? '' : body.days_ahead === 1 ? tx.tomorrow : tx.onDay.replace('%d', tx.days[(Number(body.weekday) + 1) % 7]);
+					r.phase = 'limit';
+					r.error = tx.markFrom.replace('%t', String(body.reports_from)).replace('%s', when).trim();
+				} else if (status === 429) {
 					r.phase = body.scope === 'ip' ? 'error' : 'limit';
 					if (body.scope === 'ip') r.error = tx.limitIp;
 					else {

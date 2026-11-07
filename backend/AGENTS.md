@@ -37,7 +37,8 @@ and pages are in Russian; issues and PRs may be in English, Serbian or Russian.
   `data/case-files/`, private until the admin publishes the case and its files; see `docs/ops.md`).
   `queues.py` visitors' queue marks for the Poštanska branch map on `/vyplata/` (`POST /api/queue`
   `{branch_id, state: none|few|full|outside, comment?}`, no personal data; one mark per branch per IP hash
-  per 15 min and 12 per hour; `GET /api/queue` — the most frequent state per branch over the last 2 hours;
+  per 15 min and 60 per hour; accepted only from 1 h before opening until closing, Belgrade time, per branch hours in
+  `data/postanska_branch_hours.json` (otherwise 403 `{"error": "closed", "reports_from", "days_ahead", "weekday"}`); `GET /api/queue` — the most frequent state per branch over the last 2 hours;
   the optional comment is scrubbed, kept for moderation at `/admin/queue` and never published).
   `cases.py` the «Что просили в вашем случае» block on the stats page: filter by account
   (personal / ИП / both at once — «both» counts in both) and residence permit; documents per bank

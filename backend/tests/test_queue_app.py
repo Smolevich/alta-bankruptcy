@@ -13,11 +13,15 @@ from alta_feedback.validate import hash_ip
 TOKEN = "admin-secret"
 AUTH = {"Authorization": f"Bearer {TOKEN}"}
 SITE_LIST = Path(__file__).parents[2] / "src/data/postanska-branches.json"
+# Среда 11.11.2026, 10:00 по Белграду: отделения открыты, отметки принимаются.
+OPEN_NOW = datetime(2026, 11, 11, 9, tzinfo=UTC)
 
 
 @pytest.fixture
 def client(tmp_path) -> TestClient:
-    return TestClient(create_app(data_dir=tmp_path, admin_token=TOKEN, ip_salt="salt", pow_max_number=50))
+    return TestClient(create_app(
+        data_dir=tmp_path, admin_token=TOKEN, ip_salt="salt", pow_max_number=50, clock=lambda: OPEN_NOW
+    ))
 
 
 def solved_pow(client: TestClient) -> str:
@@ -155,3 +159,23 @@ def test_backend_branch_list_matches_site_list():
     ids = {site["specijalizovana"]["sifra"], *(b["sifra"] for b in site["ekspoziture"])}
     assert queues.branch_ids() == ids
 
+
+
+def test_branch_hours_copy_matches_site_list():
+    site = json.loads(SITE_LIST.read_text("utf-8"))
+    rows = [site["specijalizovana"], *site["ekspoziture"]]
+    hours = queues.parse_hours
+    expected = {b["sifra"]: (hours(b["radnoVremeRadnimDanom"]), hours(b["radnoVremeSubotom"])) for b in rows}
+    assert queues.branch_hours() == expected
+
+
+def test_closed_branch_refuses_mark_and_stores_nothing(tmp_path):
+    closed_at = datetime(2026, 11, 7, 17, 30, tzinfo=UTC)  # суббота 18:30 по Белграду
+    client = TestClient(create_app(
+        data_dir=tmp_path, admin_token=TOKEN, ip_salt="salt", pow_max_number=50, clock=lambda: closed_at
+    ))
+    response = mark(client, branch_id="754")
+    closed = {"error": "closed", "reports_from": "7:00", "days_ahead": 2, "weekday": 0}
+    assert (response.status_code, response.json()) == (403, closed)
+    items = client.get("/admin/queue", params={"since": "2000-01-01T00:00:00Z"}, headers=AUTH).json()["items"]
+    assert items == []
