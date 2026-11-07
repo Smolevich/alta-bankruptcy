@@ -94,7 +94,7 @@ const t = UI[lang];
 			try {
 				const pdfjs = await loadPdfjs();
 				const loaded = await pdfjs.getDocument({ url: src, isEvalSupported: false }).promise;
-				if (my !== session) return void loaded.destroy();
+				if (my !== session) return void loaded.loadingTask.destroy();
 				doc = loaded;
 			} catch {
 				if (my === session) message(dlg.dataset.failed ?? '', src);
@@ -131,7 +131,7 @@ const t = UI[lang];
 			session++;
 			observer?.disconnect();
 			observer = null;
-			doc?.destroy();
+			void doc?.loadingTask.destroy();
 			doc = null;
 			pages.replaceChildren();
 		};
