@@ -1140,6 +1140,10 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			void startMap();
 		}, { rootMargin: '400px' });
 		io.observe(root);
+		// Широкий блок заходит на колонку оглавления — пока он на экране, оглавление прячем (CSS: data-qmap-wide).
+		new IntersectionObserver((entries) => {
+			document.documentElement.toggleAttribute('data-qmap-wide', entries.some((e) => e.isIntersecting));
+		}).observe(root);
 		// Таймер «обновить можно через мм:сс» в открытой карточке.
 		window.setInterval(() => {
 			const again = card.querySelector('.q-again');
