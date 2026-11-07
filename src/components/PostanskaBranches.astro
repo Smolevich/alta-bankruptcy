@@ -461,7 +461,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 	// (public/vendor/maplibre, public/map): сторонние скрипты и тайлы CSP сайта не пускает.
 
 	type Pt = { id: string; lat: number; lng: number; city: string; cityName: string; name: string; addr: string; note: string; wd: string; sat: string; gmaps: string; chart: string };
-	type Mark = { state: string; count: number; minutes_ago: number };
+	type Mark = { state: string; count: number; minutes_ago: number; sure?: boolean };
 	type Tx = Record<string, any>;
 	type Hours = { open: boolean; text: string; preOpen: boolean; reportsAt: string; next: string };
 	type Card = { tone: string; icon: string; title: string; sub: string; canMark: boolean; markWhen: string; marksWhen: string; closed: boolean; later: boolean; inside: boolean };
@@ -511,6 +511,30 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 		get: (k: string) => { try { return window.localStorage.getItem(k); } catch { return null; } },
 		set: (k: string, v: string) => { try { window.localStorage.setItem(k, v); } catch { /* приватный режим */ } },
 	};
+
+	// Номер браузера для подсчёта людей: случайный, живёт в localStorage, ни с чем не связан.
+	function deviceId(): string {
+		const have = store.get('q-device');
+		if (have && /^[A-Za-z0-9-]{16,64}$/.test(have)) return have;
+		const id = typeof crypto.randomUUID === 'function' ? crypto.randomUUID() : [...crypto.getRandomValues(new Uint8Array(16))].map((b) => b.toString(16).padStart(2, '0')).join('');
+		store.set('q-device', id);
+		return id;
+	}
+
+	// Место для флага «рядом»: только если разрешение уже дано, отдельно не спрашиваем.
+	async function grantedPosition(): Promise<{ lat: number; lng: number } | null> {
+		try {
+			const perm = await navigator.permissions?.query({ name: 'geolocation' as PermissionName });
+			if (perm?.state !== 'granted') return null;
+			return await new Promise((resolve) => navigator.geolocation.getCurrentPosition(
+				(pos) => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+				() => resolve(null),
+				{ enableHighAccuracy: true, timeout: 4000, maximumAge: 120000 },
+			));
+		} catch {
+			return null;
+		}
+	}
 
 	function distM(a: { lat: number; lng: number }, b: { lat: number; lng: number }): number {
 		const r = Math.PI / 180;
@@ -604,6 +628,8 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 		let hint: string | null = null;
 		// Карточка, в которой нажали «Отметить очередь»: в ней вместо ряда кнопок — выбор состояния.
 		let asking: string | null = null;
+		// Карточку или выбор отделения открыла верхняя кнопка «Я стою в очереди»: сразу спрашиваем, какая очередь.
+		let fromReport = false;
 		let map: any = null;
 		let lib: any = null;
 		const pins = new Map<string, HTMLButtonElement>();
@@ -631,7 +657,8 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			const text = st.closedAt === null ? tx.closedOff.replace('%s', next) : tx.closedDay.replace('%t', hhmm(st.closedAt)).replace('%s', next);
 			return { open: false, text, preOpen: false, reportsAt: hhmm(reportsFrom(opens)), next };
 		}
-		const sure = (m?: Mark) => Boolean(m && !stale && m.count >= 2 && m.minutes_ago <= SURE_MINUTES);
+		// «Точно» решает сервер: двое разных сошлись и хотя бы один был рядом.
+		const sure = (m?: Mark) => Boolean(m && !stale && m.sure && m.minutes_ago <= SURE_MINUTES);
 		const pinState = (p: Pt) => (!hoursOf(p).open && !marks[p.id] ? 'closed' : marks[p.id]?.state ?? 'unknown');
 		// Всё для блока статуса и кнопки отметки — из того же branchStatus, что и строки списка.
 		function cardState(p: Pt): Card {
@@ -879,14 +906,17 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			// Сдвиг вместо padding: padding в MapLibre копится между вызовами, а нужен ровно центр видимой над листом части.
 			map.easeTo({ center: [p.lng, p.lat], zoom: Math.max(map.getZoom(), 15), offset: [0, -bottom / 2 + 20], duration: reduced() ? 0 : 500 });
 		}
-		function openCard(id: string, opts: { focus?: boolean; hint?: string } = {}) {
+		function openCard(id: string, opts: { focus?: boolean; hint?: string; ask?: boolean } = {}) {
 			const p = point(id);
 			if (!p) return;
 			if (rep && rep.id !== id && rep.phase !== 'done') flush();
+			const ask = opts.ask ?? (fromReport && chooser !== null);
+			fromReport = false;
 			current = id;
 			chooser = null;
 			hint = opts.hint ?? null;
 			if (asking !== id) asking = null;
+			if (ask && cardState(p).canMark) { asking = id; if (narrow()) sheet = 'full'; }
 			if (citySel.value !== p.city) { citySel.value = p.city; store.set('q-city', p.city); renderLists(); }
 			if (map) showTab('map');
 			if (!rep || rep.id !== id) rep = { id, phase: 'idle', pick: '', comment: '', error: '', timer: 0, pow: null };
@@ -895,18 +925,30 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			paintPins();
 			render(opts.focus !== false);
 			easeToPin(p);
+			// На телефоне карта с карточкой ниже верхней кнопки: без прокрутки выбор состояния оказывается за экраном.
+			if (ask) showCard();
 		}
-		function openChooser(title: string, ids: string[]) {
+		function showCard() {
+			const target = narrow() ? card : card.querySelector<HTMLElement>('.q-report-box') ?? card;
+			target.scrollIntoView({ block: narrow() ? 'end' : 'nearest', behavior: reduced() ? 'auto' : 'smooth' });
+			// Внутри листа выбор состояния — под статусом и часами: прокручиваем лист к нему.
+			const box = card.querySelector<HTMLElement>('.q-report-box');
+			if (box) card.scrollTop += box.getBoundingClientRect().bottom - card.getBoundingClientRect().bottom + 16;
+		}
+		function openChooser(title: string, ids: string[], ask = false) {
 			current = null;
 			chooser = { title, ids };
+			fromReport = ask;
 			sheet = 'half';
 			paintPins();
 			render(true);
+			if (ask) showCard();
 		}
 		function closeCard() {
 			const was = current;
 			if (rep && rep.phase !== 'done') flush();
 			current = null;
+			fromReport = false;
 			chooser = null;
 			hint = null;
 			asking = null;
@@ -982,11 +1024,12 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			const id = r.id;
 			let altcha = '';
 			try { altcha = r.pow ? await r.pow : await solvePow(); } catch { /* сервер ответит 400, покажем ошибку сети */ }
+			const where = me ?? (leaving ? null : await grantedPosition());
 			let status = 0, body: any = {};
 			try {
 				const res = await fetch('/api/queue', {
 					method: 'POST', keepalive: true, headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ branch_id: id, state: r.pick, comment: r.comment, altcha }),
+					body: JSON.stringify({ branch_id: id, state: r.pick, comment: r.comment, altcha, device_id: deviceId(), ...(where ?? {}) }),
 				});
 				status = res.status;
 				body = await res.json().catch(() => ({}));
@@ -1063,7 +1106,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 				done();
 				msg.textContent = tx.geoOff;
 				const ids = pts.filter((p) => p.city === citySel.value).sort((a, b) => a.name.localeCompare(b.name)).map((p) => p.id);
-				openChooser(tx.noGeo, ids);
+				openChooser(tx.noGeo, ids, true);
 			};
 			if (!navigator.geolocation) return fallback();
 			text.textContent = tx.finding;
@@ -1084,8 +1127,8 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 						const d1 = near[1] ? distM(me, near[1]) : Infinity;
 						renderLists();
 						if (d0 <= limit && d1 > GEO_SECOND_M && pos.coords.accuracy <= GEO_MIN_M) {
-							openCard(near[0].id, { hint: `${esc(tx.nearYou.replace('%s', distText(d0)))} <button type="button" class="q-other">${esc(tx.other)}</button>` });
-						} else openChooser(tx.which, near.slice(0, 3).map((p) => p.id));
+							openCard(near[0].id, { ask: true, hint: `${esc(tx.nearYou.replace('%s', distText(d0)))} <button type="button" class="q-other">${esc(tx.other)}</button>` });
+						} else openChooser(tx.which, near.slice(0, 3).map((p) => p.id), true);
 					} catch {
 						settled = false;
 						reportBtn.setAttribute('aria-busy', 'true');
@@ -1121,7 +1164,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			if (t.closest('.q-x')) return closeCard();
 			if (t.closest('.q-back')) return closeCard();
 			if (t.closest('.q-grip')) return setSheet(sheet === 'full' ? 'half' : 'full');
-			if (t.closest('.q-other')) return openChooser(tx.which, [...pts].sort((a, b) => distM(me!, a) - distM(me!, b)).slice(0, 3).map((p) => p.id));
+			if (t.closest('.q-other')) return openChooser(tx.which, [...pts].sort((a, b) => distM(me!, a) - distM(me!, b)).slice(0, 3).map((p) => p.id), true);
 			const mk = t.closest<HTMLButtonElement>('.q-mark');
 			if (mk) { if (mk.disabled || !current) return; asking = current; if (narrow()) sheet = 'full'; return render(); }
 			if (t.closest('.q-ask-cancel')) { asking = null; if (rep?.phase === 'error') rep.phase = 'idle'; return renderReport(); }

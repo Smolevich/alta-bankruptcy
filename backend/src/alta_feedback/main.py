@@ -98,8 +98,8 @@ PUBLIC_ACCOUNTS_MAX = 2000
 LOCAL_TZ = ZoneInfo("Europe/Belgrade")
 STATIC_DIR = Path(__file__).parent / "static"
 SCRIPTS = frozenset({
-    "branch.js", "combo.js", "filters.js", "pdfview.js", "pow.js", "proposals-admin.js", "richtext.js",
-    "voice.js",
+    "branch.js", "combo.js", "filters.js", "pdfview.js", "pow.js", "proposals-admin.js", "queue-admin.js",
+    "richtext.js", "voice.js",
 })
 # Перебор запускает отметка «Я не робот»; среднее число попыток — половина, на Mac ~0,4 с, на телефоне 1–3 с.
 POW_MAX_NUMBER = 200_000
@@ -280,7 +280,8 @@ async def queue_submit(request: Request) -> JSONResponse:
         return JSONResponse({"error": "rate_limit", "scope": "ip"}, status_code=429)
     if not store.claim_challenge(solved.challenge, solved.expires_at, now):
         return JSONResponse({"error": "pow"}, status_code=400)
-    store.add_queue_report(report, ip_hash, request.headers.get("user-agent", "")[:UA_MAX], now)
+    voter = hash_ip(f"device:{report.device_id}", request.app.state.ip_salt) if report.device_id else ip_hash
+    store.add_queue_report(report, ip_hash, request.headers.get("user-agent", "")[:UA_MAX], now, voter)
     store.forget_old_traces(now - TRACE_TTL)
     return JSONResponse({"ok": True}, status_code=201)
 
@@ -292,6 +293,26 @@ async def queue_public(request: Request) -> JSONResponse:
         # 30 с в Cloudflare: в день выплат карту открывают тысячи раз, свежесть в полминуты не важна.
         {"branches": queues.summarize(rows, now)}, headers={"Cache-Control": "public, max-age=30"}
     )
+
+
+def queue_source(item: dict) -> dict:
+    """Источник отметки для модератора: хэш голосующего, тот же, по которому считаем людей."""
+    return {**item, "source": item["voter"] or item["ip_hash"] or f"id{item['id']}"}
+
+
+async def queue_admin(request: Request) -> Response:
+    """Браузер получает страницу (данные она берёт этим же адресом с токеном), мониторы и терминал — JSON."""
+    wants_page = "text/html" in request.headers.get("accept", "") and "authorization" not in request.headers
+    if wants_page:
+        return render("queue_admin.html", headers=PROPOSALS_ADMIN_HEADERS)
+    return await admin_list("queue_reports", queues.STATUSES, decorate=queue_source)(request)
+
+
+async def queue_hide_source(request: Request) -> JSONResponse:
+    if not await authorized(request):
+        return JSONResponse({"error": "unauthorized"}, status_code=401)
+    hidden = request.app.state.store.hide_queue_source(request.path_params["source"])
+    return JSONResponse({"source": request.path_params["source"], "hidden": hidden})
 
 
 async def thanks(request: Request) -> HTMLResponse:
@@ -904,7 +925,8 @@ def create_app(
         Route("/api/accounts/public", public_accounts, methods=["GET"]),
         Route("/api/queue", queue_public, methods=["GET"]),
         Route("/api/queue", queue_submit, methods=["POST"]),
-        Route("/admin/queue", admin_list("queue_reports", queues.STATUSES), methods=["GET"]),
+        Route("/admin/queue", queue_admin, methods=["GET"]),
+        Route("/admin/queue/source/{source}/hide", queue_hide_source, methods=["POST"]),
         Route(
             "/admin/queue/{id:int}/status",
             admin_set_status("queue_reports", queues.STATUSES), methods=["POST"],

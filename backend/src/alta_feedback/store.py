@@ -11,7 +11,7 @@ from pathlib import Path
 from alta_feedback.accounts import AccountReport
 from alta_feedback.casebook import CaseReport
 from alta_feedback.proposals import PUBLIC_STATUSES, Proposal
-from alta_feedback.queues import HIDDEN_STATUSES, QueueReport
+from alta_feedback.queues import HIDDEN_STATUSES, QueueReport, Vote
 from alta_feedback.stats import AnswerFilter
 from alta_feedback.validate import Suggestion
 
@@ -129,11 +129,18 @@ ADDED_COLUMNS = (
     ("proposals", "text_format", "TEXT"),
     # Правка текста редактором перед публикацией; текст автора в text не меняется.
     ("proposals", "edited_text", "TEXT"),
+    # Кто отметил очередь: хэш device_id браузера или, без него, хэш IP. Стирается вместе с ip_hash.
+    ("queue_reports", "voter", "TEXT"),
+    # 1 — отмечал в пределах NEAR_M от отделения, 0 — дальше, NULL — без геолокации. Координаты не храним.
+    ("queue_reports", "near", "INTEGER"),
 )
+# Голосующий старой отметки, записанной до колонки voter, — её хэш IP.
+VOTER = "COALESCE(NULLIF(voter, ''), NULLIF(ip_hash, ''), 'id' || id)"
 
 COLUMNS = {
     "queue_reports": (
         "id", "created_at", "branch_id", "state", "comment", "ip_hash", "user_agent_short", "status",
+        "voter", "near",
     ),
     "suggestions": (
         "id", "created_at", "section_id", "section_title", "text",
@@ -423,12 +430,19 @@ class Store:
         with self.connect() as db:
             return Counter({(bank, branch): count for bank, branch, count in db.execute(query)})
 
-    def add_queue_report(self, item: QueueReport, ip_hash: str, user_agent: str, now: datetime) -> int:
+    def add_queue_report(
+        self, item: QueueReport, ip_hash: str, user_agent: str, now: datetime, voter: str = ""
+    ) -> int:
+        near = None if item.near is None else int(item.near)
         with self.connect() as db:
             cur = db.execute(
-                "INSERT INTO queue_reports (created_at, branch_id, state, comment, ip_hash, user_agent_short)"
-                " VALUES (?, ?, ?, ?, ?, ?)",
-                (iso(now), item.branch_id, item.state, item.comment, ip_hash, user_agent),
+                "INSERT INTO queue_reports"
+                " (created_at, branch_id, state, comment, ip_hash, user_agent_short, voter, near)"
+                " VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                (
+                    iso(now), item.branch_id, item.state, item.comment, ip_hash, user_agent,
+                    voter or ip_hash, near,
+                ),
             )
             return int(cur.lastrowid)
 
@@ -440,16 +454,24 @@ class Store:
             ).fetchone()
             return row is not None
 
-    def fresh_queue_reports(self, since: datetime) -> list[tuple[str, str, str]]:
-        """(branch_id, state, created_at) без отклонённых модератором, по возрастанию времени."""
+    def fresh_queue_reports(self, since: datetime) -> list[Vote]:
+        """Отметки без отклонённых модератором, по возрастанию времени."""
         marks = ", ".join("?" * len(HIDDEN_STATUSES))
         with self.connect() as db:
             rows = db.execute(
-                "SELECT branch_id, state, created_at FROM queue_reports"
-                f" WHERE created_at > ? AND status NOT IN ({marks}) ORDER BY created_at",
+                f"SELECT branch_id, state, created_at, {VOTER}, near FROM queue_reports"
+                f" WHERE created_at > ? AND status NOT IN ({marks}) ORDER BY created_at, id",
                 (iso(since), *HIDDEN_STATUSES),
             )
-            return [(r[0], r[1], r[2]) for r in rows]
+            return [Vote(r[0], r[1], r[2], r[3], bool(r[4])) for r in rows]
+
+    def hide_queue_source(self, voter: str) -> int:
+        """Все отметки одного голосующего — в спам; сколько скрыто."""
+        with self.connect() as db:
+            cur = db.execute(
+                f"UPDATE queue_reports SET status = 'spam' WHERE {VOTER} = ? AND status != 'spam'", (voter,)
+            )
+            return cur.rowcount
 
     def claim_challenge(self, challenge: str, expires_at: int, now: datetime) -> bool:
         """Отмечает решённую задачу использованной; False — её уже предъявляли."""
@@ -470,3 +492,6 @@ class Store:
                     " WHERE created_at < ? AND (ip_hash != '' OR user_agent_short != '')",
                     (iso(before),),
                 )
+            db.execute(
+                "UPDATE queue_reports SET voter = '' WHERE created_at < ? AND voter != ''", (iso(before),)
+            )

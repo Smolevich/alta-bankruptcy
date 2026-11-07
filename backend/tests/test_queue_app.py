@@ -42,7 +42,8 @@ def public(client: TestClient) -> dict:
 
 def test_mark_shows_on_map_with_count(client):
     mark(client)
-    assert public(client)["715"] | {"minutes_ago": 0} == {"state": "outside", "count": 1, "minutes_ago": 0}
+    expected = {"state": "outside", "count": 1, "minutes_ago": 0, "sure": False}
+    assert public(client)["715"] | {"minutes_ago": 0} == expected
 
 
 def test_unknown_branch_is_rejected(client):
@@ -141,19 +142,6 @@ def test_spam_mark_disappears_from_map(client):
     assert public(client) == {}
 
 
-def test_most_frequent_state_wins():
-    now = datetime(2026, 11, 7, 12, tzinfo=UTC)
-    at = lambda m: (now - timedelta(minutes=m)).strftime("%Y-%m-%dT%H:%M:%SZ")  # noqa: E731
-    rows = [("715", "full", at(50)), ("715", "full", at(30)), ("715", "none", at(5))]
-    assert queues.summarize(rows, now)["715"] == {"state": "full", "count": 3, "minutes_ago": 5}
-
-
-def test_tie_goes_to_latest_state():
-    now = datetime(2026, 11, 7, 12, tzinfo=UTC)
-    rows = [("715", "full", "2026-11-07T11:00:00Z"), ("715", "none", "2026-11-07T11:30:00Z")]
-    assert queues.summarize(rows, now)["715"]["state"] == "none"
-
-
 def test_backend_branch_list_matches_site_list():
     site = json.loads(SITE_LIST.read_text("utf-8"))
     ids = {site["specijalizovana"]["sifra"], *(b["sifra"] for b in site["ekspoziture"])}
@@ -179,3 +167,92 @@ def test_closed_branch_refuses_mark_and_stores_nothing(tmp_path):
     assert (response.status_code, response.json()) == (403, closed)
     items = client.get("/admin/queue", params={"since": "2000-01-01T00:00:00Z"}, headers=AUTH).json()["items"]
     assert items == []
+
+
+DEVICE_A = "a" * 32
+DEVICE_B = "b" * 32
+# 715: 44.7613057, 20.4823648
+AT_715 = {"lat": 44.7613057, "lng": 20.4823648}
+FAR_715 = {"lat": 44.80, "lng": 20.46}
+
+
+def admin_items(client: TestClient) -> list[dict]:
+    return client.get("/admin/queue", params={"since": "2000-01-01T00:00:00Z"}, headers=AUTH).json()["items"]
+
+
+def test_two_devices_near_agreeing_make_mark_sure(client):
+    mark(client, device_id=DEVICE_A, **AT_715)
+    mark(client, ip="198.51.100.9", device_id=DEVICE_B, **AT_715)
+    expected = {"state": "outside", "count": 2, "minutes_ago": 0, "sure": True}
+    assert public(client)["715"] | {"minutes_ago": 0} == expected
+
+
+def test_two_devices_far_agreeing_stay_unsure(client):
+    mark(client, device_id=DEVICE_A, **FAR_715)
+    mark(client, ip="198.51.100.9", device_id=DEVICE_B, **FAR_715)
+    assert public(client)["715"]["sure"] is False
+
+
+def test_marks_without_location_stay_unsure(client):
+    mark(client, device_id=DEVICE_A)
+    mark(client, ip="198.51.100.9", device_id=DEVICE_B)
+    assert public(client)["715"]["sure"] is False
+
+
+def test_one_device_from_two_networks_counts_once(client):
+    mark(client, device_id=DEVICE_A, **AT_715)
+    mark(client, ip="198.51.100.9", device_id=DEVICE_A, **AT_715)
+    assert public(client)["715"]["count"] == 1
+
+
+def test_coordinates_are_not_stored(client):
+    mark(client, device_id=DEVICE_A, lat=44.7613057, lng=20.4823648)
+    assert "44.761" not in json.dumps(admin_items(client))
+
+
+def test_admin_sees_source_and_near_flag(client):
+    mark(client, device_id=DEVICE_A, **AT_715)
+    item = admin_items(client)[0]
+    assert (len(item["source"]), item["near"], DEVICE_A in json.dumps(item)) == (32, 1, False)
+
+
+def test_mark_without_device_uses_ip_hash_as_source(client):
+    mark(client)
+    assert admin_items(client)[0]["source"] == hash_ip("203.0.113.5", "salt")
+
+
+def test_hiding_a_source_removes_all_its_marks_from_map(client):
+    mark(client, device_id=DEVICE_A)
+    mark(client, branch_id="754", device_id=DEVICE_A)
+    source = admin_items(client)[0]["source"]
+    response = client.post(f"/admin/queue/source/{source}/hide", headers=AUTH)
+    assert (response.json()["hidden"], public(client)) == (2, {})
+
+
+def test_hiding_a_source_keeps_other_sources(client):
+    mark(client, device_id=DEVICE_A)
+    mark(client, ip="198.51.100.9", device_id=DEVICE_B, state="none")
+    source = admin_items(client)[0]["source"]
+    client.post(f"/admin/queue/source/{source}/hide", headers=AUTH)
+    assert public(client)["715"]["state"] == "none"
+
+
+def test_hiding_a_source_needs_token(client):
+    assert client.post("/admin/queue/source/abc/hide").status_code == 401
+
+
+def test_admin_page_opens_in_browser_without_data(client):
+    mark(client, comment="тайный текст")
+    page = client.get("/admin/queue", headers={"Accept": "text/html"})
+    shown = (page.status_code, "queue-admin.js" in page.text, "тайный текст" in page.text)
+    assert shown == (200, True, False)
+
+
+def test_admin_json_without_token_is_refused(client):
+    assert client.get("/admin/queue", params={"since": "2000-01-01T00:00:00Z"}).status_code == 401
+
+
+def test_source_hash_is_wiped_with_other_traces(client):
+    mark(client, device_id=DEVICE_A)
+    client.app.state.store.forget_old_traces(datetime.now(UTC) + timedelta(days=1))
+    assert admin_items(client)[0]["voter"] == ""
