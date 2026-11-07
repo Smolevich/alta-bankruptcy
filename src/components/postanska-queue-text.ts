@@ -2,7 +2,7 @@
 // Подстановки: %n — число с формой слова, %m — минуты, %s — готовая строка, %t — время чч:мм, %d — день недели.
 const ru = {
 	title: 'Очереди в отделениях Poštanska', tabMap: 'Карта', tabList: 'Список', city: 'Город',
-	report: 'Я в отделении — отметить', finding: 'Ищем ближайшее отделение…',
+	report: 'Я стою в очереди здесь — отметить', reportHint: 'Сколько людей перед вами — поможет другим понять, стоит ли ехать.', closedAll: 'Сейчас все отделения закрыты — отметить очередь пока нельзя. Можно будет с %t, отделения откроются %s.', finding: 'Ищем ближайшее отделение…',
 	privacy: 'Место определяем только у вас в телефоне, на сайт оно не уходит.',
 	geoOff: 'Геолокация выключена — выберите отделение в списке.',
 	scale: 'За 2 часа: %n в %m', scaleInvite: 'Будете в отделении — отметьте очередь, это займёт секунду.',
@@ -45,7 +45,7 @@ type QueueText = typeof ru;
 
 const en: QueueText = {
 	title: 'Queues at Poštanska branches', tabMap: 'Map', tabList: 'List', city: 'City',
-	report: 'I am at a branch — report', finding: 'Finding the nearest branch…',
+	report: 'I am in the queue here — report it', reportHint: 'How many people are ahead of you — it helps others decide whether to come.', closedAll: 'All branches are closed now, so reports are off. You can report from %t; branches open %s.', finding: 'Finding the nearest branch…',
 	privacy: 'Your location is used only on your phone and is not sent to the site.',
 	geoOff: 'Location is off — pick a branch from the list.',
 	scale: 'Last 2 hours: %n at %m', scaleInvite: 'At a branch? Report the queue — it takes a second.',
@@ -86,7 +86,7 @@ const en: QueueText = {
 
 const sr: QueueText = {
 	title: 'Redovi u ekspoziturama Poštanske štedionice', tabMap: 'Mapa', tabList: 'Spisak', city: 'Grad',
-	report: 'U ekspozituri sam — označi', finding: 'Tražimo najbližu ekspozituru…',
+	report: 'Stojim u redu ovde — označi', reportHint: 'Koliko ljudi je ispred vas — pomaže drugima da odluče da li da dođu.', closedAll: 'Sve ekspoziture su sada zatvorene, pa označavanje nije moguće. Moguće je od %t, ekspoziture se otvaraju %s.', finding: 'Tražimo najbližu ekspozituru…',
 	privacy: 'Lokaciju određujemo samo na vašem telefonu, ne šalje se sajtu.',
 	geoOff: 'Lokacija je isključena — izaberite ekspozituru sa spiska.',
 	scale: 'Za 2 sata: %n u %m', scaleInvite: 'Kad budete u ekspozituri, označite red — traje sekundu.',

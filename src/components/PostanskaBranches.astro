@@ -259,8 +259,9 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 					</select>
 				</label>
 				<button type="button" class="q-report"><Fragment set:html={'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="currentColor"/><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/></svg>'} /><span class="q-report-text">{QT.report}</span></button>
+				<p class="q-hint" id="q-hint">{QT.reportHint}</p>
 				<p class="q-privacy">{QT.privacy}</p>
-				<p class="q-msg" aria-live="polite"></p>
+				<p class="q-msg" id="q-msg" aria-live="polite"></p>
 				<p class="q-scale"></p>
 				<ul class="q-plist q-rows">
 					{rowsOf('BEOGRAD').map((p) => <li><button type="button" data-id={p.id}><i class="q-dot"></i><span><strong>{p.name}</strong><small>{hoursLine(p)}</small></span></button></li>)}
@@ -398,7 +399,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 
 <script>
 	import { attachVoice, voiceSupported } from '../scripts/voice';
-	import { branchStatus, parseRange } from '../lib/branch-hours.mjs';
+	import { branchStatus, canReport, parseRange, reportsFrom } from '../lib/branch-hours.mjs';
 
 	type Info = { el: HTMLElement; city: string; size: string; wd: number[]; sat: number[] };
 	const nums = (v?: string) => (v ? v.split(',').map(Number) : []);
@@ -470,6 +471,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 	const REPEAT_MS = 15 * 60 * 1000;
 	const GEO_MIN_M = 150;
 	const GEO_SECOND_M = 250;
+	const GEO_GIVE_UP_MS = 12000;
 	const POLL_MS = 120000;
 	const CONTACT = /@|\d[\d\s()+-]{5,}\d/;
 	const BANK_PATH = 'M12 2 2 7v2h20V7L12 2zm-7 9v7h3v-7H5zm5.5 0v7h3v-7h-3zM16 11v7h3v-7h-3zM2 20v2h20v-2H2z';
@@ -601,13 +603,13 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			}
 			if (st.state === 'later') {
 				const at = hhmm(st.opensAt);
-				return { open: false, text: tx.laterToday.replace('%t', at), preOpen: st.opensAt - min <= 60, reportsAt: hhmm(Math.max(st.opensAt - 60, 0)), next: tx.opensToday.replace('%t', at) };
+				return { open: false, text: tx.laterToday.replace('%t', at), preOpen: canReport(st, min), reportsAt: hhmm(reportsFrom(st.opensAt)), next: tx.opensToday.replace('%t', at) };
 			}
 			const opens = st.opensAt ?? 480;
 			const at = hhmm(opens);
 			const next = st.tomorrow ? tx.opensTomorrow.replace('%t', at) : tx.opensOn.replace('%d', tx.days[st.nextDay ?? 1]).replace('%t', at);
 			const text = st.closedAt === null ? tx.closedOff.replace('%s', next) : tx.closedDay.replace('%t', hhmm(st.closedAt)).replace('%s', next);
-			return { open: false, text, preOpen: false, reportsAt: hhmm(Math.max(opens - 60, 0)), next };
+			return { open: false, text, preOpen: false, reportsAt: hhmm(reportsFrom(opens)), next };
 		}
 		// Расписание недели одной строкой; сегодняшний день выделен, отдельной строкой «Сегодня» не повторяется.
 		function scheduleHtml(p: Pt, day: number): string {
@@ -701,6 +703,9 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 				all.textContent = tx.allClosed.replace('%s', h.next);
 				all.hidden = false;
 			} else all.hidden = true;
+			const anyOpen = pts.some((x) => { const h = hoursOf(x); return h.open || h.preOpen; });
+			reportBtn.dataset.closed = anyOpen ? '0' : '1';
+			reportBtn.setAttribute('aria-describedby', anyOpen ? 'q-hint' : 'q-hint q-msg');
 			$('.q-sort').hidden = !me;
 			root.querySelectorAll<HTMLButtonElement>('[data-sort]').forEach((x) => x.setAttribute('aria-pressed', String(x.dataset.sort === sort)));
 		}
@@ -979,9 +984,19 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 		// ---------- геолокация ----------
 		function locate() {
 			const text = reportBtn.querySelector('.q-report-text')!;
+			// Все отделения закрыты: геолокацию не просим, а объясняем, почему отметка недоступна и когда она откроется.
+			const open = pts.map(hoursOf);
+			if (!open.some((h) => h.open || h.preOpen)) {
+				const h = open[0];
+				msg.textContent = tx.closedAll.replace('%t', h.reportsAt).replace('%s', h.next);
+				return;
+			}
+			let settled = false;
+			let giveUp = 0;
+			const done = () => { settled = true; window.clearTimeout(giveUp); text.textContent = tx.report; reportBtn.removeAttribute('aria-busy'); };
 			const fallback = () => {
-				text.textContent = tx.report;
-				reportBtn.removeAttribute('aria-busy');
+				if (settled && !reportBtn.hasAttribute('aria-busy')) return;
+				done();
 				msg.textContent = tx.geoOff;
 				const ids = pts.filter((p) => p.city === citySel.value).sort((a, b) => a.name.localeCompare(b.name)).map((p) => p.id);
 				openChooser(tx.noGeo, ids);
@@ -989,21 +1004,29 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			if (!navigator.geolocation) return fallback();
 			text.textContent = tx.finding;
 			reportBtn.setAttribute('aria-busy', 'true');
+			// Браузер может не ответить вовсе (запрос разрешения закрыт, не отвечает служба) — тогда не молчим, а даём список.
+			giveUp = window.setTimeout(fallback, GEO_GIVE_UP_MS);
 			navigator.geolocation.getCurrentPosition(
 				(pos) => {
-					text.textContent = tx.report;
-					reportBtn.removeAttribute('aria-busy');
+					if (!reportBtn.hasAttribute('aria-busy')) return;
+					done();
 					msg.textContent = '';
-					me = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-					sort = 'near';
-					const near = [...pts].sort((a, b) => distM(me!, a) - distM(me!, b));
-					const limit = Math.max(GEO_MIN_M, pos.coords.accuracy || 0);
-					const d0 = distM(me, near[0]);
-					const d1 = near[1] ? distM(me, near[1]) : Infinity;
-					renderLists();
-					if (d0 <= limit && d1 > GEO_SECOND_M && pos.coords.accuracy <= GEO_MIN_M) {
-						openCard(near[0].id, { hint: `${esc(tx.nearYou.replace('%s', distText(d0)))} <button type="button" class="q-other">${esc(tx.other)}</button>` });
-					} else openChooser(tx.which, near.slice(0, 3).map((p) => p.id));
+					try {
+						me = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+						sort = 'near';
+						const near = [...pts].sort((a, b) => distM(me!, a) - distM(me!, b));
+						const limit = Math.max(GEO_MIN_M, pos.coords.accuracy || 0);
+						const d0 = distM(me, near[0]);
+						const d1 = near[1] ? distM(me, near[1]) : Infinity;
+						renderLists();
+						if (d0 <= limit && d1 > GEO_SECOND_M && pos.coords.accuracy <= GEO_MIN_M) {
+							openCard(near[0].id, { hint: `${esc(tx.nearYou.replace('%s', distText(d0)))} <button type="button" class="q-other">${esc(tx.other)}</button>` });
+						} else openChooser(tx.which, near.slice(0, 3).map((p) => p.id));
+					} catch {
+						settled = false;
+						reportBtn.setAttribute('aria-busy', 'true');
+						fallback();
+					}
 				},
 				fallback,
 				{ enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 },

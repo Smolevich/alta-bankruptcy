@@ -466,6 +466,8 @@ html, body { overflow-x: clip; }
 .q-report { display: flex; align-items: center; gap: 0.55rem; min-height: 56px; padding: 0.5rem 0.9rem; border: 0; border-radius: 4px; background: var(--seal); color: #fff !important; font-weight: 700 !important; font-size: 1rem; text-align: left; line-height: 1.2; cursor: pointer; }
 .q-report svg { width: 1.4rem; height: 1.4rem; flex: none; }
 .q-report:hover { background: #6f1d16; }
+.q-report[data-closed='1'], .q-report[data-closed='1']:hover { background: #8a7f78; }
+.q-hint { margin: 0.35rem 0 0; font-size: 0.9rem; }
 .q-report[aria-busy='true'] svg { animation: q-spin 1s linear infinite; }
 @keyframes q-spin { to { transform: rotate(360deg); } }
 .q-privacy { font-size: 0.75rem; line-height: 1.3; color: var(--q-muted); }
