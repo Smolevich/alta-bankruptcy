@@ -591,7 +591,9 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			pins.forEach(({ el }, id) => {
 				const st = stateOf(id);
 				const m = marks[id];
-				el.className = `q-pin q-${st}`;
+				// className целиком стёр бы maplibregl-marker (position: absolute), и пины уплывали бы при зуме.
+				el.classList.remove(...[...el.classList].filter((c) => /^q-(?!pin)/.test(c)));
+				el.classList.add(`q-${st}`);
 				el.innerHTML = `<span class="q-pin-ico">${BANK_SVG}</span>` + (m ? `<span class="q-pin-tag">${escHtml(tx.states[st])}${m.count > 1 ? ` · ${m.count}` : ''}</span>` : '');
 			});
 		}
