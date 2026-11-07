@@ -13,6 +13,8 @@ def site(tmp_path):
     (root / "trebovanie" / "index.html").write_text("<h1>Требование</h1>", encoding="utf-8")
     (root / "404.html").write_text("<h1>Нет такой страницы</h1>", encoding="utf-8")
     (root / "_astro" / "app.abc123.js").write_text("1", encoding="utf-8")
+    (root / "map").mkdir()
+    (root / "map" / "tiles.pmtiles").write_bytes(bytes(range(256)))
     return root
 
 
@@ -86,3 +88,20 @@ def test_pdf_may_be_embedded_by_the_same_origin_only(client, site):
 def test_site_may_embed_pdfs_from_aod(client):
     csp = client.get("/").headers["content-security-policy"]
     assert "object-src 'self' https://www.aod.rs" in csp and "frame-src 'self' https://www.aod.rs" in csp
+
+
+def test_site_csp_allows_map_worker_from_own_origin(client):
+    csp = client.get("/").headers["content-security-policy"]
+    assert "worker-src 'self' blob:" in csp and "https://tile." not in csp
+
+
+def test_range_request_from_revalidating_browser_gets_partial_content(client):
+    # Регрессия: повторный визит слал Range с If-None-Match, получал 304, и карта была серой.
+    etag = client.get("/map/tiles.pmtiles").headers["etag"]
+    response = client.get("/map/tiles.pmtiles", headers={"Range": "bytes=0-9", "If-None-Match": etag})
+    assert (response.status_code, response.content) == (206, bytes(range(10)))
+
+
+def test_plain_revalidation_still_gets_not_modified(client):
+    etag = client.get("/map/tiles.pmtiles").headers["etag"]
+    assert client.get("/map/tiles.pmtiles", headers={"If-None-Match": etag}).status_code == 304

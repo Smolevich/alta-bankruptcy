@@ -65,14 +65,26 @@ const T = {
 		chartNote: 'Обычная загрузка по данным Google — по геолокации телефонов, обезличенно, за прошлые недели. 100% — обычный пик этого отделения. Наплыв вкладчиков ALTA здесь не учтён.',
 		chartLink: 'Как Google считает',
 		chartLabel: 'Загрузка отделения по часам с 8 до 20',
-		svBtn: 'Посмотреть вход (Google Street View)',
-		svCap: (d: string | null) => `Изображение — Google Street View${d ? `, дата съёмки: ${d}` : ''}`,
-		svOpen: 'Открыть в Google Картах',
 		fCity: 'Город', fAllCities: 'все города', fSize: 'Размер', fAllSizes: 'все', fWhen: 'Когда пойти', fAnyTime: 'не выбрано',
 		fDay: 'День', fHour: 'Час',
 		fNote: 'Свободнее обычного в этот час — относительно пика самого отделения, а не сравнение отделений между собой.',
 		fShown: 'Показано отделений: %n', fLabel: 'Фильтры отделений', fReset: 'Сбросить', noData: 'нет данных Google', freeAt: 'в этот час %p% от пика',
 		estimate: 'оценка',
+		qTitle: 'Poštanska — очереди в отделениях', qTabMap: 'Карта', qTabList: 'Список', qCity: 'Город',
+		qLegend: 'Очередь сейчас (по отметкам посетителей)',
+		qStates: { none: 'Очереди нет', few: 'Несколько человек внутри', full: 'Полный зал', outside: 'Очередь на улице' },
+		qNoMarks: 'нет отметок за 2 часа',
+		qReport: 'Сообщить об очереди',
+		qCaption: 'Отметки оставляют посетители, без регистрации. На карте — отметки за последние 2 часа; серый — отметок нет. Это не данные банка и не точные цифры.',
+		qAsk: 'Какая очередь сейчас?', qComment: 'Комментарий (необязательно, до 140 знаков, без телефонов и почты; публично не показываем)',
+		qSent: 'Спасибо, отметка учтена.', qLimit: 'Вы уже отмечали это отделение недавно — повторно можно через 15 минут.',
+		qError: 'Не удалось отправить. Попробуйте ещё раз.', qBadComment: 'Уберите из комментария телефон или почту.',
+		qMarks: 'отметок: %n, обновлено %m мин назад',
+		qGoogle: 'Обычно людно по данным Google (не очередь на выплату)',
+		qPick: 'Выберите отделение на карте или в списке — в карточке будут кнопки.',
+		qGeo: 'Ищем ближайшее отделение по геолокации. Координаты остаются в браузере и никуда не отправляются.',
+		qGeoFail: 'Геолокация недоступна. Выберите отделение на карте или в списке.',
+		qCoop: { windowsHelpText: 'Ctrl + колесо — масштаб карты', macHelpText: '⌘ + колесо — масштаб карты', mobileHelpText: 'Двигайте карту двумя пальцами' },
 	},
 	en: {
 		source: 'Source: AOD list',
@@ -108,14 +120,26 @@ const T = {
 		chartNote: 'Usual busyness per Google data — from phone geolocation, anonymised, over past weeks. 100% is this branch’s usual peak. The influx of ALTA depositors is not reflected here.',
 		chartLink: 'How Google calculates it',
 		chartLabel: 'Branch busyness by hour, 8 to 20',
-		svBtn: 'See the entrance (Google Street View)',
-		svCap: (d: string | null) => `Image — Google Street View${d ? `, captured: ${d}` : ''}`,
-		svOpen: 'Open in Google Maps',
 		fCity: 'City', fAllCities: 'all cities', fSize: 'Size', fAllSizes: 'all', fWhen: 'When to go', fAnyTime: 'not selected',
 		fDay: 'Day', fHour: 'Hour',
 		fNote: 'Quieter than usual at this hour — relative to the branch’s own peak, not a comparison between branches.',
 		fShown: 'Branches shown: %n', fLabel: 'Branch filters', fReset: 'Reset', noData: 'no Google data', freeAt: 'at this hour %p% of peak',
 		estimate: 'estimate',
+		qTitle: 'Poštanska — queues at branches', qTabMap: 'Map', qTabList: 'List', qCity: 'City',
+		qLegend: 'Queue now (from visitors’ reports)',
+		qStates: { none: 'No queue', few: 'A few people inside', full: 'Hall is full', outside: 'Queue outside' },
+		qNoMarks: 'no reports in 2 hours',
+		qReport: 'Report the queue',
+		qCaption: 'Reports come from visitors, no sign-up. The map shows reports from the last 2 hours; grey means no reports. This is not bank data and not exact figures.',
+		qAsk: 'What is the queue now?', qComment: 'Comment (optional, up to 140 characters, no phone numbers or emails; not shown publicly)',
+		qSent: 'Thank you, your report is counted.', qLimit: 'You reported this branch recently — you can report again in 15 minutes.',
+		qError: 'Could not send. Please try again.', qBadComment: 'Remove the phone number or email from the comment.',
+		qMarks: 'reports: %n, updated %m min ago',
+		qGoogle: 'Usually busy per Google (not the payout queue)',
+		qPick: 'Pick a branch on the map or in the list — its card has the buttons.',
+		qGeo: 'Finding the nearest branch by your location. The coordinates stay in your browser and are not sent anywhere.',
+		qGeoFail: 'Location is unavailable. Pick a branch on the map or in the list.',
+		qCoop: { windowsHelpText: 'Ctrl + scroll to zoom the map', macHelpText: '⌘ + scroll to zoom the map', mobileHelpText: 'Use two fingers to move the map' },
 	},
 	sr: {
 		source: 'Izvor: spisak AOD',
@@ -151,14 +175,26 @@ const T = {
 		chartNote: 'Uobičajena opterećenost prema Google podacima — iz geolokacije telefona, anonimizovano, za prethodne nedelje. 100% je uobičajeni vrhunac ove ekspoziture. Priliv štediša ALTA ovde nije uračunat.',
 		chartLink: 'Kako Google računa',
 		chartLabel: 'Opterećenost ekspoziture po satima, od 8 do 20',
-		svBtn: 'Pogledaj ulaz (Google Street View)',
-		svCap: (d: string | null) => `Slika — Google Street View${d ? `, datum snimanja: ${d}` : ''}`,
-		svOpen: 'Otvori u Google mapama',
 		fCity: 'Grad', fAllCities: 'svi gradovi', fSize: 'Veličina', fAllSizes: 'sve', fWhen: 'Kada ići', fAnyTime: 'nije izabrano',
 		fDay: 'Dan', fHour: 'Sat',
 		fNote: 'Slobodnije nego obično u ovaj sat — u odnosu na vrhunac same ekspoziture, a ne poređenje ekspozitura međusobno.',
 		fShown: 'Prikazano ekspozitura: %n', fLabel: 'Filteri ekspozitura', fReset: 'Poništi', noData: 'nema Google podataka', freeAt: 'u ovaj sat %p% vrhunca',
 		estimate: 'procena',
+		qTitle: 'Poštanska — redovi u ekspoziturama', qTabMap: 'Mapa', qTabList: 'Spisak', qCity: 'Grad',
+		qLegend: 'Red sada (prema oznakama posetilaca)',
+		qStates: { none: 'Nema reda', few: 'Nekoliko ljudi unutra', full: 'Puna sala', outside: 'Red na ulici' },
+		qNoMarks: 'nema oznaka u poslednja 2 sata',
+		qReport: 'Prijavi red',
+		qCaption: 'Oznake ostavljaju posetioci, bez registracije. Na mapi su oznake iz poslednja 2 sata; sivo — nema oznaka. Ovo nisu podaci banke niti tačni brojevi.',
+		qAsk: 'Kakav je red sada?', qComment: 'Komentar (nije obavezno, do 140 znakova, bez telefona i e-pošte; ne objavljujemo ga)',
+		qSent: 'Hvala, oznaka je uračunata.', qLimit: 'Nedavno ste označili ovu ekspozituru — ponovo možete za 15 minuta.',
+		qError: 'Slanje nije uspelo. Pokušajte ponovo.', qBadComment: 'Uklonite telefon ili e-poštu iz komentara.',
+		qMarks: 'oznaka: %n, ažurirano pre %m min',
+		qGoogle: 'Obično gužva prema Google podacima (nije red za isplatu)',
+		qPick: 'Izaberite ekspozituru na mapi ili u spisku — u kartici su dugmad.',
+		qGeo: 'Tražimo najbližu ekspozituru prema lokaciji. Koordinate ostaju u pregledaču i nigde se ne šalju.',
+		qGeoFail: 'Lokacija nije dostupna. Izaberite ekspozituru na mapi ili u spisku.',
+		qCoop: { windowsHelpText: 'Ctrl + točkić — zumiranje mape', macHelpText: '⌘ + točkić — zumiranje mape', mobileHelpText: 'Pomerajte mapu sa dva prsta' },
 	},
 }[lang];
 
@@ -199,16 +235,6 @@ function chart(e?: Extra): string {
 	if (!h) return '';
 	return `<div class="hist" role="group" aria-label="${esc(T.chartLabel)}">${row(T.chartWd, h.weekday)}${h.sat ? row(T.chartSat, h.sat) : ''}<p class="hist-note">${esc(T.chartNote)} <a href="${GOOGLE_BUSY}" target="_blank" rel="noopener">${esc(T.chartLink)}</a></p></div>`;
 }
-const svOf = (e?: Extra) => (e ? { lat: e.lat, lng: e.lng, date: (e as { sv_date?: string | null }).sv_date ?? null } : null);
-// Street View: iframe не создаётся при загрузке страницы, только по клику (см. скрипт). Без съёмки — только ссылка на Карты.
-function streetView(e?: Extra): string {
-	const sv = svOf(e);
-	if (!sv) return '';
-	if (!sv.date) return `<a class="branch-map" href="${esc(e!.maps_url)}" target="_blank" rel="noopener">${T.svOpen}</a>`;
-	const cap = esc(T.svCap(sv.date));
-	return `<div class="sv"><button type="button" class="sv-btn" data-lat="${sv.lat}" data-lng="${sv.lng}" data-cap="${cap}" data-fallback="https://www.google.com/maps/@?api=1&amp;map_action=pano&amp;viewpoint=${sv.lat},${sv.lng}">${T.svBtn}</button><div class="sv-box"></div></div>`;
-}
-
 const histOf = (id: string) => (extraOf(id) as { hist?: Hist | null } | undefined)?.hist ?? null;
 // Данные для фильтров: часы 8–20 в атрибутах карточки, скрипт читает их же для карты.
 const fa = (id: string, city: string) => ({
@@ -220,19 +246,14 @@ const fa = (id: string, city: string) => ({
 });
 const noData = (id: string) => !histOf(id);
 
-type Point = { id: string; name: string; addr: string; hours: string; sat: string; code: string };
-function popup(b: Point, e: Extra): string {
-	const size = sizeText(e);
+type Point = { id: string; name: string; addr: string; hours: string; sat: string; code: string; city: string };
+// Постоянная часть карточки на карте; состояние очереди и кнопки дорисовывает скрипт.
+function details(b: Point, e: Extra): string {
 	const busy = busyText(e);
 	return [
-		`<strong>${esc(b.name)}</strong> <span class="branch-code">${T.code} ${esc(b.code)}</span>`,
-		`<br>${esc(b.addr)}` + (ADDR_NOTE[b.id] ? ` (${T.bankSite}: ${ADDR_NOTE[b.id]})` : ''),
-		`<br>${T.weekdays} ${esc(b.hours)}, ${T.saturday} ${esc(b.sat)}`,
-		size ? `<br>${T.size}: ${size} (${T.sizeNote}, ${T.estimate})` : '',
-		busy ? `<br>${T.busy.toLowerCase()}: ${busy} (${T.busyNote})` : '',
-		chart(e),
-		streetView(e),
-		`<br><a href="${esc(e.maps_url)}" target="_blank" rel="noopener">${T.gmaps}</a>`,
+		ADDR_NOTE[b.id] ? `<p>${T.bankSite}: ${ADDR_NOTE[b.id]}</p>` : '',
+		`<p>${T.weekdays} ${esc(b.hours)}, ${T.saturday} ${esc(b.sat)}</p>`,
+		busy ? `<p class="q-google">${esc(T.qGoogle)}: ${busy}</p>` : '',
 	].join('');
 }
 
@@ -244,13 +265,17 @@ for (const b of LIST.ekspoziture) {
 const order = [...FIRST, ...[...groups.keys()].filter((k) => !FIRST.includes(k)).sort((a, b) => CITIES[a][lang].localeCompare(CITIES[b][lang], lang))];
 const slug = (k: string) => `otdeleniya-${CITIES[k].latin.toLowerCase().normalize('NFD').replace(/[^a-z ]/g, '').replace(/ /g, '-')}`;
 const S = LIST.specijalizovana;
-const SPECIAL_PT: Point = { id: S.sifra, name: S.naziv, addr: `${S.ulicaIBroj}, ${S.pttBroj} ${CITIES.BEOGRAD.latin}`, hours: S.radnoVremeRadnimDanom, sat: S.radnoVremeSubotom, code: S.sifra };
+const SPECIAL_PT: Point = { id: S.sifra, name: S.naziv, addr: `${S.ulicaIBroj}, ${S.pttBroj} ${CITIES.BEOGRAD.latin}`, hours: S.radnoVremeRadnimDanom, sat: S.radnoVremeSubotom, code: S.sifra, city: 'BEOGRAD' };
 const points = [
 	SPECIAL_PT,
-	...LIST.ekspoziture.map((b) => ({ id: b.sifra, name: b.naziv.replace(/^EKSPOZITURA /, ''), addr: `${b.ulicaIBroj}, ${b.pttBroj} ${CITIES[cityKey(b.naziv)].latin}`, hours: b.radnoVremeRadnimDanom, sat: b.radnoVremeSubotom, code: b.sifra })),
+	...LIST.ekspoziture.map((b) => ({ id: b.sifra, name: b.naziv.replace(/^EKSPOZITURA /, ''), addr: `${b.ulicaIBroj}, ${b.pttBroj} ${CITIES[cityKey(b.naziv)].latin}`, hours: b.radnoVremeRadnimDanom, sat: b.radnoVremeSubotom, code: b.sifra, city: cityKey(b.naziv) })),
 ]
 	.filter((p) => extraOf(p.id))
-	.map((p) => ({ id: p.id, lat: extraOf(p.id)!.lat, lng: extraOf(p.id)!.lng, size: extraOf(p.id)!.size, label: p.name, html: popup(p, extraOf(p.id)!) }));
+	.map((p) => ({ id: p.id, lat: extraOf(p.id)!.lat, lng: extraOf(p.id)!.lng, city: p.city, name: p.name, addr: p.addr, gmaps: extraOf(p.id)!.maps_url, html: details(p, extraOf(p.id)!) }));
+const STATES = ['none', 'few', 'full', 'outside'] as const;
+const qText = { states: T.qStates, noMarks: T.qNoMarks, marks: T.qMarks, ask: T.qAsk, comment: T.qComment, sent: T.qSent, limit: T.qLimit, error: T.qError, badComment: T.qBadComment, gmaps: T.gmaps, pick: T.qPick, geo: T.qGeo, geoFail: T.qGeoFail, coop: T.qCoop, report: T.qReport };
+const BANK = '<svg viewBox="0 0 24 24" aria-hidden="true" class="q-bank"><path d="M12 2 2 7v2h20V7L12 2zm-7 9v7h3v-7H5zm5.5 0v7h3v-7h-3zM16 11v7h3v-7h-3zM2 20v2h20v-2H2z" fill="currentColor"/></svg>';
+const styleUrl = `/map/style-${lang}.json`;
 const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST.url };
 ---
 
@@ -261,6 +286,39 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 		<a href={LIST.url} target="_blank" rel="noopener">aod.rs<span class="sr-only"> ({T.newTab})</span></a>
 	</p>
 	<p class="branches-total">{T.total(LIST.ekspoziture.length + 1, groups.size)}</p>
+
+	<section class="qmap" data-points={JSON.stringify(points)} data-text={JSON.stringify(qText)} data-style={styleUrl} aria-label={T.qTitle}>
+		<header class="qmap-head">
+			<p class="qmap-title"><Fragment set:html={BANK} /><span>{T.qTitle}</span></p>
+			<div class="qmap-tabs" role="tablist">
+				<button type="button" role="tab" aria-selected="true" data-tab="map">{T.qTabMap}</button>
+				<button type="button" role="tab" aria-selected="false" data-tab="list">{T.qTabList}</button>
+			</div>
+		</header>
+		<div class="qmap-body">
+			<aside class="qmap-panel">
+				<label class="qmap-city">{T.qCity}
+					<select class="q-city">
+						{order.map((k) => <option value={k} selected={k === 'BEOGRAD'}>{CITIES[k][lang]}</option>)}
+					</select>
+				</label>
+				<details class="qmap-legend" open>
+					<summary>{T.qLegend}</summary>
+					<ul>
+						{STATES.map((st) => <li><i class={`q-dot q-${st}`}></i>{T.qStates[st]}</li>)}
+						<li><i class="q-dot q-unknown"></i>{T.qNoMarks}</li>
+					</ul>
+				</details>
+				<button type="button" class="q-report"><span aria-hidden="true">+</span> {T.qReport}</button>
+				<p class="q-msg" aria-live="polite"></p>
+				<p class="qmap-caption">{T.qCaption}</p>
+			</aside>
+			<div class="qmap-view">
+				<div class="qmap-canvas" role="region" aria-label={T.mapLabel}></div>
+				<ul class="qmap-list" hidden></ul>
+			</div>
+		</div>
+	</section>
 
 	<article class="branch branch-special" {...fa(S.sifra, 'BEOGRAD')}>
 		<p class="branch-tag">{T.special}</p>
@@ -276,7 +334,6 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 		{busyText(extraOf(S.sifra)) && <p class="branch-extra">{T.busy}: {busyText(extraOf(S.sifra))}</p>}
 							{noData(S.sifra) && <p class="branch-extra branch-nodata">{T.noData}</p>}
 							<Fragment set:html={chart(extraOf(S.sifra))} />
-							<Fragment set:html={streetView(extraOf(S.sifra))} />
 		<a class="branch-map" href={mapUrl(S, 'BEOGRAD')} target="_blank" rel="noopener">{T.map}<span class="sr-only"> ({T.newTab})</span></a>
 	</article>
 
@@ -312,17 +369,6 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 		<p class="f-note" hidden>{T.fNote}</p>
 		<p class="f-count" aria-live="polite"></p>
 	</div>
-	<div class="branch-map-wrap" data-points={JSON.stringify(points)}>
-		<div class="branch-leaflet" role="region" aria-label={T.mapLabel}></div>
-		<p class="branch-legend">
-			{T.legend}
-			<span><i class="dot dot-small"></i>{T.sizes.small}</span>
-			<span><i class="dot dot-medium"></i>{T.sizes.medium}</span>
-			<span><i class="dot dot-large"></i>{T.sizes.large}</span>
-			<span><i class="dot dot-unknown"></i>{T.unknown}</span>
-		</p>
-	</div>
-
 	<nav class="branch-cities" data-nav aria-label={T.cities}>
 		{order.map((k) => <a href={`#${slug(k)}`} data-city={k}>{CITIES[k][lang]} <span>{groups.get(k)!.length}</span></a>)}
 	</nav>
@@ -353,7 +399,6 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 							{busyText(extraOf(b.sifra)) && <p class="branch-extra">{T.busy}: {busyText(extraOf(b.sifra))}</p>}
 							{noData(b.sifra) && <p class="branch-extra branch-nodata">{T.noData}</p>}
 							<Fragment set:html={chart(extraOf(b.sifra))} />
-							<Fragment set:html={streetView(extraOf(b.sifra))} />
 							<a class="branch-map" href={mapUrl(b, k)} target="_blank" rel="noopener">
 								{T.map}
 								<span class="sr-only"> ({T.newTab})</span>
@@ -372,9 +417,6 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 </div>
 
 <script>
-	// Карта грузится лениво: Leaflet подтягивается, когда блок подъезжает к экрану.
-	const COLORS: Record<string, string> = { small: '#2f8f5b', medium: '#d98a1f', large: '#b3261e', none: '#8a8478' };
-	const RADIUS: Record<string, number> = { small: 6, medium: 9, large: 12, none: 7 };
 
 	type Info = { el: HTMLElement; city: string; size: string; wd: number[]; sat: number[] };
 	const nums = (v?: string) => (v ? v.split(',').map(Number) : []);
@@ -384,8 +426,6 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 	});
 	const box = document.querySelector<HTMLElement>('.branch-filters');
 	const sel = (c: string) => box?.querySelector<HTMLSelectElement>(c);
-	let onVisible: ((ids: Set<string>, city: string, hl: Set<string>) => void) | null = null;
-	let lastState: [Set<string>, string, Set<string>] | null = null;
 
 	// Значение — процент от пика самого отделения в этот час; 0 в часы без данных (закрыто) считаем «нет данных».
 	function pctAt(i: Info, day: string, hour: number): number | null {
@@ -423,8 +463,6 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 		});
 		box.querySelector<HTMLElement>('.f-note')!.hidden = !hour;
 		box.querySelector('.f-count')!.textContent = box.dataset.shown!.replace('%n', String(show.size));
-		lastState = [show, city, hl];
-		onVisible?.(show, city, hl);
 	}
 	if (box) {
 		applyFilters();
@@ -435,94 +473,251 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 		});
 	}
 
-	// Leaflet вендорен в public/vendor/leaflet (без npm-зависимости и CDN) и подключается при доскролле.
-	function loadLeaflet(): Promise<any> {
-		const w = window as any;
-		if (w.L) return Promise.resolve(w.L);
-		const base = import.meta.env.BASE_URL.replace(/\/?$/, '/') + 'vendor/leaflet/';
+	// Карта очередей: MapLibre, подложка и шрифты с нашего же адреса (public/vendor/maplibre, public/map).
+	// Ни тайлов, ни скриптов со сторонних серверов: так требует CSP сайта.
+	type Pt = { id: string; lat: number; lng: number; city: string; name: string; addr: string; gmaps: string; html: string };
+	type Mark = { state: string; count: number; minutes_ago: number };
+	type Text = {
+		states: Record<string, string>; noMarks: string; marks: string; ask: string; comment: string; sent: string; limit: string;
+		error: string; badComment: string; gmaps: string; pick: string; geo: string; geoFail: string; coop: Record<string, string>; report: string;
+	};
+	const STATE_ORDER = ['none', 'few', 'full', 'outside'];
+	const BANK_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 2 7v2h20V7L12 2zm-7 9v7h3v-7H5zm5.5 0v7h3v-7h-3zM16 11v7h3v-7h-3zM2 20v2h20v-2H2z" fill="currentColor"/></svg>';
+	const escHtml = (v: string) => v.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+
+	async function fetchMarks(): Promise<Record<string, Mark>> {
+		try {
+			const r = await fetch('/api/queue', { cache: 'no-store' });
+			return r.ok ? (await r.json()).branches ?? {} : {};
+		} catch {
+			return {};
+		}
+	}
+
+	function loadLib(): Promise<any> {
+		const base = import.meta.env.BASE_URL.replace(/\/?$/, '/') + 'vendor/maplibre/';
 		const css = document.createElement('link');
 		css.rel = 'stylesheet';
-		css.href = base + 'leaflet.css';
+		css.href = base + 'maplibre-gl.css';
 		document.head.appendChild(css);
-		return new Promise((resolve, reject) => {
+		const pm = new Promise((resolve, reject) => {
 			const s = document.createElement('script');
-			s.src = base + 'leaflet.js';
-			s.onload = () => resolve(w.L);
+			s.src = base + 'pmtiles.js';
+			s.onload = resolve;
 			s.onerror = reject;
 			document.head.appendChild(s);
 		});
+		const url = base + 'maplibre-gl.mjs';
+		return Promise.all([import(/* @vite-ignore */ url), pm]).then(([lib]) => lib);
 	}
 
-	async function init(wrap: HTMLElement) {
-		const L = await loadLeaflet();
-		const pts: { id: string; lat: number; lng: number; size: string | null; label: string; html: string }[] = JSON.parse(wrap.dataset.points ?? '[]');
-		const map = L.map(wrap.querySelector('.branch-leaflet') as HTMLElement, { scrollWheelZoom: false }).setView([44.81, 20.46], 12);
-		L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-			maxZoom: 18,
-			attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-		}).addTo(map);
-		const markers = new Map<string, ReturnType<typeof L.circleMarker>>();
-		const group = pts.map((p) => {
-			const k = p.size ?? 'none';
-			const m = L.circleMarker([p.lat, p.lng], { radius: RADIUS[k], color: '#222', weight: 1, fillColor: COLORS[k], fillOpacity: 0.85 })
-				.bindPopup(p.html, { maxWidth: 280 })
-				.bindTooltip(p.label)
-				.addTo(map);
-			markers.set(p.id, m);
-			return m;
-		});
-		// Фильтры: маркеры вне выборки уходят с карты, найденные «свободнее обычного» — с жирной обводкой.
-		onVisible = (ids, city, hl) => {
-			const inView: ReturnType<typeof L.circleMarker>[] = [];
-			markers.forEach((m, id) => {
-				if (ids.has(id)) { m.addTo(map); m.setStyle({ weight: hl.has(id) ? 4 : 1, color: hl.has(id) ? '#1b2430' : '#222' }); inView.push(m); }
-				else m.remove();
-			});
-			if (city && inView.length) map.fitBounds(L.featureGroup(inView).getBounds().pad(0.2), { maxZoom: 14 });
-		};
-		if (lastState) onVisible(...lastState);
-		// Старт — Белград: большинство отделений там, по всей Сербии карта мелкая.
-		const bg = pts.filter((p) => p.lat > 44.65 && p.lat < 44.95 && p.lng > 20.25 && p.lng < 20.65);
-		if (bg.length) map.fitBounds(L.latLngBounds(bg.map((p) => [p.lat, p.lng] as [number, number])).pad(0.15), { maxZoom: 12 });
-		else map.fitBounds(L.featureGroup(group).getBounds().pad(0.1));
+	function distKm(a: { lat: number; lng: number }, b: { lat: number; lng: number }): number {
+		const r = Math.PI / 180;
+		const x = (b.lng - a.lng) * r * Math.cos(((a.lat + b.lat) / 2) * r);
+		return Math.hypot(x, (b.lat - a.lat) * r) * 6371;
 	}
 
-	// Street View подгружается по клику: embed без ключа; если у кнопки нет съёмки — осталась ссылка на Карты.
-	document.addEventListener('click', (ev) => {
-		const btn = (ev.target as HTMLElement).closest<HTMLButtonElement>('.sv-btn');
-		if (!btn) return;
-		const box = btn.nextElementSibling as HTMLElement;
-		if (box.firstChild) {
-			box.replaceChildren();
-			return;
+	async function initQueueMap(root: HTMLElement) {
+		const pts: Pt[] = JSON.parse(root.dataset.points ?? '[]');
+		const tx: Text = JSON.parse(root.dataset.text ?? '{}');
+		const citySel = root.querySelector<HTMLSelectElement>('.q-city')!;
+		const msg = root.querySelector<HTMLElement>('.q-msg')!;
+		const list = root.querySelector<HTMLElement>('.qmap-list')!;
+		const canvas = root.querySelector<HTMLElement>('.qmap-canvas')!;
+		let marks: Record<string, Mark> = {};
+		let current: string | null = null;
+
+		const stateOf = (id: string) => marks[id]?.state ?? 'unknown';
+		const markLine = (id: string) =>
+			marks[id] ? tx.marks.replace('%n', String(marks[id].count)).replace('%m', String(marks[id].minutes_ago)) : tx.noMarks;
+
+		function card(p: Pt): string {
+			const st = stateOf(p.id);
+			const badge = marks[p.id] ? `<span class="q-badge q-${st}">${escHtml(tx.states[st])}</span>` : '';
+			const buttons = STATE_ORDER.map((k) => `<button type="button" class="q-pick q-${k}" data-state="${k}">${escHtml(tx.states[k])}</button>`).join('');
+			return `<div class="q-card" data-id="${p.id}">
+				<p class="q-card-name">${BANK_SVG}<strong>${escHtml(p.name)}</strong></p>
+				<p class="q-card-addr">${escHtml(p.addr)}</p>
+				${badge}<p class="q-card-upd">${escHtml(markLine(p.id))}</p>
+				<div class="q-card-info">${p.html}</div>
+				<p class="q-ask">${escHtml(tx.ask)}</p>
+				<div class="q-picks">${buttons}</div>
+				<details class="q-more"><summary>${escHtml(tx.comment)}</summary><input type="text" class="q-comment" maxlength="140"></details>
+				<p class="q-card-msg" aria-live="polite"></p>
+				<a class="q-gmaps" href="${escHtml(p.gmaps)}" target="_blank" rel="noopener">${escHtml(tx.gmaps)} ↗</a>
+			</div>`;
 		}
-		const { lat, lng, cap, fallback } = btn.dataset;
-		const f = document.createElement('iframe');
-		f.src = `https://maps.google.com/maps?layer=c&cbll=${lat},${lng}&cbp=12,0,0,0,0&output=svembed`;
-		f.loading = 'lazy';
-		f.title = btn.textContent ?? '';
-		f.referrerPolicy = 'no-referrer';
-		const p = document.createElement('p');
-		p.className = 'sv-cap';
-		p.textContent = cap ?? '';
-		const a = document.createElement('a');
-		a.href = fallback ?? '#';
-		a.target = '_blank';
-		a.rel = 'noopener';
-		a.textContent = ' ↗';
-		p.append(a);
-		box.append(f, p);
-	});
 
-	document.querySelectorAll<HTMLElement>('.branch-map-wrap').forEach((wrap) => {
+		function renderList() {
+			const rows = pts.filter((p) => p.city === citySel.value);
+			list.innerHTML = rows
+				.map((p) => `<li><button type="button" data-id="${p.id}"><i class="q-dot q-${stateOf(p.id)}"></i><span><strong>${escHtml(p.name)}</strong><br>${escHtml(p.addr)}<br><small>${marks[p.id] ? escHtml(tx.states[stateOf(p.id)]) + ' · ' : ''}${escHtml(markLine(p.id))}</small></span></button></li>`)
+				.join('');
+		}
+
+		const lib = await loadLib();
+		const pmtiles = (window as any).pmtiles;
+		lib.addProtocol('pmtiles', new pmtiles.Protocol().tile);
+		const map = new lib.Map({
+			container: canvas,
+			style: root.dataset.style,
+			center: [20.46, 44.81],
+			zoom: 11,
+			maxZoom: 17,
+			attributionControl: false,
+			cooperativeGestures: true,
+			locale: { 'CooperativeGesturesHandler.WindowsHelpText': tx.coop.windowsHelpText, 'CooperativeGesturesHandler.MacHelpText': tx.coop.macHelpText, 'CooperativeGesturesHandler.MobileHelpText': tx.coop.mobileHelpText },
+		});
+		map.addControl(new lib.NavigationControl({ showCompass: false }), 'top-right');
+		map.addControl(new lib.GeolocateControl({ positionOptions: { enableHighAccuracy: true } }), 'top-right');
+		map.addControl(new lib.ScaleControl({ unit: 'metric' }), 'bottom-right');
+		map.addControl(new lib.AttributionControl({ compact: false }), 'bottom-left');
+
+		const popup = new lib.Popup({ maxWidth: '290px', className: 'q-popup', anchor: 'bottom', offset: 20, focusAfterOpen: false });
+		const pins = new Map<string, { marker: any; el: HTMLElement }>();
+		for (const p of pts) {
+			const el = document.createElement('button');
+			el.type = 'button';
+			el.className = 'q-pin';
+			el.setAttribute('aria-label', p.name);
+			el.addEventListener('click', (ev) => {
+				ev.stopPropagation();
+				openCard(p.id);
+			});
+			pins.set(p.id, { marker: new lib.Marker({ element: el, anchor: 'left', offset: [-16, 0] }).setLngLat([p.lng, p.lat]).addTo(map), el });
+		}
+
+		function paintPins() {
+			pins.forEach(({ el }, id) => {
+				const st = stateOf(id);
+				const m = marks[id];
+				// className целиком стёр бы maplibregl-marker (position: absolute), и пины уплывали бы при зуме.
+				el.classList.remove(...[...el.classList].filter((c) => /^q-(?!pin)/.test(c)));
+				el.classList.add(`q-${st}`);
+				el.innerHTML = `<span class="q-pin-ico">${BANK_SVG}</span>` + (m ? `<span class="q-pin-tag">${escHtml(tx.states[st])}${m.count > 1 ? ` · ${m.count}` : ''}</span>` : '');
+			});
+		}
+
+		function openCard(id: string) {
+			const p = pts.find((x) => x.id === id);
+			if (!p) return;
+			current = id;
+			if (citySel.value !== p.city) {
+				citySel.value = p.city;
+				renderList();
+			}
+			showTab('map');
+			popup.setLngLat([p.lng, p.lat]).setHTML(card(p)).addTo(map);
+			// Пин уводим вниз, чтобы карточка над ним поместилась в окно карты.
+			map.easeTo({ center: [p.lng, p.lat], zoom: Math.max(map.getZoom(), 14), offset: [0, canvas.clientHeight * 0.4] });
+		}
+
+		function fitCity() {
+			const rows = pts.filter((p) => p.city === citySel.value);
+			if (!rows.length) return;
+			const b = new lib.LngLatBounds();
+			rows.forEach((p) => b.extend([p.lng, p.lat]));
+			map.fitBounds(b, { padding: 50, maxZoom: 14, duration: 0 });
+		}
+
+		function showTab(tab: string) {
+			root.querySelectorAll<HTMLButtonElement>('[data-tab]').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === tab)));
+			list.hidden = tab !== 'list';
+			canvas.hidden = tab !== 'map';
+			if (tab === 'map') map.resize();
+		}
+
+		async function refresh() {
+			marks = await fetchMarks();
+			paintPins();
+			renderList();
+			if (current && popup.isOpen()) {
+				const p = pts.find((x) => x.id === current);
+				if (p) popup.setHTML(card(p));
+			}
+		}
+
+		root.querySelectorAll<HTMLButtonElement>('[data-tab]').forEach((b) => b.addEventListener('click', () => showTab(b.dataset.tab!)));
+		citySel.addEventListener('change', () => {
+			popup.remove();
+			renderList();
+			fitCity();
+		});
+		list.addEventListener('click', (ev) => {
+			const b = (ev.target as HTMLElement).closest<HTMLButtonElement>('button[data-id]');
+			if (b) openCard(b.dataset.id!);
+		});
+
+		// «Сообщить об очереди»: открытая карточка — сразу к кнопкам; иначе ближайшее отделение по геолокации.
+		// Координаты используются только здесь, в браузере, и на сервер не уходят.
+		root.querySelector('.q-report')!.addEventListener('click', () => {
+			if (current && popup.isOpen()) {
+				popup.getElement()?.querySelector<HTMLElement>('.q-pick')?.focus();
+				return;
+			}
+			if (!navigator.geolocation) {
+				msg.textContent = tx.geoFail;
+				return;
+			}
+			msg.textContent = tx.geo;
+			navigator.geolocation.getCurrentPosition(
+				(pos) => {
+					const me = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+					const near = [...pts].sort((a, b) => distKm(me, a) - distKm(me, b))[0];
+					msg.textContent = '';
+					if (near) openCard(near.id);
+				},
+				() => {
+					msg.textContent = tx.geoFail + ' ' + tx.pick;
+				},
+				{ enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 },
+			);
+		});
+
+		document.addEventListener('click', async (ev) => {
+			const b = (ev.target as HTMLElement).closest<HTMLButtonElement>('.q-card .q-pick');
+			if (!b) return;
+			const box = b.closest<HTMLElement>('.q-card')!;
+			const out = box.querySelector<HTMLElement>('.q-card-msg')!;
+			const comment = box.querySelector<HTMLInputElement>('.q-comment')?.value ?? '';
+			box.querySelectorAll<HTMLButtonElement>('.q-pick').forEach((x) => (x.disabled = true));
+			let text = tx.error;
+			try {
+				const r = await fetch('/api/queue', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ branch_id: box.dataset.id, state: b.dataset.state, comment }),
+				});
+				const body = await r.json().catch(() => ({}));
+				if (r.status === 201) text = tx.sent;
+				else if (r.status === 429) text = tx.limit;
+				else if (String(body.error).startsWith('comment')) text = tx.badComment;
+			} catch {
+				/* сеть: остаётся tx.error */
+			}
+			if (text === tx.sent) await refresh();
+			const live = popup.getElement()?.querySelector<HTMLElement>('.q-card-msg') ?? out;
+			live.textContent = text;
+			popup.getElement()?.querySelectorAll<HTMLButtonElement>('.q-pick').forEach((x) => (x.disabled = text === tx.sent));
+		});
+
+		// На узком экране легенда свёрнута, чтобы карта была видна сразу.
+		if (root.clientWidth <= 560) root.querySelector('.qmap-legend')?.removeAttribute('open');
+		map.on('load', fitCity);
+		fitCity();
+		await refresh();
+		window.setInterval(refresh, 120000);
+	}
+
+	document.querySelectorAll<HTMLElement>('.qmap').forEach((root) => {
 		const io = new IntersectionObserver(
 			(entries) => {
 				if (!entries.some((e) => e.isIntersecting)) return;
 				io.disconnect();
-				init(wrap);
+				initQueueMap(root);
 			},
 			{ rootMargin: '300px' },
 		);
-		io.observe(wrap);
+		io.observe(root);
 	});
 </script>

@@ -11,6 +11,7 @@ from pathlib import Path
 from alta_feedback.accounts import AccountReport
 from alta_feedback.casebook import CaseReport
 from alta_feedback.proposals import PUBLIC_STATUSES, Proposal
+from alta_feedback.queues import HIDDEN_STATUSES, QueueReport
 from alta_feedback.stats import AnswerFilter
 from alta_feedback.validate import Suggestion
 
@@ -102,6 +103,19 @@ CREATE TABLE IF NOT EXISTS case_files (
 );
 CREATE INDEX IF NOT EXISTS case_files_case ON case_files (case_id);
 
+CREATE TABLE IF NOT EXISTS queue_reports (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at TEXT NOT NULL,
+    branch_id TEXT NOT NULL,
+    state TEXT NOT NULL,
+    comment TEXT NOT NULL DEFAULT '',
+    ip_hash TEXT NOT NULL,
+    user_agent_short TEXT NOT NULL DEFAULT '',
+    status TEXT NOT NULL DEFAULT 'new'
+);
+CREATE INDEX IF NOT EXISTS queue_reports_time ON queue_reports (created_at);
+CREATE INDEX IF NOT EXISTS queue_reports_ip_time ON queue_reports (ip_hash, created_at);
+
 CREATE TABLE IF NOT EXISTS pow_used (
     challenge TEXT PRIMARY KEY,
     expires_at INTEGER NOT NULL
@@ -118,6 +132,9 @@ ADDED_COLUMNS = (
 )
 
 COLUMNS = {
+    "queue_reports": (
+        "id", "created_at", "branch_id", "state", "comment", "ip_hash", "user_agent_short", "status",
+    ),
     "suggestions": (
         "id", "created_at", "section_id", "section_title", "text",
         "source", "contact", "ip_hash", "user_agent_short", "status",
@@ -405,6 +422,34 @@ class Store:
         )
         with self.connect() as db:
             return Counter({(bank, branch): count for bank, branch, count in db.execute(query)})
+
+    def add_queue_report(self, item: QueueReport, ip_hash: str, user_agent: str, now: datetime) -> int:
+        with self.connect() as db:
+            cur = db.execute(
+                "INSERT INTO queue_reports (created_at, branch_id, state, comment, ip_hash, user_agent_short)"
+                " VALUES (?, ?, ?, ?, ?, ?)",
+                (iso(now), item.branch_id, item.state, item.comment, ip_hash, user_agent),
+            )
+            return int(cur.lastrowid)
+
+    def queue_report_since(self, ip_hash: str, branch_id: str, since: datetime) -> bool:
+        with self.connect() as db:
+            row = db.execute(
+                "SELECT 1 FROM queue_reports WHERE ip_hash = ? AND branch_id = ? AND created_at > ? LIMIT 1",
+                (ip_hash, branch_id, iso(since)),
+            ).fetchone()
+            return row is not None
+
+    def fresh_queue_reports(self, since: datetime) -> list[tuple[str, str, str]]:
+        """(branch_id, state, created_at) без отклонённых модератором, по возрастанию времени."""
+        marks = ", ".join("?" * len(HIDDEN_STATUSES))
+        with self.connect() as db:
+            rows = db.execute(
+                "SELECT branch_id, state, created_at FROM queue_reports"
+                f" WHERE created_at > ? AND status NOT IN ({marks}) ORDER BY created_at",
+                (iso(since), *HIDDEN_STATUSES),
+            )
+            return [(r[0], r[1], r[2]) for r in rows]
 
     def claim_challenge(self, challenge: str, expires_at: int, now: datetime) -> bool:
         """Отмечает решённую задачу использованной; False — её уже предъявляли."""
