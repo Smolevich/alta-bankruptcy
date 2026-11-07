@@ -16,7 +16,9 @@ DEFAULT_SITE_DIR = Path("/var/www/alta-bankruptcy")
 SITE_CSP = (
     "default-src 'none'; "
     "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://static.cloudflareinsights.com; "
-    "style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; "
+    "style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; "
+    # Карта отделений: MapLibre рисует в своём модульном воркере с нашего же адреса.
+    "worker-src 'self' blob:; "
     "connect-src 'self' https://cloudflareinsights.com; "
     "form-action 'self'; frame-ancestors 'none'; base-uri 'none'"
 )

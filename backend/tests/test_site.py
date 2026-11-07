@@ -86,3 +86,8 @@ def test_pdf_may_be_embedded_by_the_same_origin_only(client, site):
 def test_site_may_embed_pdfs_from_aod(client):
     csp = client.get("/").headers["content-security-policy"]
     assert "object-src 'self' https://www.aod.rs" in csp and "frame-src 'self' https://www.aod.rs" in csp
+
+
+def test_site_csp_allows_map_worker_from_own_origin(client):
+    csp = client.get("/").headers["content-security-policy"]
+    assert "worker-src 'self' blob:" in csp and "https://tile." not in csp
