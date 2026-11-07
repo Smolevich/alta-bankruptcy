@@ -475,6 +475,8 @@ select:focus-visible, .bc-seg input:focus-visible + span, .branch-controls butto
 .bl-far { flex: none; font-style: normal; font-size: 12px; color: var(--q-muted); }
 .bl-status, .bl-addr { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .bl-status { color: var(--ink); }
+/* Строка «мнения расходятся» длиннее обычной: переносим, а не обрезаем число голосов. */
+.bl-status[data-wrap='1'] { white-space: normal; }
 .bl-addr { color: var(--q-muted); }
 .bl-body { display: flex; flex-direction: column; gap: 6px; padding: 8px 10px 10px 44px; font-size: 14px; line-height: 1.35; }
 .bl-hours { font-variant-numeric: tabular-nums; }
@@ -506,8 +508,8 @@ select:focus-visible, .bc-seg input:focus-visible + span, .branch-controls butto
 /* ---- Карта очередей Poštanska (PostanskaBranches.astro, MapLibre; ТЗ ux-spec этап 1) ---- */
 /* Палитра сайта (бумага, чернила, печать); цвета загрузки — смысловые, текст на них ≥ 4.5:1.
    Граница «телефон / компьютер» — контейнер-запрос 560px: блок живёт в колонке Starlight. */
-.branches { --q-muted: #5a5448; --q-none: #2d6a4f; --q-few: #d9b44a; --q-few-ink: #2b2200; --q-full: #b5541c; --q-outside: var(--seal); --q-unknown: #8a8478; --q-closed: #1b2430; }
-.qmap { --q-muted: #5a5448; --q-none: #2d6a4f; --q-few: #d9b44a; --q-few-ink: #2b2200; --q-full: #b5541c; --q-outside: var(--seal); --q-unknown: #8a8478; --q-closed: #1b2430;
+.branches { --q-muted: #5a5448; --q-none: #2d6a4f; --q-few: #d9b44a; --q-few-ink: #2b2200; --q-full: #b5541c; --q-outside: var(--seal); --q-unknown: #8a8478; --q-mixed: #6b665b; --q-closed: #1b2430; }
+.qmap { --q-muted: #5a5448; --q-none: #2d6a4f; --q-few: #d9b44a; --q-few-ink: #2b2200; --q-full: #b5541c; --q-outside: var(--seal); --q-unknown: #8a8478; --q-mixed: #6b665b; --q-closed: #1b2430;
 	--q-vh: 37.5rem;
 	container-type: inline-size; margin: 0 0 1.2rem; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; background: #fbf8f0; color: var(--ink); box-shadow: 6px 6px 0 var(--seal-soft); font-family: var(--sl-font-system); }
 .qmap p { margin: 0; }
@@ -534,7 +536,8 @@ select:focus-visible, .bc-seg input:focus-visible + span, .branch-controls butto
 .q-report { display: flex; align-items: center; gap: 0.55rem; min-height: 56px; padding: 0.5rem 0.9rem; border: 0; border-radius: 4px; background: var(--seal); color: #fff !important; font-weight: 700 !important; font-size: 1rem; text-align: left; line-height: 1.2; cursor: pointer; }
 .q-report svg { width: 1.4rem; height: 1.4rem; flex: none; }
 .q-report:hover { background: #6f1d16; }
-.q-report[data-closed='1'], .q-report[data-closed='1']:hover { background: #8a7f78; }
+/* Всё закрыто: кнопка без действия только занимает экран, причину и время открытия говорит строка под ней. */
+.q-report[data-closed='1'] { display: none; }
 .q-report[aria-busy='true'] svg { animation: q-spin 1s linear infinite; }
 @keyframes q-spin { to { transform: rotate(360deg); } }
 .q-msg { font-size: 0.85rem; color: var(--seal); font-weight: 700; }
@@ -554,9 +557,9 @@ select:focus-visible, .bc-seg input:focus-visible + span, .branch-controls butto
 .q-dot { --pc: var(--q-unknown); display: grid; place-items: center; flex: none; width: 1.5rem; height: 1.5rem; margin-top: 0.1rem; border-radius: 50%; background: var(--pc); color: #fff; box-sizing: border-box; }
 .q-dot svg { width: 0.95rem; height: 0.95rem; }
 [data-q='none'] { --pc: var(--q-none); } [data-q='few'] { --pc: var(--q-few); } [data-q='full'] { --pc: var(--q-full); }
-[data-q='outside'] { --pc: var(--q-outside); } [data-q='unknown'] { --pc: var(--q-unknown); } [data-q='closed'] { --pc: var(--q-closed); }
+[data-q='outside'] { --pc: var(--q-outside); } [data-q='unknown'] { --pc: var(--q-unknown); } [data-q='mixed'] { --pc: var(--q-mixed); } [data-q='closed'] { --pc: var(--q-closed); }
 .q-dot[data-q='few'] { color: var(--q-few-ink); }
-.q-dot[data-sure='0']:not([data-q='unknown']):not([data-q='closed']) { background: #fffdf7; border: 3px solid var(--pc); color: var(--pc); }
+.q-dot[data-sure='0']:not([data-q='unknown']):not([data-q='mixed']):not([data-q='closed']) { background: #fffdf7; border: 3px solid var(--pc); color: var(--pc); }
 .q-dot[data-sure='0'][data-q='few'] { color: #8a6d10; }
 
 .qmap-view { grid-area: view; position: relative; min-width: 0; min-height: var(--q-vh); background: #f2efe9; }
@@ -582,6 +585,7 @@ select:focus-visible, .bc-seg input:focus-visible + span, .branch-controls butto
 .q-mini { flex: none; width: 0.9rem; height: 1.15rem; border: 2px solid var(--ink); border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%; box-sizing: border-box; background: var(--q-unknown); }
 .q-mini-none { background: var(--q-none); } .q-mini-few { background: var(--q-few); } .q-mini-full { background: var(--q-full); } .q-mini-outside { background: var(--q-outside); }
 .q-mini-ring { background: #fffdf7; border: 3px solid #b8931f; }
+.q-mini-mixed { background: var(--q-mixed); }
 .q-mini-closed { background: var(--q-closed); }
 .qmap-caption { font-size: 0.76rem; line-height: 1.35; color: var(--q-muted); }
 
@@ -592,8 +596,8 @@ select:focus-visible, .bc-seg input:focus-visible + span, .branch-controls butto
 .q-drop-body { fill: var(--pc); stroke: var(--ink); stroke-width: 2; }
 .q-drop-ico { fill: #fff; }
 .q-pin[data-q='few'] .q-drop-ico { fill: var(--q-few-ink); }
-.q-pin[data-sure='0']:not([data-q='unknown']):not([data-q='closed']) .q-drop-body { fill: #fffdf7; stroke: var(--pc); stroke-width: 3.5; }
-.q-pin[data-sure='0']:not([data-q='unknown']):not([data-q='closed']) .q-drop-ico { fill: var(--pc); }
+.q-pin[data-sure='0']:not([data-q='unknown']):not([data-q='mixed']):not([data-q='closed']) .q-drop-body { fill: #fffdf7; stroke: var(--pc); stroke-width: 3.5; }
+.q-pin[data-sure='0']:not([data-q='unknown']):not([data-q='mixed']):not([data-q='closed']) .q-drop-ico { fill: var(--pc); }
 .q-pin[data-sure='0'][data-q='few'] .q-drop-body { stroke: #b8931f; }
 .q-pin[data-sure='0'][data-q='few'] .q-drop-ico { fill: #8a6d10; }
 .q-pin[data-selected] .q-drop { transform: scale(1.3); }
@@ -764,7 +768,8 @@ select:focus-visible, .bc-seg input:focus-visible + span, .branch-controls butto
 	/* Нижний лист в той же ячейке сетки, что и карта: прижат к низу карты, два положения. */
 	/* Лист прижат к низу экрана; кратко — по высоте содержимого (до 60% экрана), карта видна над ним. */
 	.qmap[data-card='half'] .q-card { position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; height: auto; max-height: 60vh; max-height: 60dvh; }
-	.q-card { grid-area: view; align-self: end; height: 62%; border: 0; border-top: 1px solid var(--line); border-radius: 14px 14px 0 0; box-shadow: 0 -4px 16px rgba(27, 36, 48, 0.2); padding-bottom: env(safe-area-inset-bottom); overscroll-behavior: contain; transition: height 0.25s ease; }
+	/* Встроенный браузер Telegram рисует плавающую панель (~110px) поверх низа страницы: запас, чтобы кнопки листа были над ней. */
+	.q-card { grid-area: view; align-self: end; height: 62%; border: 0; border-top: 1px solid var(--line); border-radius: 14px 14px 0 0; box-shadow: 0 -4px 16px rgba(27, 36, 48, 0.2); padding-bottom: calc(env(safe-area-inset-bottom) + 7rem); overflow-anchor: none; overscroll-behavior: contain; transition: height 0.25s ease; }
 	/* Развёрнутый лист — до 90% экрана поверх страницы; над ним остаётся полоска карты, внутри своя прокрутка. */
 	.qmap[data-card='full'] .q-card { position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; height: min(90vh, 100vh - var(--sl-nav-height) - var(--sl-mobile-toc-height) - 2rem); height: min(90dvh, 100dvh - var(--sl-nav-height) - var(--sl-mobile-toc-height) - 2rem); }
 	.q-card-head { grid-template-columns: minmax(0, 1fr) auto; padding-top: 0; touch-action: none; }

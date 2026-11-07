@@ -173,21 +173,23 @@ def latest_votes(rows: list[Vote]) -> dict[str, list[Vote]]:
 
 
 def branch_summary(votes: list[Vote], now: datetime) -> dict:
-    """Состояние — самое частое среди людей рядом, а если рядом никого — среди всех; при равенстве — свежее.
+    """Состояние — самое частое среди людей рядом, а если рядом никого — среди всех.
 
-    «Точно» (sure) — только когда это состояние выбрали двое разных и хотя бы один из них рядом.
+    Ничья между верхними состояниями — «mixed» (мнения расходятся): «split» говорит, сколько голосов у каждого.
+    «Точно» (sure) — только когда состояние выбрали двое разных и хотя бы один из них рядом.
     """
     near = [v for v in votes if v.near]
     pool = near or votes
     counts = Counter(v.state for v in pool)
     top = max(counts.values())
-    latest = {v.state: v.created_at for v in pool}
-    state = max((s for s in counts if counts[s] == top), key=lambda s: latest[s])
-    agree = [v for v in votes if v.state == state]
-    sure = len(agree) >= 2 and any(v.near for v in agree)
+    leaders = [s for s in counts if counts[s] == top]
     updated = max(v.created_at for v in pool)
     minutes = int((now - datetime.fromisoformat(updated)).total_seconds() // 60)
-    return {"state": state, "count": len(pool), "minutes_ago": max(minutes, 0), "sure": sure}
+    summary = {"state": leaders[0], "count": len(pool), "minutes_ago": max(minutes, 0), "sure": False}
+    if len(leaders) > 1:
+        return summary | {"state": "mixed", "split": {s: counts[s] for s in STATES if s in counts}}
+    agree = [v for v in votes if v.state == leaders[0]]
+    return summary | {"sure": len(agree) >= 2 and any(v.near for v in agree)}
 
 
 def summarize(rows: list[Vote], now: datetime) -> dict[str, dict]:

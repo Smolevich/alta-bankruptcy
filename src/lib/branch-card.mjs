@@ -7,6 +7,7 @@ import { hoursOn } from './branch-hours.mjs';
 // Последний час до закрытия — предупреждаем янтарным, а не зелёным.
 export const CLOSING_SOON_MIN = 60;
 export const QUEUE_LEVELS = ['none', 'few', 'full', 'outside'];
+export const MIXED = 'mixed';
 
 /** Тон и иконка блока статуса: open — зелёный, soon — янтарный, closed — красный. */
 export function statusTone(status) {
@@ -30,4 +31,10 @@ export function weekTiles(wd, sat, today) {
 		const h = hoursOn(day, wd, sat);
 		return { day, hours: h ? shortRange(h) : null, today: day === today };
 	});
+}
+
+/** «1 — мало людей, 1 — много · за 2 часа»: сколько голосов у каждого из спорящих состояний. */
+export function splitText(split, labels, tail) {
+	const parts = QUEUE_LEVELS.filter((state) => split?.[state]).map((state) => `${split[state]} — ${labels[state]}`);
+	return `${parts.join(', ')} · ${tail}`;
 }
