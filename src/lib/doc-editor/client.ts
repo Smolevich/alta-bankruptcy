@@ -40,7 +40,7 @@ async function renderPages(bytes: Uint8Array, width: number): Promise<HTMLCanvas
 			canvases.push(c);
 		}
 	} finally {
-		await doc.destroy();
+		await doc.loadingTask.destroy();
 	}
 	return canvases;
 }
