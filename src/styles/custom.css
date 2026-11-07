@@ -672,6 +672,20 @@ select:focus-visible, .bc-seg input:focus-visible + span, .branch-controls butto
 .q-x { grid-column: 2; grid-row: 2; display: grid; place-items: center; width: 36px; height: 36px; padding: 0; border: 1px solid var(--line); border-radius: 50%; background: #fff; color: var(--ink); cursor: pointer; }
 .q-stale { display: flex; gap: 0.4rem; align-items: center; font-size: 13px; color: var(--seal); }
 .q-stale .q-ic { width: 16px; height: 16px; }
+/* Карточка: статус, очередь и «Сегодня» — по одной строке; неделя, размер, загрузка — под «Подробнее». */
+.q-line { display: flex; gap: 8px; align-items: center; font-size: 15px; line-height: 1.3; }
+.q-line > .q-ic { width: 18px; height: 18px; color: var(--q-muted); }
+.q-line b { font-weight: 600; }
+.q-st { --tc: var(--ok); color: var(--ink); }
+.q-st[data-tone='soon'] { --tc: var(--amber); }
+.q-st[data-tone='closed'] { --tc: var(--seal); }
+.q-st > .q-ic, .q-st b { color: var(--tc); }
+.q-line .q-dot { width: 18px; height: 18px; margin: 0; }
+.q-line .q-dot svg { width: 11px; height: 11px; }
+.q-details { border-top: 1px solid var(--line); }
+.q-details summary { min-height: 44px; font-weight: 600; }
+.q-details-body { display: flex; flex-direction: column; gap: 6px; padding: 0 0 10px; }
+.q-details-body .q-week { margin-top: 2px; }
 .q-status { --tc: var(--ok); --tb: var(--ok-soft); display: flex; gap: 12px; align-items: center; padding: 14px 16px; border-radius: 12px; background: var(--tb); }
 .q-status[data-tone='soon'] { --tc: var(--amber); --tb: var(--amber-soft); }
 .q-status[data-tone='closed'] { --tc: var(--seal); --tb: var(--seal-soft); }
@@ -748,13 +762,14 @@ select:focus-visible, .bc-seg input:focus-visible + span, .branch-controls butto
 	.qmap-tabs { width: 100%; }
 	.qmap-tabs button { flex: 1; }
 	/* Нижний лист в той же ячейке сетки, что и карта: прижат к низу карты, два положения. */
+	/* Лист прижат к низу экрана; кратко — по высоте содержимого (до 60% экрана), карта видна над ним. */
+	.qmap[data-card='half'] .q-card { position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; height: auto; max-height: 60vh; max-height: 60dvh; }
 	.q-card { grid-area: view; align-self: end; height: 62%; border: 0; border-top: 1px solid var(--line); border-radius: 14px 14px 0 0; box-shadow: 0 -4px 16px rgba(27, 36, 48, 0.2); padding-bottom: env(safe-area-inset-bottom); overscroll-behavior: contain; transition: height 0.25s ease; }
 	/* Развёрнутый лист — до 90% экрана поверх страницы; над ним остаётся полоска карты, внутри своя прокрутка. */
 	.qmap[data-card='full'] .q-card { position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; height: min(90vh, 100vh - var(--sl-nav-height) - var(--sl-mobile-toc-height) - 2rem); height: min(90dvh, 100dvh - var(--sl-nav-height) - var(--sl-mobile-toc-height) - 2rem); }
 	.q-card-head { grid-template-columns: minmax(0, 1fr) auto; padding-top: 0; touch-action: none; }
 	.q-grip { grid-column: 1 / -1; display: flex; justify-content: center; align-items: center; height: 28px; margin: 0 -0.8rem; border: 0; background: none; cursor: grab; }
 	.q-back { display: none; }
-	.qmap:not([data-card='full']) .q-full-only { display: none; }
 	.qmap[data-card='full'] .q-picks { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
 	.qmap[data-card='full'] .q-pick { min-height: 48px; flex-direction: column; justify-content: center; gap: 0.15rem; padding: 0.3rem; text-align: center; font-size: 0.78rem; }
 	.qmap[data-card='full'] .q-long { display: none; }

@@ -239,6 +239,7 @@ const points = [
 	.map((p) => ({
 		id: p.id, lat: extraOf(p.id)!.lat, lng: extraOf(p.id)!.lng, city: p.city, cityName: CITIES[p.city][lang], name: p.name, addr: p.addr,
 		note: ADDR_NOTE[p.id] ? `${T.bankSite}: ${ADDR_NOTE[p.id]}` : '', wd: p.hours, sat: p.sat, gmaps: extraOf(p.id)!.maps_url ?? '', chart: chart(extraOf(p.id)), code: p.code, tag: p.id === S.sifra ? S.oznaka : '',
+		sz: sizeText(extraOf(p.id)) ? `${T.size}: ${sizeText(extraOf(p.id))} (${T.sizeNote})` : '', busy: busyText(extraOf(p.id)) ? `${T.busy}: ${busyText(extraOf(p.id))}` : '',
 	}));
 const STATES = ['none', 'few', 'full', 'outside'] as const;
 const BANK = '<svg viewBox="0 0 24 24" aria-hidden="true" class="q-bank"><path d="M12 2 2 7v2h20V7L12 2zm-7 9v7h3v-7H5zm5.5 0v7h3v-7h-3zM16 11v7h3v-7h-3zM2 20v2h20v-2H2z" fill="currentColor"/></svg>';
@@ -401,7 +402,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 <script>
 	import { attachVoice, voiceSupported } from '../scripts/voice';
 	import { branchStatus, canReport, parseRange, reportsFrom } from '../lib/branch-hours.mjs';
-	import { QUEUE_LEVELS, queueLevel, statusTone, weekTiles } from '../lib/branch-card.mjs';
+	import { statusTone, weekTiles } from '../lib/branch-card.mjs';
 	import { belgradeParts, clockOffset } from '../lib/server-clock.mjs';
 
 	type Info = { el: HTMLDetailsElement; li: HTMLElement; city: string; size: string; wd: number[]; sat: number[] };
@@ -415,7 +416,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 	// Карта очередей Poštanska (ТЗ ux-spec, этап 1). MapLibre, подложка и шрифты — с нашего адреса
 	// (public/vendor/maplibre, public/map): сторонние скрипты и тайлы CSP сайта не пускает.
 
-	type Pt = { id: string; lat: number; lng: number; city: string; cityName: string; name: string; addr: string; note: string; wd: string; sat: string; gmaps: string; chart: string; code: string; tag: string };
+	type Pt = { id: string; lat: number; lng: number; city: string; cityName: string; name: string; addr: string; note: string; wd: string; sat: string; gmaps: string; chart: string; code: string; tag: string; sz: string; busy: string };
 	type Mark = { state: string; count: number; minutes_ago: number; sure?: boolean };
 	type Tx = Record<string, any>;
 	type Hours = { open: boolean; text: string; preOpen: boolean; reportsAt: string; next: string };
@@ -593,6 +594,8 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 		let picked: string | null = null;
 		// Перед печатью раскрываются все строки: их toggle не должен двигать карту.
 		let printing = false;
+		// «Подробнее» в карточке: на телефоне свёрнуто, на компьютере раскрыто; выбор человека живёт до закрытия карточки.
+		let moreOpen: boolean | null = null;
 		let sheet: 'half' | 'full' = 'half';
 		let chooser: { title: string; ids: string[] } | null = null;
 		let hint: string | null = null;
@@ -859,7 +862,6 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			const far = me ? distM(me, p) : null;
 			const near = hint ?? '';
 			const staleLine = stale ? `<p class="q-stale">${ICON('alert')}<span>${esc(note.textContent ?? '')}</span></p>` : '';
-			const google = p.chart ? `<details class="q-acc q-google"><summary>${ICON('chart')}<span>${esc(tx.googleSum)}</span>${ICON('chevron')}</summary>${p.chart}<p class="q-google-note">${esc(tx.googleNote)}</p></details>` : '';
 			const code = `${tx.code} ${p.code}`;
 			const tag = p.tag ? `<div class="q-tag"><p class="q-tag-t">${esc(tx.special)}</p><p class="q-tag-o" lang="sr-Latn">${esc(p.tag)}</p><p class="q-tag-n">${esc(tx.unclear)}</p></div>` : '';
 			return `${head(p.name, `${shortAddr(p.addr)} · ${code}`)}<div class="q-card-body">
@@ -868,13 +870,24 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 				${near ? `<p class="q-near">${near}</p>` : ''}
 				${far !== null ? `<p class="q-far">${esc(tx.far.replace('%s', distText(far)))}</p>` : ''}
 				${p.note ? `<p class="q-muted">${esc(p.note)}</p>` : ''}
-				<div class="q-status" data-tone="${c.tone}" role="status"><span class="q-status-ic">${ICON(c.icon)}</span><div><p class="q-status-t">${esc(c.title)}</p><p class="q-status-s">${esc(c.sub)}</p></div></div>
+				<p class="q-line q-st" data-tone="${c.tone}" role="status">${ICON(c.icon)}<span><b>${esc(c.title)}</b> · ${esc(c.sub)}</span></p>
 				${verdictHtml(p)}
-				<div class="q-block q-full-only"><div class="q-block-head"><span class="q-block-ic">${ICON('clock')}</span><p class="q-lbl">${esc(tx.hLabel)}</p></div>${weekHtml(p)}</div>
+				<p class="q-line q-today">${ICON('clock')}<span>${todayText(p)}</span></p>
 				<div class="q-report-box">${actionsHtml(p, c)}</div>
-				<div class="q-full-only q-more">${google}
-				<p class="q-foot">${ICON('info')}<span>${esc(tx.foot)} <button type="button" class="q-legend-link">${esc(tx.legend)}</button></span></p></div>
+				<details class="q-acc q-details"${moreOpen ?? !narrow() ? ' open' : ''}><summary><span>${esc(tx.details)}</span>${ICON('chevron')}</summary>
+					<div class="q-details-body">
+					<p class="q-lbl">${esc(tx.hLabel)}</p>${weekHtml(p)}
+					${p.sz ? `<p>${esc(p.sz)}</p>` : ''}${p.busy ? `<p>${esc(p.busy)}</p>` : ''}
+					${p.chart ? `<p class="q-lbl">${esc(tx.googleSum)}</p>${p.chart}<p class="q-google-note">${esc(tx.googleNote)}</p>` : ''}
+					<p class="q-foot">${ICON('info')}<span>${esc(tx.foot)} <button type="button" class="q-legend-link">${esc(tx.legend)}</button></span></p>
+					</div>
+				</details>
 			</div>`;
+		}
+		// «Сегодня 08:00–17:00» — одна строка вместо сетки недели; сетка — под «Подробнее».
+		function todayText(p: Pt): string {
+			const today = weekTiles(range(p.wd), range(p.sat), belgradeNow().day).find((d) => d.today);
+			return `<b>${esc(tx.today)}</b> ${today?.hours ? esc(today.hours) : esc(tx.dayOff)}`;
 		}
 		function weekHtml(p: Pt): string {
 			const tiles = weekTiles(range(p.wd), range(p.sat), belgradeNow().day).map((d) => {
@@ -909,11 +922,8 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 				} else sub = (ok ? tx.qSure : tx.qAgo).replace('%n', nMarks(m.count)).replace('%m', String(m.minutes_ago));
 				if (!ok) sub += ` · ${tx.unsure}`;
 			} else sub = c.closed && !c.canMark ? tx.qFrom.replace('%t', c.marksWhen.split(' ')[0]).replace('%s', c.marksWhen.split(' ').slice(1).join(' ')).trim() : tx.qNobody;
-			const level = m ? queueLevel(m.state) : 0;
-			const segs = QUEUE_LEVELS.map((k, i) => `<i data-q="${k}"${i < level ? ' data-on' : ''}></i>`).join('');
-			return `<div class="q-block q-queue" data-sure="${ok ? 1 : 0}"><div class="q-block-head"><span class="q-block-ic">${ICON('users')}</span><div class="q-block-txt"><p class="q-lbl">${esc(tx.qLabel)}</p>
-				<p class="q-verdict">${esc(title)}</p><p class="q-trust">${esc(sub)}</p></div></div>
-				<div class="q-meter" aria-hidden="true">${segs}</div><p class="q-meter-lbl" aria-hidden="true"><span>${esc(tx.qFree)}</span><span>${esc(tx.qOut)}</span></p></div>`;
+			const st = m ? m.state : 'unknown';
+			return `<p class="q-line q-queue" data-sure="${ok ? 1 : 0}"><i class="q-dot" data-q="${st}" data-sure="${ok ? 1 : 0}">${GLYPH[st] ?? ''}</i><span><b>${esc(tx.qLabel)}:</b> ${esc(title)} · ${esc(sub)}</span></p>`;
 		}
 		function updateVerdict() {
 			const v = card.querySelector('.q-queue');
@@ -954,9 +964,22 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 
 		function easeToPin(p: Pt) {
 			if (!map) return;
-			const bottom = narrow() ? card.getBoundingClientRect().height : 0;
-			// Сдвиг вместо padding: padding в MapLibre копится между вызовами, а нужен ровно центр видимой над листом части.
-			map.easeTo({ center: [p.lng, p.lat], zoom: Math.max(map.getZoom(), 15), offset: [0, -bottom / 2 + 20], duration: reduced() ? 0 : 500 });
+			// Сдвиг вместо padding: padding в MapLibre копится между вызовами, а нужен ровно центр видимой над листом части карты.
+			let dy = 0;
+			if (narrow() && !card.hidden) {
+				const v = $('.qmap-view').getBoundingClientRect();
+				const top = Math.max(v.top, navBottom());
+				const bottom = Math.min(v.bottom, card.getBoundingClientRect().top);
+				if (bottom > top) dy = (top + bottom) / 2 - (v.top + v.height / 2) + 20;
+			}
+			map.easeTo({ center: [p.lng, p.lat], zoom: Math.max(map.getZoom(), 15), offset: [0, dy], duration: reduced() ? 0 : 500 });
+		}
+		const navBottom = () => parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
+		// Телефон: лист прижат к низу экрана, карта ставится сразу под шапку сайта — пин виден над листом.
+		function mapAboveSheet() {
+			if (!narrow() || sheet === 'full') return;
+			const v = $('.qmap-view');
+			window.scrollTo({ top: v.getBoundingClientRect().top + window.scrollY - navBottom(), behavior: 'auto' });
 		}
 		function openCard(id: string, opts: { focus?: boolean; hint?: string; ask?: boolean } = {}) {
 			const p = point(id);
@@ -966,6 +989,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			fromReport = false;
 			// Карточка и раскрытая строка с тем же содержимым одновременно не показываются.
 			if (picked) { const was = infos.get(picked)?.el; picked = null; if (was) was.open = false; }
+			if (current !== id) moreOpen = null;
 			current = id;
 			chooser = null;
 			hint = opts.hint ?? null;
@@ -979,6 +1003,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			paintPins();
 			renderLists();
 			render(opts.focus !== false);
+			mapAboveSheet();
 			easeToPin(p);
 			// На телефоне карта с карточкой ниже верхней кнопки: без прокрутки выбор состояния оказывается за экраном.
 			if (ask) showCard();
@@ -1020,6 +1045,10 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 		function setSheet(pos: 'half' | 'full') {
 			sheet = pos;
 			root.dataset.card = pos;
+			const more = card.querySelector<HTMLDetailsElement>('.q-details');
+			// «Полностью» раскрывает «Подробнее», «кратко» снова сворачивает — иначе в кратком листе нужна прокрутка.
+			if (more && narrow()) { more.open = pos === 'full'; moreOpen = pos === 'full'; }
+			if (pos === 'half') mapAboveSheet();
 			const grip = card.querySelector('.q-grip');
 			grip?.setAttribute('aria-label', pos === 'full' ? tx.collapse : tx.expand);
 			const p = current ? point(current) : null;
@@ -1247,6 +1276,10 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			openCard(mk.dataset.mark!, { ask: true });
 			showCard();
 		});
+		card.addEventListener('toggle', (ev) => {
+			const d = ev.target as HTMLDetailsElement;
+			if (d.classList?.contains('q-details')) moreOpen = d.open;
+		}, true);
 		listBox.addEventListener('toggle', (ev) => {
 			const d = ev.target as HTMLDetailsElement;
 			if (printing || !d.classList?.contains('bl-row')) return;
