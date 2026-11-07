@@ -46,6 +46,11 @@ def test_mark_shows_on_map_with_count(client):
     assert public(client)["715"] | {"minutes_ago": 0} == expected
 
 
+def test_public_queue_tells_server_time(client):
+    now = datetime.fromisoformat(client.get("/api/queue").json()["now"])
+    assert abs(now - datetime.now(UTC)) < timedelta(seconds=5)
+
+
 def test_unknown_branch_is_rejected(client):
     assert mark(client, branch_id="99999").status_code == 400
 

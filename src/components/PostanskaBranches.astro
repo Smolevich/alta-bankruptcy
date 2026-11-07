@@ -410,6 +410,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 	import { attachVoice, voiceSupported } from '../scripts/voice';
 	import { branchStatus, canReport, parseRange, reportsFrom } from '../lib/branch-hours.mjs';
 	import { QUEUE_LEVELS, queueLevel, statusTone, weekTiles } from '../lib/branch-card.mjs';
+	import { belgradeParts, clockOffset } from '../lib/server-clock.mjs';
 
 	type Info = { el: HTMLElement; city: string; size: string; wd: number[]; sat: number[] };
 	const nums = (v?: string) => (v ? v.split(',').map(Number) : []);
@@ -504,13 +505,10 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 		return Math.hypot(x, (b.lat - a.lat) * r) * 6371000;
 	}
 
-	// Время по Белграду, а не по часам телефона: человек может смотреть карту из другой страны.
-	function belgradeNow(): { day: number; min: number } {
-		const parts = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Belgrade', weekday: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date());
-		const get = (t: string) => parts.find((p) => p.type === t)?.value ?? '';
-		const day = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].indexOf(get('weekday'));
-		return { day, min: Number(get('hour')) * 60 + Number(get('minute')) };
-	}
+	// Часы сервера вместо часов телефона: поправка приходит с GET /api/queue; пока её нет — часы устройства.
+	let offset = 0;
+	const nowMs = () => Date.now() + offset;
+	const belgradeNow = () => belgradeParts(nowMs());
 	const range = (text: string) => parseRange(text);
 	const rangeText = (text: string) => { const r = range(text); return r ? `${hhmm(r[0])}–${hhmm(r[1])}` : text; };
 
@@ -652,7 +650,8 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			const opens = st.opensAt ?? 480;
 			const dayWord = st.tomorrow ? tx.tomorrow : tx.onDay.replace('%d', tx.days[st.nextDay ?? 1]);
 			const next = st.tomorrow ? tx.opensTomorrow.replace('%t', hhmm(opens)) : tx.opensOn.replace('%d', tx.days[st.nextDay ?? 1]).replace('%t', hhmm(opens));
-			const sub = tx.stNext.replace('%s', next) + (st.closedAt !== null ? ` · ${tx.stToday.replace('%t', hhmm(st.closedAt))}` : '');
+			// «сегодня до …» после закрытия только путает: сегодняшние часы уже прошли.
+			const sub = tx.stNext.replace('%s', next);
 			const when = `${hhmm(reportsFrom(opens))} ${dayWord}`;
 			return { tone, icon, title: tx.stClosed, sub, canMark: mark, markWhen: when, marksWhen: when, closed: true, later: false, inside: mark };
 		}
@@ -799,7 +798,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 
 		// ---------- карточка ----------
 		function reportBlock(p: Pt): string {
-			const since = Date.now() - sentAt(p.id);
+			const since = nowMs() - sentAt(p.id);
 			const r = rep?.id === p.id ? rep : null;
 			if (r?.phase === 'done' || ((!r || r.phase === 'idle') && since < REPEAT_MS)) {
 				const left = Math.max(REPEAT_MS - since, 0);
@@ -876,7 +875,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			const routeBtn = `<a class="q-route" href="${esc(route)}" target="_blank" rel="noopener">${ICON('navigation')}<span>${esc(tx.route)}</span></a>`;
 			const toList = `<button type="button" class="q-tolist">${esc(tx.toList)}${ICON('chevron')}</button>`;
 			const r = rep?.id === p.id ? rep : null;
-			const recent = Date.now() - sentAt(p.id) < REPEAT_MS;
+			const recent = nowMs() - sentAt(p.id) < REPEAT_MS;
 			if (c.canMark && (asking === p.id || (r && r.phase !== 'idle') || recent)) {
 				return `${reportBlock(p)}<div class="q-actions q-actions-1">${routeBtn}</div>${toList}`;
 			}
@@ -892,7 +891,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			if (m) {
 				title = tx.states[m.state];
 				if (c.later) {
-					const t = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Belgrade', hour: 'numeric', minute: '2-digit', hourCycle: 'h23' }).format(new Date(Date.now() - m.minutes_ago * 60000));
+					const t = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Belgrade', hour: 'numeric', minute: '2-digit', hourCycle: 'h23' }).format(new Date(nowMs() - m.minutes_ago * 60000));
 					sub = tx.qDoor.replace('%n', nMarks(m.count)).replace('%t', t);
 				} else sub = (ok ? tx.qSure : tx.qAgo).replace('%n', nMarks(m.count)).replace('%m', String(m.minutes_ago));
 				if (!ok) sub += ` · ${tx.unsure}`;
@@ -1085,7 +1084,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			if (leaving) return;
 			r.pow = null;
 			if (status === 201) {
-				store.set(`q-sent-${id}`, String(Date.now()));
+				store.set(`q-sent-${id}`, String(nowMs()));
 				optimistic.delete(id);
 				r.phase = 'done';
 				window.setTimeout(() => void refresh(), 31000);
@@ -1102,8 +1101,8 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 					r.phase = body.scope === 'ip' ? 'error' : 'limit';
 					if (body.scope === 'ip') r.error = tx.limitIp;
 					else {
-						const at = sentAt(id) || Date.now();
-						const left = Math.max(1, Math.ceil((REPEAT_MS - (Date.now() - at)) / 60000));
+						const at = sentAt(id) || nowMs();
+						const left = Math.max(1, Math.ceil((REPEAT_MS - (nowMs() - at)) / 60000));
 						const t = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Belgrade', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date(at));
 						r.error = tx.limitBranch.replace('%t', t).replace('%m', String(left));
 					}
@@ -1118,17 +1117,19 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			try {
 				const res = await fetch('/api/queue');
 				if (!res.ok) throw new Error(String(res.status));
-				const fresh = (await res.json()).branches ?? {};
+				const body = await res.json();
+				offset = clockOffset(body.now, Number(res.headers.get('age')) || 0, Date.now());
+				const fresh = body.branches ?? {};
 				optimistic.forEach((_, id) => { if (marks[id]) fresh[id] = marks[id]; });
 				marks = fresh;
 				stale = false;
 				note.hidden = true;
-				store.set('q-updated', String(Date.now()));
+				store.set('q-updated', String(nowMs()));
 			} catch {
 				// Отметки оставляем, но все пины — «не точно», и говорим, на какое время данные.
 				stale = true;
-				const at = Number(store.get('q-updated')) || Date.now();
-				note.textContent = tx.stale.replace('%t', new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date(at)));
+				const at = Number(store.get('q-updated')) || nowMs();
+				note.textContent = tx.stale.replace('%t', new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Belgrade', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date(at)));
 				note.hidden = false;
 			}
 			paintPins();
@@ -1373,7 +1374,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 		window.setInterval(() => {
 			const again = card.querySelector('.q-again');
 			if (!again || !current) return;
-			if (Date.now() - sentAt(current) >= REPEAT_MS) { if (rep) rep.phase = 'idle'; renderReport(); }
+			if (nowMs() - sentAt(current) >= REPEAT_MS) { if (rep) rep.phase = 'idle'; renderReport(); }
 			else renderReport();
 		}, 1000);
 		new ResizeObserver(() => { if (!current && !chooser) stub.hidden = !narrow(); }).observe(root);

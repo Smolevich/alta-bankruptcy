@@ -44,7 +44,7 @@ and pages are in Russian; issues and PRs may be in English, Serbian or Russian.
   already has location permission). The server turns coordinates into `near` (≤ `NEAR_M` = 500 m from
   the branch, coordinates in `data/postanska_branch_coords.json`, a copy of
   `src/data/postanska-branches-extra.json` checked by a test) and never stores or logs them.
-  `GET /api/queue` `{state, count, minutes_ago, sure}` per branch over the last 2 hours: people, not
+  `GET /api/queue` `{branches, now}`: `now` is server UTC time (the map uses it instead of the device clock); `branches` holds `{state, count, minutes_ago, sure}` per branch over the last 2 hours: people, not
   marks — only each voter's latest mark counts; if any voter was near, the state comes from near voters,
   otherwise from everyone; `sure` only when ≥ 2 different voters chose the shown state and at least one
   of them was near (the site shows «не точно» otherwise). The optional comment is scrubbed, kept for

@@ -442,9 +442,11 @@ html, body { overflow-x: clip; }
 .bc-seg legend { margin-bottom: 4px; }
 .bc-city { flex: 1 1 14rem; }
 .bc-hour { flex: 0 1 11rem; }
-.branch-controls select { appearance: none; -webkit-appearance: none; box-sizing: border-box; width: 100%; min-height: 48px; margin: 0; padding: 0 44px 0 14px; border: 1px solid var(--line); border-radius: 12px; background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231b2430' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 14px center / 20px 20px; color: var(--ink); font: 400 16px/1.2 var(--sl-font-system); cursor: pointer; }
-.branch-controls select:hover { border-color: #b9b09a; }
-.branch-controls select:focus-visible, .bc-seg input:focus-visible + span, .branch-controls button:focus-visible, .branch-actions a:focus-visible, .bc-more summary:focus-visible { outline: 2px solid var(--seal); outline-offset: 2px; }
+/* Все select сайта одного вида; переключатель языка Starlight в шапке — свой, его не трогаем. */
+.branch-controls select { width: 100%; }
+select:not(starlight-lang-select select, starlight-theme-select select) { appearance: none; -webkit-appearance: none; box-sizing: border-box; max-width: 100%; text-overflow: ellipsis; min-height: 48px; margin: 0; padding: 0 44px 0 14px; border: 1px solid var(--line); border-radius: 12px; background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231b2430' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 14px center / 20px 20px; color: var(--ink); font: 400 16px/1.2 var(--sl-font-system); cursor: pointer; }
+select:not(starlight-lang-select select, starlight-theme-select select):hover { border-color: #b9b09a; }
+select:focus-visible, .bc-seg input:focus-visible + span, .branch-controls button:focus-visible, .branch-actions a:focus-visible, .bc-more summary:focus-visible { outline: 2px solid var(--seal); outline-offset: 2px; }
 .bc-seg { display: flex; }
 .bc-seg > label { position: relative; }
 .bc-seg { flex-direction: row; flex-wrap: wrap; gap: 0; }
@@ -732,7 +734,8 @@ html, body { overflow-x: clip; }
 	.qmap-tabs button { flex: 1; }
 	/* Нижний лист в той же ячейке сетки, что и карта: прижат к низу карты, два положения. */
 	.q-card { grid-area: view; align-self: end; height: 56%; border: 0; border-top: 1px solid var(--line); border-radius: 14px 14px 0 0; box-shadow: 0 -4px 16px rgba(27, 36, 48, 0.2); padding-bottom: env(safe-area-inset-bottom); overscroll-behavior: contain; transition: height 0.25s ease; }
-	.qmap[data-card='full'] .q-card { height: 88%; }
+	/* Развёрнутый лист — до 90% экрана поверх страницы; над ним остаётся полоска карты, внутри своя прокрутка. */
+	.qmap[data-card='full'] .q-card { position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; height: min(90vh, 100vh - var(--sl-nav-height) - var(--sl-mobile-toc-height) - 2rem); height: min(90dvh, 100dvh - var(--sl-nav-height) - var(--sl-mobile-toc-height) - 2rem); }
 	.q-card-head { grid-template-columns: minmax(0, 1fr) auto; padding-top: 0; touch-action: none; }
 	.q-grip { grid-column: 1 / -1; display: flex; justify-content: center; align-items: center; height: 28px; margin: 0 -0.8rem; border: 0; background: none; cursor: grab; }
 	.q-back { display: none; }
