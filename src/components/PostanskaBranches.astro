@@ -429,6 +429,8 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 	const REPEAT_MS = 15 * 60 * 1000;
 	const GEO_MIN_M = 150;
 	const GEO_SECOND_M = 250;
+	// Как на сервере (queues.py NEAR_M): дальше — отметка принимается, но весит меньше отметок рядом.
+	const NEAR_M = 500;
 	const GEO_GIVE_UP_MS = 12000;
 	const POLL_MS = 120000;
 	const CONTACT = /@|\d[\d\s()+-]{5,}\d/;
@@ -868,7 +870,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 				${tag}
 				${staleLine}
 				${near ? `<p class="q-near">${near}</p>` : ''}
-				${far !== null ? `<p class="q-far">${esc(tx.far.replace('%s', distText(far)))}</p>` : ''}
+				${far !== null && !near ? `<p class="q-far">${esc(tx.far.replace('%s', distText(far)))}${far > NEAR_M ? ` — ${esc(tx.farWeak)}` : ''}</p>` : ''}
 				${p.note ? `<p class="q-muted">${esc(p.note)}</p>` : ''}
 				<p class="q-line q-st" data-tone="${c.tone}" role="status">${ICON(c.icon)}<span><b>${esc(c.title)}</b> · ${esc(c.sub)}</span></p>
 				${verdictHtml(p)}
@@ -1196,9 +1198,10 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			const fallback = () => {
 				if (settled && !reportBtn.hasAttribute('aria-busy')) return;
 				done();
+				// Места нет: не дублируем весь список в листе, а отправляем к нему — у каждой строки своя «Отметить».
+				// Страницу не прокручиваем: иначе это пояснение под кнопкой уходит за экран.
 				msg.textContent = tx.geoOff;
-				const ids = pts.filter(inCity).sort((a, b) => a.name.localeCompare(b.name)).map((p) => p.id);
-				openChooser(tx.noGeo, ids, true);
+				if (current || chooser) closeCard(false);
 			};
 			if (!navigator.geolocation) return fallback();
 			text.textContent = tx.finding;
@@ -1220,7 +1223,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 						renderLists();
 						if (d0 <= limit && d1 > GEO_SECOND_M && pos.coords.accuracy <= GEO_MIN_M) {
 							openCard(near[0].id, { ask: true, hint: `${esc(tx.nearYou.replace('%s', distText(d0)))} <button type="button" class="q-other">${esc(tx.other)}</button>` });
-						} else openChooser(tx.which, near.slice(0, 3).map((p) => p.id), true);
+						} else openChooser(d0 > NEAR_M ? tx.whichFar.replace('%s', distText(d0)) : tx.which, near.slice(0, 3).map((p) => p.id), true);
 					} catch {
 						settled = false;
 						reportBtn.setAttribute('aria-busy', 'true');
