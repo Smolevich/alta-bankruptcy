@@ -36,8 +36,8 @@ and pages are in Russian; issues and PRs may be in English, Serbian or Russian.
   `uploads.py` its photos/PDFs (type by magic bytes, Pillow re-encode without EXIF, HEIC → JPEG,
   `data/case-files/`, private until the admin publishes the case and its files; see `docs/ops.md`).
   `queues.py` visitors' queue marks for the Poštanska branch map on `/vyplata/` (`POST /api/queue`
-  `{branch_id, state: none|few|full|outside, comment?}`, no personal data; one mark per branch per IP hash
-  per 15 min and 60 per hour; accepted from 1 h before opening until 1 h after closing (`PRE_OPEN`/`POST_CLOSE`, mirrored by `PRE_OPEN_MIN`/`POST_CLOSE_MIN` in `src/lib/branch-hours.mjs`), Belgrade time, per branch hours in
+  `{branch_id, state: none|few|full|outside, comment?}`, no personal data; one mark per branch per voter
+  (`device_id` hash, otherwise IP hash) per 15 min and 60 per IP hash per hour; accepted from 1 h before opening until 1 h after closing (`PRE_OPEN`/`POST_CLOSE`, mirrored by `PRE_OPEN_MIN`/`POST_CLOSE_MIN` in `src/lib/branch-hours.mjs`), Belgrade time, per branch hours in
   `data/postanska_branch_hours.json` (otherwise 403 `{"error": "closed", "reports_from", "days_ahead", "weekday"}`).
   Anti-stuffing: the body may carry `device_id` (random, from the browser's localStorage; stored only as a
   salted hash in `voter`, otherwise `voter` is the IP hash) and `lat`/`lng` (sent only when the browser

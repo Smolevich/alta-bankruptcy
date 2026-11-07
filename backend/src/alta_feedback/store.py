@@ -446,11 +446,11 @@ class Store:
             )
             return int(cur.lastrowid)
 
-    def queue_report_since(self, ip_hash: str, branch_id: str, since: datetime) -> bool:
+    def queue_report_since(self, voter: str, branch_id: str, since: datetime) -> bool:
         with self.connect() as db:
             row = db.execute(
-                "SELECT 1 FROM queue_reports WHERE ip_hash = ? AND branch_id = ? AND created_at > ? LIMIT 1",
-                (ip_hash, branch_id, iso(since)),
+                f"SELECT 1 FROM queue_reports WHERE {VOTER} = ? AND branch_id = ? AND created_at > ? LIMIT 1",
+                (voter, branch_id, iso(since)),
             ).fetchone()
             return row is not None
 
