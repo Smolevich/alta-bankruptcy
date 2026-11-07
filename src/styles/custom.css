@@ -612,9 +612,11 @@ html, body { overflow-x: clip; }
 .q-voice-status:empty { display: none; }
 .q-done { padding: 0.6rem 0.7rem; border-left: 4px solid var(--q-none); background: #eef5ef; display: flex; flex-direction: column; gap: 0.25rem; }
 .q-google summary { cursor: pointer; font-weight: 700; font-size: 0.86rem; min-height: 32px; display: flex; align-items: center; }
+/* display:flex у summary прячет системный треугольник — без него заголовок выглядит как пустой, без графика. */
+.q-google summary::before { content: '▸'; margin-right: 0.4em; }
+.q-google[open] summary::before { content: '▾'; }
 .q-google-note, .q-google-none { font-size: 0.8rem; color: var(--q-muted); font-style: italic; }
 .q-route { display: block; margin-top: 0.3rem; padding: 0.6rem; min-height: 44px; box-sizing: border-box; border-radius: 3px; background: var(--ink); color: #fff !important; text-align: center; font-weight: 700; font-size: 0.9rem; text-decoration: none; }
-.q-disclaimer { font-size: 0.75rem; color: var(--q-muted); }
 .q-choose button { min-height: 56px; }
 .qmap .maplibregl-ctrl-attrib { font-size: 0.72rem; }
 
