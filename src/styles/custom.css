@@ -390,109 +390,117 @@ html, body { overflow-x: clip; }
 .assets-lead ul { margin: 0; padding-left: 1.1rem; }
 .assets-lead li { margin: 0 0 0.3rem; }
 
-/* ---- Отделения Poštanska для выплаты (PostanskaBranches.astro): карточки, без широкой таблицы ---- */
+/* ---- Отделения Poštanska для выплаты (PostanskaBranches.astro): фильтры, карта и один список ---- */
 .branches { margin: 1rem 0 1.6rem; }
 .branches a { color: var(--sl-color-text-accent); }
 .branches p { margin: 0 0 0.6rem; }
+.branches [hidden] { display: none !important; }
 .branches-src { font-size: 0.88rem; color: #5a5448; overflow-wrap: anywhere; }
-.branches-total { font-weight: 700; }
-.branch { box-sizing: border-box; padding: 0.7rem 0.85rem; background: #fffdf7; border: 1px solid var(--line); border-left: 4px solid var(--line); border-radius: 3px; min-width: 0; }
-.branch h4 { margin: 0 0 0.2rem; font-size: 1rem; line-height: 1.3; overflow-wrap: anywhere; }
-.branch .branch-addr { margin: 0 0 0.35rem; font-size: 0.95rem; overflow-wrap: anywhere; }
-.branch-code { font-weight: 400; font-size: 0.78rem; color: #5a5448; white-space: nowrap; }
-.branch-hours { display: grid; grid-template-columns: auto 1fr; gap: 0.1rem 0.6rem; margin: 0 0 0.1rem; font-size: 0.88rem; }
-.branch-hours dt { color: #5a5448; }
-.branch-hours dd { margin: 0; font-variant-numeric: tabular-nums; }
-.branch-map { display: inline-block; font-weight: 700; font-size: 0.9rem; padding: 0.25rem 0 0; }
-.branch-special { margin: 0 0 1rem; border-left-color: var(--seal); background: #fff8f5; }
-.branch .branch-tag { margin: 0; font-weight: 700; color: var(--seal); font-size: 0.9rem; }
-.branch .branch-tag-orig { margin: 0; font-size: 0.75rem; color: #5a5448; font-style: italic; }
-.branch .branch-tag-note { margin: 0 0 0.3rem; font-size: 0.8rem; color: #5a5448; }
-.branch-cities { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0 0 1rem; }
-.branch-cities a { padding: 0.35rem 0.6rem; border: 1px solid var(--line); border-radius: 3px; background: #fffdf7; font-size: 0.88rem; text-decoration: none; }
-.branch-cities a span, .branch-n { color: #5a5448; font-weight: 400; }
-.branch-city { scroll-margin-top: 5rem; }
-.branch-city h3 { margin: 1.2rem 0 0.5rem; font-size: 1.15rem; }
-.branch-city ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.6rem; grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); }
-.branch-city li { margin: 0 !important; }
+.branches-src strong { color: var(--ink); }
 .branches-phones { margin-top: 1rem !important; font-size: 0.88rem; }
-
-/* Карта отделений и строки «размер / обычно людно» */
-.branches-note { font-size: 0.9rem; padding: 0.6rem 0.8rem; background: #fffdf7; border: 1px solid var(--line); border-left: 4px solid var(--seal); border-radius: 3px; }
-.branch .branch-extra { margin: 0 0 0.25rem; font-size: 0.88rem; }
-/* График загрузки по часам в карточках */
-.hist { margin: 0.4rem 0 0.3rem; max-width: 16rem; }
+.branch-code { font-weight: 400; font-size: 0.78rem; color: #5a5448; white-space: nowrap; }
+.branch-n { color: #5a5448; font-weight: 400; }
+/* График загрузки по часам в строке */
+.hist { margin: 0.2rem 0 0.3rem; max-width: 16rem; }
 .hist-lbl { font-size: 0.78rem; color: #5a5448; margin-top: 0.25rem; }
 .hist-svg { display: block; width: 100%; height: auto; color: #5a5448; }
 .hist-svg .bar { fill: var(--sl-color-text-accent, #9b2c22); }
 .hist-svg .axis { stroke: currentColor; stroke-width: 0.5; opacity: 0.5; }
 .hist-svg .tick { fill: currentColor; font-size: 7px; }
-.hist-note { margin: 0.25rem 0 0 !important; font-size: 0.75rem; line-height: 1.3; color: #5a5448; }
-:root[data-theme='dark'] .hist-svg, :root[data-theme='dark'] .hist-lbl, :root[data-theme='dark'] .hist-note { color: #cfc9b8; }
 
-/* Фильтры отделений */
-.branches [hidden] { display: none !important; }
-.branch.f-hl { border-left-color: var(--ok); }
-.branch .f-free { color: var(--ok); font-weight: 700; }
-.branch .branch-nodata { color: #5a5448; font-style: italic; }
-/* Панель фильтров над картой: свои select (appearance: none, стрелка SVG), сегменты на radio, кнопки как в карточке. */
-.branch-controls { display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: flex-end; margin: 0 0 1rem; padding: 12px; background: #fffdf7; border: 1px solid var(--line); border-radius: 12px; }
+/* Фильтры: одна строка «Город · Будни|Сб · Ещё»; час, размер и порядок — в выпадающей панели «Ещё». */
+.branch-controls { position: relative; z-index: 6; display: flex; flex-wrap: nowrap; gap: 8px; align-items: center; margin: 0 0 0.8rem; }
 .branch-controls fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
-.bc-field, .bc-seg legend { display: flex; flex-direction: column; gap: 4px; font-size: 14px; color: #5a5448; min-width: 0; padding: 0; }
-.bc-seg legend { margin-bottom: 4px; }
-.bc-city { flex: 1 1 14rem; }
-.bc-hour { flex: 0 1 11rem; }
-/* Все select сайта одного вида; переключатель языка Starlight в шапке — свой, его не трогаем. */
+.bc-city { flex: 1 1 10rem; min-width: 0; }
+.bc-day { flex: 0 1 auto; }
+.bc-field, .bc-more-body legend { display: flex; flex-direction: column; gap: 4px; font-size: 14px; color: #5a5448; min-width: 0; padding: 0; }
+.bc-more-body legend { margin-bottom: 4px; }
 .branch-controls select { width: 100%; }
+/* Все select сайта одного вида; переключатель языка Starlight в шапке — свой, его не трогаем. */
 select:not(starlight-lang-select select, starlight-theme-select select) { appearance: none; -webkit-appearance: none; box-sizing: border-box; max-width: 100%; text-overflow: ellipsis; min-height: 48px; margin: 0; padding: 0 44px 0 14px; border: 1px solid var(--line); border-radius: 12px; background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231b2430' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 14px center / 20px 20px; color: var(--ink); font: 400 16px/1.2 var(--sl-font-system); cursor: pointer; }
 select:not(starlight-lang-select select, starlight-theme-select select):hover { border-color: #b9b09a; }
-select:focus-visible, .bc-seg input:focus-visible + span, .branch-controls button:focus-visible, .branch-actions a:focus-visible, .bc-more summary:focus-visible { outline: 2px solid var(--seal); outline-offset: 2px; }
-.bc-seg { display: flex; }
-.bc-seg > label { position: relative; }
-.bc-seg { flex-direction: row; flex-wrap: wrap; gap: 0; }
+.bc-city select { padding-right: 36px; background-position: right 10px center; }
+select:focus-visible, .bc-seg input:focus-visible + span, .branch-controls button:focus-visible, .bl-actions a:focus-visible, .bl-actions button:focus-visible, .bc-more summary:focus-visible, .bl summary:focus-visible { outline: 2px solid var(--seal); outline-offset: 2px; }
+.bc-seg { display: flex; flex-direction: row; flex-wrap: nowrap; gap: 0; }
+.bc-seg > label { position: relative; flex: 1 1 0; min-width: 0; }
 .bc-seg legend { flex-basis: 100%; }
 .bc-seg input { position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0; }
-.bc-seg span { display: flex; align-items: center; justify-content: center; min-height: 48px; box-sizing: border-box; padding: 0 14px; border: 1px solid var(--line); margin-left: -1px; background: #fff; color: var(--ink); font: 500 15px/1.15 var(--sl-font-system); text-align: center; cursor: pointer; }
+.bc-seg span { display: flex; align-items: center; justify-content: center; min-height: 48px; box-sizing: border-box; padding: 0 12px; border: 1px solid var(--line); margin-left: -1px; background: #fff; color: var(--ink); font: 500 15px/1.15 var(--sl-font-system); text-align: center; cursor: pointer; }
+.bc-seg abbr { text-decoration: none; }
 .bc-seg > label:first-of-type span { margin-left: 0; border-radius: 12px 0 0 12px; }
 .bc-seg > label:last-of-type span, .bc-seg > label:has(+ label[hidden]) span { border-radius: 0 12px 12px 0; }
 .bc-seg input:checked + span { position: relative; z-index: 1; background: var(--ink); border-color: var(--ink); color: #fff; font-weight: 600; }
 .bc-seg span:hover { background: #fbf8f0; }
 .bc-seg input:checked + span:hover { background: var(--ink); }
-.bc-more { flex-basis: 100%; }
-.bc-more summary { display: flex; align-items: center; min-height: 44px; font: 600 15px/1.2 var(--sl-font-system); color: var(--ink); cursor: pointer; }
-.bc-more[open] { display: flex; flex-wrap: wrap; gap: 12px 16px; }
-.bc-more[open] summary { flex-basis: 100%; }
-.bc-foot { flex-basis: 100%; display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between; }
-.branch-controls .f-count { margin: 0 !important; font-size: 15px; color: var(--ink); }
-.branch-controls .f-note { flex-basis: 100%; margin: 0 !important; font-size: 13px; color: #5a5448; }
-.f-reset, .branch-actions a { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; box-sizing: border-box; padding: 0 16px; border-radius: 12px; font: 600 16px/1.15 var(--sl-font-system); text-align: center; text-decoration: none !important; cursor: pointer; }
-.f-reset, .branch-actions .branch-map { background: #fff; color: var(--seal) !important; border: 1.5px solid var(--seal); }
-.f-reset:hover, .branch-actions .branch-map:hover { background: var(--seal-soft); }
-.branch-actions .branch-show { background: var(--ink); color: #fff !important; border: 0; }
-.branch-actions .branch-show:hover { background: #2c3a4d; }
-.branch-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
-.branch-actions a { padding: 0 10px; font-size: 15px; }
-.branch.is-selected { border: 2px solid var(--seal); border-left-width: 4px; box-shadow: 0 0 0 3px var(--seal-soft); }
-.branch .branch-onmap { margin: 0 0 4px; font-size: 14px; font-weight: 700; color: var(--seal); }
-.branch .branch-nomatch { margin: 0 0 4px; font-size: 13px; color: #5a5448; font-style: italic; }
-.branch .branch-live { display: flex; gap: 8px; align-items: center; margin: 6px 0; font-size: 14px; }
-.branch .branch-live .q-dot { flex: none; }
-.branch h4:focus { outline: none; }
-.branch h4:focus-visible { outline: 2px solid var(--seal); outline-offset: 2px; }
-.branch-chart summary { display: flex; align-items: center; min-height: 44px; font-size: 14px; font-weight: 600; cursor: pointer; }
-.branch-city { scroll-margin-top: 5rem; }
-.branch { scroll-margin-top: 5rem; }
-.q-pin[data-dim='1'] { opacity: 0.35; }
-.q-tolist { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; min-height: 48px; margin-top: 8px; padding: 0 10px; border: 1px solid var(--line); border-radius: 12px; background: #fff; color: var(--ink); font: 600 15px/1.15 var(--sl-font-system); cursor: pointer; }
-.q-tolist:hover { background: #fbf8f0; }
+.bc-more { flex: none; }
+.bc-more summary { display: flex; align-items: center; gap: 6px; min-height: 48px; box-sizing: border-box; padding: 0 14px; border: 1px solid var(--line); border-radius: 12px; background: #fff; font: 600 15px/1.2 var(--sl-font-system); color: var(--ink); cursor: pointer; list-style: none; }
+.bc-more summary::-webkit-details-marker { display: none; }
+.bc-more summary::after { content: ''; width: 7px; height: 7px; border: solid currentColor; border-width: 0 2px 2px 0; transform: translateY(-2px) rotate(45deg); transition: transform 0.15s; }
+.bc-more[open] summary { background: var(--ink); border-color: var(--ink); color: #fff; }
+.bc-more[open] summary::after { transform: translateY(2px) rotate(-135deg); }
+.bc-more-body { position: absolute; left: 0; right: 0; top: calc(100% + 6px); display: flex; flex-direction: column; gap: 12px; padding: 12px; background: #fffdf7; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 8px 24px rgba(27, 36, 48, 0.18); }
+@media (min-width: 760px) { .bc-more-body { left: auto; width: 30rem; } }
+.branch-controls .f-note { margin: 0 !important; font-size: 13px; color: #5a5448; }
+.f-reset { align-self: flex-start; display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border-radius: 12px; background: #fff; color: var(--seal); border: 1.5px solid var(--seal); font: 600 15px/1.15 var(--sl-font-system); cursor: pointer; }
+.f-reset:hover { background: var(--seal-soft); }
+@media (max-width: 400px) { .bc-seg span { padding: 0 8px; font-size: 14px; } .bc-more summary { padding: 0 10px; } }
 .q-tag { padding: 10px 12px; border-left: 4px solid var(--seal); border-radius: 0 12px 12px 0; background: #fff8f5; }
 .q-tag-t { font-weight: 700; color: var(--seal); font-size: 14px; }
 .q-tag-o { font-size: 12px; font-style: italic; color: var(--q-muted); }
 .q-tag-n { font-size: 13px; color: var(--q-muted); }
+.q-pin[data-dim='1'] { opacity: 0.35; }
+
+/* Список: строка-<details>; свёрнутая ~64 px — значок, название, статус, адрес. */
+.bl { font-family: var(--sl-font-system); }
+.bl p { margin: 0; }
+.bl-count { padding: 0 0 6px; font-size: 13px; color: var(--q-muted); }
+.bl-city { scroll-margin-top: 5rem; }
+.bl-city h3 { margin: 0.8rem 0 0.4rem; font: 700 1.05rem/1.2 var(--serif); }
+.bl.bl-js .bl-city h3 { display: none; }
+.bl-rows { list-style: none; margin: 0; padding: 0; }
+.bl-rows > li { margin: 0 0 -1px !important; }
+.bl-rows > li:first-child .bl-row { border-radius: 6px 6px 0 0; }
+.bl-rows > li:last-child .bl-row { border-radius: 0 0 6px 6px; }
+.bl-row { position: relative; border: 1px solid var(--line); border-left: 4px solid var(--line); border-radius: 0; background: #fffdf7; scroll-margin-top: 5rem; }
+.bl-row.bl-special { border-left-color: var(--seal); }
+.bl-row.f-hl { border-left-color: var(--ok); }
+.bl-row.is-selected { z-index: 1; border-color: var(--seal); box-shadow: 0 0 0 2px var(--seal-soft); }
+.bl-row > summary { display: flex; gap: 10px; align-items: flex-start; min-height: 62px; box-sizing: border-box; padding: 5px 10px; cursor: pointer; list-style: none; }
+.bl-row > summary::-webkit-details-marker { display: none; }
+.bl-row > summary:hover { background: #fbf8f0; }
+.bl-row[open] > summary { border-bottom: 1px dashed var(--line); }
+.bl-sum { display: flex; flex-direction: column; min-width: 0; flex: 1; line-height: 1.3; }
+.bl-name { display: flex; gap: 8px; align-items: baseline; justify-content: space-between; }
+.bl-name strong { min-width: 0; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bl-far { flex: none; font-style: normal; font-size: 12px; color: var(--q-muted); }
+.bl-status, .bl-addr { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bl-status { color: var(--ink); }
+.bl-addr { color: var(--q-muted); }
+.bl-body { display: flex; flex-direction: column; gap: 6px; padding: 8px 10px 10px 44px; font-size: 14px; line-height: 1.35; }
+.bl-hours { font-variant-numeric: tabular-nums; }
+.bl-nodata { color: var(--q-muted); font-style: italic; }
+.bl .f-free { color: var(--ok); font-weight: 700; }
+.bl-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.bl-actions a, .bl-actions button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; flex: 1 1 auto; min-height: 44px; box-sizing: border-box; padding: 0 12px; border-radius: 10px; font: 600 14px/1.15 var(--sl-font-system); text-decoration: none !important; white-space: nowrap; cursor: pointer; }
+.bl-actions .bl-show { background: var(--ink); color: #fff !important; border: 0; }
+.bl-actions .bl-show:hover { background: #2c3a4d; }
+.bl-actions .bl-gmaps { background: #fff; color: var(--ink) !important; border: 1px solid var(--line); }
+.bl-actions .bl-gmaps:hover, .bl-actions .bl-mark:hover { background: #fbf8f0; }
+.bl-actions .bl-mark { background: #fff; color: var(--seal); border: 1.5px solid var(--seal); }
+.gm-pin { width: 18px; height: 18px; flex: none; }
+.bl-closed { margin-top: 8px; }
+.bl-closed > summary { display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 10px; border-radius: 6px; background: #efebe1; font-size: 14px; font-weight: 700; color: var(--ink); cursor: pointer; list-style: none; }
+.bl-closed > summary::-webkit-details-marker { display: none; }
+.bl-closed > summary::before { content: ''; flex: none; width: 7px; height: 7px; border: solid currentColor; border-width: 0 2px 2px 0; transform: rotate(-45deg); transition: transform 0.15s; }
+.bl-closed[open] > summary::before { transform: rotate(45deg); }
+.bl-closed[open] > summary { margin-bottom: 6px; }
+.bl-closed.bl-all > summary { border-left: 4px solid var(--q-closed); background: #fffdf7; border-top: 1px solid var(--line); border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 @media print {
-	.branch-controls, .qmap, .branch-show { display: none !important; }
-	.branches .branch-city, .branches .branch { display: block !important; }
-	.branch-chart > * { display: block !important; }
+	.branch-controls, .qmap-head, .qmap-panel, .qmap-view, .q-card, .bl-actions, .bl-count { display: none !important; }
+	.qmap { box-shadow: none !important; width: auto !important; }
+	.qmap-body { display: block !important; }
+	.bl-box, .bl { position: static !important; overflow: visible !important; height: auto !important; }
+	.bl-row { break-inside: avoid; }
 }
 
 /* ---- Карта очередей Poštanska (PostanskaBranches.astro, MapLibre; ТЗ ux-spec этап 1) ---- */
@@ -513,24 +521,25 @@ select:focus-visible, .bc-seg input:focus-visible + span, .branch-controls butto
 .qmap-tabs button[aria-selected='true'] { background: #fbf8f0; border-color: var(--line); color: var(--ink); font-weight: 700; box-shadow: inset 0 -2px 0 var(--seal); }
 
 /* Компьютер: панель 15rem слева (список города или карточка), карта справа, легенда под панелью. */
-.qmap-body { display: grid; grid-template-columns: 17rem minmax(0, 1fr); grid-template-rows: var(--q-vh) auto; grid-template-areas: 'panel view' 'foot foot'; }
+/* Слева — кнопка отметки и под ней список с прокруткой внутри; справа карта. Ряд списка гибкий: его высоту задаёт карта. */
+.qmap-body { display: grid; grid-template-columns: 17rem minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto; grid-template-areas: 'panel view' 'list view' 'foot foot'; }
+.bl-box { grid-area: list; position: relative; min-height: 12rem; border-top: 1px solid var(--line); }
+.bl-box > .bl { position: absolute; inset: 0; overflow-y: auto; overscroll-behavior: contain; padding: 8px 0.8rem 0.8rem; }
+.bl-box .bl-count { position: sticky; top: -8px; z-index: 1; margin: -8px -0.8rem 0 !important; padding: 8px 0.8rem 6px; background: #fbf8f0; }
 @container (min-width: 760px) { .qmap-body { grid-template-columns: 21rem minmax(0, 1fr); } }
 .qmap-panel { grid-area: panel; display: flex; flex-direction: column; gap: 0.6rem; padding: 0.8rem; min-width: 0; min-height: 0; }
-.qmap[data-card] .qmap-panel { visibility: hidden; }
+.qmap[data-card] .qmap-panel, .qmap[data-card] .bl-box { visibility: hidden; }
 .qmap-city { display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.88rem; color: var(--q-muted); }
 .qmap-city select { font: inherit; font-size: 1rem; min-height: 44px; padding: 0.4rem 0.6rem; border-radius: 3px; border: 1px solid var(--line); background: #fff; color: var(--ink); max-width: 100%; }
 .q-report { display: flex; align-items: center; gap: 0.55rem; min-height: 56px; padding: 0.5rem 0.9rem; border: 0; border-radius: 4px; background: var(--seal); color: #fff !important; font-weight: 700 !important; font-size: 1rem; text-align: left; line-height: 1.2; cursor: pointer; }
 .q-report svg { width: 1.4rem; height: 1.4rem; flex: none; }
 .q-report:hover { background: #6f1d16; }
 .q-report[data-closed='1'], .q-report[data-closed='1']:hover { background: #8a7f78; }
-.q-hint { margin: 0.35rem 0 0; font-size: 0.9rem; }
 .q-report[aria-busy='true'] svg { animation: q-spin 1s linear infinite; }
 @keyframes q-spin { to { transform: rotate(360deg); } }
-.q-privacy { font-size: 0.75rem; line-height: 1.3; color: var(--q-muted); }
 .q-msg { font-size: 0.85rem; color: var(--seal); font-weight: 700; }
 .q-msg:empty { display: none; }
 .q-scale { font-size: 0.85rem; color: var(--ink); font-weight: 700; }
-.q-plist { flex: 1; min-height: 0; overflow-y: auto; margin: 0 -0.3rem; padding: 0 0.3rem; }
 
 /* Строки списка: и в панели, и на вкладке «Список», и в выборе отделения. */
 .q-rows { list-style: none; margin: 0; padding: 0; }
@@ -550,16 +559,15 @@ select:focus-visible, .bc-seg input:focus-visible + span, .branch-controls butto
 .q-dot[data-sure='0']:not([data-q='unknown']):not([data-q='closed']) { background: #fffdf7; border: 3px solid var(--pc); color: var(--pc); }
 .q-dot[data-sure='0'][data-q='few'] { color: #8a6d10; }
 
-.qmap-view { grid-area: view; position: relative; min-width: 0; min-height: 0; background: #f2efe9; }
+.qmap-view { grid-area: view; position: relative; min-width: 0; min-height: var(--q-vh); background: #f2efe9; }
 .qmap-canvas { height: 100%; }
 .qmap-loading { display: grid; place-items: center; height: 100%; color: var(--q-muted); font-size: 0.95rem; }
-.qmap-listview { height: 100%; box-sizing: border-box; overflow-y: auto; padding: 0.6rem; }
 .q-sort { display: flex; gap: 0.4rem; margin-bottom: 0.5rem !important; }
 .q-sort button { min-height: 40px; padding: 0.3rem 0.9rem; border: 1px solid var(--line); border-radius: 999px; background: #fffdf7; cursor: pointer; font-size: 0.88rem; }
 .q-sort button[aria-pressed='true'] { background: var(--ink); color: #fff; border-color: var(--ink); font-weight: 700; }
 .q-allclosed, .q-cityempty { margin-bottom: 0.5rem !important; padding: 0.5rem 0.7rem; border-left: 4px solid var(--q-closed); background: #fffdf7; font-size: 0.88rem; }
 .q-stub { position: absolute; left: 0; right: 0; bottom: 0; z-index: 3; display: flex; flex-direction: column; align-items: center; gap: 0.3rem; min-height: 44px; padding: 0.4rem 1rem calc(0.5rem + env(safe-area-inset-bottom)); border: 0; border-top: 1px solid var(--line); border-radius: 12px 12px 0 0; background: #fffdf7; box-shadow: 0 -2px 10px rgba(27, 36, 48, 0.15); font-size: 0.9rem; color: var(--q-muted); cursor: pointer; }
-.qmap-listview:not([hidden]) ~ .q-stub { display: none !important; }
+.qmap[data-nomap] .qmap-view { min-height: 0; }
 .q-stub-grip, .q-grip i { display: block; width: 2.5rem; height: 4px; border-radius: 2px; background: #c8c0ae; }
 
 .qmap-foot { grid-area: foot; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.3rem 1.2rem; padding: 0.5rem 0.9rem; border-top: 1px solid var(--line); background: #fffdf7; }
@@ -598,7 +606,7 @@ select:focus-visible, .bc-seg input:focus-visible + span, .branch-controls butto
 .qmap[data-near] .q-pin-name { display: block; }
 
 /* Карточка отделения: на компьютере — содержимое панели, на телефоне — нижний лист над картой. */
-.q-card { grid-area: panel; z-index: 4; min-height: 0; overflow-y: auto; overscroll-behavior: contain; background: #fffdf7; border-right: 1px solid var(--line); }
+.q-card { grid-column: 1; grid-row: 1 / 3; z-index: 4; min-height: 0; overflow-y: auto; overscroll-behavior: contain; background: #fffdf7; border-right: 1px solid var(--line); }
 .q-card-head { position: sticky; top: 0; z-index: 1; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: 0.2rem 0.6rem; padding: 0.8rem 1rem 0.5rem; background: #fffdf7; }
 .q-grip { display: none; }
 .q-back { grid-column: 1; grid-row: 1; justify-self: start; align-self: center; min-height: 36px; padding: 0; border: 0; background: none; color: var(--seal); font-weight: 700; font-size: 0.88rem; cursor: pointer; }
@@ -664,6 +672,20 @@ select:focus-visible, .bc-seg input:focus-visible + span, .branch-controls butto
 .q-x { grid-column: 2; grid-row: 2; display: grid; place-items: center; width: 36px; height: 36px; padding: 0; border: 1px solid var(--line); border-radius: 50%; background: #fff; color: var(--ink); cursor: pointer; }
 .q-stale { display: flex; gap: 0.4rem; align-items: center; font-size: 13px; color: var(--seal); }
 .q-stale .q-ic { width: 16px; height: 16px; }
+/* Карточка: статус, очередь и «Сегодня» — по одной строке; неделя, размер, загрузка — под «Подробнее». */
+.q-line { display: flex; gap: 8px; align-items: center; font-size: 15px; line-height: 1.3; }
+.q-line > .q-ic { width: 18px; height: 18px; color: var(--q-muted); }
+.q-line b { font-weight: 600; }
+.q-st { --tc: var(--ok); color: var(--ink); }
+.q-st[data-tone='soon'] { --tc: var(--amber); }
+.q-st[data-tone='closed'] { --tc: var(--seal); }
+.q-st > .q-ic, .q-st b { color: var(--tc); }
+.q-line .q-dot { width: 18px; height: 18px; margin: 0; }
+.q-line .q-dot svg { width: 11px; height: 11px; }
+.q-details { border-top: 1px solid var(--line); }
+.q-details summary { min-height: 44px; font-weight: 600; }
+.q-details-body { display: flex; flex-direction: column; gap: 6px; padding: 0 0 10px; }
+.q-details-body .q-week { margin-top: 2px; }
 .q-status { --tc: var(--ok); --tb: var(--ok-soft); display: flex; gap: 12px; align-items: center; padding: 14px 16px; border-radius: 12px; background: var(--tb); }
 .q-status[data-tone='soon'] { --tc: var(--amber); --tb: var(--amber-soft); }
 .q-status[data-tone='closed'] { --tc: var(--seal); --tb: var(--seal-soft); }
@@ -693,7 +715,9 @@ select:focus-visible, .bc-seg input:focus-visible + span, .branch-controls butto
 .q-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 .q-actions-1 { grid-template-columns: minmax(0, 1fr); margin-top: 10px; }
 .q-route, .q-mark { display: flex; gap: 8px; align-items: center; justify-content: center; min-width: 0; min-height: 48px; box-sizing: border-box; padding: 0 10px; border-radius: 12px; font: 600 16px/1.15 var(--sl-font-system); text-align: center; text-decoration: none; cursor: pointer; }
-.q-route { background: var(--ink); color: #fff !important; border: 0; }
+.q-route { background: #fff; color: var(--ink) !important; border: 1px solid var(--line); }
+.q-route:hover { background: #fbf8f0; }
+.qmap[data-nomap] .q-card { height: auto; max-height: 80vh; }
 .q-mark { background: #fff; color: var(--seal); border: 1.5px solid var(--seal); }
 .q-mark:hover { background: var(--seal-soft); }
 .q-mark[disabled] { background: var(--paper-2); color: var(--q-muted); border-color: var(--line); cursor: not-allowed; }
@@ -723,23 +747,29 @@ select:focus-visible, .bc-seg input:focus-visible + span, .branch-controls butto
 .qmap .maplibregl-ctrl-attrib { font-size: 0.72rem; }
 
 @container (max-width: 560px) {
-	.qmap { --q-vh: max(26rem, 68svh); }
-	.qmap-body { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto var(--q-vh) auto; grid-template-areas: 'panel' 'view' 'foot'; height: auto; }
+	.qmap-head { display: none; }
+	.qmap-body { --q-vh: 25rem; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto var(--q-vh) auto auto; grid-template-areas: 'panel' 'view' 'list' 'foot'; height: auto; }
+	.qmap[data-nomap] .qmap-body { grid-template-rows: auto auto auto auto; }
+	.qmap[data-card] .bl-box { visibility: visible; }
+	.bl-box { min-height: 0; }
+	.bl-box > .bl { position: static; overflow: visible; padding: 8px 0.6rem 0.6rem; }
+	.bl-box .bl-count { position: static; margin: 0 !important; padding: 0 0 6px; background: none; }
 	.qmap[data-card] .qmap-panel { visibility: visible; }
 	.qmap-panel { padding: 0.7rem 0.75rem; gap: 0.5rem; }
 	.qmap-city { flex-direction: row; align-items: center; gap: 0.5rem; }
 	.qmap-city select { flex: 1; }
-	.q-plist, .q-scale { display: none; }
+	.q-scale { display: none; }
 	.qmap-tabs { width: 100%; }
 	.qmap-tabs button { flex: 1; }
 	/* Нижний лист в той же ячейке сетки, что и карта: прижат к низу карты, два положения. */
-	.q-card { grid-area: view; align-self: end; height: 56%; border: 0; border-top: 1px solid var(--line); border-radius: 14px 14px 0 0; box-shadow: 0 -4px 16px rgba(27, 36, 48, 0.2); padding-bottom: env(safe-area-inset-bottom); overscroll-behavior: contain; transition: height 0.25s ease; }
+	/* Лист прижат к низу экрана; кратко — по высоте содержимого (до 60% экрана), карта видна над ним. */
+	.qmap[data-card='half'] .q-card { position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; height: auto; max-height: 60vh; max-height: 60dvh; }
+	.q-card { grid-area: view; align-self: end; height: 62%; border: 0; border-top: 1px solid var(--line); border-radius: 14px 14px 0 0; box-shadow: 0 -4px 16px rgba(27, 36, 48, 0.2); padding-bottom: env(safe-area-inset-bottom); overscroll-behavior: contain; transition: height 0.25s ease; }
 	/* Развёрнутый лист — до 90% экрана поверх страницы; над ним остаётся полоска карты, внутри своя прокрутка. */
 	.qmap[data-card='full'] .q-card { position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; height: min(90vh, 100vh - var(--sl-nav-height) - var(--sl-mobile-toc-height) - 2rem); height: min(90dvh, 100dvh - var(--sl-nav-height) - var(--sl-mobile-toc-height) - 2rem); }
 	.q-card-head { grid-template-columns: minmax(0, 1fr) auto; padding-top: 0; touch-action: none; }
 	.q-grip { grid-column: 1 / -1; display: flex; justify-content: center; align-items: center; height: 28px; margin: 0 -0.8rem; border: 0; background: none; cursor: grab; }
 	.q-back { display: none; }
-	.qmap:not([data-card='full']) .q-full-only { display: none; }
 	.qmap[data-card='full'] .q-picks { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
 	.qmap[data-card='full'] .q-pick { min-height: 48px; flex-direction: column; justify-content: center; gap: 0.15rem; padding: 0.3rem; text-align: center; font-size: 0.78rem; }
 	.qmap[data-card='full'] .q-long { display: none; }
@@ -749,15 +779,3 @@ select:focus-visible, .bc-seg input:focus-visible + span, .branch-controls butto
 	.q-card, .q-drop, .q-bar i.go { transition: none; }
 	.q-report[aria-busy='true'] svg { animation: none; }
 }
-.bc-seg > label { flex: 1 1 auto; }
-.bc-day { flex: 1 1 16rem; }
-.bc-size, .bc-order { flex: 1 1 20rem; }
-.bc-more summary, .branch-chart summary { list-style: none; gap: 10px; }
-.bc-more summary::-webkit-details-marker, .branch-chart summary::-webkit-details-marker { display: none; }
-.bc-more summary::before, .branch-chart summary::before { content: ''; flex: none; width: 8px; height: 8px; border: solid currentColor; border-width: 0 2px 2px 0; transform: rotate(-45deg); transition: transform 0.15s; }
-.bc-more[open] summary::before, .branch-chart[open] summary::before { transform: rotate(45deg); }
-.bc-seg { flex-wrap: nowrap; }
-.bc-seg > label { flex: 1 1 0; min-width: 0; }
-.bc-hour { flex: 1 1 11rem; }
-@media (max-width: 600px) { .bc-seg span { padding: 0 4px; font-size: 14px; } }
-@media (min-width: 760px) { .bc-hour { flex: 0 1 14rem; } }
