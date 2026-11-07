@@ -65,7 +65,7 @@ export const LINKS: LinkCard[] = [
 		kind: 'unverified',
 		url: 'https://t.me/dcloza',
 		label: 't.me/dcloza',
-		extra: { url: 'https://maps.app.goo.gl/krKnvr2Qv7YLFV2b7', label: { ru: 'Карта', en: 'Map', sr: 'Mapa' } },
+		extra: { url: 'https://maps.google.com/maps?q=DC+Lo%C5%BEa,+%D0%94%D0%B0%D0%BB%D0%BC%D0%B0%D1%82%D0%B8%D0%BD%D1%81%D0%BA%D0%B0+84L,+%D0%91%D0%B5%D0%BE%D0%B3%D1%80%D0%B0%D0%B4+11000&ftid=0x475a7b323372eab3:0x7a48d3f35c96fc1b', label: { ru: 'Карта', en: 'Map', sr: 'Mapa' } },
 	},
 	{
 		group: 'help',
