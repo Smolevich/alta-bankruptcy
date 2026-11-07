@@ -432,21 +432,71 @@ html, body { overflow-x: clip; }
 
 /* Фильтры отделений */
 .branches [hidden] { display: none !important; }
-.branch-filters { display: flex; flex-wrap: wrap; gap: 0.5rem 0.9rem; align-items: flex-end; margin: 0 0 0.8rem; padding: 0.6rem 0.8rem; background: #fffdf7; border: 1px solid var(--line); border-radius: 3px; }
-.branch-filters label { display: flex; flex-direction: column; gap: 0.15rem; font-size: 0.82rem; color: #5a5448; min-width: 0; }
-.branch-filters select, .branch-filters button { font: inherit; font-size: 0.92rem; padding: 0.3rem 0.4rem; border: 1px solid var(--line); border-radius: 3px; background: #fff; color: var(--ink); max-width: 100%; }
-.branch-filters button { cursor: pointer; font-weight: 700; color: var(--seal); }
-.branch-filters fieldset { display: flex; flex-wrap: wrap; gap: 0.4rem 0.7rem; margin: 0; padding: 0; border: 0; min-width: 0; }
-.branch-filters legend { font-size: 0.82rem; color: #5a5448; padding: 0; margin-bottom: 0.15rem; }
-.branch-filters .f-note, .branch-filters .f-count { flex-basis: 100%; margin: 0 !important; font-size: 0.82rem; color: #5a5448; }
 .branch.f-hl { border-left-color: var(--ok); }
 .branch .f-free { color: var(--ok); font-weight: 700; }
 .branch .branch-nodata { color: #5a5448; font-style: italic; }
-@media (max-width: 600px) { .branch-filters label, .branch-filters fieldset { flex: 1 1 8rem; } }
+/* Панель фильтров над картой: свои select (appearance: none, стрелка SVG), сегменты на radio, кнопки как в карточке. */
+.branch-controls { display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: flex-end; margin: 0 0 1rem; padding: 12px; background: #fffdf7; border: 1px solid var(--line); border-radius: 12px; }
+.branch-controls fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
+.bc-field, .bc-seg legend { display: flex; flex-direction: column; gap: 4px; font-size: 14px; color: #5a5448; min-width: 0; padding: 0; }
+.bc-seg legend { margin-bottom: 4px; }
+.bc-city { flex: 1 1 14rem; }
+.bc-hour { flex: 0 1 11rem; }
+.branch-controls select { appearance: none; -webkit-appearance: none; box-sizing: border-box; width: 100%; min-height: 48px; margin: 0; padding: 0 44px 0 14px; border: 1px solid var(--line); border-radius: 12px; background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231b2430' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 14px center / 20px 20px; color: var(--ink); font: 400 16px/1.2 var(--sl-font-system); cursor: pointer; }
+.branch-controls select:hover { border-color: #b9b09a; }
+.branch-controls select:focus-visible, .bc-seg input:focus-visible + span, .branch-controls button:focus-visible, .branch-actions a:focus-visible, .bc-more summary:focus-visible { outline: 2px solid var(--seal); outline-offset: 2px; }
+.bc-seg { display: flex; }
+.bc-seg > label { position: relative; }
+.bc-seg { flex-direction: row; flex-wrap: wrap; gap: 0; }
+.bc-seg legend { flex-basis: 100%; }
+.bc-seg input { position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0; }
+.bc-seg span { display: flex; align-items: center; justify-content: center; min-height: 48px; box-sizing: border-box; padding: 0 14px; border: 1px solid var(--line); margin-left: -1px; background: #fff; color: var(--ink); font: 500 15px/1.15 var(--sl-font-system); text-align: center; cursor: pointer; }
+.bc-seg > label:first-of-type span { margin-left: 0; border-radius: 12px 0 0 12px; }
+.bc-seg > label:last-of-type span, .bc-seg > label:has(+ label[hidden]) span { border-radius: 0 12px 12px 0; }
+.bc-seg input:checked + span { position: relative; z-index: 1; background: var(--ink); border-color: var(--ink); color: #fff; font-weight: 600; }
+.bc-seg span:hover { background: #fbf8f0; }
+.bc-seg input:checked + span:hover { background: var(--ink); }
+.bc-more { flex-basis: 100%; }
+.bc-more summary { display: flex; align-items: center; min-height: 44px; font: 600 15px/1.2 var(--sl-font-system); color: var(--ink); cursor: pointer; }
+.bc-more[open] { display: flex; flex-wrap: wrap; gap: 12px 16px; }
+.bc-more[open] summary { flex-basis: 100%; }
+.bc-foot { flex-basis: 100%; display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between; }
+.branch-controls .f-count { margin: 0 !important; font-size: 15px; color: var(--ink); }
+.branch-controls .f-note { flex-basis: 100%; margin: 0 !important; font-size: 13px; color: #5a5448; }
+.f-reset, .branch-actions a { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; box-sizing: border-box; padding: 0 16px; border-radius: 12px; font: 600 16px/1.15 var(--sl-font-system); text-align: center; text-decoration: none !important; cursor: pointer; }
+.f-reset, .branch-actions .branch-map { background: #fff; color: var(--seal) !important; border: 1.5px solid var(--seal); }
+.f-reset:hover, .branch-actions .branch-map:hover { background: var(--seal-soft); }
+.branch-actions .branch-show { background: var(--ink); color: #fff !important; border: 0; }
+.branch-actions .branch-show:hover { background: #2c3a4d; }
+.branch-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+.branch-actions a { padding: 0 10px; font-size: 15px; }
+.branch.is-selected { border: 2px solid var(--seal); border-left-width: 4px; box-shadow: 0 0 0 3px var(--seal-soft); }
+.branch .branch-onmap { margin: 0 0 4px; font-size: 14px; font-weight: 700; color: var(--seal); }
+.branch .branch-nomatch { margin: 0 0 4px; font-size: 13px; color: #5a5448; font-style: italic; }
+.branch .branch-live { display: flex; gap: 8px; align-items: center; margin: 6px 0; font-size: 14px; }
+.branch .branch-live .q-dot { flex: none; }
+.branch h4:focus { outline: none; }
+.branch h4:focus-visible { outline: 2px solid var(--seal); outline-offset: 2px; }
+.branch-chart summary { display: flex; align-items: center; min-height: 44px; font-size: 14px; font-weight: 600; cursor: pointer; }
+.branch-city { scroll-margin-top: 5rem; }
+.branch { scroll-margin-top: 5rem; }
+.q-pin[data-dim='1'] { opacity: 0.35; }
+.q-tolist { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; min-height: 48px; margin-top: 8px; padding: 0 10px; border: 1px solid var(--line); border-radius: 12px; background: #fff; color: var(--ink); font: 600 15px/1.15 var(--sl-font-system); cursor: pointer; }
+.q-tolist:hover { background: #fbf8f0; }
+.q-tag { padding: 10px 12px; border-left: 4px solid var(--seal); border-radius: 0 12px 12px 0; background: #fff8f5; }
+.q-tag-t { font-weight: 700; color: var(--seal); font-size: 14px; }
+.q-tag-o { font-size: 12px; font-style: italic; color: var(--q-muted); }
+.q-tag-n { font-size: 13px; color: var(--q-muted); }
+@media print {
+	.branch-controls, .qmap, .branch-show { display: none !important; }
+	.branches .branch-city, .branches .branch { display: block !important; }
+	.branch-chart > * { display: block !important; }
+}
 
 /* ---- Карта очередей Poštanska (PostanskaBranches.astro, MapLibre; ТЗ ux-spec этап 1) ---- */
 /* Палитра сайта (бумага, чернила, печать); цвета загрузки — смысловые, текст на них ≥ 4.5:1.
    Граница «телефон / компьютер» — контейнер-запрос 560px: блок живёт в колонке Starlight. */
+.branches { --q-muted: #5a5448; --q-none: #2d6a4f; --q-few: #d9b44a; --q-few-ink: #2b2200; --q-full: #b5541c; --q-outside: var(--seal); --q-unknown: #8a8478; --q-closed: #1b2430; }
 .qmap { --q-muted: #5a5448; --q-none: #2d6a4f; --q-few: #d9b44a; --q-few-ink: #2b2200; --q-full: #b5541c; --q-outside: var(--seal); --q-unknown: #8a8478; --q-closed: #1b2430;
 	--q-vh: 37.5rem;
 	container-type: inline-size; margin: 0 0 1.2rem; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; background: #fbf8f0; color: var(--ink); box-shadow: 6px 6px 0 var(--seal-soft); font-family: var(--sl-font-system); }
@@ -696,3 +746,15 @@ html, body { overflow-x: clip; }
 	.q-card, .q-drop, .q-bar i.go { transition: none; }
 	.q-report[aria-busy='true'] svg { animation: none; }
 }
+.bc-seg > label { flex: 1 1 auto; }
+.bc-day { flex: 1 1 16rem; }
+.bc-size, .bc-order { flex: 1 1 20rem; }
+.bc-more summary, .branch-chart summary { list-style: none; gap: 10px; }
+.bc-more summary::-webkit-details-marker, .branch-chart summary::-webkit-details-marker { display: none; }
+.bc-more summary::before, .branch-chart summary::before { content: ''; flex: none; width: 8px; height: 8px; border: solid currentColor; border-width: 0 2px 2px 0; transform: rotate(-45deg); transition: transform 0.15s; }
+.bc-more[open] summary::before, .branch-chart[open] summary::before { transform: rotate(45deg); }
+.bc-seg { flex-wrap: nowrap; }
+.bc-seg > label { flex: 1 1 0; min-width: 0; }
+.bc-hour { flex: 1 1 11rem; }
+@media (max-width: 600px) { .bc-seg span { padding: 0 4px; font-size: 14px; } }
+@media (min-width: 760px) { .bc-hour { flex: 0 1 14rem; } }
