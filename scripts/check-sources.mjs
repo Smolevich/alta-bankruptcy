@@ -1,6 +1,4 @@
-// Проверка внешних ссылок сайта по реестру доверенных доменов (src/data/trusted-domains.yaml).
-// Запуск: npm run check:sources — исходники; npm run check:sources -- --dist — собранный dist/
-// (там видны автоссылки GFM вроде голого «www.aod.rs», которых нет в исходниках).
+// --dist also scans the built HTML: GFM autolinks (a bare "www.aod.rs") exist only there.
 import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { domainToUnicode } from 'node:url';
@@ -14,14 +12,15 @@ const SHORTENERS = new Set([
 	'goo.gl', 'maps.app.goo.gl', 'bit.ly', 't.co', 'tinyurl.com', 'is.gd', 'cutt.ly', 'ow.ly', 'rb.gy',
 	'shorturl.at', 'tiny.cc', 'buff.ly', 'rebrand.ly', 'clck.ru', 'vk.cc',
 ]);
-// Какой kind источника допустим для категории домена: official — только у госорганов, судов, банков и регулятора.
+// A source may be cited at its domain's trust level or below, never above it.
 const KIND_CATEGORIES = {
 	official: OFFICIAL_CATEGORIES,
+	reference: new Set([...OFFICIAL_CATEGORIES, 'reference']),
+	reliable_media: new Set([...OFFICIAL_CATEGORIES, 'reference', 'press']),
 	own: new Set(['own']),
 };
 
-// Минимальная таблица похожих символов (идея Unicode TR39 skeleton): кириллица, греческий, fullwidth и
-// ASCII-подмены, которыми чаще всего подделывают латинский домен.
+// A small subset of Unicode TR39 confusables: only the substitutions commonly used to spoof Latin domains.
 const CONFUSABLES = {
 	а: 'a', в: 'b', е: 'e', ё: 'e', к: 'k', м: 'm', н: 'h', о: 'o', р: 'p', с: 'c', т: 't', у: 'y', х: 'x',
 	ѕ: 's', і: 'i', ї: 'i', ј: 'j', һ: 'h', ԁ: 'd', ԛ: 'q', ԝ: 'w', ӏ: 'l', ь: 'b', г: 'r', п: 'n', з: '3',
@@ -94,7 +93,7 @@ function pathAllowed(pathname, entry) {
 const strip = (h) => h.replace(/^www\./, '');
 const brand = (domain) => domain.split('.')[0];
 
-// Похожесть влияет только на текст ошибки: хост не из реестра падает в любом случае.
+// Only shapes the error message: an unregistered host fails either way.
 export function lookalike(host, registry) {
 	const unicode = domainToUnicode(host) || host;
 	const sk = skeleton(strip(unicode));
@@ -116,7 +115,7 @@ export function lookalike(host, registry) {
 
 const fail = (code, message, extra = {}) => ({ ok: false, code, message, ...extra });
 
-// Авторитет (user@host:port) до того, как URL его нормализует: иначе не-ASCII и точку в конце не увидеть.
+// Read before URL normalizes it, otherwise non-ASCII hosts and trailing dots are invisible.
 function rawAuthority(raw) {
 	const m = raw.match(/^[a-z][a-z0-9+.-]*:\/\/([^/?#]*)/i);
 	return m ? m[1] : '';
@@ -128,10 +127,8 @@ function parseWayback(url) {
 	return m[1] + url.search + url.hash;
 }
 
-/**
- * Проверка одной ссылки. opts.inner — адрес внутри веб-архива (там допустимы http и :80/:443),
- * opts.copyOf — url источника, копией которого служит ссылка.
- */
+// opts.inner: URL inside a web archive, where old snapshots legitimately carry http and :80/:443.
+// opts.copyOf: the source URL this link archives; short archive.ph links are trusted only through it.
 export function classifyUrl(raw, registry, opts = {}) {
 	const authority = rawAuthority(raw);
 	if (!authority) return fail('scheme', `не абсолютная ссылка с протоколом: ${raw}`);
@@ -195,7 +192,6 @@ export function classifyUrl(raw, registry, opts = {}) {
 	return { ok: true, host, entry };
 }
 
-/** Проверка записи sources: url, kind и copy. */
 export function checkSource(src, registry) {
 	const errors = [];
 	const res = classifyUrl(src.url, registry);
@@ -205,7 +201,7 @@ export function checkSource(src, registry) {
 	}
 	const allowed = KIND_CATEGORIES[src.kind];
 	if (allowed && !allowed.has(res.entry.category)) {
-		errors.push(`kind: ${src.kind} у ${res.innerHost ?? res.host} (категория ${res.entry.category}); официальные — только госорганы, суды, банки, регулятор`);
+		errors.push(`kind: ${src.kind} у ${res.innerHost ?? res.host} (категория ${res.entry.category}) не допускается; разрешены категории: ${[...allowed].join(', ')}`);
 	}
 	if (src.copy && /^https?:/i.test(src.copy)) {
 		const copy = classifyUrl(src.copy, registry, { copyOf: src.url });
@@ -216,8 +212,6 @@ export function checkSource(src, registry) {
 	}
 	return errors;
 }
-
-// --- Сканирование файлов ---
 
 const URL_RE = /(?<![\w/])https?:\/\/[^\s)"'<>\]}`\\]+/gi;
 const SRC_EXT = /\.(md|mdx|astro|ts|json|mjs)$/;
