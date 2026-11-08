@@ -23,8 +23,8 @@
 - domain: pravno-informacioni-sistem.rs
   name: "Pravno-informacioni sistem Republike Srbije — официальная правовая информационная система Сербии (тексты законов)"
   category: official-rs-gov
-  proof: "WHOIS RNIDS, регистрант: JP Službeni glasnik (государственное издательство официального вестника); проверено 07.11.2026"
-  hosts: [pravno-informacioni-sistem.rs, reg.pravno-informacioni-sistem.rs]
+  proof: "WHOIS RNIDS, регистрант: JP Službeni glasnik (государственное издательство официального вестника); проверено 07.11.2026; slgl.* — портал выпусков «Службени гласник» на том же домене"
+  hosts: [pravno-informacioni-sistem.rs, www.pravno-informacioni-sistem.rs, reg.pravno-informacioni-sistem.rs, slgl.pravno-informacioni-sistem.rs]
 
 - domain: apr.gov.rs
   name: "Agencija za privredne registre — Агентство хозяйственных реестров Сербии (реестр компаний и финансовых отчётов)"
@@ -233,6 +233,13 @@
   proof: "Общеизвестный домен Google LLC"
   hosts: [docs.google.com]
   paths: [/spreadsheets/]
+
+- domain: ivantitov.tech
+  name: "Банковский Радар — сторонний неофициальный сравнитель тарифов банков Сербии (автор Иван Титов); разрешены только страницы сравнения"
+  category: social
+  proof: "Автор подтвердил в чате вкладчиков, что рад ссылке; сайт открыт 08.11.2026: тарифы со ссылками на официальные PDF банков и датами сверки, опыт клиентов помечен отдельно; WHOIS не проверялся, поэтому только kind: unverified"
+  hosts: [banks.ivantitov.tech]
+  paths: [/, /scenarios, /podbor]
 
 # --- This site ---
 - domain: smolevich.com

@@ -19,6 +19,8 @@
 				var target = next && document.getElementById(next);
 				if (!target) return;
 				history.replaceState(history.state, '', location.pathname + location.search + '#' + next);
+				// replaceState не шлёт hashchange: блокам, которые выбирают содержимое по якорю (город в списке отделений), сообщаем сами.
+				window.dispatchEvent(new Event('anchor-redirect'));
 				target.scrollIntoView();
 			})
 			.catch(function () {});

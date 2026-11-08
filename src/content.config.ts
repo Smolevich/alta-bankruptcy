@@ -57,10 +57,27 @@ export const collections = {
 		loader: file('src/data/status.json'),
 		schema: z.object({
 			stage: z.number().int().min(1),
+			// Дата выхода объявления в «Службени гласник» (YYYY-MM-DD); null, пока объявления нет.
+			publicationDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().default(null),
 			headline: loc,
 			note: loc,
 			checkedAt: z.coerce.date(),
-			stages: z.array(z.object({ n: z.number().int(), title: loc, when: loc })).min(2),
+			stages: z
+				.array(
+					z.object({
+						n: z.number().int(),
+						// Идёт параллельно с текущей стадией: на шкале тоже «Мы здесь».
+						parallel: z.boolean().optional(),
+						title: loc,
+						when: loc,
+						// Ссылки рядом со сроком (текст объявления, страница выпуска); copy — копия в веб-архиве.
+						links: z.array(z.object({ label: loc, url: z.string().url(), copy: z.string().url().optional() })).optional(),
+						// Пройденная стадия: ссылка на источник; будущая: что её запускает.
+						source: z.object({ url: z.string().url(), label: loc }).optional(),
+						trigger: loc.optional(),
+					}),
+				)
+				.min(2),
 			sources,
 		}),
 	}),

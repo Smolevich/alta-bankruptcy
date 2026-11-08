@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { branchStatus, parseRange } from '../src/lib/branch-hours.mjs';
-import { queueLevel, shortRange, statusTone, weekTiles } from '../src/lib/branch-card.mjs';
+import { queueLevel, shortRange, splitText, statusTone, weekTiles } from '../src/lib/branch-card.mjs';
 
 const WD = parseRange('08:00-17:00');
 const SAT = parseRange('8.00h - 13.00h');
@@ -37,4 +37,14 @@ test('week starts on monday, sunday is a day off, today is marked', () => {
 
 test('branch without saturday hours shows saturday as a day off', () => {
 	assert.equal(weekTiles(WD, null, 3)[5].hours, null);
+});
+
+const SPLIT_LABELS = { none: 'no queue', few: 'a few people', full: 'crowded', outside: 'queue outside' };
+
+test('disagreement line lists votes per state in scale order, then the window', () => {
+	assert.equal(splitText({ full: 1, few: 1 }, SPLIT_LABELS, 'in 2 hours'), '1 — a few people, 1 — crowded · in 2 hours');
+});
+
+test('disagreement line skips states nobody chose', () => {
+	assert.equal(splitText({ none: 2, outside: 2 }, SPLIT_LABELS, 'in 2 hours'), '2 — no queue, 2 — queue outside · in 2 hours');
 });

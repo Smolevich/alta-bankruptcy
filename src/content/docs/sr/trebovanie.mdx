@@ -1,7 +1,7 @@
 ---
 title: "Prijava potraživanja iznad 50.000 € u stečaju ALTA banke"
 description: "Ko prijavljuje potraživanje iznad 50.000 €, gde, u kom roku (90 dana od objavljivanja, određuje sud), šta pripremiti i u koji isplatni red spadaju štediše."
-checked: 2026-11-06
+checked: 2026-11-08
 sources:
   - { title: "Rešenje suda 10 St 275/2026 od 03.11.2026", url: "http://www.bg.pr.sud.rs/docs/dokument_03112026_104425437.pdf", kind: official, date: 2026-11-03 }
   - { title: "Rešenje Privrednog suda u Beogradu 10 St 275/2026 od 03.11.2026, objavljeno na oglasnoj tabli suda", url: "http://www.bg.pr.sud.rs/", kind: official, date: 2026-11-03 }
@@ -21,9 +21,14 @@ sources:
   - { title: "Uprava za javni dug: lista ovlašćenih učesnika (matični broj i PIB Alta banke)", url: "https://www.javnidug.gov.rs/static/uploads/Lista%20ovlascenih%20ucesnika_cir.pdf", kind: official, date: 2025-05-07 }
   - { title: "AOD: Obaveštenje o datumu početka isplate osiguranih iznosa depozita Alta banke, 06.11.2026 (PDF)", url: "https://www.aod.rs/uploads/dokumenti/altabanka/Obave%C5%A1tenje_o_po%C4%8Detku_isplate_OD_6nov2026.pdf", kind: official, date: 2026-11-06 }
   - { title: "Privredni sud u Beogradu: saopštenje za javnost, 06.11.2026 (PDF)", url: "http://www.bg.pr.sud.rs/files/files/Saopstenje(1).pdf", kind: official, date: 2026-11-06 }
+  - { title: "Zakon o parničnom postupku, čl. 103 (računanje rokova)", url: "https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2011/72/1/reg", kind: official, date: 2026-11-08, copy: "https://web.archive.org/web/20260313105634/https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2011/72/1/reg" }
+  - { title: "„Službeni glasnik RS“ br. 109/2026 od 06.11.2026, Sudski oglasi, poz. 172: oglas o otvaranju stečajnog postupka nad Alta bankom", url: "https://slgl.pravno-informacioni-sistem.rs/api/prins/viewdoc?uuid=653ae8fc-9490-497e-b42a-abcbf2fbd7fe", kind: official, date: 2026-11-06, copy: "https://web.archive.org/web/20261108141656/https://slgl.pravno-informacioni-sistem.rs/api/prins/viewdoc?uuid=653ae8fc-9490-497e-b42a-abcbf2fbd7fe" }
+  - { title: "Zakon o objavljivanju zakona i drugih propisa i opštih akata, čl. 27", url: "https://www.pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2013/45/4/reg", kind: official, date: 2026-11-08 }
+  - { title: "„Službeni glasnik RS“ br. 109/2026: stranica broja", url: "https://www.pravno-informacioni-sistem.rs/slglrsNP-overview/24686", kind: official, date: 2026-11-08 }
 ---
 
 import ForIp from '../../../components/ForIp.astro';
+import ClaimDeadline from '../../../components/ClaimDeadline.astro';
 import Shot from '../../../components/Shot.astro';
 import Faq from '../../../components/Faq.astro';
 import FormCards from '../../../components/FormCards.astro';
@@ -50,9 +55,13 @@ Sudu koji vodi stečaj: Privredni sud u Beogradu, pismeno. Nadležan je sud prem
 
 ## U kom roku
 
-**90 dana** od dana kad oglas o stečaju izađe u „Službenom glasniku“. Ne od oduzimanja dozvole i ne od 3. novembra. Taj rok sud je odredio u rešenju 10 St 275/2026 od 03.11.2026 ([tačka IV](http://www.bg.pr.sud.rs/docs/dokument_03112026_104425437.pdf)), a isto piše na [stranici obrazaca AOD](https://www.aod.rs/clan/altabanka/obrasci_altabanka). Dok oglas nije objavljen, rok ne teče ([član 7](https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2015/14/3/reg)). U brojevima 106 (04.11.) i 107 (05.11.) oglas se ne vidi. Ne čekajte isplatu osiguranog iznosa. Poređenja radi: kod Univerzal banke sud je odredio 60 dana.
+<ClaimDeadline lang="sr" />
+
+**90 dana** od dana kad je oglas o stečaju izašao u „Službenom glasniku“ (06.11.2026). Sam dan objavljivanja se ne računa: prvi dan je 7. novembar. Ne od oduzimanja dozvole i ne od 3. novembra. Taj rok sud je odredio u rešenju 10 St 275/2026 od 03.11.2026 ([tačka IV](http://www.bg.pr.sud.rs/docs/dokument_03112026_104425437.pdf)), a isto piše na [stranici obrazaca AOD](https://www.aod.rs/clan/altabanka/obrasci_altabanka). Rok teče od objavljivanja ([član 7](https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2015/14/3/reg)): oglas je izašao u broju 109 od 06.11.2026. Ne čekajte isplatu osiguranog iznosa. Poređenja radi: kod Univerzal banke sud je odredio 60 dana.
 
 ## „Službeni glasnik“ i oglas o stečaju
+
+**Tekst oglasa: [„Službeni glasnik“ br. 109, poz. 172 →](https://slgl.pravno-informacioni-sistem.rs/api/prins/viewdoc?uuid=653ae8fc-9490-497e-b42a-abcbf2fbd7fe)** ([kopija u veb-arhivi](https://web.archive.org/web/20261108141656/https://slgl.pravno-informacioni-sistem.rs/api/prins/viewdoc?uuid=653ae8fc-9490-497e-b42a-abcbf2fbd7fe)). U samom tekstu nema broja ni datuma izdanja: [broj 109 od 06.11.2026 →](https://www.pravno-informacioni-sistem.rs/slglrsNP-overview/24686).
 
 **Šta je to.** „Službeni glasnik Republike Srbije“ je službeno glasilo Srbije. U oglasnom delu objavljuju se oglasi organa, sudova i pravnih lica ([Službeni glasnik](https://www.slglasnik.com/sluzbena-glasila/sluzbeni-glasnik)).
 
@@ -71,9 +80,11 @@ Sudu koji vodi stečaj: Privredni sud u Beogradu, pismeno. Nadležan je sud prem
 3. **„Službeni glasnik“: uz pretplatu.** Elektronsko izdanje dostupno je samo uz plaćenu pretplatu ([uslovi i cene](https://www.slglasnik.com/sluzbena-glasila/sluzbeni-glasnik)). Bez pretplate pratite oglasnu tablu suda i aod.rs.
 4. **Dnevni list „Danas“.** Oglas o pokretanju stečajnog postupka sud je 03.11.2026. uputio radi objavljivanja u dnevnom listu „Danas“ i u „Službenom glasniku“ ([saopštenje suda, 06.11.2026](http://www.bg.pr.sud.rs/files/files/Saopstenje(1).pdf)).
 
-**Kada oglas izađe.** Pronađite u njemu broj dana za prijavu i računajte ih od datuma broja „Glasnika“. Podnesite pismenu prijavu potraživanja Privrednom sudu u Beogradu ([član 111 stav 1](https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2009/104/25/reg)); šta treba da sadrži — ispod, u „Šta pripremiti“.
+**Kada oglas izađe.** Pronađite u njemu broj dana za prijavu i računajte ih od dana posle datuma broja „Glasnika“: dan objavljivanja se ne računa. Podnesite pismenu prijavu potraživanja Privrednom sudu u Beogradu ([član 111 stav 1](https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2009/104/25/reg)); šta treba da sadrži — ispod, u „Šta pripremiti“.
 
-**Sada.** Prema portalu sudova, sud je oglas o otvaranju stečaja otpremio 03.11 ([kako proveriti predmet](/sr/)). Dok oglas u „Službenom glasniku“ ne bude objavljen, rok ne teče: 90 dana teče od dana objavljivanja (naša poslednja provera — broj 107 od 05.11.). Kad bude objavljen, ovde ćemo upisati datum i poslednji dan roka.
+**Sada.** Prema portalu sudova, sud je oglas o otvaranju stečaja otpremio 03.11 ([kako proveriti predmet](/sr/)). Oglas je objavljen u „Službenom glasniku“ br. 109 od 06.11.2026, odeljak „Sudski oglasi“, poz. 172 ([tekst oglasa](https://slgl.pravno-informacioni-sistem.rs/api/prins/viewdoc?uuid=653ae8fc-9490-497e-b42a-abcbf2fbd7fe); [kopija u veb-arhivi](https://web.archive.org/web/20261108141656/https://slgl.pravno-informacioni-sistem.rs/api/prins/viewdoc?uuid=653ae8fc-9490-497e-b42a-abcbf2fbd7fe); [broj 109 od 06.11.2026](https://www.pravno-informacioni-sistem.rs/slglrsNP-overview/24686)). Oglas je izašao 06.11.2026. Taj dan se ne računa (čl. 103 ZPP): prvi dan je 7. novembar, 90. (poslednji) dan je 4. februar 2027; 120. dan je 6. mart 2027. (subota). Ako sud tog dana ne radi, rok se pomera na najbliži radni dan (čl. 103 st. 4 ZPP) — 8. mart 2027. Tačka IV doslovno: „Позивају се повериоци стечајног дужника да у року од 90 дана од дана објављивања огласа о покретању поступка стечаја над стечајним дужником у „Службеном гласнику РС”, пријаве Привредном суду у Београду своја обезбеђена и необезбеђена потраживања.”
+
+**Kako videti original broja 109.** Oglas ALTA nalazi se u „Službenom glasniku RS“ br. 109 od 06.11.2026, odeljak „Sudski oglasi“, pozicija 172, strana 64 od 80 u PDF verziji broja. Tekst samog oglasa otvoren je besplatno (veza iznad). Ceo PDF broja na portalu pravno-informacioni-sistem.rs otvara se samo uz pretplatu. [Elektronska pretplata na „Službeni glasnik RS“](https://www.slglasnik.com/usluge/pretplata) prodaje se na sajtu izdavača: na dan 08.11.2026. košta 16.643 RSD (sa popustom), a aktuelna cena je na stranici pretplate; uz nju se na portalu kod broja pojavljuje dugme PDF. Može se zaključiti i iz inostranstva. Štampani broj izdavač prodaje posebno: [517 RSD](https://www.slglasnik.com/e-prodavnica/kategorija/sluzbena-glasila-pojedinacni-brojevi) u internet prodavnici i u sopstvenim prodavnicama „Službenog glasnika“ (maloprodajni objekti); da li je broj 109 na zalihama, proverite kod izdavača: prodaja@slglasnik.com, +381 11 30 60 580. Uslovi portala zabranjuju objavljivanje kopije broja ili njegovih strana na drugim sajtovima bez pisane saglasnosti „Glasnika“, zato dajemo samo veze.
 
 ## Šta pripremiti
 
@@ -154,7 +165,7 @@ Kako se završilo kod Univerzal banke: prvi isplatni red dobio je oko 96,5 % utv
 
 <Faq items={[
   { q: 'Da li su fizička lica na kraju reda?', a: 'Ne. Iznos iznad 50.000 € fizičkih lica, preduzetnika i mikro, malih i srednjih pravnih lica spada u prvi isplatni red (član 20 tačka 1 Zakona o stečaju i likvidaciji banaka i društava za osiguranje).' },
-  { q: 'Da li ostatak treba prijaviti tek pošto primim 50.000 €?', a: 'Ne, ne čekajte. To su dve odvojene stvari. Osiguranje do 50.000 € isplaćuje sama AOD preko Poštanske, za to se sudu ništa ne podnosi. Sve iznad 50.000 € prijavljuje se sudu, u roku od 90 dana od objavljivanja oglasa u „Službenom glasniku“ (odluka suda 10 St 275/2026, tačka IV; član 7). Taj rok teče bez obzira na isplatu: ako čekate osiguranje, možete ga propustiti. Primer: na računima imate 80.000 €. AOD isplaćuje 50.000 €, a sudu prijavljujete potraživanje od 30.000 €. Prijavu možete podneti odmah nakon objavljivanja u Glasniku. Sada je rano: oglas još nije objavljen.' },
+  { q: 'Da li ostatak treba prijaviti tek pošto primim 50.000 €?', a: 'Ne, ne čekajte. To su dve odvojene stvari. Osiguranje do 50.000 € isplaćuje sama AOD preko Poštanske, za to se sudu ništa ne podnosi. Sve iznad 50.000 € prijavljuje se sudu, u roku od 90 dana od objavljivanja oglasa u „Službenom glasniku“ (odluka suda 10 St 275/2026, tačka IV; član 7). Taj rok teče bez obzira na isplatu: ako čekate osiguranje, možete ga propustiti. Primer: na računima imate 80.000 €. AOD isplaćuje 50.000 €, a sudu prijavljujete potraživanje od 30.000 €. Prijavu možete podneti odmah nakon objavljivanja u Glasniku: oglas je objavljen 06.11.2026.' },
   { q: 'Postoji li rok od 120 dana ili šest meseci za prijavu?', a: 'Ne. Prijavite u roku koji je odredio sud: 90 dana od objavljivanja. Rezervna mogućnost do 120 dana se plaća i ništa ne garantuje. Zašto: za banke rok određuje sud (član 7). Opšti Zakon o stečaju važi i za banke u svemu što poseban zakon ne uređuje drugačije (član 22 Zakona o stečaju i likvidaciji banaka i društava za osiguranje). On dozvoljava zakasnelu prijavu, ali najkasnije 120 dana od objavljivanja oglasa i samo uz predujam troškova dopunskog ročišta; bez predujma ili posle 120 dana prijava se odbacuje (član 111 st. 5 i 8). Kod Univerzal banke 2014. AOD je navela: „u roku od 60 dana (opšti rok 120 dana)“, ali je tada važio raniji zakon.' },
   { q: 'Računaju li se lični račun i račun firme zajedno?', a: 'Ne. Firma (DOO) je zasebno pravno lice sa sopstvenim PIB-om i sopstvenim limitom, ako je mikro, malo ili srednje pravno lice (član 2 Zakona o osiguranju depozita).' },
   { q: 'Imam u ALTA banci i depozit i kredit. Da li se dug automatski prebija sa depozitom?', a: 'Ne nužno. Ako je depozit bio sredstvo obezbeđenja baš tog kredita, AOD to uzima u obzir pri isplati osiguranog iznosa (član 16 stav 2 Zakona o osiguranju depozita). U ostalim slučajevima prebijanje je moguće samo ako do isteka roka za prijavu sudu dostavite prijavu na ceo iznos i izjavu o prebijanju. Uz to, pravo na prebijanje moralo je nastati pre podnošenja predloga za pokretanje stečaja (član 82 Zakona o stečaju; zabrane i izuzeci u članu 83). Posavetujte se sa advokatom; kredit u međuvremenu treba otplaćivati.' },

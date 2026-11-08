@@ -1,0 +1,147 @@
+---
+// Панель срока подачи требования: день 0 = публикация в «Службени гласник».
+// Пока publicationDate в src/data/status.json пустой, даты не показываем совсем.
+import { getEntry } from 'astro:content';
+import { formatDate, type Lang } from '../i18n';
+import { claimWindows, parsePublicationDate } from '../lib/claim-deadline';
+
+const { lang = 'ru' } = Astro.props as { lang?: Lang };
+const status = (await getEntry('status', 'current'))!.data;
+const pub = parsePublicationDate(status.publicationDate);
+const w = pub ? claimWindows(pub) : null;
+const fmt = (d: Date) => formatDate(d, lang).replace(/\.$/, '');
+
+const L = {
+	COURT: 'http://www.bg.pr.sud.rs/docs/dokument_03112026_104425437.pdf',
+	BANK7: 'https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2015/14/3/reg',
+	STE111: 'https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2009/104/25/reg',
+	ZPP103: 'https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2011/72/1/reg',
+};
+
+const T = {
+	ru: {
+		label: 'Срок подачи требования',
+		notStarted: 'Срок ещё не начался: ждём публикации в «Службени гласник»',
+		started: (d: string) => `Срок идёт: объявление вышло в «Службени гласник» ${d}`,
+		notDay0: 'Решение суда от 03.11.2026 — не начало отсчёта.',
+		day0: 'День 0',
+		day0Text: 'Публикация объявления в «Службени гласник» (в срок не входит)',
+		waiting: 'ждём',
+		ordinary: 'Дни 1–90',
+		ordinaryText: 'Обычная подача: до 90-го дня',
+		ordinaryUntil: (d: string) => `день 1 — ${d.split('|')[0]}; день 90 (последний) — ${d.split('|')[1]}`,
+		late: 'Дни 91–120',
+		lateText: 'Только запоздалая подача, с условиями: нужен аванс за дополнительное заседание суда, без него требование отбросят. Это запасной выход, а не продление срока.',
+		lateUntil: (d: string) => `с ${d.split('|')[0]} до ${d.split('|')[1]}`,
+		after: 'После 120-го дня',
+		afterText: 'Требование не примут: его отбросят как опоздавшее.',
+		days90: '90 дней с публикации',
+		rule: 'Как считаем: первый день срока — следующий за публикацией. Если последний день выпадает на выходной или праздник, срок истекает в следующий рабочий день; праздники выше не учтены, поэтому подавайте раньше. Объявление вышло 06.11.2026: этот день в срок не входит (ст. 103 ЗПП), день 1 — 7 ноября.',
+		shift: (n: number, d0: string, wd: string, d: string) => `${n}-й день — ${d0} (${wd}). Если суд в этот день не работает, срок переносится на ближайший рабочий день (ст. 103 ч. 4 ЗПП) — ${d}`,
+		weekdays: ['воскресенье', 'понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота'],
+		src: 'Основание',
+		court: 'решение суда, п. IV',
+		bank: 'закон о банкротстве банков, ст. 7',
+		ste: 'закон о банкротстве, ст. 111 ч. 5 и 8',
+		zpp: 'закон о гражданском процессе, ст. 103',
+	},
+	en: {
+		label: 'Claim filing deadline',
+		notStarted: 'The deadline has not started yet: waiting for publication in the Official Gazette (Službeni glasnik)',
+		started: (d: string) => `The deadline is running: the notice appeared in the Official Gazette on ${d}`,
+		notDay0: 'The court decision of 03.11.2026 is not the start of the count.',
+		day0: 'Day 0',
+		day0Text: 'The notice is published in the Official Gazette (does not count)',
+		waiting: 'waiting',
+		ordinary: 'Days 1–90',
+		ordinaryText: 'Ordinary filing: up to day 90',
+		ordinaryUntil: (d: string) => `day 1 — ${d.split('|')[0]}; day 90 (the last) — ${d.split('|')[1]}`,
+		late: 'Days 91–120',
+		lateText: 'Late filing only, with conditions: an advance for an additional court hearing is required, without it the claim is rejected. This is a fallback, not an extension.',
+		lateUntil: (d: string) => `from ${d.split('|')[0]} to ${d.split('|')[1]}`,
+		after: 'After day 120',
+		afterText: 'The claim will not be accepted: it is dismissed as late.',
+		days90: '90 days from publication',
+		rule: 'How we count: the first day of the period is the day after publication. If the last day falls on a weekend or holiday, the period ends on the next working day; holidays are not accounted for above, so file earlier. The notice came out on 06.11.2026: that day does not count (art. 103 Civil Procedure Law), day 1 is 7 November.',
+		shift: (n: number, d0: string, wd: string, d: string) => `Day ${n} is ${d0} (${wd}). If the court does not work that day, the period moves to the nearest working day (art. 103 para. 4 Civil Procedure Law) — ${d}`,
+		weekdays: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+		src: 'Basis',
+		court: 'court decision, item IV',
+		bank: 'Law on Bankruptcy of Banks, art. 7',
+		ste: 'Law on Bankruptcy, art. 111 paras 5 and 8',
+		zpp: 'Civil Procedure Law, art. 103',
+	},
+	sr: {
+		label: 'Rok za prijavu potraživanja',
+		notStarted: 'Rok još nije počeo: čeka se objavljivanje u „Službenom glasniku“',
+		started: (d: string) => `Rok teče: oglas je objavljen u „Službenom glasniku“ ${d}`,
+		notDay0: 'Rešenje suda od 03.11.2026. nije početak računanja roka.',
+		day0: 'Dan 0',
+		day0Text: 'Objavljivanje oglasa u „Službenom glasniku“ (ne računa se)',
+		waiting: 'čeka se',
+		ordinary: 'Dani 1–90',
+		ordinaryText: 'Redovna prijava: do 90. dana',
+		ordinaryUntil: (d: string) => `dan 1 — ${d.split('|')[0]}; dan 90 (poslednji) — ${d.split('|')[1]}`,
+		late: 'Dani 91–120',
+		lateText: 'Samo naknadna prijava, uz uslove: potreban je predujam za dopunsko ročište, bez njega se prijava odbacuje. To je rezervni izlaz, a ne produženje roka.',
+		lateUntil: (d: string) => `od ${d.split('|')[0]} do ${d.split('|')[1]}`,
+		after: 'Posle 120. dana',
+		afterText: 'Prijava se neće primiti: odbacuje se kao neblagovremena.',
+		days90: '90 dana od objavljivanja',
+		rule: 'Kako računamo: prvi dan roka je dan posle objavljivanja. Ako poslednji dan pada na vikend ili praznik, rok ističe prvog narednog radnog dana; praznici gore nisu uračunati, zato podnesite ranije. Oglas je izašao 06.11.2026: taj dan se ne računa (čl. 103 ZPP), prvi dan je 7. novembar.',
+		shift: (n: number, d0: string, wd: string, d: string) => `${n}. dan je ${d0} (${wd}). Ako sud tog dana ne radi, rok se pomera na najbliži radni dan (čl. 103 st. 4 ZPP) — ${d}`,
+		weekdays: ['nedelja', 'ponedeljak', 'utorak', 'sreda', 'četvrtak', 'petak', 'subota'],
+		src: 'Osnov',
+		court: 'rešenje suda, tačka IV',
+		bank: 'zakon o stečaju banaka, čl. 7',
+		ste: 'zakon o stečaju, čl. 111 st. 5 i 8',
+		zpp: 'zakon o parničnom postupku, čl. 103',
+	},
+}[lang];
+---
+
+<section class="claim-deadline not-content" aria-label={T.label}>
+	{
+		w && pub ? (
+			<p class="cd-big cd-on">{T.started(fmt(pub))}</p>
+		) : (
+			<p class="cd-big">{T.notStarted}</p>
+		)
+	}
+	<p class="cd-note">{T.notDay0}</p>
+	<ol class="cd-scale">
+		<li class="cd-day0">
+			<span class="cd-tag">{T.day0}</span>
+			<span class="cd-text">{T.day0Text}</span>
+			<span class="cd-date">{pub ? fmt(pub) : T.waiting}</span>
+		</li>
+		<li class="cd-ok">
+			<span class="cd-tag">{T.ordinary}</span>
+			<span class="cd-text">{T.ordinaryText}</span>
+			<span class="cd-date">
+				{w && pub ? T.ordinaryUntil(`${fmt(new Date(pub.getTime() + 86_400_000))}|${fmt(w.ordinary.nominal)}`) : T.days90}
+				{w?.ordinary.weekendShift && <><br />{T.shift(90, fmt(w.ordinary.nominal), T.weekdays[w.ordinary.nominal.getUTCDay()], fmt(w.ordinary.weekendShift))}</>}
+			</span>
+		</li>
+		<li class="cd-late">
+			<span class="cd-tag">{T.late}</span>
+			<span class="cd-text">{T.lateText}</span>
+			{
+				w && (
+					<span class="cd-date">
+						{T.lateUntil(`${fmt(w.lateFrom)}|${fmt(w.late.nominal)}`)}
+						{w.late.weekendShift && <><br />{T.shift(120, fmt(w.late.nominal), T.weekdays[w.late.nominal.getUTCDay()], fmt(w.late.weekendShift))}</>}
+					</span>
+				)
+			}
+		</li>
+		<li class="cd-no">
+			<span class="cd-tag">{T.after}</span>
+			<span class="cd-text">{T.afterText}</span>
+		</li>
+	</ol>
+	{w && <p class="cd-note">{T.rule}</p>}
+	<p class="cd-note">
+		{T.src}: <a href={L.COURT}>{T.court}</a>; <a href={L.BANK7}>{T.bank}</a>; <a href={L.STE111}>{T.ste}</a>; <a href={L.ZPP103}>{T.zpp}</a>.
+	</p>
+</section>
