@@ -57,6 +57,8 @@ export const collections = {
 		loader: file('src/data/status.json'),
 		schema: z.object({
 			stage: z.number().int().min(1),
+			// Дата выхода объявления в «Службени гласник» (YYYY-MM-DD); null, пока объявления нет.
+			publicationDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().default(null),
 			headline: loc,
 			note: loc,
 			checkedAt: z.coerce.date(),

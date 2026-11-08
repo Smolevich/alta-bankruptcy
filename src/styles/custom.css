@@ -799,3 +799,15 @@ select:focus-visible, .bc-seg input:focus-visible + span, .branch-controls butto
 	.q-card, .q-drop, .q-bar i.go { transition: none; }
 	.q-report[aria-busy='true'] svg { animation: none; }
 }
+
+.claim-deadline { border: 2px solid var(--ink); padding: 1rem; margin: 1rem 0 1.4rem; background: #fff; }
+.cd-big { margin: 0 0 0.4rem; font: 700 clamp(1.25rem, 4.5vw, 1.7rem)/1.2 var(--serif); color: var(--seal); }
+.cd-big.cd-on { color: var(--ok); }
+.cd-note { margin: 0.4rem 0; font-size: 0.88rem; color: #5a5448; line-height: 1.4; }
+.cd-scale { list-style: none; margin: 0.8rem 0; padding: 0; display: grid; gap: 0.5rem; }
+.cd-scale li { display: grid; gap: 0.15rem; margin: 0; padding: 0.5rem 0.7rem; border-left: 5px solid var(--ink); background: #faf6ee; overflow-wrap: anywhere; }
+.cd-scale .cd-ok { border-color: var(--ok); }
+.cd-scale .cd-late { border-color: #b7791f; }
+.cd-scale .cd-no { border-color: var(--seal); }
+.cd-tag { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; }
+.cd-date { font-size: 0.9rem; font-weight: 700; }
