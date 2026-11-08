@@ -21,9 +21,11 @@ sources:
   - { title: "Управа за јавни дуг: список участников рынка госбумаг (МБ и ПИБ ALTA banka)", url: "https://www.javnidug.gov.rs/static/uploads/Lista%20ovlascenih%20ucesnika_cir.pdf", kind: official, date: 2025-05-07 }
   - { title: "AOD: объявление о дате начала выплаты застрахованных вкладов ALTA banka, 06.11.2026 (PDF)", url: "https://www.aod.rs/uploads/dokumenti/altabanka/Obave%C5%A1tenje_o_po%C4%8Detku_isplate_OD_6nov2026.pdf", kind: official, date: 2026-11-06 }
   - { title: "Хозяйственный суд Белграда: сообщение для общественности, 06.11.2026 (PDF, сербский)", url: "http://www.bg.pr.sud.rs/files/files/Saopstenje(1).pdf", kind: official, date: 2026-11-06 }
+  - { title: "Закон о гражданском процессе, ст. 103 (правила счёта сроков)", url: "https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2011/72/1/reg", kind: official, date: 2026-11-08, copy: "https://web.archive.org/web/20260313105634/https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2011/72/1/reg" }
 ---
 
 import ForIp from '../../components/ForIp.astro';
+import ClaimDeadline from '../../components/ClaimDeadline.astro';
 import Shot from '../../components/Shot.astro';
 import Faq from '../../components/Faq.astro';
 import FormCards from '../../components/FormCards.astro';
@@ -51,6 +53,8 @@ import { prijava } from '../../data/forms/prijava';
 Письменно, в Хозяйственный суд Белграда (Privredni sud u Beogradu): банкротство ведёт суд по месту нахождения банка ([Закон о банкротстве, ст. 111 ч. 1 и ст. 16](https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2009/104/25/reg)). Адрес суда: Masarikova 2, Белград. Суд открыл банкротство 03.11.2026; решение вывешивается на [электронной доске объявлений суда](http://www.bg.pr.sud.rs/index.php?prf=con&id=56), ход дела по номеру — на [портале судов](https://tpson.portal.sud.rs/tpprvs/) (как искать — [на главной](/)). 04.11.2026 AOD опубликовал образец требования, о нём — [ниже](#claim-form).
 
 ## В какой срок
+
+<ClaimDeadline />
 
 **90 дней** со дня, когда объявление о банкротстве выйдет в «Службени гласник» (официальный вестник Сербии). Не со дня отзыва лицензии и не с 3 ноября. Этот срок суд назначил в решении 10 Ст 275/2026 от 03.11.2026 ([п. IV](http://www.bg.pr.sud.rs/docs/dokument_03112026_104425437.pdf)), то же сказано на [странице форм AOD](https://www.aod.rs/clan/altabanka/obrasci_altabanka). Пока объявления нет, срок не идёт ([ст. 7](https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2015/14/3/reg)). В номерах № 106 (04.11) и № 107 (05.11) его не видно. Подавайте, не дожидаясь страховой выплаты. Для сравнения: у Univerzal суд дал 60 дней.
 
