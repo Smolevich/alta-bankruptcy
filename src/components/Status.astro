@@ -1,16 +1,40 @@
 ---
 // Крупный блок «Сейчас»: текущая стадия и рельса из всех стадий.
-// На телефоне рельса сжата до текущей стадии, чтобы первый шаг главной был на первом экране.
+// На телефоне рельса главной сжата до текущей стадии, чтобы первый шаг был на первом экране.
+// variant="timeline" (страница /procedura/): только вертикальная шкала, на телефоне тоже полная.
 import { getEntry } from 'astro:content';
 import { formatDate, UI, href, type Lang } from '../i18n';
 
-const { lang = 'ru' } = Astro.props as { lang?: Lang };
+const { lang = 'ru', variant = 'home' } = Astro.props as { lang?: Lang; variant?: 'home' | 'timeline' };
 const t = UI[lang];
 const status = (await getEntry('status', 'current'))!.data;
 // sr-Latn уже ставит точку после года («3. 11. 2026.»), а фраза ниже добавляет свою.
 const fmt = (d: Date) => formatDate(d, lang);
 ---
 
+{
+	variant === 'timeline' ? (
+		<ol class="timeline not-content" aria-label={t.allStages}>
+			{status.stages.map((s) => {
+				const state = s.n < status.stage ? 'done' : s.n === status.stage ? 'now' : 'next';
+				const label = state === 'done' ? t.stageDone : state === 'now' ? t.stageNow : t.stageNext;
+				return (
+					<li class={`tl-${state}`} aria-current={state === 'now' ? 'step' : undefined}>
+						<span class="tl-dot" aria-hidden="true">{state === 'done' ? '✓' : state === 'now' ? '▶' : '○'}</span>
+						<span class="tl-state">{label}</span>
+						<span class="tl-title">{s.n}. {s.title[lang]}</span>
+						{state !== 'next' && <span class="tl-when">{s.when[lang]}</span>}
+						{state === 'done' && s.source && (
+							<a class="tl-src" href={s.source.url} rel="noopener">{s.source.label[lang]}</a>
+						)}
+						{state === 'next' && s.trigger && (
+							<span class="tl-trigger">{t.stageTrigger}: {s.trigger[lang]}</span>
+						)}
+					</li>
+				);
+			})}
+		</ol>
+	) : (
 <section class="status not-content" aria-labelledby="status-h">
 	<div class="status-stamp" aria-hidden="true">
 		<span class="status-n">{status.stage}</span>
@@ -34,3 +58,5 @@ const fmt = (d: Date) => formatDate(d, lang);
 		}
 	</ol>
 </section>
+)
+}

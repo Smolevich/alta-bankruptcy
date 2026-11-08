@@ -60,7 +60,18 @@ export const collections = {
 			headline: loc,
 			note: loc,
 			checkedAt: z.coerce.date(),
-			stages: z.array(z.object({ n: z.number().int(), title: loc, when: loc })).min(2),
+			stages: z
+				.array(
+					z.object({
+						n: z.number().int(),
+						title: loc,
+						when: loc,
+						// Пройденная стадия: ссылка на источник; будущая: что её запускает.
+						source: z.object({ url: z.string().url(), label: loc }).optional(),
+						trigger: loc.optional(),
+					}),
+				)
+				.min(2),
 			sources,
 		}),
 	}),

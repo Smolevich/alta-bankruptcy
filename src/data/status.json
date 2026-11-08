@@ -25,6 +25,14 @@
           "ru": "30.10.2026",
           "en": "30.10.2026",
           "sr": "30.10.2026"
+        },
+        "source": {
+          "url": "https://www.nbs.rs/sr/scripts/showcontent/index.html?id=21849",
+          "label": {
+            "ru": "Нацбанк, 30.10.2026",
+            "en": "NBS, 30.10.2026",
+            "sr": "NBS, 30.10.2026."
+          }
         }
       },
       {
@@ -38,6 +46,14 @@
           "ru": "03.11.2026",
           "en": "03.11.2026",
           "sr": "03.11.2026"
+        },
+        "source": {
+          "url": "https://www.aod.rs/clan/vest/vest_forma/139",
+          "label": {
+            "ru": "AOD, 03.11.2026",
+            "en": "AOD, 03.11.2026",
+            "sr": "AOD, 03.11.2026."
+          }
         }
       },
       {
@@ -51,6 +67,14 @@
           "ru": "03.11.2026, договор — 05.11.2026",
           "en": "03.11.2026, contract 05.11.2026",
           "sr": "03.11.2026, ugovor 05.11.2026"
+        },
+        "source": {
+          "url": "https://www.posted.co.rs/media/novosti.html",
+          "label": {
+            "ru": "Poštanska, 05.11.2026",
+            "en": "Poštanska, 05.11.2026",
+            "sr": "Poštanska, 05.11.2026."
+          }
         }
       },
       {
@@ -77,6 +101,11 @@
           "ru": "90 дней со дня публикации в «Службени гласник» — срок из решения суда (публикации ещё нет)",
           "en": "90 days from publication in the Official Gazette: the deadline is from the court decision (not published yet)",
           "sr": "90 dana od objavljivanja u „Službenom glasniku“: rok iz rešenja suda (još nije objavljeno)"
+        },
+        "trigger": {
+          "ru": "Публикация объявления в «Службени гласник»: срок подачи начинается только после неё.",
+          "en": "Publication of the notice in the Official Gazette: the filing period starts only after it.",
+          "sr": "Objavljivanje oglasa u „Službenom glasniku“: rok za prijavu počinje tek posle toga."
         }
       },
       {
@@ -90,6 +119,11 @@
           "ru": "до 6 месяцев после срока подачи + до 60 дней (ст. 17)",
           "en": "up to 6 months after the filing period + up to 60 days (art. 17)",
           "sr": "do 6 meseci od isteka roka za prijavu + do 60 dana (čl. 17)"
+        },
+        "trigger": {
+          "ru": "Окончание срока подачи требований.",
+          "en": "The end of the claim filing period.",
+          "sr": "Istek roka za prijavu potraživanja."
         }
       },
       {
@@ -103,6 +137,11 @@
           "ru": "срока по закону нет",
           "en": "no deadline in the law",
           "sr": "zakonom rok nije određen"
+        },
+        "trigger": {
+          "ru": "Итоговый список требований; платят по мере продажи имущества банка.",
+          "en": "The final list of claims; payments follow the sale of the bank’s assets.",
+          "sr": "Konačna lista potraživanja; isplate teku po meri prodaje imovine banke."
         }
       }
     ],
