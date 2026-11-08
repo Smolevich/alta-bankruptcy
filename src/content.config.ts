@@ -66,6 +66,8 @@ export const collections = {
 				.array(
 					z.object({
 						n: z.number().int(),
+						// Идёт параллельно с текущей стадией: на шкале тоже «Мы здесь».
+						parallel: z.boolean().optional(),
 						title: loc,
 						when: loc,
 						// Пройденная стадия: ссылка на источник; будущая: что её запускает.

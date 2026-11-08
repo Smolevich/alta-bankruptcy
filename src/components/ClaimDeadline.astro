@@ -36,8 +36,9 @@ const T = {
 		after: 'После 120-го дня',
 		afterText: 'Требование не примут: его отбросят как опоздавшее.',
 		days90: '90 дней с публикации',
-		rule: 'Как считаем: первый день срока — следующий за публикацией. Если последний день выпадает на выходной или праздник, срок истекает в следующий рабочий день; праздники выше не учтены, поэтому подавайте раньше.',
-		shift: (d: string) => `выходной: срок истекает в ${d}, но надёжнее подать раньше`,
+		rule: 'Как считаем: первый день срока — следующий за публикацией. Если последний день выпадает на выходной или праздник, срок истекает в следующий рабочий день; праздники выше не учтены, поэтому подавайте раньше. Выпуск № 109 датирован 06.11.2026; срок считается от даты выпуска.',
+		shift: (n: number, d0: string, wd: string, d: string) => `${n}-й день — ${d0} (${wd}). Если суд в этот день не работает, срок переносится на ближайший рабочий день (ст. 103 ч. 4 ЗПП) — ${d}`,
+		weekdays: ['воскресенье', 'понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота'],
 		src: 'Основание',
 		court: 'решение суда, п. IV',
 		bank: 'закон о банкротстве банков, ст. 7',
@@ -61,8 +62,9 @@ const T = {
 		after: 'After day 120',
 		afterText: 'The claim will not be accepted: it is dismissed as late.',
 		days90: '90 days from publication',
-		rule: 'How we count: the first day of the period is the day after publication. If the last day falls on a weekend or holiday, the period ends on the next working day; holidays are not accounted for above, so file earlier.',
-		shift: (d: string) => `weekend: the period ends on ${d}, but filing earlier is safer`,
+		rule: 'How we count: the first day of the period is the day after publication. If the last day falls on a weekend or holiday, the period ends on the next working day; holidays are not accounted for above, so file earlier. Issue No. 109 is dated 06.11.2026; the deadline is counted from the issue date.',
+		shift: (n: number, d0: string, wd: string, d: string) => `Day ${n} is ${d0} (${wd}). If the court does not work that day, the period moves to the nearest working day (art. 103 para. 4 Civil Procedure Law) — ${d}`,
+		weekdays: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
 		src: 'Basis',
 		court: 'court decision, item IV',
 		bank: 'Law on Bankruptcy of Banks, art. 7',
@@ -86,8 +88,9 @@ const T = {
 		after: 'Posle 120. dana',
 		afterText: 'Prijava se neće primiti: odbacuje se kao neblagovremena.',
 		days90: '90 dana od objavljivanja',
-		rule: 'Kako računamo: prvi dan roka je dan posle objavljivanja. Ako poslednji dan pada na vikend ili praznik, rok ističe prvog narednog radnog dana; praznici gore nisu uračunati, zato podnesite ranije.',
-		shift: (d: string) => `vikend: rok ističe ${d}, ali je sigurnije podneti ranije`,
+		rule: 'Kako računamo: prvi dan roka je dan posle objavljivanja. Ako poslednji dan pada na vikend ili praznik, rok ističe prvog narednog radnog dana; praznici gore nisu uračunati, zato podnesite ranije. Broj 109 nosi datum 06.11.2026; rok se računa od datuma broja.',
+		shift: (n: number, d0: string, wd: string, d: string) => `${n}. dan je ${d0} (${wd}). Ako sud tog dana ne radi, rok se pomera na najbliži radni dan (čl. 103 st. 4 ZPP) — ${d}`,
+		weekdays: ['nedelja', 'ponedeljak', 'utorak', 'sreda', 'četvrtak', 'petak', 'subota'],
 		src: 'Osnov',
 		court: 'rešenje suda, tačka IV',
 		bank: 'zakon o stečaju banaka, čl. 7',
@@ -117,7 +120,7 @@ const T = {
 			<span class="cd-text">{T.ordinaryText}</span>
 			<span class="cd-date">
 				{w ? T.ordinaryUntil(fmt(w.ordinary.nominal)) : T.days90}
-				{w?.ordinary.weekendShift && <><br />{T.shift(fmt(w.ordinary.weekendShift))}</>}
+				{w?.ordinary.weekendShift && <><br />{T.shift(90, fmt(w.ordinary.nominal), T.weekdays[w.ordinary.nominal.getUTCDay()], fmt(w.ordinary.weekendShift))}</>}
 			</span>
 		</li>
 		<li class="cd-late">
@@ -127,7 +130,7 @@ const T = {
 				w && (
 					<span class="cd-date">
 						{T.lateUntil(`${fmt(w.lateFrom)}|${fmt(w.late.nominal)}`)}
-						{w.late.weekendShift && <><br />{T.shift(fmt(w.late.weekendShift))}</>}
+						{w.late.weekendShift && <><br />{T.shift(120, fmt(w.late.nominal), T.weekdays[w.late.nominal.getUTCDay()], fmt(w.late.weekendShift))}</>}
 					</span>
 				)
 			}
