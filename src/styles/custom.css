@@ -75,6 +75,21 @@ html, body { overflow-x: clip; }
 .done .rail-dot { background: var(--ok); border-color: var(--ok); color: #fff; }
 .rail-when { font-size: 0.8rem; font-weight: 400; color: #5a5448; }
 .rail-more { display: none; }
+.timeline { list-style: none; margin: 1rem 0 1.4rem; padding: 0; }
+.timeline li { position: relative; display: grid; grid-template-columns: 2rem 1fr; column-gap: 0.7rem; padding: 0 0 1.1rem; margin: 0; }
+.timeline li::before { content: ''; position: absolute; left: 0.95rem; top: 1.7rem; bottom: 0; width: 2px; background: var(--ink); opacity: 0.25; }
+.timeline li:last-child { padding-bottom: 0; }
+.timeline li:last-child::before { display: none; }
+.tl-dot { grid-row: span 5; display: grid; place-content: center; width: 1.9rem; height: 1.9rem; border-radius: 50%; border: 1.5px solid var(--ink); font-size: 0.85rem; background: #fff; position: relative; z-index: 1; }
+.tl-done .tl-dot { background: var(--ok); border-color: var(--ok); color: #fff; }
+.tl-now .tl-dot { background: var(--seal); border-color: var(--seal); color: #fff; }
+.tl-state { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; color: #5a5448; }
+.tl-now .tl-state { color: var(--seal); }
+.tl-title { font-weight: 700; line-height: 1.3; }
+.tl-next .tl-title { font-weight: 600; opacity: 0.8; }
+.tl-when, .tl-trigger { font-size: 0.88rem; color: #5a5448; line-height: 1.35; }
+.tl-src { font-size: 0.88rem; overflow-wrap: anywhere; }
+
 @media (max-width: 520px) {
 	.status { grid-template-columns: auto 1fr; gap: 0.4rem 0.8rem; padding: 0.8rem; margin: 0.6rem 0 1.2rem; box-shadow: 4px 4px 0 var(--seal-soft); }
 	.status-stamp { width: 3.4rem; height: 3.4rem; border-width: 2px; }
