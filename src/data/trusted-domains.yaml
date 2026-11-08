@@ -24,7 +24,7 @@
   name: "Pravno-informacioni sistem Republike Srbije — официальная правовая информационная система Сербии (тексты законов)"
   category: official-rs-gov
   proof: "WHOIS RNIDS, регистрант: JP Službeni glasnik (государственное издательство официального вестника); проверено 07.11.2026; slgl.* — портал выпусков «Службени гласник» на том же домене"
-  hosts: [pravno-informacioni-sistem.rs, reg.pravno-informacioni-sistem.rs, slgl.pravno-informacioni-sistem.rs]
+  hosts: [pravno-informacioni-sistem.rs, www.pravno-informacioni-sistem.rs, reg.pravno-informacioni-sistem.rs, slgl.pravno-informacioni-sistem.rs]
 
 - domain: apr.gov.rs
   name: "Agencija za privredne registre — Агентство хозяйственных реестров Сербии (реестр компаний и финансовых отчётов)"
