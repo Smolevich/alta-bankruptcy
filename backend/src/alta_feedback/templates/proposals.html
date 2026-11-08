@@ -115,7 +115,7 @@
   {% if errors %}
   <div class="errors" role="alert" style="margin-top: 14px">{% for e in errors %}<p>{{ e }}</p>{% endfor %}</div>
   {% endif %}
-  <form method="post" action="{{ action }}">
+  <form method="post" action="{{ action }}" data-body-required="{{ t.errors.body }}">
     <label for="title">{{ t.f_title }}<span class="hint">{{ t.f_title_hint }}</span></label>
     <input type="text" id="title" name="title" maxlength="{{ title_max }}" value="{{ values.title or '' }}">
 
@@ -144,6 +144,8 @@
       <label for="website">{{ t.trap }}</label>
       <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
     </div>
+
+    {% include "pow_box.html" %}
 
     <p class="note">{{ t.public_note }}</p>
     <button type="submit">{{ t.submit }}</button>
@@ -188,5 +190,6 @@
 {% endif %}
 {% endif %}
 <a class="back" href="{{ home }}">{{ t.back }}</a>
-{% if kind == "case" %}<script src="/static/pow.js" defer></script>{% else %}<script src="/static/richtext.js"></script>{% endif %}
+{% if kind != "case" %}<script src="/static/richtext.js"></script><script src="/static/proposal-form.js" defer></script>{% endif %}
+<script src="/static/pow.js" defer></script>
 {% endblock %}

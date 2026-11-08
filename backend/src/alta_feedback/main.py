@@ -98,8 +98,8 @@ PUBLIC_ACCOUNTS_MAX = 2000
 LOCAL_TZ = ZoneInfo("Europe/Belgrade")
 STATIC_DIR = Path(__file__).parent / "static"
 SCRIPTS = frozenset({
-    "branch.js", "combo.js", "filters.js", "pdfview.js", "pow.js", "proposals-admin.js", "queue-admin.js",
-    "richtext.js", "voice.js",
+    "branch.js", "combo.js", "filters.js", "pdfview.js", "pow.js", "proposal-form.js", "proposals-admin.js",
+    "queue-admin.js", "richtext.js", "voice.js",
 })
 # Перебор запускает отметка «Я не робот»; среднее число попыток — половина, на Mac ~0,4 с, на телефоне 1–3 с.
 POW_MAX_NUMBER = 200_000
@@ -143,8 +143,8 @@ STATS_PAGE_HEADERS = {
 
 # Страница предложений — служебная для рабочей группы: в поиск не попадает и ссылкам вес не передаёт.
 NOINDEX = {"X-Robots-Tag": "noindex, nofollow"}
-# Форме предложения нужен свой скрипт редактора (static/richtext.js); форме кейса — проверка от ботов
-# (static/pow.js), которая за новой задачей ходит на свой же адрес.
+# Страницам нужны свои скрипты (редактор, проверка полей, проверка от ботов), а проверка за новой
+# задачей ходит на свой же адрес.
 PROPOSALS_PAGE_HEADERS = {
     **NOINDEX,
     "Content-Security-Policy": SECURITY_HEADERS["Content-Security-Policy"].replace(
@@ -565,7 +565,7 @@ def proposals_page(
         summary_max=casebook.SUMMARY_MAX, filed_max=casebook.FILED_MAX, result_max=casebook.RESULT_MAX,
         files_max=uploads.MAX_FILES, file_mb=uploads.FILE_MAX // MB, total_mb=uploads.TOTAL_MAX // MB,
         today=today_local().date().isoformat(),
-        pow=new_challenge(request) if kind == "case" else None, pow_ttl=int(CHALLENGE_TTL.total_seconds()),
+        pow=new_challenge(request), pow_ttl=int(CHALLENGE_TTL.total_seconds()),
     )
 
 
@@ -593,12 +593,15 @@ def proposals_submit(lang: str) -> Callable[[Request], Awaitable[Response]]:
         if is_bot(form):
             return RedirectResponse(path, status_code=303)
         proposal, errors = proposals.parse_proposal(form, lang)
+        now = datetime.now(UTC)
+        solved = verify_payload(request.app.state.pow_key, form.get("altcha", ""), now)
+        if solved is None:
+            errors.append(casebook.TEXTS[lang]["errors"]["pow"])
         if errors:
             # В редактор возвращаем уже очищенный HTML, а не то, что пришло.
             values = {**form, "text": proposal.text} if form.get("text_format") == "html" else form
             return proposals_page(request, lang, values, errors, status_code=400)
         store: Store = request.app.state.store
-        now = datetime.now(UTC)
         ip_hash = ip_hash_of(request)
         if store.recent_from(ip_hash, now, RATE_WINDOW, table="proposals") >= RATE_LIMIT:
             text = proposals.TEXTS[lang]
@@ -607,6 +610,8 @@ def proposals_submit(lang: str) -> Callable[[Request], Awaitable[Response]]:
                 limit_title=text["limit_title"], limit_text=text["limit"],
                 return_url=path, back=text["back"],
             )
+        if not store.claim_challenge(solved.challenge, solved.expires_at, now):
+            return proposals_page(request, lang, form, [casebook.TEXTS[lang]["errors"]["pow"]], status_code=400)
         item_id = store.add_proposal(proposal, ip_hash, request.headers.get("user-agent", "")[:UA_MAX], now)
         store.forget_old_traces(now - TRACE_TTL)
         return RedirectResponse(f"{path}?sent={item_id}#p{item_id}", status_code=303)
