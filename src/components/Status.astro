@@ -23,7 +23,18 @@ const fmt = (d: Date) => formatDate(d, lang);
 						<span class="tl-dot" aria-hidden="true">{state === 'done' ? '✓' : state === 'now' ? '▶' : '○'}</span>
 						<span class="tl-state">{label}</span>
 						<span class="tl-title">{s.n}. {s.title[lang]}</span>
-						{state !== 'next' && <span class="tl-when">{s.when[lang]}</span>}
+						{state !== 'next' && (
+							<span class="tl-when">
+								{s.when[lang]}
+								{s.links?.map((l) => (
+							<>
+								{' · '}
+								<a class="tl-link" href={l.url} target="_blank" rel="noopener">{l.label[lang]}</a>
+								{l.copy && (<>{' ('}<a class="tl-link" href={l.copy} target="_blank" rel="noopener">{t.sourceCopy}</a>{')'}</>)}
+							</>
+						))}
+							</span>
+						)}
 						{state === 'done' && s.source && (
 							<a class="tl-src" href={s.source.url} rel="noopener">{s.source.label[lang]}</a>
 						)}
@@ -52,7 +63,16 @@ const fmt = (d: Date) => formatDate(d, lang);
 				<li class:list={[s.n < status.stage && 'done', s.n === status.stage && 'now']} aria-current={s.n === status.stage ? 'step' : undefined}>
 					<span class="rail-dot">{s.n < status.stage ? '✓' : s.n}</span>
 					<span class="rail-title">{s.title[lang]}</span>
-					<span class="rail-when">{s.when[lang]}</span>
+					<span class="rail-when">
+						{s.when[lang]}
+						{s.links?.map((l) => (
+							<>
+								{' · '}
+								<a class="rail-link" href={l.url} target="_blank" rel="noopener">{l.label[lang]}</a>
+								{l.copy && (<>{' ('}<a class="rail-link" href={l.copy} target="_blank" rel="noopener">{t.sourceCopy}</a>{')'}</>)}
+							</>
+						))}
+					</span>
 				</li>
 			))
 		}
