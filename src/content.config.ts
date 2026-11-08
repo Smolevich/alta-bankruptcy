@@ -70,6 +70,8 @@ export const collections = {
 						parallel: z.boolean().optional(),
 						title: loc,
 						when: loc,
+						// Ссылки рядом со сроком (текст объявления, страница выпуска); copy — копия в веб-архиве.
+						links: z.array(z.object({ label: loc, url: z.string().url(), copy: z.string().url().optional() })).optional(),
 						// Пройденная стадия: ссылка на источник; будущая: что её запускает.
 						source: z.object({ url: z.string().url(), label: loc }).optional(),
 						trigger: loc.optional(),
