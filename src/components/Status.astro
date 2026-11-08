@@ -16,7 +16,7 @@ const fmt = (d: Date) => formatDate(d, lang);
 	variant === 'timeline' ? (
 		<ol class="timeline not-content" aria-label={t.allStages}>
 			{status.stages.map((s) => {
-				const state = s.n < status.stage ? 'done' : s.n === status.stage ? 'now' : 'next';
+				const state = s.n < status.stage ? 'done' : s.n === status.stage || s.parallel ? 'now' : 'next';
 				const label = state === 'done' ? t.stageDone : state === 'now' ? t.stageNow : t.stageNext;
 				return (
 					<li class={`tl-${state}`} aria-current={state === 'now' ? 'step' : undefined}>
