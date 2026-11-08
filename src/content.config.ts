@@ -44,7 +44,7 @@ export const collections = {
 		schema: z.object({
 			title: z.string().min(1),
 			date: z.coerce.date(),
-			publisher: z.enum(['aod', 'nbs', 'bank', 'postanska', 'court']),
+			publisher: z.enum(['aod', 'nbs', 'bank', 'postanska', 'court', 'city']),
 			summary: z.string().min(20).max(900),
 			// Порядок среди новостей одного дня: больше — выше.
 			order: z.number().default(0),
