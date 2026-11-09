@@ -81,10 +81,12 @@ The database goes to `$DATA_DIR/feedback.db` (default `data/`).
   never public.
 - **No third-party scripts, fonts or trackers.** CSP is `default-src 'none'`; only
   `/account` adds `script-src 'self'` and `connect-src 'self'` (fresh PoW challenge), and
-  `/account/stats` adds only `script-src 'self'` (`static/filters.js`: search lists and date fields;
+  `/account/stats` adds only `script-src 'self'` (`static/select-combo.js`: the site-wide dropdown
+  for every `<select data-combo>` (`="search"` adds search), also on `/vyplata/` and the proposals
+  admin, styles in `base.html` and `src/styles/custom.css`; `static/filters.js`: date fields;
   without JS the filters stay plain `<select>`/`<input type=date>`; `static/pdfview.js`: the PDF
   viewer) and `object-src`/`frame-src 'self'` for the bank forms in that viewer; `/predlozheniya/`
-  adds `script-src 'self'` for the text editor. The pure search logic of `filters.js` is tested
+  adds `script-src 'self'` for the text editor. The pure search logic of `select-combo.js` is tested
   with `node --test tests/js/filters.test.js`.
 - **Formatted text only through `richtext.sanitize`.** Allowed: p, br, strong, em, h2, h3, ul, ol,
   li, blockquote, a (http/https `href` only, our `rel`). Stored text is already cleaned and is cleaned

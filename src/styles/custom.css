@@ -439,6 +439,51 @@ html, body { overflow-x: clip; }
 select:not(starlight-lang-select select, starlight-theme-select select) { appearance: none; -webkit-appearance: none; box-sizing: border-box; max-width: 100%; text-overflow: ellipsis; min-height: 48px; margin: 0; padding: 0 44px 0 14px; border: 1px solid var(--line); border-radius: 12px; background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231b2430' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 14px center / 20px 20px; color: var(--ink); font: 400 16px/1.2 var(--sl-font-system); cursor: pointer; }
 select:not(starlight-lang-select select, starlight-theme-select select):hover { border-color: #b9b09a; }
 .bc-city select { padding-right: 36px; background-position: right 10px center; }
+/* Выпадающий список вместо системного (backend/.../static/select-combo.js), тот же вид, что у select выше;
+   его же стили для форм бэкенда — в backend/.../templates/base.html. */
+.combo-native { display: none !important; }
+.combo-select { position: relative; min-width: 0; max-width: 100%; }
+.combo-select[hidden] { display: none; }
+.combo-select .combo-face, .combo-select .combo-input { display: block; box-sizing: border-box; width: 100%; min-width: 0; max-width: 100%; min-height: 48px; margin: 0; padding: 0 44px 0 14px; border: 1px solid var(--line); border-radius: 12px; background: #fff; color: var(--ink); font: 400 16px/46px var(--sl-font-system); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; cursor: pointer; user-select: none; transition: border-color 0.15s, box-shadow 0.15s; }
+.combo-select .combo-input { line-height: 1.2; cursor: text; user-select: auto; }
+.combo-select .combo-input::placeholder { color: var(--ink); opacity: 1; }
+.combo-select.chosen .combo-input { font-weight: 700; }
+.combo-select .combo-face:hover, .combo-select .combo-input:hover { border-color: #b9b09a; }
+.combo-select .combo-face:focus, .combo-select .combo-input:focus { outline: none; }
+.combo-select .combo-face:focus-visible, .combo-select .combo-input:focus-visible { outline: 2px solid var(--seal); outline-offset: 2px; }
+.combo-select.open .combo-face, .combo-select.open .combo-input { border-color: var(--ink); }
+.combo-select::after { content: ''; position: absolute; right: 18px; top: 50%; width: 7px; height: 7px; margin-top: -6px; border: solid var(--ink); border-width: 0 2px 2px 0; transform: rotate(45deg); pointer-events: none; transition: transform 0.15s, margin-top 0.15s; }
+.combo-select.open::after { transform: rotate(-135deg); margin-top: -1px; }
+.combo-select.chosen:not(.combo-pick)::after { display: none; }
+/* Переключатель языка Starlight остаётся системным <select> (его слушает Starlight), но там, где браузер
+   умеет appearance: base-select (Chrome), его раскрытый список рисуем в стиле наших списков. */
+@supports (appearance: base-select) {
+	starlight-lang-select select, starlight-lang-select select::picker(select) { appearance: base-select; }
+	starlight-lang-select select { border: 0; background: transparent; cursor: pointer; }
+	starlight-lang-select select::picker-icon { display: none; }
+	starlight-lang-select select::picker(select) { margin-top: 6px; padding: 4px; border: 1px solid var(--line); border-radius: 12px; background: #fffdf7; box-shadow: 0 8px 24px rgba(27, 36, 48, 0.18); }
+	starlight-lang-select option { display: flex; align-items: center; gap: 8px; min-height: 44px; box-sizing: border-box; padding: 8px 14px 8px 12px; border-radius: 8px; color: var(--ink); font: 400 16px/1.3 var(--sl-font-system); cursor: pointer; }
+	starlight-lang-select option::checkmark { color: var(--seal); }
+	starlight-lang-select option:checked { font-weight: 700; }
+	starlight-lang-select option:hover, starlight-lang-select option:focus-visible { background: #f1e9d6; outline: none; }
+}
+.bc-city .combo-face { padding-right: 34px; }
+.bc-city .combo-select::after { right: 14px; }
+.combo-select .combo-clear { position: absolute; z-index: 2; right: 3px; top: 50%; transform: translateY(-50%); display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; margin: 0; padding: 0; border: 0; border-radius: 8px; background: none; color: #5a5448; cursor: pointer; }
+.combo-select .combo-clear[hidden] { display: none; }
+.combo-select .combo-clear::before { content: '×'; font-size: 24px; line-height: 1; }
+.combo-select .combo-clear:hover { color: var(--seal); background: var(--seal-soft); }
+.combo-select .combo-list { position: absolute; z-index: 20; top: calc(100% + 6px); left: 0; box-sizing: border-box; min-width: 100%; width: max-content; max-width: min(420px, calc(100vw - 32px)); max-height: 340px; margin: 0; padding: 4px; list-style: none; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; text-align: left; background: #fffdf7; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 8px 24px rgba(27, 36, 48, 0.18); }
+.combo-select .combo-list[hidden] { display: none; }
+.combo-select .combo-list.up { top: auto; bottom: calc(100% + 6px); }
+.combo-select .combo-list.end { left: auto; right: 0; }
+.combo-select .combo-option { position: relative; display: flex; align-items: center; min-height: 44px; box-sizing: border-box; margin: 0; padding: 8px 12px 8px 34px; border-radius: 8px; color: var(--ink); font: 400 16px/1.3 var(--sl-font-system); cursor: pointer; overflow-wrap: anywhere; -webkit-tap-highlight-color: transparent; }
+.combo-select .combo-option.all { color: #5a5448; }
+.combo-select .combo-option[aria-selected='true'] { font-weight: 700; }
+.combo-select .combo-option[aria-selected='true']::before { content: ''; position: absolute; left: 13px; top: 50%; width: 5px; height: 10px; margin-top: -7px; border: solid var(--seal); border-width: 0 2px 2px 0; transform: rotate(45deg); }
+.combo-select .combo-option.active, .combo-select .combo-option:hover { background: #f1e9d6; }
+.combo-select .combo-option mark { background: none; color: var(--seal); font-weight: 700; }
+.combo-select .combo-empty { padding: 12px; font-size: 14px; color: #5a5448; }
 select:focus-visible, .bc-seg input:focus-visible + span, .branch-controls button:focus-visible, .bl-actions a:focus-visible, .bl-actions button:focus-visible, .bc-more summary:focus-visible, .bl summary:focus-visible { outline: 2px solid var(--seal); outline-offset: 2px; }
 .bc-seg { display: flex; flex-direction: row; flex-wrap: nowrap; gap: 0; }
 .bc-seg > label { position: relative; flex: 1 1 0; min-width: 0; }
@@ -819,3 +864,9 @@ select:focus-visible, .bc-seg input:focus-visible + span, .branch-controls butto
 .cd-scale .cd-late .cd-date { font-weight: 400; }
 .deadline-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1rem; margin: 0 0 1rem; font: 700 1.15rem/1.3 var(--serif); }
 .deadline-cta .form-btn { min-height: 2.5rem; }
+
+/* Чек-листы из Markdown (- [ ]): системный флажок там серый и 13 px — рисуем свой, в цвет сайта. */
+.sl-markdown-content .contains-task-list { padding-left: 0; list-style: none; }
+.sl-markdown-content .task-list-item { position: relative; padding-left: 30px; }
+.sl-markdown-content .task-list-item input[type='checkbox'] { position: absolute; left: 0; top: 0.2em; appearance: none; -webkit-appearance: none; width: 20px; height: 20px; margin: 0; border: 1.5px solid var(--ink); border-radius: 5px; background: #fff; opacity: 1; }
+.sl-markdown-content .task-list-item input[type='checkbox']:checked { border-color: var(--seal); background: var(--seal) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 12 5 5 9-10'/%3E%3C/svg%3E") no-repeat center / 14px 14px; }

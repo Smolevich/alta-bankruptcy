@@ -272,12 +272,12 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 	</p>
 
 	<div class="branch-controls" role="group" aria-label={T.fLabel} data-free={T.freeAt} data-shown={T.listCount} hidden>
-		<label class="bc-city"><span class="sr-only">{T.fCity}</span>
-			<select class="f-city" aria-label={T.fCity}>
+		<div class="bc-city">
+			<select class="f-city" aria-label={T.fCity} data-combo>
 				<option value="">{T.fAllCities} · {points.length}</option>
 				{order.map((k) => <option value={k} selected={k === 'BEOGRAD'}>{CITIES[k][lang]} · {cityCount(k)}</option>)}
 			</select>
-		</label>
+		</div>
 		<fieldset class="bc-seg bc-day">
 			<legend class="sr-only">{T.fDay}</legend>
 			<label><input type="radio" name="f-day" value="wd" checked /><span>{T.weekdays}</span></label>
@@ -287,7 +287,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			<summary>{T.more}</summary>
 			<div class="bc-more-body">
 				<label class="bc-field bc-hour">{T.fHour}
-					<select class="f-hour">
+					<select class="f-hour" data-combo>
 						<option value="">{T.anyHour}</option>
 						{Array.from({ length: 12 }, (_, i) => i + 8).map((h) => <option value={h}>{h}:00</option>)}
 					</select>
@@ -407,6 +407,8 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 	</p>
 </div>
 
+<!-- Выпадающие списки в стиле сайта вместо системных; тот же скрипт у форм бэкенда. Без него остаются обычные <select>. -->
+<script is:inline src="/static/select-combo.js" defer></script>
 <script>
 	import { attachVoice, voiceSupported } from '../scripts/voice';
 	import { branchStatus, canReport, parseRange, reportsFrom } from '../lib/branch-hours.mjs';

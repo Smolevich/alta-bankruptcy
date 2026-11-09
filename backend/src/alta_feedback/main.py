@@ -99,7 +99,7 @@ LOCAL_TZ = ZoneInfo("Europe/Belgrade")
 STATIC_DIR = Path(__file__).parent / "static"
 SCRIPTS = frozenset({
     "branch.js", "combo.js", "filters.js", "pdfview.js", "pow.js", "proposal-form.js", "proposals-admin.js",
-    "queue-admin.js", "richtext.js", "voice.js",
+    "queue-admin.js", "richtext.js", "select-combo.js", "voice.js",
 })
 # Перебор запускает отметка «Я не робот»; среднее число попыток — половина, на Mac ~0,4 с, на телефоне 1–3 с.
 POW_MAX_NUMBER = 200_000
