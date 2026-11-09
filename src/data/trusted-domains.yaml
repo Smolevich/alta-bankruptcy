@@ -44,6 +44,12 @@
   proof: "Зона gov.rs выдаётся только органам власти Сербии (WHOIS RNIDS); проверено 07.11.2026"
   hosts: [www.mup.gov.rs]
 
+- domain: jt.rs
+  name: "Javno tužilaštvo — Прокуратура Сербии (tok.jt.rs — Прокуратура по организованной преступности)"
+  category: official-rs-gov
+  proof: "WHOIS RNIDS, регистрант: MINISTARSTVO PRAVDE (Министерство юстиции); проверено 09.11.2026"
+  hosts: [tok.jt.rs, www.tok.jt.rs]
+
 - domain: ravnopravnost.gov.rs
   name: "Poverenik za zaštitu ravnopravnosti — Уполномоченный по защите равноправия Сербии"
   category: official-rs-gov

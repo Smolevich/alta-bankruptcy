@@ -30,6 +30,10 @@ const EXTRA_COPIES: Record<string, string> = {
 		'privredni-sud-2026-11-03-resenje-10-st-275-2026.pdf',
 	'http://www.bg.pr.sud.rs/files/files/Saopstenje(1).pdf':
 		'privredni-sud-2026-11-06-saopstenje-alta.pdf',
+	'https://www.tok.jt.rs/html_tok/saopstenja/saopstenje_20261031_cir.pdf':
+		'tok-2026-10-31-saopstenje.pdf',
+	'https://www.tok.jt.rs/html_tok/saopstenja/saopstenje_20261102_1_cir.pdf':
+		'tok-2026-11-02-saopstenje.pdf',
 	'https://www.aod.rs/uploads/dokumenti/kvartalniizvestaj/Univerzal%20banka_1%20kvartal%202026.pdf':
 		'aod-univerzal-2026-q1-kvartalni-izvestaj.pdf',
 	'https://web.archive.org/web/20160830213118/http://aod.rs/pdf/2014-02-06-obavestenje-o-nacinu-izmirivanja.pdf':
