@@ -52,6 +52,7 @@ export default defineConfig({
 			// «Назад/Далее» внизу страницы идут в порядке бокового меню, как плитки на главной.
 			pagination: true,
 			customCss: ['./src/styles/custom.css'],
+			routeMiddleware: './src/route-data.ts',
 			components: {
 				Footer: './src/components/Footer.astro',
 				SocialIcons: './src/components/SocialIcons.astro',
