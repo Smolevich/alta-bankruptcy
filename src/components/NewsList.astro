@@ -24,6 +24,17 @@ const fmt = (d: Date) => formatDate(d, lang);
 					<span class={`pub pub-${n.data.publisher}`}>{PUBLISHER[n.data.publisher]}</span>
 				</div>
 				<h3>{n.data.title}</h3>
+				{n.data.outdated && (
+					<p class="news-outdated">
+						<strong>{UI[lang].outdated}:</strong> {n.data.outdated.note}
+						{n.data.outdated.links.map((l) => (
+							<>
+								{' '}
+								<a href={l.href}>{l.label}</a>
+							</>
+						))}
+					</p>
+				)}
 				<p>{n.data.summary}</p>
 				{n.data.forms && !limit && <FormCards forms={n.data.forms} lang={lang} fields={false} />}
 				<p class="news-src">
