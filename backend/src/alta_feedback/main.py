@@ -611,7 +611,8 @@ def proposals_submit(lang: str) -> Callable[[Request], Awaitable[Response]]:
                 return_url=path, back=text["back"],
             )
         if not store.claim_challenge(solved.challenge, solved.expires_at, now):
-            return proposals_page(request, lang, form, [casebook.TEXTS[lang]["errors"]["pow"]], status_code=400)
+            pow_error = casebook.TEXTS[lang]["errors"]["pow"]
+            return proposals_page(request, lang, form, [pow_error], status_code=400)
         item_id = store.add_proposal(proposal, ip_hash, request.headers.get("user-agent", "")[:UA_MAX], now)
         store.forget_old_traces(now - TRACE_TTL)
         return RedirectResponse(f"{path}?sent={item_id}#p{item_id}", status_code=303)
