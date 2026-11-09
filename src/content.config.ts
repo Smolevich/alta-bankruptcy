@@ -67,7 +67,9 @@ export const collections = {
 			// Дата выхода объявления в «Службени гласник» (YYYY-MM-DD); null, пока объявления нет.
 			publicationDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().default(null),
 			headline: loc,
-			note: loc,
+			// Карточка на главной: по строке на каждый случай (до 50 000 € / больше) и ссылка на действие.
+			paths: z.array(z.object({ lead: loc, text: loc, link: loc, href: z.string().startsWith('/') })).default([]),
+			note: loc.optional(),
 			checkedAt: z.coerce.date(),
 			stages: z
 				.array(

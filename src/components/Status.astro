@@ -54,7 +54,14 @@ const fmt = (d: Date) => formatDate(d, lang);
 	<div class="status-body">
 		<p class="status-label" id="status-h">{t.statusNow} {status.stage}</p>
 		<p class="status-headline">{status.headline[lang]}</p>
-		<p class="status-note">{status.note[lang]}</p>
+		{status.paths.length > 0 && (
+			<ul class="status-paths">
+				{status.paths.map((p) => (
+					<li><strong>{p.lead[lang]}</strong> — {p.text[lang]} <a href={href(lang, p.href)}>{p.link[lang]}&nbsp;→</a></li>
+				))}
+			</ul>
+		)}
+		{status.note && <p class="status-note">{status.note[lang]}</p>}
 		<p class="status-checked">{t.checkedOn} {fmt(status.checkedAt).replace(/\.$/, '')}. <span class="status-update">{t.statusUpdate}</span> <a class="rail-more" href={href(lang, '/procedura/')}>{t.allStages}: {status.stages.length} →</a></p>
 	</div>
 	<ol class="rail" aria-label={t.allStages}>

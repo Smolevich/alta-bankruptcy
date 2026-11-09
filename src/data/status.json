@@ -8,11 +8,28 @@
       "en": "Payout of up to €50,000 starts on 13.11.2026 at Poštanska štedionica",
       "sr": "Isplata do 50.000 € počinje 13.11.2026. u Poštanskoj štedionici"
     },
-    "note": {
-      "ru": "06.11.2026 AOD объявил: выплата застрахованных вкладов ALTA banka до 50 000 € на вкладчика начинается 13.11.2026 через Banka Poštanska štedionica, в её отделениях, назначенных для вкладчиков ALTA. Динарные вклады платят в динарах, валютные — в евро по среднему курсу на 03.11.2026. Список отделений AOD опубликовал 06.11. В списке 54 отделения в 13 городах. Одно из них в Белграде (Kraljice Marije 3) помечено «специализированное, только для выплаты» (SPECIJALIZOVANA EKSPOZITURA SAMO ZA ISPLATU). Что значит эта пометка, из документа AOD не ясно — ждём пояснений. Подать заявление можно до 03.11.2029. С собой: документ личности и оригинал документа о вкладе; ИП и фирмам — ещё ОП-образац и при необходимости доверенность. Если вместо физлица идёт другой человек — доверенность, заверенная нотариусом, с датой не раньше дня отзыва лицензии (30.10.2026). 06.11.2026 оглас об открытии банкротства опубликован в «Службени гласник» № 109: идёт 90-дневный срок подачи требований сверх 50 000 € в Привредный суд, объявление вышло 06.11.2026 и в срок не входит: день 1 — 7 ноября, 90-й день (последний) — 4 февраля 2027.",
-      "en": "On 06.11.2026 AOD announced that the payout of insured ALTA banka deposits, up to €50,000 per depositor, starts on 13.11.2026 through Banka Poštanska štedionica, at its branches designated for ALTA depositors. Dinar deposits are paid in dinars, foreign-currency deposits in euros at the middle rate of 03.11.2026. AOD published the branch list on 06.11. The list has 54 branches in 13 cities. One of them, in Belgrade (Kraljice Marije 3), is marked “specialised, for payout only” (SPECIJALIZOVANA EKSPOZITURA SAMO ZA ISPLATU). What this mark means is not clear from the AOD document; we are waiting for clarification. You can apply until 03.11.2029. Bring an identity document and the original deposit document; sole traders and companies also the OP form and, if needed, an authorisation. If someone else goes for an individual: an authorisation certified by a notary, dated no earlier than the day the licence was revoked (30.10.2026). On 06.11.2026 the notice of the opening of bankruptcy was published in the Official Gazette No. 109: the 90-day period for filing claims above €50,000 with the Commercial Court is running, the notice came out on 06.11.2026 and that day does not count: day 1 is 7 November, day 90 (the last) is 4 February 2027.",
-      "sr": "AOD je 06.11.2026. objavila da isplata osiguranih depozita Alta banke do 50.000 € po deponentu počinje 13.11.2026. preko Banke Poštanska štedionica, u ekspoziturama određenim za deponente Alta banke. Dinarski depoziti isplaćuju se u dinarima, devizni u evrima po srednjem kursu na dan 03.11.2026. AOD je 06.11. objavila spisak ekspozitura. Na spisku su 54 ekspoziture u 13 gradova. Jedna od njih, u Beogradu (Kraljice Marije 3), u spisku nosi oznaku „SPECIJALIZOVANA EKSPOZITURA SAMO ZA ISPLATU”. Šta ta oznaka znači, iz dokumenta AOD nije jasno; čekamo pojašnjenje. Zahtev se može podneti do 03.11.2029. Ponesite ispravu o identitetu i original isprave o depozitu; preduzetnici i pravna lica i OP obrazac i, po potrebi, ovlašćenje. Ako umesto fizičkog lica dolazi drugo lice: ovlašćenje overeno kod javnog beležnika, sa datumom ne starijim od dana oduzimanja dozvole (30.10.2026). Oglas o otvaranju stečaja objavljen je 06.11.2026. u „Službenom glasniku“ br. 109: teče rok od 90 dana za prijavu potraživanja iznad 50.000 € Privrednom sudu, oglas je izašao 06.11.2026 i taj dan se ne računa: prvi dan je 7. novembar, 90. (poslednji) dan je 4. februar 2027.."
-    },
+    "paths": [
+      {
+        "lead": { "ru": "До 50 000 €", "en": "Up to €50,000", "sr": "Do 50.000 €" },
+        "text": {
+          "ru": "с 13.11 в отделениях Poštanska. С собой: документ личности и оригинал документа о вкладе.",
+          "en": "from 13.11 at Poštanska branches. Bring an identity document and the original deposit document.",
+          "sr": "od 13.11. u ekspoziturama Poštanske štedionice. Ponesite ispravu o identitetu i original isprave o depozitu."
+        },
+        "link": { "ru": "Что взять и куда идти", "en": "What to bring and where to go", "sr": "Šta poneti i gde" },
+        "href": "/vyplata/#what-to-bring"
+      },
+      {
+        "lead": { "ru": "Больше 50 000 €", "en": "More than €50,000", "sr": "Više od 50.000 €" },
+        "text": {
+          "ru": "первые 50 000 € так же получите в Poštanska. Сумму сверх них заявите в суд до 4 февраля 2027.",
+          "en": "you get the first €50,000 at Poštanska too. Claim the amount above it with the court by 4 February 2027.",
+          "sr": "prvih 50.000 € takođe dobijate u Poštanskoj štedionici. Iznos iznad toga prijavite sudu do 4. februara 2027."
+        },
+        "link": { "ru": "Как подать", "en": "How to file", "sr": "Kako podneti prijavu" },
+        "href": "/trebovanie/"
+      }
+    ],
     "checkedAt": "2026-11-08",
     "stages": [
       {

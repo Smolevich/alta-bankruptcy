@@ -65,6 +65,9 @@ html, body { overflow-x: clip; }
 .status-label { margin: 0; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--seal); font-weight: 700; }
 .status-headline { margin: 0.2rem 0 0.5rem; font: 700 clamp(1.5rem, 4.5vw, 2.2rem)/1.15 var(--serif); }
 .status-note { margin: 0 0 0.4rem; }
+.status-paths { list-style: none; margin: 0 0 0.5rem; padding: 0; display: grid; gap: 0.45rem; }
+.status-paths li { margin: 0; line-height: 1.4; }
+.status-paths a { font-weight: 700; color: var(--seal); }
 .status-checked { margin: 0; font-size: 0.85rem; color: #5a5448; }
 .rail { grid-column: 1 / -1; list-style: none; margin: 0.6rem 0 0; padding: 0; display: grid; gap: 0.35rem; counter-reset: none; }
 .rail li { display: grid; grid-template-columns: 1.7rem 1fr; column-gap: 0.6rem; align-items: baseline; padding: 0.15rem 0; margin: 0; opacity: 0.6; }
@@ -101,7 +104,7 @@ html, body { overflow-x: clip; }
 	.status-body { display: contents; }
 	.status-label, .status-headline { grid-column: 2; }
 	.status-stamp { grid-row: span 2; align-self: center; }
-	.status-note, .status-checked { grid-column: 1 / -1; }
+	.status-note, .status-paths, .status-checked { grid-column: 1 / -1; }
 	.rail, .status-update { display: none; }
 	.sl-heading-wrapper:has(+ .steps3) { margin-top: 1rem !important; }
 	.sl-heading-wrapper:has(+ .steps3) h2 { font-size: 1.45rem; }
