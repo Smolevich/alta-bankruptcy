@@ -1,3 +1,4 @@
+import html
 import re
 import sqlite3
 
@@ -6,6 +7,7 @@ from starlette.testclient import TestClient
 
 from alta_feedback import proposals
 from alta_feedback.main import create_app
+from alta_feedback.pow import Challenge, encode_payload, solve
 
 TOKEN = "admin-secret"
 AUTH = {"Authorization": f"Bearer {TOKEN}"}
@@ -14,11 +16,26 @@ PAGE = "/predlozheniya/"
 
 @pytest.fixture
 def client(tmp_path) -> TestClient:
-    return TestClient(create_app(data_dir=tmp_path, admin_token=TOKEN, ip_salt="salt"))
+    return TestClient(create_app(data_dir=tmp_path, admin_token=TOKEN, ip_salt="salt", pow_max_number=50))
 
 
-def propose(client: TestClient, ip: str = "203.0.113.5", path: str = PAGE, **fields):
+def solved_pow(client: TestClient, path: str = PAGE) -> str:
+    page = client.get(path).text
+
+    def attr(name: str) -> str:
+        return html.unescape(re.search(rf'data-{name}="([^"]*)"', page).group(1))
+
+    challenge = Challenge(
+        attr("algorithm"), attr("challenge"), attr("salt"), attr("signature"), int(attr("maxnumber"))
+    )
+    return encode_payload(challenge, solve(challenge))
+
+
+def propose(
+    client: TestClient, ip: str = "203.0.113.5", path: str = PAGE, altcha: str | None = None, **fields,
+):
     data = {
+        "altcha": solved_pow(client, path) if altcha is None else altcha,
         "title": "Сроки подачи требования",
         "text": "Срок — 30 дней с публикации решения суда.",
         "sources": "https://www.aod.rs/\nРешение Привредного суда от 03.11.2026",
@@ -384,3 +401,23 @@ def test_sources_field_over_limit_says_so(client, path, message):
 ])
 def test_form_says_sources_are_optional(client, path, hint):
     assert hint in client.get(path).text
+
+
+def test_proposal_without_bot_check_is_rejected_and_not_stored(client):
+    assert propose(client, altcha="").status_code == 400
+    assert admin_items(client) == []
+
+
+def test_proposal_with_forged_bot_check_is_rejected(client):
+    assert propose(client, altcha="bm90LWEtdG9rZW4=").status_code == 400
+
+
+def test_proposal_reusing_a_solved_bot_check_is_rejected(client):
+    token = solved_pow(client)
+    assert propose(client, altcha=token).status_code == 303
+    assert propose(client, altcha=token).status_code == 400
+
+
+def test_proposal_form_shows_bot_check_in_every_language(client):
+    for path in ("/predlozheniya/", "/en/predlozheniya/", "/sr/predlozheniya/"):
+        assert 'id="pow"' in client.get(path).text

@@ -1,0 +1,12 @@
+    <div id="pow" class="pow" data-state="idle" data-algorithm="{{ pow.algorithm }}"
+         data-challenge="{{ pow.challenge }}" data-salt="{{ pow.salt }}" data-signature="{{ pow.signature }}"
+         data-maxnumber="{{ pow.maxnumber }}" data-ttl="{{ pow_ttl }}" data-texts="{{ c.pow | tojson | forceescape }}">
+      <input type="hidden" name="altcha" value="">
+      <div id="pow-box" class="pow-box" role="checkbox" aria-checked="false" tabindex="0"
+           aria-labelledby="pow-text" aria-describedby="pow-hint">
+        <span class="pow-mark" aria-hidden="true"></span>
+        <span id="pow-text" class="pow-text" aria-live="polite">{{ c.pow.label }}</span>
+        <span class="pow-note">{% for part in c.pow.note.split("<br>") %}{{ part }}{% if not loop.last %}<br>{% endif %}{% endfor %}</span>
+      </div>
+      <p id="pow-hint" class="pow-hint" aria-live="polite"><noscript>{{ c.pow.nojs }}</noscript></p>
+    </div>
