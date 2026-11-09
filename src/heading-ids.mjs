@@ -6,7 +6,7 @@ export const HEADING_IDS = {
 	bank: ['ownership', 'board', 'executive-board', 'capital', 'unknowns'],
 	bezopasnost: ['no-queue-buying', 'what-not-to-send', 'payout-is-free', 'fake-aod', 'check-lawyer', 'complaints'],
 	'imushchestvo-banka': ['all-assets', 'cash', 'real-estate', 'related-parties', 'valuation', 'not-disclosed'],
-	index: ['most-asked', 'after-court-decision', 'three-steps', 'save-documents', 'when-to-file', 'what-to-expect', 'latest-news', 'up-to-50000', 'all-sections'],
+	index: ['three-steps', 'save-documents', 'when-to-file', 'what-to-expect', 'all-sections', 'most-asked', 'after-court-decision', 'latest-news'],
 	'kak-bylo': ['in-short', 'univerzal-2014', 'univerzal-still-open', 'other-cases'],
 	'nalog-kvartira': ['in-short', 'completed-flat', 'mutual-cancellation', 'notary-cancellation', 'under-construction', 'transfer-tax', 'full-answer'],
 	'otkaz-scheta': ['in-short', 'your-rights', 'step-1', 'step-2', 'step-3', 'citizenship', 'complaint-template', 'chat-example', 'compare-banks', 'record-result'],
