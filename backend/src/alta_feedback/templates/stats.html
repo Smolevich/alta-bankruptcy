@@ -136,7 +136,7 @@
     letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted);
   }
   /* Общий вид поля; select и date без скрипта выглядят так же, только со стрелкой браузера внутри. */
-  .filters select, .filters input[type=date], .filters .combo-input, .date {
+  .filters select, .filters input[type=date], .date {
     display: block; width: 100%; min-width: 0; max-width: 100%; margin: 0; height: 48px;
     font: inherit; font-size: 16px; font-weight: 400; line-height: 1.2; color: var(--ink); background-color: #fff;
     border: 1px solid var(--line); border-radius: 12px; padding: 0 14px;
@@ -144,54 +144,12 @@
   }
   .filters select { padding-right: 44px; }
   .filters input[type=date] { -webkit-appearance: none; appearance: none; }
-  .filters select:hover, .combo-input:hover, .date:hover { border-color: var(--ink); }
-  .filters select:focus, .filters input[type=date]:focus, .combo-input:focus, .date:focus-within {
+  .filters select:hover, .date:hover { border-color: var(--ink); }
+  .filters select:focus, .filters input[type=date]:focus, .date:focus-within {
     outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--seal-soft);
   }
   .filters select[hidden] { display: none; }
   .field { scroll-margin-top: 68px; }
-  .combo { position: relative; }
-  .combo-input { padding-right: 44px; text-overflow: ellipsis; }
-  .combo-input::placeholder { color: var(--ink); opacity: 1; }
-  .combo.chosen .combo-input { font-weight: 700; }
-  .combo::after {
-    content: ""; position: absolute; right: 17px; top: 50%; width: 7px; height: 7px; margin-top: -6px;
-    border: solid var(--ink); border-width: 0 2px 2px 0; transform: rotate(45deg); pointer-events: none;
-    transition: transform 0.15s, margin-top 0.15s;
-  }
-  .combo.open::after { transform: rotate(-135deg); margin-top: -1px; }
-  .combo.chosen::after { display: none; }
-  .filters .combo-clear, .filters .date-clear {
-    position: absolute; z-index: 2; right: 3px; top: 50%; transform: translateY(-50%);
-    display: flex; align-items: center; justify-content: center; width: 40px; min-height: 0; height: 40px;
-    margin: 0; padding: 0; border: 0; border-radius: 3px; background: none; color: var(--muted); cursor: pointer;
-  }
-  .filters .combo-clear[hidden], .filters .date-clear[hidden] { display: none; }
-  .combo-clear::before, .date-clear::before { content: "×"; font-size: 24px; line-height: 1; }
-  .filters .combo-clear:hover, .filters .date-clear:hover { color: var(--accent); background: var(--seal-soft); filter: none; }
-  .combo-list {
-    position: absolute; z-index: 5; top: calc(100% + 6px); left: 0; min-width: 100%; width: max-content;
-    max-width: min(420px, calc(100vw - 32px)); max-height: 340px; margin: 0; padding: 4px; list-style: none;
-    overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
-    background: var(--surface); border: 2px solid var(--ink); border-radius: 4px; box-shadow: 4px 4px 0 var(--seal-soft);
-  }
-  .combo-list[hidden] { display: none; }
-  .combo-list.up { top: auto; bottom: calc(100% + 6px); }
-  .combo-list.end { left: auto; right: 0; }
-  .combo-option {
-    position: relative; display: flex; align-items: center; min-height: 46px; padding: 8px 12px 8px 34px;
-    border-radius: 3px; font-size: 16px; line-height: 1.3; cursor: pointer; overflow-wrap: anywhere;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .combo-option.all { color: var(--muted); }
-  .combo-option[aria-selected=true] { font-weight: 700; }
-  .combo-option[aria-selected=true]::before {
-    content: ""; position: absolute; left: 13px; top: 50%; width: 5px; height: 10px; margin-top: -7px;
-    border: solid var(--accent); border-width: 0 2px 2px 0; transform: rotate(45deg);
-  }
-  .combo-option.active, .combo-option:hover { background: #f1e9d6; }
-  .combo-option mark { background: none; color: var(--accent); font-weight: 700; }
-  .combo-empty { padding: 12px; font-size: 14px; color: var(--muted); }
   .date { position: relative; display: flex; align-items: center; gap: 10px; padding-right: 44px; cursor: pointer; }
   .date-icon { display: flex; flex: none; color: var(--accent); }
   .date-face { flex: 1; min-width: 0; white-space: nowrap; font-variant-numeric: tabular-nums; color: #8f8573; }
@@ -264,8 +222,7 @@
     .stats-card h1 { font-size: 35px; }
     .filters { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px 12px; padding: 18px; align-items: end; }
     .field, .field:has(input[type=date]) { grid-column: span 2; }
-    .filters select, .filters input[type=date], .filters .combo-input, .date { height: 48px; font-size: 15px; }
-    .combo-option { min-height: 38px; font-size: 15px; }
+    .filters select, .filters input[type=date], .date { height: 48px; font-size: 15px; }
     .filter-actions { grid-column: span 2; flex-wrap: nowrap; margin: 0; }
     .filter-actions button { min-height: 44px; padding: 0 14px; }
     .reset { min-height: 44px; padding: 0 12px; }
@@ -341,13 +298,13 @@
   {% else %}
   <form class="filters" method="get" action="/account/stats">
     <div class="field field-bank"><label for="f-bank">Банк</label>
-      <select id="f-bank" name="bank"><option value="">Все банки</option>
+      <select id="f-bank" name="bank" data-combo="search"><option value="">Все банки</option>
         {%- for code, name in banks.items() %}<option value="{{ code }}"{% if filter.bank == code %} selected{% endif %}>{{ name }}</option>{% endfor %}</select></div>
     <div class="field"><label for="f-city">Город</label>
-      <select id="f-city" name="city"><option value="">Все города</option>
+      <select id="f-city" name="city" data-combo="search"><option value="">Все города</option>
         {%- for code, name in cities.items() %}<option value="{{ code }}"{% if filter.city == code %} selected{% endif %}>{{ name }}</option>{% endfor %}</select></div>
     <div class="field"><label for="f-result">Чем закончилось</label>
-      <select id="f-result" name="result"><option value="">Всё</option>
+      <select id="f-result" name="result" data-combo="search"><option value="">Всё</option>
         {%- for code, name in results.items() %}<option value="{{ code }}"{% if filter.result == code %} selected{% endif %}>{{ name }}</option>{% endfor %}</select></div>
     <div class="field"><label for="f-from">Визит с</label><input type="date" id="f-from" name="from" value="{{ filter.date_from or '' }}"></div>
     <div class="field"><label for="f-to">Визит по</label><input type="date" id="f-to" name="to" value="{{ filter.date_to or '' }}"></div>
@@ -375,10 +332,10 @@
   <form class="case-form" method="get" action="/account/stats#my-case">
     {{ hidden_except(["case", "vnzh"]) }}
     <div><label for="c-case">Счёт</label>
-      <select id="c-case" name="case"><option value="">Любой</option>
+      <select id="c-case" name="case" data-combo><option value="">Любой</option>
         {%- for code, name in cases.items() %}<option value="{{ code }}"{% if case_filter.case == code %} selected{% endif %}>{{ name }}</option>{% endfor %}</select></div>
     <div><label for="c-vnzh">ВНЖ</label>
-      <select id="c-vnzh" name="vnzh"><option value="">Неважно</option>
+      <select id="c-vnzh" name="vnzh" data-combo><option value="">Неважно</option>
         {%- for code, name in vnzh_options.items() %}<option value="{{ code }}"{% if case_filter.vnzh == code %} selected{% endif %}>{{ name }}</option>{% endfor %}</select></div>
     <button type="submit">Показать</button>
   </form>
@@ -523,6 +480,7 @@
   <header><strong></strong><a href="" target="_blank" rel="noopener">Оригинал на сайте банка</a><button type="button" data-close>Закрыть</button></header>
   <object type="application/pdf"></object>
 </dialog>
+<script src="/static/select-combo.js" defer></script>
 <script src="/static/filters.js" defer></script>
 <script src="/static/pdfview.js" defer></script>
 {% endblock %}

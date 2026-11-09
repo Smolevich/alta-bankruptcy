@@ -1,7 +1,9 @@
-// Поиск в списках фильтров сводки: node --test tests/js/filters.test.js
+// Поиск в выпадающих списках (select-combo.js) и даты фильтров сводки (filters.js):
+// node --test tests/js/filters.test.js
 const assert = require("node:assert/strict");
 const test = require("node:test");
-const { filterOptions, fold, russianDate } = require("../../src/alta_feedback/static/filters.js");
+const { filterOptions, fold } = require("../../src/alta_feedback/static/select-combo.js");
+const { russianDate } = require("../../src/alta_feedback/static/filters.js");
 
 const banks = [
   { value: "", label: "Все банки" },

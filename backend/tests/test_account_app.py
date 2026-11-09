@@ -273,7 +273,20 @@ def test_stats_page_loads_filter_script(client):
 def test_stats_filters_work_without_script(client):
     seed(client, 1)
     page = client.get("/account/stats").text
-    assert all(f'<select id="f-{name}" name="{name}">' in page for name in ("bank", "city", "result"))
+    names = ("bank", "city", "result")
+    assert all(f'<select id="f-{name}" name="{name}" data-combo="search">' in page for name in names)
+
+
+def test_stats_selects_get_the_site_dropdown(client):
+    seed(client, 1)
+    page = client.get("/account/stats").text
+    assert '<script src="/static/select-combo.js" defer></script>' in page
+    assert all(f'<select id="c-{name}" name="{name}" data-combo>' in page for name in ("case", "vnzh"))
+
+
+def test_dropdown_script_is_served_as_javascript(client):
+    response = client.get("/static/select-combo.js")
+    assert (response.status_code, response.headers["content-type"]) == (200, "text/javascript; charset=utf-8")
 
 
 def test_filters_script_is_served_as_javascript(client):

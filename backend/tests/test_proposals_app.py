@@ -241,6 +241,12 @@ def test_admin_script_is_served(client):
     assert client.get("/static/proposals-admin.js").status_code == 200
 
 
+def test_admin_selects_get_the_site_dropdown(client):
+    page = client.get("/predlozheniya/admin/").text
+    assert '<script src="/static/select-combo.js"></script>' in page
+    assert '<select name="status">' not in page and page.count('<select name="status" data-combo>') == 2
+
+
 @pytest.mark.parametrize(
     ("path", "header"),
     [

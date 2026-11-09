@@ -85,16 +85,16 @@
   <div class="bar">
     <div class="tools">
       <label for="kind" style="margin: 0">Тип</label>
-      <select id="kind">
+      <select id="kind" data-combo>
         <option value="material">{{ c.tab_material }}</option>
         <option value="case">Кейсы</option>
       </select>
       <label for="filter" style="margin: 0">Статус</label>
-      <select id="filter">
+      <select id="filter" data-combo>
         <option value="">все</option>
         {% for code in statuses %}<option value="{{ code }}">{{ t.statuses.get(code, "спам (скрыто)") }}</option>{% endfor %}
       </select>
-      <select id="case-filter" aria-label="Статус кейса" hidden>
+      <select id="case-filter" aria-label="Статус кейса" data-combo hidden>
         <option value="">все</option>
         {% for code in case_statuses %}<option value="{{ code }}">{{ case_status_labels[code] }}</option>{% endfor %}
       </select>
@@ -121,7 +121,7 @@
     </div>
     <form class="edit">
       <label>Статус
-        <select name="status">
+        <select name="status" data-combo>
           {% for code in statuses %}<option value="{{ code }}">{{ t.statuses.get(code, "спам (скрыто)") }}</option>{% endfor %}
         </select>
       </label>
@@ -161,7 +161,7 @@
     </div>
     <form class="edit">
       <label>Статус
-        <select name="status">
+        <select name="status" data-combo>
           {% for code in case_statuses %}<option value="{{ code }}">{{ case_status_labels[code] }}</option>{% endfor %}
         </select>
       </label>
@@ -175,5 +175,6 @@
 </template>
 <script type="application/json" id="labels">{{ {"targets": t.targets, "categories": c.categories, "case_statuses": case_status_labels} | tojson }}</script>
 <script src="/static/richtext.js"></script>
+<script src="/static/select-combo.js"></script>
 <script src="/static/proposals-admin.js"></script>
 {% endblock %}
