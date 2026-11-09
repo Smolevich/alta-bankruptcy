@@ -138,6 +138,7 @@ html, body { overflow-x: clip; }
 .news h3 { margin: 0.3rem 0; font-size: 1.1rem; }
 .news p { margin: 0.3rem 0; font-size: 0.95rem; }
 .news-meta { display: flex; gap: 0.6rem; align-items: center; font-size: 0.85rem; }
+.news-outdated { padding: 0.3rem 0.6rem; border-left: 3px solid var(--seal); background: #fff8e1; }
 .news-src { font-size: 0.85rem !important; color: #5a5448; overflow-wrap: anywhere; }
 .pub { padding: 0.05rem 0.5rem; border-radius: 99px; background: var(--ink); color: #fff; font-size: 0.75rem; }
 

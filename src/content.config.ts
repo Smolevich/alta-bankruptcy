@@ -50,6 +50,13 @@ export const collections = {
 			order: z.number().default(0),
 			// Бланки AOD, которые показать карточками под новостью (src/data/aod-forms.ts).
 			forms: z.array(z.enum(['prijava', 'fizicka', 'pravna'])).optional(),
+			// Новость устарела по более поздним официальным сообщениям: текст не трогаем, пометку показываем над ним.
+			outdated: z
+				.object({
+					note: z.string().min(10),
+					links: z.array(z.object({ label: z.string().min(1), href: z.string().startsWith('/') })).default([]),
+				})
+				.optional(),
 			sources,
 		}),
 	}),
