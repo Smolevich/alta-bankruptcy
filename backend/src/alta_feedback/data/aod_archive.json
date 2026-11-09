@@ -182,13 +182,5 @@
   "sha256": "da11111223c5056250872ae8a94a452e5b7a64c1fae08cd78b7c89bd0b382f59",
   "bytes": 99257,
   "fetched": "2026-11-03"
- },
- {
-  "name": "oglas-243-1.pdf",
-  "url": "https://www.aod.rs/uploads/dokumenti/oglas/243_1_oglas.pdf",
-  "public": true,
-  "sha256": "59df531c49432e485fb29dfc9c7c1e54f0ef4cfbe3d93df1c38d2cb1aae40537",
-  "bytes": 159528,
-  "fetched": "2026-11-09"
  }
 ]
