@@ -50,6 +50,10 @@ const EXTRA_COPIES: Record<string, string> = {
 		'aod-2026-11-06-poziv-mali-investitori-fzi.pdf',
 	'https://www.aod.rs/uploads/dokumenti/oglas/242_1_oglas.pdf':
 		'aod-2026-11-09-resenje-privredni-sud-stecaj-alta.pdf',
+	'https://www.aod.rs/uploads/dokumenti/altabanka/uputstvo.pdf':
+		'aod-2026-11-10-uputstvo-prijava-potrazivanja.pdf',
+	'https://web.archive.org/web/20261110172018/https://www.aod.rs/uploads/dokumenti/altabanka/uputstvo.pdf':
+		'aod-2026-11-10-uputstvo-prijava-potrazivanja.pdf',
 	'https://www.aod.rs/uploads/dokumenti/oglas/243_1_oglas.pdf':
 		'aod-2026-11-09-javni-konkurs-poverenik.pdf',
 	'https://www.aod.rs/uploads/dokumenti/pravnareg/40_pravnareg.pdf':
