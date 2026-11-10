@@ -13,9 +13,9 @@ export const HEADING_IDS = {
 	pomoch: ['rule', 'source-levels', 'how-to-correct', 'three-languages', 'news-item', 'report-account'],
 	procedura: ['licence-revoked', 'bankruptcy-opened', 'paying-bank', 'payout-up-to-50000', 'claim-above-50000', 'claims-verified', 'payouts-above-50000'],
 	ssylki: ['chats', 'food-help', 'official-contacts', 'our-tools'],
-	trebovanie: ['who-files', 'where', 'deadline', 'gazette', 'what-to-prepare', 'payout-paperwork', 'authorisation', 'claim-form', 'payment-ranks', 'common-mistakes'],
+	trebovanie: ['who-files', 'where', 'deadline', 'gazette', 'what-to-prepare', 'payout-paperwork', 'authorisation', 'claim-form', 'claim-attachments', 'claim-no-contract', 'payment-ranks', 'common-mistakes'],
 	voprosy: ['now', 'payout-up-to-50000', 'companies-payout', 'claim-above-50000', 'class-action', 'loans-and-safes'],
 	vypiski: ['now', 'without-statements', 'statement-emails', 'what-to-save', 'how-to-export', 'sole-traders', 'corporate', 'officebanking', 'do-not-send'],
-	vyplata: ['now', 'postanska-branches', 'what-to-bring', 'item-notes', 'how-much', 'who-is-eligible', 'individuals', 'sole-traders-companies', 'aod-answers', 'euros-at-postanska', 'deposit-document', 'no-contract', 'power-of-attorney', 'investments'],
+	vyplata: ['now', 'what-to-bring', 'before-signing', 'postanska-branches', 'item-notes', 'how-much', 'who-is-eligible', 'individuals', 'sole-traders-companies', 'aod-answers', 'euros-at-postanska', 'deposit-document', 'no-contract', 'power-of-attorney', 'investments'],
 	zakony: ['deposit-insurance-law', 'bank-bankruptcy-law', 'bankruptcy-law', 'banking-law', 'national-bank-law', 'aod-procedure'],
 };

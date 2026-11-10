@@ -1,0 +1,96 @@
+---
+// Чек-лист с рабочими галочками: отметки живут только в localStorage этого браузера и никуда
+// не отправляются. Кнопка печати кладёт на лист A4 только этот блок, с адресом страницы и датой сверки.
+// Пункты — обычный markdown-список задач «- [ ]» внутри компонента.
+import type { Lang } from '../i18n';
+
+type Props = { lang?: Lang; name: string; title: string; path: string; checked: string };
+const { lang = 'ru', name, title, path, checked } = Astro.props as Props;
+
+const T = {
+	ru: { print: 'Распечатать на один лист A4', clear: 'Снять все отметки', note: 'Отметки хранятся только в этом браузере: на сайт и куда-либо ещё они не отправляются.', checked: 'сверено' },
+	en: { print: 'Print on one A4 sheet', clear: 'Clear all ticks', note: 'Ticks are stored only in this browser: they are not sent to the site or anywhere else.', checked: 'checked' },
+	sr: { print: 'Odštampaj na jednom listu A4', clear: 'Poništi sve oznake', note: 'Oznake se čuvaju samo u ovom pregledaču: ne šalju se sajtu niti bilo kome drugom.', checked: 'provereno' },
+}[lang];
+---
+
+<section class="checklist" data-checklist={name}>
+	<p class="checklist-print-head">
+		<strong>{title}</strong>
+		<span>alta.smolevich.com{path} · {T.checked} {checked}</span>
+	</p>
+	<div class="checklist-bar not-content">
+		<button type="button" class="checklist-print" data-checklist-print>{T.print}</button>
+		<button type="button" class="checklist-clear" data-checklist-clear>{T.clear}</button>
+		<p>{T.note}</p>
+	</div>
+	<div class="checklist-body">
+		<slot />
+	</div>
+</section>
+
+<script>
+	// Ключ отметки — хэш текста пункта: правка списка не переносит старые галочки на чужие строки.
+	const hash = (s: string) => {
+		let h = 5381;
+		for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) >>> 0;
+		return h.toString(36);
+	};
+	const store = {
+		get(k: string): Record<string, boolean> {
+			try { return JSON.parse(window.localStorage.getItem(k) ?? '{}') ?? {}; } catch { return {}; }
+		},
+		set(k: string, v: Record<string, boolean>) {
+			try { window.localStorage.setItem(k, JSON.stringify(v)); } catch { /* приватный режим: отметки живут до перезагрузки */ }
+		},
+	};
+
+	for (const box of document.querySelectorAll<HTMLElement>('[data-checklist]')) {
+		const key = `alta-checklist:${box.dataset.checklist}:${document.documentElement.lang}`;
+		const saved = store.get(key);
+		const inputs = [...box.querySelectorAll<HTMLInputElement>('.checklist-body input[type="checkbox"]')];
+		for (const input of inputs) {
+			const item = input.closest('li');
+			const id = hash((item?.textContent ?? '').trim());
+			input.disabled = false;
+			input.removeAttribute('disabled');
+			input.dataset.id = id;
+			input.checked = saved[id] === true;
+			if (item) {
+				item.classList.add('checklist-item');
+				const label = document.createElement('label');
+				label.className = 'checklist-label';
+				while (item.firstChild) label.appendChild(item.firstChild);
+				item.appendChild(label);
+			}
+			input.addEventListener('change', () => {
+				const now = store.get(key);
+				if (input.checked) now[id] = true;
+				else delete now[id];
+				store.set(key, now);
+			});
+		}
+
+		box.querySelector('[data-checklist-clear]')?.addEventListener('click', () => {
+			for (const input of inputs) input.checked = false;
+			store.set(key, {});
+		});
+
+		box.querySelector('[data-checklist-print]')?.addEventListener('click', () => {
+			// Печатаем только этот блок: помечаем цепочку предков, остальное прячет CSS.
+			const path: Element[] = [];
+			for (let el = box.parentElement; el && el !== document.body; el = el.parentElement) path.push(el);
+			path.forEach((el) => el.setAttribute('data-print-path', ''));
+			box.setAttribute('data-print-target', '');
+			document.documentElement.classList.add('print-checklist');
+			const done = () => {
+				document.documentElement.classList.remove('print-checklist');
+				path.forEach((el) => el.removeAttribute('data-print-path'));
+				box.removeAttribute('data-print-target');
+				window.removeEventListener('afterprint', done);
+			};
+			window.addEventListener('afterprint', done);
+			window.print();
+		});
+	}
+</script>
