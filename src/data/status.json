@@ -4,9 +4,9 @@
     "stage": 4,
     "publicationDate": "2026-11-06",
     "headline": {
-      "ru": "Выплата до 50 000 € начинается 13.11.2026 в Poštanska štedionica",
-      "en": "Payout of up to €50,000 starts on 13.11.2026 at Poštanska štedionica",
-      "sr": "Isplata do 50.000 € počinje 13.11.2026. u Poštanskoj štedionici"
+      "ru": "Выплата до 50 000 € в Poštanska štedionica: с 13.11.2026 до 03.11.2029",
+      "en": "Payout of up to €50,000 at Poštanska štedionica: from 13.11.2026 until 03.11.2029",
+      "sr": "Isplata do 50.000 € u Poštanskoj štedionici: od 13.11.2026. do 03.11.2029."
     },
     "paths": [
       {
@@ -16,7 +16,7 @@
           "en": "from 13.11 at Poštanska branches. Bring an identity document and the original deposit document.",
           "sr": "od 13.11. u ekspoziturama Poštanske štedionice. Ponesite ispravu o identitetu i original isprave o depozitu."
         },
-        "link": { "ru": "Что взять и куда идти", "en": "What to bring and where to go", "sr": "Šta poneti i gde" },
+        "link": { "ru": "Чек-лист: что взять", "en": "Checklist: what to bring", "sr": "Kontrolna lista: šta poneti" },
         "href": "/vyplata/#what-to-bring"
       },
       {
@@ -30,7 +30,7 @@
         "href": "/trebovanie/"
       }
     ],
-    "checkedAt": "2026-11-08",
+    "checkedAt": "2026-11-10",
     "stages": [
       {
         "n": 1,
@@ -177,7 +177,7 @@
     ],
     "sources": [
       {
-        "title": "«Службени гласник РС» № 109/2026 от 06.11.2026, Судски огласи, поз. 172: оглас об открытии банкротства ALTA banka",
+        "title": "«Службени гласник РС» № 109/2026 от 06.11.2026, Судски огласи, стр. 64, АУ26-3120: оглас об открытии банкротства ALTA banka",
         "url": "https://slgl.pravno-informacioni-sistem.rs/api/prins/viewdoc?uuid=653ae8fc-9490-497e-b42a-abcbf2fbd7fe",
         "kind": "official",
         "date": "2026-11-06",
