@@ -49,6 +49,7 @@ export const AOD_FORMS: Record<FormKey, AodForm> = {
 				'список приложенных доказательств;',
 				'просьба к суду признать требование («утврди потраживање»): кредитор, адрес, матичный номер, ПИБ, счёт и банк, сумма;',
 				'место, дата и подпись.',
+				'инструкция AOD от 10.11.2026 просит ещё: телефон и e-mail, основной долг и проценты отдельно, обязательно копии доказательств.',
 			],
 			en: [
 				'the case number (Ст. ___/___);',
@@ -59,6 +60,7 @@ export const AOD_FORMS: Record<FormKey, AodForm> = {
 				'the list of attached evidence;',
 				'the request that the court recognise the claim (“утврди потраживање”): creditor, address, registration number, PIB, account and bank, amount;',
 				'place, date and signature.',
+				'AOD\'s instructions of 10.11.2026 also ask for: phone and email, principal and interest separately, and copies of the evidence (mandatory).',
 			],
 			sr: [
 				'broj predmeta (St. ___/___);',
@@ -69,6 +71,7 @@ export const AOD_FORMS: Record<FormKey, AodForm> = {
 				'spisak dokaza koji se prilažu;',
 				'predlog da sud „utvrdi potraživanje“: poverilac, adresa, matični broj, PIB, račun i banka, iznos;',
 				'mesto, datum i potpis.',
+				'uputstvo AOD od 10.11.2026 traži još: telefon i mejl, posebno glavnicu i kamatu, obavezno kopije dokaza.',
 			],
 		},
 		sourceUrl: `${UPLOADS}/potrazivanja.docx`,

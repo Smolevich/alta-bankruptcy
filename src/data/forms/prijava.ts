@@ -17,6 +17,8 @@ export const prijava = {
 				{ name: 'name', sr: 'име и презиме' },
 				{ name: 'address', sr: 'адреса' },
 				{ name: 'jmbg', sr: 'ЈМБГ' },
+				{ name: 'phone', sr: 'телефон' },
+				{ name: 'email', sr: 'мејл' },
 				{ name: 'account', sr: 'рачун бр.' },
 				{ name: 'bank', sr: 'назив банке' },
 				{ name: 'bankSeat', sr: 'седиште банке' },
