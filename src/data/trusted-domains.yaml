@@ -190,6 +190,12 @@
   proof: "WHOIS RNIDS, регистрант: POLITIKA NOVINE I MAGAZINI PNM DOO BEOGRAD; проверено 07.11.2026"
   hosts: [www.politika.rs]
 
+- domain: insajder.net
+  name: "Insajder — редакция журналистских расследований (Insajder produkcija, Белград)"
+  category: press
+  proof: "WHOIS: регистрант скрыт, страна RS, домен с 2014; импрессум insajder.net/impresum: издатель Insajder produkcija, Savski nasip 7, Beograd, рег. номер медиа IN 000 312; проверено 11.11.2026"
+  hosts: [insajder.net, www.insajder.net]
+
 # --- Archives ---
 - domain: web.archive.org
   name: "Internet Archive Wayback Machine — веб-архив некоммерческой организации Internet Archive"
