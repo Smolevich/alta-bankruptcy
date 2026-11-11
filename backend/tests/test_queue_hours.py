@@ -5,8 +5,8 @@ import pytest
 from alta_feedback import queues
 from alta_feedback.queues import Closed, closed_until
 
-# 754 BEOGRAD 30 - CENTAR: будни 08:00-17:00, суббота 08:00-13:00. 11.11.2026 — среда.
-BRANCH = "754"
+# 759 BEOGRAD 31 - ĐERAM: будни 8.00h - 17.00h, суббота 8.00h - 13.00h. 11.11.2026 — среда.
+BRANCH = "759"
 
 
 def at(day: int, hour: int, minute: int = 0) -> datetime:

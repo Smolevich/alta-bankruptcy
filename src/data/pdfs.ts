@@ -46,6 +46,8 @@ const EXTRA_COPIES: Record<string, string> = {
 		'aod-2026-11-06-obavestenje-pocetak-isplate.pdf',
 	'https://www.aod.rs/uploads/dokumenti/altabanka/Spisak.pdf':
 		'aod-2026-11-06-spisak-ekspozitura-postanska.pdf',
+	'https://www.aod.rs/uploads/dokumenti/altabanka/ekspoziture.pdf':
+		'aod-2026-11-11-ekspoziture-postanska.pdf',
 	'https://www.aod.rs/uploads/dokumenti/altabanka/FZI_20261106.pdf':
 		'aod-2026-11-06-poziv-mali-investitori-fzi.pdf',
 	'https://www.aod.rs/uploads/dokumenti/oglas/242_1_oglas.pdf':

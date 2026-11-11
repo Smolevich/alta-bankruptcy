@@ -161,7 +161,7 @@ def test_spam_mark_disappears_from_map(client):
 
 def test_backend_branch_list_matches_site_list():
     site = json.loads(SITE_LIST.read_text("utf-8"))
-    ids = {site["specijalizovana"]["sifra"], *(b["sifra"] for b in site["ekspoziture"])}
+    ids = {site["specijalizovana"]["id"], *(b["id"] for b in site["ekspoziture"])}
     assert queues.branch_ids() == ids
 
 
@@ -170,7 +170,7 @@ def test_branch_hours_copy_matches_site_list():
     site = json.loads(SITE_LIST.read_text("utf-8"))
     rows = [site["specijalizovana"], *site["ekspoziture"]]
     hours = queues.parse_hours
-    expected = {b["sifra"]: (hours(b["radnoVremeRadnimDanom"]), hours(b["radnoVremeSubotom"])) for b in rows}
+    expected = {b["id"]: (hours(b["radnoVremeRadnimDanom"]), hours(b["radnoVremeSubotom"])) for b in rows}
     assert queues.branch_hours() == expected
 
 
