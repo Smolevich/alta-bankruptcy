@@ -1,11 +1,16 @@
 {% extends "base.html" %}
-{% block title %}Где открывают счета{% endblock %}
+{% block title %}Где открывают счета после ALTA: ответы вкладчиков | Вкладчики ALTA: что дальше{% endblock %}
+{# Единственная страница сервиса, которую стоит находить поиском: остальные формы — noindex. #}
+{% block robots %}index, follow{% endblock %}
 {% block head %}
+<meta name="description" content="{{ description }}">
+<link rel="canonical" href="{{ canonical }}">
 <style>
   main.stats-main { padding: 12px 12px 32px; }
   .stats-card { padding: 16px 14px; }
   .stats-card h1 { font-size: 20px; margin: 0 0 4px; }
   .stats-card .lead { font-size: 14px; margin: 0 0 12px; line-height: 1.4; }
+  .stats-card .answer p { margin: 0 0 6px; }
   .stats-card h2 { font-size: 16px; margin: 22px 0 8px; }
   .stats-card a { color: var(--accent); }
   .cta { display: inline-block; font-weight: 600; text-decoration: none; }
@@ -288,7 +293,10 @@
 <div class="card stats-card">
   <div class="page-title">
   <h1>Где открывают счета после ALTA</h1>
-  <p class="lead">Ответы самих вкладчиков, которые мы проверили. Это не рейтинг и не правила банков: в другом отделении может быть иначе.</p>
+  <div class="lead answer">
+    <p>На <time datetime="{{ today.isoformat() }}">{{ today.strftime('%d.%m.%Y') }}</time>{% if summary_lines %} — {{ summary_lines | join(' ') }}{% else %} проверенных ответов вкладчиков пока нет.{% endif %}</p>
+    <p>{{ disclaimer }}{% if updated %} Последний принятый ответ — <time datetime="{{ updated.isoformat() }}">{{ updated.strftime('%d.%m.%Y') }}</time>.{% endif %}</p>
+  </div>
   <a class="cta" href="/account">+ Добавить свой ответ</a>
   <p class="refusal-link">Отказали? <a href="/otkaz-scheta/">Как требовать письменный ответ и жаловаться в Нацбанк</a></p>
   </div>

@@ -671,3 +671,84 @@ def test_trailing_slash_redirect_keeps_query(client):
 
     assert response.status_code == 308
     assert response.headers["location"] == "/account/stats?bank=x"
+
+
+def answer_block(page: str) -> str:
+    return re.search(r'<div class="lead answer">(.*?)</div>', page, re.S).group(1)
+
+
+def tile(page: str, kind: str) -> int:
+    return int(re.search(rf'<div class="tile {kind}"><b>(\d+)</b>', page).group(1))
+
+
+def three_answers(client: TestClient) -> None:
+    report(client, ip="203.0.113.1", bank="otp", result="refused")
+    report(client, ip="203.0.113.2", bank="otp", result="refused")
+    report(client, ip="203.0.113.3", bank="intesa", result="opened")
+    accept_all(client)
+
+
+@pytest.mark.parametrize("path", ["/account/stats", "/en/account/stats", "/sr/account/stats"])
+def test_stats_page_answers_in_every_language(client, path):
+    assert client.get(path).status_code == 200
+
+
+def test_en_and_sr_stats_lead_to_russian_page_until_translated(client):
+    response = client.get("/sr/account/stats?bank=otp", follow_redirects=False)
+    assert (response.status_code, response.headers["location"]) == (302, "/account/stats?bank=otp")
+
+
+def test_stats_answer_matches_tiles_below(client):
+    three_answers(client)
+    page = client.get("/account/stats").text
+    expected = f"счёт открыли — {tile(page, 'opened')}, отказали — {tile(page, 'refused')}"
+    assert expected in answer_block(page)
+
+
+def test_stats_answer_names_banks_where_accounts_were_opened(client):
+    three_answers(client)
+    assert "Чаще всего открывали: Banca Intesa (1)." in answer_block(client.get("/account/stats").text)
+
+
+def test_stats_answer_names_banks_that_refused(client):
+    three_answers(client)
+    assert "Чаще всего отказывали: OTP banka (2)." in answer_block(client.get("/account/stats").text)
+
+
+def test_stats_answer_ignores_filter(client):
+    three_answers(client)
+    answer = answer_block(client.get("/account/stats?bank=intesa").text)
+    assert "3 проверенных ответа" in answer
+
+
+def test_stats_answer_is_dated_with_last_accepted_answer(client):
+    three_answers(client)
+    page = client.get("/account/stats").text
+    assert f'Последний принятый ответ — <time datetime="{TODAY}">' in page
+
+
+def test_stats_page_without_answers_still_answers(client):
+    assert "проверенных ответов вкладчиков пока нет" in answer_block(client.get("/account/stats").text)
+
+
+def test_stats_page_is_indexable(client):
+    assert '<meta name="robots" content="index, follow">' in client.get("/account/stats").text
+
+
+def test_filtered_stats_page_points_to_one_canonical_address(client):
+    page = client.get("/account/stats?bank=otp&before=2026-11-01_5").text
+    assert '<link rel="canonical" href="https://alta.smolevich.com/account/stats">' in page
+
+
+def test_stats_description_counts_answers(client):
+    three_answers(client)
+    page = client.get("/account/stats").text
+    description = re.search(r'<meta name="description" content="([^"]*)"', page).group(1)
+    assert "3 проверенных ответа, открыли 1, отказали 2" in description
+
+
+def test_stats_answer_escapes_custom_bank_name(client):
+    report(client, ip="203.0.113.9", bank="<script>alert(1)</script>Bank", result="opened")
+    accept_all(client)
+    page = client.get("/account/stats").text
+    assert "<script>alert(1)" not in page

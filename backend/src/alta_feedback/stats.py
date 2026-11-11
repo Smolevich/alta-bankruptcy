@@ -222,3 +222,84 @@ def account_stats(items: list[dict], counts: Counter | None = None) -> AccountSt
         residencies=tally_by(items, "residency", RESIDENCIES),
         documents=count_documents(items),
     )
+
+
+TOP_BANKS = 3
+DISCLAIMER = (
+    "Это ответы самих вкладчиков, не рейтинг и не правила банков: в другом отделении может быть иначе."
+)
+
+
+@dataclass(frozen=True)
+class Summary:
+    """Короткий ответ в начале страницы: те же числа, что в блоках «Всего» и «По банкам»."""
+
+    total: int
+    results: Counter
+    top_opened: list[tuple[str, int]]
+    top_refused: list[tuple[str, int]]
+
+
+def top_banks(banks: list[Tally], result: str, size: int = TOP_BANKS) -> list[tuple[str, int]]:
+    with_result = [tally for tally in banks if tally.results[result]]
+    ranked = sorted(with_result, key=lambda tally: (-tally.results[result], tally.name))
+    return [(tally.name, tally.results[result]) for tally in ranked[:size]]
+
+
+def summarize(items: list[dict]) -> Summary:
+    """Сводка по всем принятым ответам; банки считаются так же, как в блоке «По банкам»."""
+    banks = tally_by(items, "bank")
+    return Summary(
+        total=len(items),
+        results=Counter(item["result"] for item in items),
+        top_opened=top_banks(banks, "opened"),
+        top_refused=top_banks(banks, "refused"),
+    )
+
+
+def checked_answers(n: int) -> str:
+    """«1 проверенный ответ», «3 проверенных ответа», «12 проверенных ответов»."""
+    if n % 10 == 1 and n % 100 != 11:
+        return f"{n} проверенный ответ"
+    if n % 10 in (2, 3, 4) and n % 100 not in (12, 13, 14):
+        return f"{n} проверенных ответа"
+    return f"{n} проверенных ответов"
+
+
+def ru_date(day: date) -> str:
+    return day.strftime("%d.%m.%Y")
+
+
+def bank_list(pairs: list[tuple[str, int]]) -> str:
+    return ", ".join(f"{name} ({count})" for name, count in pairs)
+
+
+def summary_lines(summary: Summary) -> list[str]:
+    """Предложения после даты: итог и банки; без ответов — пусто."""
+    if not summary.total:
+        return []
+    results = summary.results
+    lines = [
+        f"{checked_answers(summary.total)} вкладчиков: счёт открыли — {results['opened']}, "
+        f"отказали — {results['refused']}, ещё в процессе — {results['pending']}."
+    ]
+    if summary.top_opened:
+        lines.append(f"Чаще всего открывали: {bank_list(summary.top_opened)}.")
+    if summary.top_refused:
+        lines.append(f"Чаще всего отказывали: {bank_list(summary.top_refused)}.")
+    return lines
+
+
+def meta_description(summary: Summary, today: date) -> str:
+    """Описание для поисковиков и ИИ-ассистентов: дата и главные числа."""
+    lead = "Где вкладчикам ALTA открывают счета в банках Сербии"
+    if not summary.total:
+        return f"{lead}: ответы самих вкладчиков после проверки модератором. Не рейтинг и не правила банков."
+    results = summary.results
+    text = (
+        f"{lead}: на {ru_date(today)} — {checked_answers(summary.total)}, "
+        f"открыли {results['opened']}, отказали {results['refused']}."
+    )
+    if summary.top_opened:
+        text += " Чаще открывали: " + ", ".join(name for name, _ in summary.top_opened) + "."
+    return text

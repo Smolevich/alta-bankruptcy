@@ -17,7 +17,9 @@ and pages are in Russian; issues and PRs may be in English, Serbian or Russian.
   build`, pinned versions, output committed); its source is `editor/src/richtext.js`.
 - Code: `main.py` routes and middleware, `accounts.py` account-report parsing and
   `scrub_pii`, `validate.py` correction form and IP hashing, `store.py` SQLite,
-  `pow.py` ALTCHA-style proof-of-work, `stats.py` public stats, `branches.py` the bank
+  `pow.py` ALTCHA-style proof-of-work, `stats.py` public stats (the page is the only indexable one of
+  the service: canonical `/account/stats`, a short answer on top built from all accepted answers with the
+  same numbers as the blocks below; `/en/` and `/sr/account/stats` redirect 302 to it until translated), `branches.py` the bank
   branch directory (`data/branches.json`, rebuilt by `uv run scripts/build_branches.py`), `nbs.py`
   official National Bank of Serbia figures per bank in one collapsed block below the answers on the
   stats page, reported banks first (`data/nbs_banks.json`,
