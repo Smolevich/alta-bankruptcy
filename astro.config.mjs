@@ -74,7 +74,7 @@ export default defineConfig({
 						{ label: 'Подать требование сверх 50 000 €', slug: 'trebovanie', translations: { en: 'File a claim above €50,000', 'sr-Latn': 'Prijavite potraživanje iznad 50.000 €' } },
 						// Страница отдаётся сервисом формы и есть только по-русски: полный адрес, иначе Starlight
 						// приклеит /en/ или /sr/ и ссылка уйдёт в 404.
-						{ label: 'Где открыть счёт для выплаты', link: 'https://alta.smolevich.com/account/stats', translations: { en: 'Where to open an account for the payout', 'sr-Latn': 'Gde otvoriti račun za isplatu' } },
+						{ label: 'Опыт вкладчиков: где открывают счета', link: 'https://alta.smolevich.com/account/stats', translations: { en: 'Depositors’ experience: where accounts get opened', 'sr-Latn': 'Iskustva deponenata: gde se otvaraju računi' } },
 						{ label: 'Банк отказал в счёте: куда жаловаться', slug: 'otkaz-scheta', translations: { en: 'Account refused: where to complain', 'sr-Latn': 'Odbijen račun: gde se žaliti' } },
 						{ label: 'Какие документы сохранить', slug: 'vypiski', translations: { en: 'Which documents to keep', 'sr-Latn': 'Koja dokumenta sačuvati' } },
 					],
@@ -107,7 +107,7 @@ export default defineConfig({
 					collapsed: true,
 					items: [
 						{ label: 'Банк: владелец и руководство', slug: 'bank', translations: { en: 'The bank: owner and management', 'sr-Latn': 'Banka: vlasnik i rukovodstvo' } },
-						{ label: 'Что есть у банка', slug: 'imushchestvo-banka', translations: { en: 'What the bank owns', 'sr-Latn': 'Šta banka ima' } },
+						{ label: 'Что было на балансе ALTA', slug: 'imushchestvo-banka', translations: { en: 'What ALTA had on its balance sheet', 'sr-Latn': 'Šta je ALTA imala u bilansu' } },
 						{ label: 'Документы банка', slug: 'dokumenty', translations: { en: 'Bank documents', 'sr-Latn': 'Dokumenta banke' } },
 						{ label: 'Законы', slug: 'zakony', translations: { en: 'Laws', 'sr-Latn': 'Zakoni' } },
 					],

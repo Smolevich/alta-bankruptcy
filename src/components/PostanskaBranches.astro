@@ -59,6 +59,7 @@ const T = {
 		busyWd: 'будни',
 		busySat: 'суббота',
 		busyNote: 'Google',
+		obs: 'Наши наблюдения (не данные банка)',
 		gmaps: 'Открыть в Google Картах',
 		mapLabel: 'Карта отделений',
 		legend: 'Размер отделения (наша оценка):',
@@ -104,6 +105,7 @@ const T = {
 		busyWd: 'weekdays',
 		busySat: 'Saturday',
 		busyNote: 'Google',
+		obs: 'Our observations (not bank data)',
 		gmaps: 'Open in Google Maps',
 		mapLabel: 'Branch map',
 		legend: 'Branch size (our estimate):',
@@ -149,6 +151,7 @@ const T = {
 		busyWd: 'radnim danom',
 		busySat: 'subotom',
 		busyNote: 'Google',
+		obs: 'Naša zapažanja (nisu podaci banke)',
 		gmaps: 'Otvori u Google mapama',
 		mapLabel: 'Mapa ekspozitura',
 		legend: 'Veličina ekspoziture (naša procena):',
@@ -362,11 +365,17 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 													)}
 													<p class="bl-hours">{T.weekdays} {r.wd} · {T.saturday} {r.sat}{r.code && <> · <span class="branch-code">{T.code} {r.code}</span></>}</p>
 													{addrNote(r.id) && <p class="bl-extra">{addrNote(r.id)}</p>}
-													{sizeText(extraOf(r.id)) && <p class="bl-extra" set:html={sizeLine(extraOf(r.id), gmapsOf(r, k))} />}
-													{busyText(extraOf(r.id)) && <p class="bl-extra">{T.busy}: {busyText(extraOf(r.id))}</p>}
-													{noData(r.id) && <p class="bl-extra bl-nodata">{T.noData}</p>}
 													<p class="bl-extra f-free" hidden></p>
-													{histOf(r.id) && <Fragment set:html={chart(extraOf(r.id))} />}
+													{/* Размер и загрузка — наши наблюдения и данные Google, не банка: свёрнуты, чтобы не стоять в одном ряду с официальным адресом. */}
+													{(sizeText(extraOf(r.id)) || busyText(extraOf(r.id)) || noData(r.id) || histOf(r.id)) && (
+														<details class="bl-obs">
+															<summary>{T.obs}</summary>
+															{sizeText(extraOf(r.id)) && <p class="bl-extra" set:html={sizeLine(extraOf(r.id), gmapsOf(r, k))} />}
+															{busyText(extraOf(r.id)) && <p class="bl-extra">{T.busy}: {busyText(extraOf(r.id))}</p>}
+															{noData(r.id) && <p class="bl-extra bl-nodata">{T.noData}</p>}
+															{histOf(r.id) && <Fragment set:html={chart(extraOf(r.id))} />}
+														</details>
+													)}
 													<div class="bl-actions">
 														<a class="bl-show" href={`?b=${r.id}#branches-map`} data-show={r.id}>{T.showOnMap}</a>
 														<a class="bl-gmaps" href={gmapsOf(r, k)} target="_blank" rel="noopener"><Fragment set:html={PIN} /><span>{T.gmapsShort}</span><span class="sr-only"> ({T.newTab})</span></a>
@@ -907,8 +916,10 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 				<details class="q-acc q-details"${moreOpen ?? !narrow() ? ' open' : ''}><summary><span>${esc(tx.details)}</span>${ICON('chevron')}</summary>
 					<div class="q-details-body">
 					<p class="q-lbl">${esc(tx.hLabel)}</p>${weekHtml(p)}
+					${p.sz || p.busy || p.chart ? `<details class="q-obs"><summary>${esc(tx.obs)}</summary>
 					${p.sz ? `<p>${p.sz}</p>` : ''}${p.busy ? `<p>${esc(p.busy)}</p>` : ''}
 					${p.chart ? `<p class="q-lbl">${esc(tx.googleSum)}</p>${p.chart}<p class="q-google-note">${esc(tx.googleNote)}</p>` : ''}
+					</details>` : ''}
 					<p class="q-foot">${ICON('info')}<span>${esc(tx.foot)} <button type="button" class="q-legend-link">${esc(tx.legend)}</button></span></p>
 					</div>
 				</details>
