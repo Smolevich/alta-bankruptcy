@@ -1,18 +1,34 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
+import sitemap from '@astrojs/sitemap';
 import starlightLinksValidator from 'starlight-links-validator';
 import { INSTAGRAM_URL, TELEGRAM_CHANNEL_URL, TELEGRAM_CHAT_URL } from './src/site.mjs';
 import { unified } from '@astrojs/markdown-remark';
 import rehypeNewTab from './src/rehype-new-tab.mjs';
 import rehypeHeadingIds from './src/rehype-heading-ids.mjs';
+import { lastmodByPath } from './src/sitemap-lastmod.mjs';
+
+const SITE = 'https://alta.smolevich.com';
+const LASTMOD = lastmodByPath('./src/content/docs', './src/content/news');
 
 // Сайт живёт в корне alta.smolevich.com: статику отдаёт сервис из backend/
 // (см. docs/deploy.md), поэтому base не задаём.
 export default defineConfig({
-	site: 'https://alta.smolevich.com',
+	site: SITE,
 	markdown: { processor: unified({ rehypePlugins: [rehypeNewTab, rehypeHeadingIds] }) },
 	integrations: [
+		// Свой экземпляр вместо встроенного в Starlight: тот не умеет lastmod и страниц backend.
+		// i18n — как у Starlight, иначе пропадут hreflang в карте сайта.
+		sitemap({
+			i18n: { defaultLocale: 'root', locales: { root: 'ru', en: 'en', sr: 'sr-Latn' } },
+			// Страницы отдаёт backend, в сборке Astro их нет. Дату не ставим: данные меняются с каждым ответом.
+			customPages: [`${SITE}/account`, `${SITE}/account/stats`],
+			serialize(item) {
+				const lastmod = LASTMOD.get(new URL(item.url).pathname);
+				return lastmod ? { ...item, lastmod } : item;
+			},
+		}),
 		starlight({
 			title: { ru: 'Вкладчики ALTA: что дальше', en: "ALTA depositors: what's next", 'sr-Latn': 'Štediše ALTA banke: šta dalje' },
 			description:

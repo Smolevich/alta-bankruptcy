@@ -58,6 +58,12 @@ jobs:
           grep -q 'hreflang="sr-Latn"' dist/index.html
           # Второй ключ head в конфиге Starlight молча затирал первый, и тег Bing пропадал.
           grep -q 'name="msvalidate.01"' dist/index.html
+          # У каждой страницы Astro в карте сайта есть дата сверки; две страницы backend (/account*) — без даты.
+          test "$(grep -o '<url>' dist/sitemap-0.xml | wc -l)" -eq "$(( $(grep -o '<lastmod>' dist/sitemap-0.xml | wc -l) + 2 ))"
+          grep -q '<loc>https://alta.smolevich.com/account/stats</loc>' dist/sitemap-0.xml
+          # Главные /en/ и /sr/ попадали в русский раздел llms.txt.
+          test -z "$(awk '/^## English/{exit} /smolevich\.com\/(en|sr)\//' dist/llms.txt)"
+          grep -q 'smolevich.com/account/stats)' dist/llms.txt
 
   # Сервис сайта (backend/): тесты, линтер и тест поиска в фильтрах статистики.
   backend:
