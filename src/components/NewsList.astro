@@ -37,6 +37,16 @@ const fmt = (d: Date) => formatDate(d, lang);
 				)}
 				{n.data.aside && <p class="news-aside">{n.data.aside}</p>}
 				<p>{n.data.summary}</p>
+				{n.data.links && (
+					<p>
+						{n.data.links.map((l, i) => (
+							<>
+								{i > 0 && ' · '}
+								<a href={l.href}>{l.label}</a>
+							</>
+						))}
+					</p>
+				)}
 				{n.data.forms && !limit && <FormCards forms={n.data.forms} lang={lang} fields={false} />}
 				<p class="news-src">
 					{n.data.sources.map((s, i) => (

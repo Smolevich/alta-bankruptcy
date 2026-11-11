@@ -12,9 +12,9 @@
       {
         "lead": { "ru": "До 50 000 €", "en": "Up to €50,000", "sr": "Do 50.000 €" },
         "text": {
-          "ru": "с 13.11 в отделениях Poštanska; запись на приём через портал банка — с 12.11. С собой: документ личности и оригинал документа о вкладе.",
-          "en": "from 13.11 at Poštanska branches; the bank's appointment portal opens 12.11. Bring an identity document and the original deposit document.",
-          "sr": "od 13.11. u ekspoziturama Poštanske štedionice; portal banke za zakazivanje termina dostupan je od 12.11. Ponesite ispravu o identitetu i original isprave o depozitu."
+          "ru": "с 13.11 в отделениях Poštanska; онлайн-запись открыта (кнопка на странице банка с вечера 11.11.2026). С собой: документ личности и оригинал документа о вкладе.",
+          "en": "from 13.11 at Poštanska branches; online booking is open (button on the bank's page since the evening of 11.11.2026). Bring an identity document and the original deposit document.",
+          "sr": "od 13.11. u ekspoziturama Poštanske štedionice; onlajn zakazivanje je otvoreno (dugme na stranici banke od večeri 11.11.2026). Ponesite ispravu o identitetu i original isprave o depozitu."
         },
         "link": { "ru": "Чек-лист: что взять", "en": "Checklist: what to bring", "sr": "Kontrolna lista: šta poneti" },
         "href": "/vyplata/#what-to-bring"
@@ -201,6 +201,13 @@
         "kind": "official",
         "date": "2026-11-11",
         "copy": "https://web.archive.org/web/20261111144021/https://www.aod.rs/clan/vest/vest_forma/147"
+      },
+      {
+        "title": "Banka Poštanska štedionica: «Заказивање исплате депозита» — кнопка «Онлајн заказивање» на форму записи, 11.11.2026",
+        "url": "https://www.posted.co.rs/promo/zakazivanje-isplate.html",
+        "kind": "official",
+        "date": "2026-11-11",
+        "copy": "https://web.archive.org/web/20261111194454/https://www.posted.co.rs/promo/zakazivanje-isplate.html"
       },
       {
         "title": "AOD: «Привредни суд у Београду донео решење о покретању стечајног поступка над Алта банком»",
