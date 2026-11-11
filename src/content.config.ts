@@ -50,6 +50,8 @@ export const collections = {
 			order: z.number().default(0),
 			// Бланки AOD, которые показать карточками под новостью (src/data/aod-forms.ts).
 			forms: z.array(z.enum(['prijava', 'fizicka', 'pravna'])).optional(),
+			// Короткая пометка над текстом: новость рядом с выплатами, но о другом (например, «не о вкладах»).
+			aside: z.string().min(3).optional(),
 			// Новость устарела по более поздним официальным сообщениям: текст не трогаем, пометку показываем над ним.
 			outdated: z
 				.object({

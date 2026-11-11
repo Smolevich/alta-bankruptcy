@@ -141,6 +141,7 @@ html, body { overflow-x: clip; }
 .news h3 { margin: 0.3rem 0; font-size: 1.1rem; }
 .news p { margin: 0.3rem 0; font-size: 0.95rem; }
 .news-meta { display: flex; gap: 0.6rem; align-items: center; font-size: 0.85rem; }
+.news-aside { font-weight: 600; padding: 0.3rem 0.6rem; border-left: 3px solid var(--line); background: #f6f4ee; }
 .news-outdated { padding: 0.3rem 0.6rem; border-left: 3px solid var(--seal); background: #fff8e1; }
 .news-src { font-size: 0.85rem !important; color: #5a5448; overflow-wrap: anywhere; }
 .pub { padding: 0.05rem 0.5rem; border-radius: 99px; background: var(--ink); color: #fff; font-size: 0.75rem; }
@@ -404,7 +405,7 @@ html, body { overflow-x: clip; }
 	.assets { background: none; }
 }
 
-/* ---- Страница «Что есть у банка»: блок «коротко» сверху ---- */
+/* ---- Страница «Что было на балансе ALTA»: блок «коротко» сверху ---- */
 .assets-lead { margin: 0 0 1.2rem; padding: 0.8rem 1rem; background: #fffdf7; border: 2px solid var(--ink); border-radius: 4px; box-shadow: 4px 4px 0 var(--seal-soft); }
 .assets-lead ul { margin: 0; padding-left: 1.1rem; }
 .assets-lead li { margin: 0 0 0.3rem; }
@@ -754,6 +755,8 @@ select:focus-visible, .bc-seg input:focus-visible + span, .branch-controls butto
 .q-details summary { min-height: 44px; font-weight: 600; }
 .q-details-body { display: flex; flex-direction: column; gap: 6px; padding: 0 0 10px; }
 .q-details-body .q-week { margin-top: 2px; }
+.bl-obs, .q-obs { margin: 4px 0; }
+.bl-obs > summary, .q-details .q-obs > summary { min-height: 32px; font-size: 0.9em; font-weight: 600; color: var(--sl-color-gray-3); cursor: pointer; }
 .q-status { --tc: var(--ok); --tb: var(--ok-soft); display: flex; gap: 12px; align-items: center; padding: 14px 16px; border-radius: 12px; background: var(--tb); }
 .q-status[data-tone='soon'] { --tc: var(--amber); --tb: var(--amber-soft); }
 .q-status[data-tone='closed'] { --tc: var(--seal); --tb: var(--seal-soft); }

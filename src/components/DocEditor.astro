@@ -53,12 +53,14 @@ const formId = `de-form-${doc.id}`;
 						<fieldset>
 							<legend>{t.groups[g.key]}</legend>
 							{g.fields.map((f) => {
-								const [label, hint] = t.fields[f.name];
+								// Третий элемент — предупреждение, которое надо прочесть до ввода, поэтому оно над полем.
+								const [label, hint, warn] = t.fields[f.name] as readonly string[];
 								return (
 									<label>
 										<span>
 											{label} {f.sr && <i lang="sr-Cyrl">({f.sr})</i>}
 										</span>
+										{warn && <small class="de-warn">{warn}</small>}
 										{f.type === 'lines' ? (
 											<textarea name={f.name} data-type="lines" rows="3">{f.value ?? ''}</textarea>
 										) : (
@@ -120,6 +122,7 @@ const formId = `de-form-${doc.id}`;
 	.de-form label span { font-weight: 600; }
 	.de-form i, .de-form small { color: var(--sl-color-gray-3); }
 	.de-form i { font-weight: 400; }
+	.de-form .de-warn { color: var(--sl-color-text); background: var(--sl-color-accent-low); padding: 0.35rem 0.55rem; border-radius: 0.3rem; }
 	.de-form input, .de-form textarea {
 		font: inherit; padding: 0.55rem 0.65rem; border: 1px solid var(--sl-color-gray-4);
 		border-radius: 0.4rem; background: var(--sl-color-bg); color: var(--sl-color-text); width: 100%;

@@ -3,6 +3,7 @@ title: "NBS oduzela ovlašćenje menjaču „Alta Group d.o.o. Beograd“ i izre
 date: 2026-11-06
 publisher: nbs
 order: 7
+aside: "Nije o depozitima Alta banke."
 summary: >-
   NBS je 6. novembra saopštila da je ovlašćenom menjaču „Alta Group d.o.o. Beograd“ oduzela ovlašćenje za obavljanje menjačkih poslova i izrekla novčane kazne u ukupnom iznosu od 250 miliona dinara pravnom licu i odgovornom licu u pravnom licu. Kontrolom su utvrđena kršenja Zakona o deviznom poslovanju i podzakonskih propisa, kao i flagrantno kršenje propisa o sprečavanju pranja novca i finansiranja terorizma. Nalaze kontrole NBS će dostaviti Javnom tužilaštvu za organizovani kriminal, Upravi za sprečavanje pranja novca i, po potrebi, drugim nadležnim organima. U saopštenju veza menjača sa Alta bankom nije navedena, a o depozitima i klijentima menjača nema reči. Naziv se poklapa sa kompanijom koja je, prema podacima na sajtu, jedini akcionar banke (stranica „Banka“); da je reč o istom licu, saopštenje ne potvrđuje.
 sources:

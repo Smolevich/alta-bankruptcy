@@ -131,7 +131,7 @@ export const LINKS: LinkCard[] = [
 	},
 	{
 		group: 'tools',
-		title: { ru: 'Где открыть счёт для выплаты: статистика', en: 'Where to open an account for the payout: statistics (in Russian)', sr: 'Gde otvoriti račun za isplatu: statistika (na ruskom)' },
+		title: { ru: 'Опыт вкладчиков: где открывают счета', en: 'Depositors’ experience: where accounts get opened (in Russian)', sr: 'Iskustva deponenata: gde se otvaraju računi (na ruskom)' },
 		what: {
 			ru: 'В каких банках вкладчикам удалось открыть счёт: личный, ИП или бизнес.',
 			en: 'At which banks depositors managed to open a personal account and a sole-trader or business account.',

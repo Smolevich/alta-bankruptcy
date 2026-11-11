@@ -63,7 +63,7 @@ export const UI = {
 			fields: {
 				name: ['Имя и фамилия', ''],
 				address: ['Адрес', 'Город, улица и номер дома.'],
-				jmbg: ['JMBG', 'Обязательный пункт (ст. 111 ч. 1 п. 2 закона о банкротстве). Если JMBG нет — уточните у AOD.'],
+				jmbg: ['JMBG', 'Обязательный пункт (ст. 111 ч. 1 п. 2 закона о банкротстве).', 'Нет JMBG? Как заполнять это поле без него, AOD и суд пока не объяснили. Не придумывайте номер — спросите AOD письменно (Masarikova 5, Белград).'],
 				phone: ['Телефон', 'Инструкция AOD от 10.11.2026 просит указать телефон.'],
 				email: ['E-mail', 'Если есть (инструкция AOD от 10.11.2026).'],
 				account: ['Номер счёта для выплаты', 'Ваш текущий или динарский счёт в другом, работающем банке: на него переведут деньги, когда начнутся выплаты кредиторам (инструкция AOD, с. 1).'],
@@ -101,7 +101,7 @@ export const UI = {
 			local: 'Всё происходит только в вашем браузере: ни введённые данные, ни документ на сервер не отправляются.',
 		},
 		acct: {
-			title: 'Где открыть счёт для выплаты',
+			title: 'Опыт вкладчиков: где открывают счета',
 			blurb: 'Выплату через Poštanska можно получить переводом на счёт в другом банке в Сербии. Вкладчики делятся, в каких банках получилось открыть личный счёт, счёт ИП или фирмы.',
 			stats: 'Статистика по банкам',
 			share: 'Поделиться своим опытом',
@@ -160,7 +160,7 @@ export const UI = {
 			fields: {
 				name: ['Full name', ''],
 				address: ['Address', 'Town, street and house number.'],
-				jmbg: ['JMBG', 'Required in the claim (art. 111 para. 1 item 2 of the Bankruptcy Law). If you have no JMBG, ask AOD.'],
+				jmbg: ['JMBG', 'Required in the claim (art. 111 para. 1 item 2 of the Bankruptcy Law).', 'No JMBG? AOD and the court have not yet explained how to fill in this field without one. Do not make up a number: ask AOD in writing (Masarikova 5, Belgrade).'],
 				phone: ['Phone', 'AOD\'s instructions of 10.11.2026 ask for a phone number.'],
 				email: ['Email', 'If you have one (AOD\'s instructions of 10.11.2026).'],
 				account: ['Account number for the payment', 'Your current or dinar account at another, operating bank: the money goes there when payments to creditors start (AOD instructions, p. 1).'],
@@ -198,7 +198,7 @@ export const UI = {
 			local: 'Everything happens only in your browser: neither what you type nor the document is sent to a server.',
 		},
 		acct: {
-			title: 'Where to open an account for the payout (in Russian)',
+			title: 'Depositors’ experience: where accounts get opened (in Russian)',
 			blurb: 'The payout through Poštanska can be transferred to an account at another bank in Serbia. Depositors share which banks let them open a personal account and a sole-trader or business account.',
 			stats: 'Statistics by bank',
 			share: 'Share your experience',
@@ -258,7 +258,7 @@ export const UI = {
 			fields: {
 				name: ['Ime i prezime', ''],
 				address: ['Adresa', 'Mesto, ulica i broj.'],
-				jmbg: ['JMBG', 'Obavezan podatak u prijavi (član 111 stav 1 tačka 2 Zakona o stečaju). Ako nemate JMBG, raspitajte se kod AOD.'],
+				jmbg: ['JMBG', 'Obavezan podatak u prijavi (član 111 stav 1 tačka 2 Zakona o stečaju).', 'Nemate JMBG? Kako se ovo polje popunjava bez njega, AOD i sud još nisu objasnili. Ne izmišljajte broj — pitajte AOD pisanim putem (Masarikova 5, Beograd).'],
 				phone: ['Telefon', 'Uputstvo AOD od 10.11.2026 traži broj telefona.'],
 				email: ['Mejl', 'Ako ga imate (uputstvo AOD od 10.11.2026).'],
 				account: ['Broj računa za isplatu', 'Vaš tekući ili dinarski račun u drugoj aktivnoj banci, na koji će vam se preneti novac kada počne isplata poverilaca (uputstvo AOD, str. 1).'],
@@ -296,7 +296,7 @@ export const UI = {
 			local: 'Sve se dešava samo u vašem pregledaču: ni uneti podaci ni dokument ne šalju se na server.',
 		},
 		acct: {
-			title: 'Gde otvoriti račun za isplatu (na ruskom)',
+			title: 'Iskustva deponenata: gde se otvaraju računi (na ruskom)',
 			blurb: 'Isplatu preko Poštanske štedionice možete primiti i prenosom na račun u drugoj banci u Srbiji. Štediše dele u kojim bankama su uspele da otvore lični račun i račun preduzetnika ili poslovni račun.',
 			stats: 'Statistika po bankama',
 			share: 'Podelite svoje iskustvo',
