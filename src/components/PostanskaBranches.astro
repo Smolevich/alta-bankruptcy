@@ -1,6 +1,8 @@
 ---
 // Отделения Poštanska для выплаты вкладчикам ALTA. Данные — src/data/postanska-branches.json,
-// поля дословно из списка AOD (PDF от 06.11.2026); город выводится из названия отделения.
+// поля дословно из списка AOD (PDF от 11.11.2026, часы приведены к виду «8.00h - 17.00h»); город выводится
+// из названия отделения. id — шифра из списка AOD от 06.11.2026 (в новом списке шифр нет); у мест,
+// которых тогда не было, id — slug, а шифра пустая.
 import LIST from '../data/postanska-branches.json';
 import EXTRA from '../data/postanska-branches-extra.json';
 import { type Lang } from '../i18n';
@@ -10,7 +12,7 @@ const { lang = 'ru' } = Astro.props as { lang?: Lang };
 
 type Branch = (typeof LIST.ekspoziture)[number];
 
-const COPY = '/docs/aod-2026-11-06-spisak-ekspozitura-postanska.pdf';
+const COPY = '/docs/aod-2026-11-11-ekspoziture-postanska.pdf';
 const POSTED_SEARCH = 'https://www.posted.co.rs/o-nama/ekspoziture.html';
 
 // Ключ — город так, как он написан в названии отделения в PDF.
@@ -28,17 +30,19 @@ const CITIES: Record<string, { latin: string; ru: string; en: string; sr: string
 	SUBOTICA: { latin: 'Subotica', ru: 'Суботица', en: 'Subotica', sr: 'Subotica' },
 	ŠABAC: { latin: 'Šabac', ru: 'Шабац', en: 'Šabac', sr: 'Šabac' },
 	VRŠAC: { latin: 'Vršac', ru: 'Вршац', en: 'Vršac', sr: 'Vršac' },
+	KRUŠEVAC: { latin: 'Kruševac', ru: 'Крушевац', en: 'Kruševac', sr: 'Kruševac' },
+	SOMBOR: { latin: 'Sombor', ru: 'Сомбор', en: 'Sombor', sr: 'Sombor' },
 };
 const FIRST = ['BEOGRAD', 'NOVI SAD', 'NIŠ', 'KRAGUJEVAC'];
 
 const T = {
 	ru: {
 		source: 'Источник: список AOD',
-		published: 'опубликован 06.11.2026',
-		pdf: 'PDF, 2 стр.',
-		total: (n: number, c: number) => `Отделений в списке: ${n}, городов: ${c}.`,
+		published: 'версия от 11.11.2026',
+		pdf: 'PDF, 3 стр.',
+		total: (n: number, c: number) => `Мест выплаты в списке: ${n}, городов: ${c}.`,
 		special: 'Пометка в списке AOD',
-		unclear: 'Что значит эта пометка, из документа AOD не ясно.',
+		specialNote: 'Poštanska 10.11.2026: новое специализированное отделение в центральном офисе банка, 28 окон, только для этой выплаты.',
 		code: 'шифра',
 		weekdays: 'Будни',
 		saturday: 'Суббота',
@@ -60,7 +64,8 @@ const T = {
 		legend: 'Размер отделения (наша оценка):',
 		unknown: 'не определён',
 		hint: 'Показать карту',
-		bankSite: 'у банка на сайте указано',
+		bankSite: 'на сайте банка указан другой адрес',
+		addrCheck: 'Источники расходятся: уточните в контакт-центре Poštanska 011/20-20-292, опция 4.',
 		chartWd: 'будни (среднее пн–пт)',
 		chartSat: 'суббота',
 		chartNote: 'Обычная загрузка по данным Google — по геолокации телефонов, обезличенно, за прошлые недели. 100% — обычный пик этого отделения. Наплыв вкладчиков ALTA здесь не учтён.',
@@ -78,11 +83,11 @@ const T = {
 	},
 	en: {
 		source: 'Source: AOD list',
-		published: 'published 06.11.2026',
-		pdf: 'PDF, 2 pp.',
-		total: (n: number, c: number) => `Branches on the list: ${n}, cities: ${c}.`,
+		published: 'version of 11.11.2026',
+		pdf: 'PDF, 3 pp.',
+		total: (n: number, c: number) => `Payout locations on the list: ${n}, cities: ${c}.`,
 		special: 'Mark in the AOD list',
-		unclear: 'What this mark means is not clear from the AOD document.',
+		specialNote: 'Poštanska, 10.11.2026: a new specialised branch at the bank’s head office, 28 counters, only for this payout.',
 		code: 'code',
 		weekdays: 'Weekdays',
 		saturday: 'Saturday',
@@ -104,7 +109,8 @@ const T = {
 		legend: 'Branch size (our estimate):',
 		unknown: 'unknown',
 		hint: 'Show map',
-		bankSite: 'the bank’s website gives',
+		bankSite: 'the bank’s website gives a different address',
+		addrCheck: 'The sources differ: check with the Poštanska contact centre, 011/20-20-292, option 4.',
 		chartWd: 'weekdays (Mon–Fri average)',
 		chartSat: 'Saturday',
 		chartNote: 'Usual busyness per Google data — from phone geolocation, anonymised, over past weeks. 100% is this branch’s usual peak. The influx of ALTA depositors is not reflected here.',
@@ -122,11 +128,11 @@ const T = {
 	},
 	sr: {
 		source: 'Izvor: spisak AOD',
-		published: 'objavljen 06.11.2026.',
-		pdf: 'PDF, 2 str.',
-		total: (n: number, c: number) => `Ekspozitura na spisku: ${n}, gradova: ${c}.`,
+		published: 'verzija od 11.11.2026.',
+		pdf: 'PDF, 3 str.',
+		total: (n: number, c: number) => `Isplatnih mesta na spisku: ${n}, gradova: ${c}.`,
 		special: 'Oznaka u spisku AOD',
-		unclear: 'Šta ta oznaka znači, iz dokumenta AOD nije jasno.',
+		specialNote: 'Poštanska, 10.11.2026: nova specijalizovana ekspozitura u centrali banke, 28 isplatnih šaltera, namenjena isključivo ovoj isplati.',
 		code: 'šifra',
 		weekdays: 'Radnim danom',
 		saturday: 'Subotom',
@@ -148,7 +154,8 @@ const T = {
 		legend: 'Veličina ekspoziture (naša procena):',
 		unknown: 'nije određena',
 		hint: 'Prikaži mapu',
-		bankSite: 'na sajtu banke piše',
+		bankSite: 'na sajtu banke je druga adresa',
+		addrCheck: 'Izvori se razlikuju: proverite u kontakt centru Poštanske štedionice 011/20-20-292, opcija 4.',
 		chartWd: 'radnim danom (prosek pon–pet)',
 		chartSat: 'subota',
 		chartNote: 'Uobičajena opterećenost prema Google podacima — iz geolokacije telefona, anonimizovano, za prethodne nedelje. 100% je uobičajeni vrhunac ove ekspoziture. Priliv štediša ALTA ovde nije uračunat.',
@@ -169,7 +176,7 @@ const T = {
 const QT = QUEUE_TEXT[lang];
 
 function cityKey(naziv: string): string {
-	const key = naziv.replace(/^EKSPOZITURA /, '').replace(/ \d+.*$/, '');
+	const key = naziv.replace(/^(EKSPOZITURA|Samostalni šalter) /, '').replace(/ \d+.*$/, '').toUpperCase();
 	if (!CITIES[key]) throw new Error(`PostanskaBranches: unknown city in "${naziv}"`);
 	return key;
 }
@@ -177,7 +184,9 @@ function cityKey(naziv: string): string {
 const mapUrl = (b: Pick<Branch, 'ulicaIBroj' | 'pttBroj'>, city: string) =>
 	`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${b.ulicaIBroj}, ${b.pttBroj} ${CITIES[city].latin}, Srbija`)}`;
 
-const ADDR_NOTE: Record<string, string> = { '767': 'Hercegovačka 19' };
+// Адрес из таблицы «ИСПЛАТНА МЕСТА» на posted.co.rs/promo/zakazivanje-isplate.html, если он не совпадает со списком AOD.
+const ADDR_NOTE: Record<string, string> = { '831': 'Strahinjića Bana 8, 18101 Niš' };
+const addrNote = (id: string) => (ADDR_NOTE[id] ? `${T.bankSite}: ${ADDR_NOTE[id]}. ${T.addrCheck}` : '');
 const esc = (v: string) => v.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
 
 type Extra = (typeof EXTRA)[keyof typeof EXTRA];
@@ -236,16 +245,16 @@ for (const b of LIST.ekspoziture) {
 const order = [...FIRST, ...[...groups.keys()].filter((k) => !FIRST.includes(k)).sort((a, b) => CITIES[a][lang].localeCompare(CITIES[b][lang], lang))];
 const slug = (k: string) => `branches-${CITIES[k].latin.toLowerCase().normalize('NFD').replace(/[^a-z ]/g, '').replace(/ /g, '-')}`;
 const S = LIST.specijalizovana;
-const SPECIAL_PT: Point = { id: S.sifra, name: S.naziv, addr: `${S.ulicaIBroj}, ${S.pttBroj} ${CITIES.BEOGRAD.latin}`, hours: S.radnoVremeRadnimDanom, sat: S.radnoVremeSubotom, code: S.sifra, city: 'BEOGRAD' };
+const SPECIAL_PT: Point = { id: S.id, name: S.naziv, addr: `${S.ulicaIBroj}, ${S.pttBroj} ${CITIES.BEOGRAD.latin}`, hours: S.radnoVremeRadnimDanom, sat: S.radnoVremeSubotom, code: S.sifra, city: 'BEOGRAD' };
 // Всё, что нужно карточке и списку очередей: часы — строками из PDF AOD, график Google — готовым SVG.
 const points = [
 	SPECIAL_PT,
-	...LIST.ekspoziture.map((b) => ({ id: b.sifra, name: b.naziv.replace(/^EKSPOZITURA /, ''), addr: `${b.ulicaIBroj}, ${b.pttBroj} ${CITIES[cityKey(b.naziv)].latin}`, hours: b.radnoVremeRadnimDanom, sat: b.radnoVremeSubotom, code: b.sifra, city: cityKey(b.naziv) })),
+	...LIST.ekspoziture.map((b) => ({ id: b.id, name: b.naziv.replace(/^EKSPOZITURA /, ''), addr: `${b.ulicaIBroj}, ${b.pttBroj} ${CITIES[cityKey(b.naziv)].latin}`, hours: b.radnoVremeRadnimDanom, sat: b.radnoVremeSubotom, code: b.sifra ?? '', city: cityKey(b.naziv) })),
 ]
 	.filter((p) => extraOf(p.id))
 	.map((p) => ({
 		id: p.id, lat: extraOf(p.id)!.lat, lng: extraOf(p.id)!.lng, city: p.city, cityName: CITIES[p.city][lang], name: p.name, addr: p.addr,
-		note: ADDR_NOTE[p.id] ? `${T.bankSite}: ${ADDR_NOTE[p.id]}` : '', wd: p.hours, sat: p.sat, gmaps: extraOf(p.id)!.maps_url ?? '', chart: chart(extraOf(p.id)), code: p.code, tag: p.id === S.sifra ? S.oznaka : '',
+		note: addrNote(p.id), wd: p.hours, sat: p.sat, gmaps: extraOf(p.id)!.maps_url ?? '', chart: chart(extraOf(p.id)), code: p.code, tag: p.id === S.id ? S.oznaka : '',
 		sz: sizeLine(extraOf(p.id), extraOf(p.id)!.maps_url ?? `https://www.google.com/maps/dir/?api=1&destination=${extraOf(p.id)!.lat},${extraOf(p.id)!.lng}`), busy: busyText(extraOf(p.id)) ? `${T.busy}: ${busyText(extraOf(p.id))}` : '',
 	}));
 const STATES = ['none', 'few', 'full', 'outside'] as const;
@@ -253,11 +262,11 @@ const BANK = '<svg viewBox="0 0 24 24" aria-hidden="true" class="q-bank"><path d
 const VOICE_LANG = { ru: 'ru-RU', en: 'en-US', sr: 'sr-RS' }[lang];
 const styleUrl = `/map/style-${lang}.json`;
 // Строки нижнего списка по городам: карточка AOD (шифра 864) — первой строкой Белграда.
-type Row = { id: string; name: string; addr: string; street: Pick<Branch, 'ulicaIBroj' | 'pttBroj'>; wd: string; sat: string; special: boolean };
+type Row = { id: string; code: string; name: string; addr: string; street: Pick<Branch, 'ulicaIBroj' | 'pttBroj'>; wd: string; sat: string; special: boolean };
 const gmapsOf = (r: Row, city: string) => extraOf(r.id)?.maps_url || mapUrl(r.street, city);
 const rowsByCity = new Map<string, Row[]>(order.map((k) => [k, [
-	...(k === 'BEOGRAD' ? [{ id: S.sifra, name: S.naziv, addr: `${S.ulicaIBroj}, ${S.pttBroj} ${CITIES.BEOGRAD.latin}`, street: S, wd: S.radnoVremeRadnimDanom, sat: S.radnoVremeSubotom, special: true }] : []),
-	...groups.get(k)!.map((b) => ({ id: b.sifra, name: b.naziv.replace(/^EKSPOZITURA /, ''), addr: `${b.ulicaIBroj}, ${b.pttBroj} ${CITIES[k].latin}`, street: b, wd: b.radnoVremeRadnimDanom, sat: b.radnoVremeSubotom, special: false })),
+	...(k === 'BEOGRAD' ? [{ id: S.id, code: S.sifra, name: S.naziv, addr: `${S.ulicaIBroj}, ${S.pttBroj} ${CITIES.BEOGRAD.latin}`, street: S, wd: S.radnoVremeRadnimDanom, sat: S.radnoVremeSubotom, special: true }] : []),
+	...groups.get(k)!.map((b) => ({ id: b.id, code: b.sifra ?? '', name: b.naziv.replace(/^EKSPOZITURA /, ''), addr: `${b.ulicaIBroj}, ${b.pttBroj} ${CITIES[k].latin}`, street: b, wd: b.radnoVremeRadnimDanom, sat: b.radnoVremeSubotom, special: false })),
 ]]));
 const cityCount = (k: string) => rowsByCity.get(k)!.length;
 const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST.url };
@@ -348,11 +357,11 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 														<div class="q-tag">
 															<p class="q-tag-t">{T.special}</p>
 															<p class="q-tag-o" lang="sr-Latn">{S.oznaka}</p>
-															<p class="q-tag-n">{T.unclear}</p>
+															<p class="q-tag-n">{T.specialNote}</p>
 														</div>
 													)}
-													<p class="bl-hours">{T.weekdays} {r.wd} · {T.saturday} {r.sat} · <span class="branch-code">{T.code} {r.id}</span></p>
-													{ADDR_NOTE[r.id] && <p class="bl-extra">{T.bankSite}: {ADDR_NOTE[r.id]}</p>}
+													<p class="bl-hours">{T.weekdays} {r.wd} · {T.saturday} {r.sat}{r.code && <> · <span class="branch-code">{T.code} {r.code}</span></>}</p>
+													{addrNote(r.id) && <p class="bl-extra">{addrNote(r.id)}</p>}
 													{sizeText(extraOf(r.id)) && <p class="bl-extra" set:html={sizeLine(extraOf(r.id), gmapsOf(r, k))} />}
 													{busyText(extraOf(r.id)) && <p class="bl-extra">{T.busy}: {busyText(extraOf(r.id))}</p>}
 													{noData(r.id) && <p class="bl-extra bl-nodata">{T.noData}</p>}
@@ -883,9 +892,9 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			const far = me ? distM(me, p) : null;
 			const near = hint ?? '';
 			const staleLine = stale ? `<p class="q-stale">${ICON('alert')}<span>${esc(note.textContent ?? '')}</span></p>` : '';
-			const code = `${tx.code} ${p.code}`;
-			const tag = p.tag ? `<div class="q-tag"><p class="q-tag-t">${esc(tx.special)}</p><p class="q-tag-o" lang="sr-Latn">${esc(p.tag)}</p><p class="q-tag-n">${esc(tx.unclear)}</p></div>` : '';
-			return `${head(p.name, `${shortAddr(p.addr)} · ${code}`)}<div class="q-card-body">
+			const code = p.code ? `${tx.code} ${p.code}` : '';
+			const tag = p.tag ? `<div class="q-tag"><p class="q-tag-t">${esc(tx.special)}</p><p class="q-tag-o" lang="sr-Latn">${esc(p.tag)}</p><p class="q-tag-n">${esc(tx.specialNote)}</p></div>` : '';
+			return `${head(p.name, code ? `${shortAddr(p.addr)} · ${code}` : shortAddr(p.addr))}<div class="q-card-body">
 				${tag}
 				${staleLine}
 				${near ? `<p class="q-near">${near}</p>` : ''}

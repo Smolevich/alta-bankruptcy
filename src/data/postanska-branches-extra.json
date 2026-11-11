@@ -285,15 +285,15 @@
 		"source_date": "2026-11-06"
 	},
 	"767": {
-		"lat": 44.8068765,
-		"lng": 20.4508976,
-		"maps_url": "https://www.google.com/maps/place/data=!4m2!3m1!1s0x475a653ad764fa03:0xe5cadd7533aa9314",
-		"size": "medium",
+		"lat": 44.8077505,
+		"lng": 20.4503913,
+		"maps_url": "https://www.google.com/maps/search/?api=1&query=44.8077505,20.4503913",
+		"size": null,
 		"peak": null,
 		"peak_saturday": null,
 		"hist": null,
-		"sv_date": "Aug 2024",
-		"source_date": "2026-11-06"
+		"sv_date": null,
+		"source_date": "2026-11-11"
 	},
 	"798": {
 		"lat": 44.793457,
@@ -1894,5 +1894,38 @@
 		},
 		"sv_date": "May 2026",
 		"source_date": "2026-11-06"
+	},
+	"nis-4": {
+		"lat": 43.329318,
+		"lng": 21.9264653,
+		"maps_url": "https://www.google.com/maps/search/?api=1&query=43.329318,21.9264653",
+		"size": null,
+		"peak": null,
+		"peak_saturday": null,
+		"hist": null,
+		"sv_date": null,
+		"source_date": "2026-11-11"
+	},
+	"krusevac": {
+		"lat": 43.5840192,
+		"lng": 21.3247437,
+		"maps_url": "https://www.google.com/maps/search/?api=1&query=43.5840192,21.3247437",
+		"size": null,
+		"peak": null,
+		"peak_saturday": null,
+		"hist": null,
+		"sv_date": null,
+		"source_date": "2026-11-11"
+	},
+	"sombor": {
+		"lat": 45.7662707,
+		"lng": 19.1169141,
+		"maps_url": "https://www.google.com/maps/search/?api=1&query=45.7662707,19.1169141",
+		"size": null,
+		"peak": null,
+		"peak_saturday": null,
+		"hist": null,
+		"sv_date": null,
+		"source_date": "2026-11-11"
 	}
 }

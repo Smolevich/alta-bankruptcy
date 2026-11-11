@@ -1,274 +1,308 @@
 {
-	"title": "Списак експозитура Банке Поштанске штедионица за преузимање осигураног износа",
-	"url": "https://www.aod.rs/uploads/dokumenti/altabanka/Spisak.pdf",
-	"published": "2026-11-06",
+	"title": "Списак експозитура банке исплатиоца",
+	"url": "https://www.aod.rs/uploads/dokumenti/altabanka/ekspoziture.pdf",
+	"published": "2026-11-11",
 	"specijalizovana": {
 		"oznaka": "SPECIJALIZOVANA EKSPOZITURA SAMO ZA ISPLATU",
+		"id": "864",
 		"sifra": "864",
 		"naziv": "AOD - Centrala banke",
 		"ulicaIBroj": "Kraljice Marije 3",
 		"pttBroj": "11120",
-		"radnoVremeRadnimDanom": "08:00-19:30",
-		"radnoVremeSubotom": "08:00-13:00"
+		"radnoVremeRadnimDanom": "8.00h - 19.30h",
+		"radnoVremeSubotom": "8.00h - 13.00h"
 	},
 	"ekspoziture": [
 		{
+			"id": "751",
 			"sifra": "751",
 			"naziv": "EKSPOZITURA BEOGRAD 29 - KOTEŽ",
 			"ulicaIBroj": "Anke Matić br. 4",
 			"pttBroj": "11210",
-			"radnoVremeRadnimDanom": "08:00-15:00",
-			"radnoVremeSubotom": "08:00-13:00"
+			"radnoVremeRadnimDanom": "8.00h - 15.00h",
+			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "754",
 			"sifra": "754",
 			"naziv": "EKSPOZITURA BEOGRAD 30 - CENTAR",
 			"ulicaIBroj": "Vase Čarapića br.18",
 			"pttBroj": "11158",
-			"radnoVremeRadnimDanom": "08:00-17:00",
-			"radnoVremeSubotom": "08:00-13:00"
+			"radnoVremeRadnimDanom": "8.00h - 18.00h",
+			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "759",
 			"sifra": "759",
 			"naziv": "EKSPOZITURA BEOGRAD 31 - ĐERAM",
 			"ulicaIBroj": "Bul.kralja Aleksandra 158",
 			"pttBroj": "11050",
-			"radnoVremeRadnimDanom": "08:00-17:00",
-			"radnoVremeSubotom": "08:00-13:00"
+			"radnoVremeRadnimDanom": "8.00h - 17.00h",
+			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "765",
 			"sifra": "765",
 			"naziv": "EKSPOZITURA BEOGRAD 32 - DORĆOL",
 			"ulicaIBroj": "Cara Dušana 6",
 			"pttBroj": "11158",
-			"radnoVremeRadnimDanom": "08:00-15:00",
-			"radnoVremeSubotom": "08:00-13:00"
+			"radnoVremeRadnimDanom": "8.00h - 16.00h",
+			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "767",
 			"sifra": "767",
 			"naziv": "EKSPOZITURA BEOGRAD 33 - BEOGRAD NA VODI",
-			"ulicaIBroj": "Bulevar Vudroa Vilsona 8 a",
+			"ulicaIBroj": "Hercegovačka 19",
 			"pttBroj": "11000",
-			"radnoVremeRadnimDanom": "08:00-17:00",
-			"radnoVremeSubotom": "08:00-13:00"
+			"radnoVremeRadnimDanom": "8.00h - 17.00h",
+			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "798",
 			"sifra": "798",
 			"naziv": "EKSPOZITURA BEOGRAD 23 - PROKOP",
 			"ulicaIBroj": "Zorana Žunkovića 15 lok 12 (L12)",
 			"pttBroj": "11040",
-			"radnoVremeRadnimDanom": "08:00-17:00",
-			"radnoVremeSubotom": "08:00-13:00"
+			"radnoVremeRadnimDanom": "8.00h - 17.00h",
+			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "801",
 			"sifra": "801",
 			"naziv": "EKSPOZITURA BEOGRAD 1 - BANOVO BRDO",
 			"ulicaIBroj": "Kirovljeva br. 5",
 			"pttBroj": "11030",
-			"radnoVremeRadnimDanom": "08:00-17:00",
-			"radnoVremeSubotom": "08:00-13:00"
+			"radnoVremeRadnimDanom": "8.00h - 18.00h",
+			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "802",
 			"sifra": "802",
 			"naziv": "EKSPOZITURA BEOGRAD 4 - BLOK 62",
 			"ulicaIBroj": "Nehruova br. 56a - levo",
 			"pttBroj": "11073",
-			"radnoVremeRadnimDanom": "08:00-19:30",
-			"radnoVremeSubotom": "08:00-13:00"
+			"radnoVremeRadnimDanom": "8.00h - 19.30h",
+			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "803",
 			"sifra": "803",
 			"naziv": "EKSPOZITURA BEOGRAD 2 - BEŽANIJSKA KOSA",
 			"ulicaIBroj": "Ljubinke Bobić br. 28",
 			"pttBroj": "11077",
-			"radnoVremeRadnimDanom": "08:00-16:00",
-			"radnoVremeSubotom": "08:00-13:00"
+			"radnoVremeRadnimDanom": "8.00h - 16.00h",
+			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "804",
 			"sifra": "804",
 			"naziv": "EKSPOZITURA BEOGRAD 3 - BLOK 70A",
 			"ulicaIBroj": "Omladinskih brigada br. 65v",
 			"pttBroj": "11197",
-			"radnoVremeRadnimDanom": "08:00-15:00",
-			"radnoVremeSubotom": "08:00-13:00"
+			"radnoVremeRadnimDanom": "8.00h - 16.00h",
+			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "817",
 			"sifra": "817",
 			"naziv": "EKSPOZITURA BEOGRAD 5 - ZEMUN",
 			"ulicaIBroj": "Milana Uzelca br. 23a",
 			"pttBroj": "11080",
-			"radnoVremeRadnimDanom": "08:00-17:00",
-			"radnoVremeSubotom": "08:00-13:00"
+			"radnoVremeRadnimDanom": "8.00h - 17.00h",
+			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "819",
 			"sifra": "819",
 			"naziv": "EKSPOZITURA BEOGRAD 6 - MILJAKOVAC",
 			"ulicaIBroj": "Bogdana Žerajića br.24a",
 			"pttBroj": "11090",
-			"radnoVremeRadnimDanom": "08:00-17:00",
-			"radnoVremeSubotom": "08:00-13:00"
+			"radnoVremeRadnimDanom": "8.00h - 17.00h",
+			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "822",
 			"sifra": "822",
 			"naziv": "EKSPOZITURA BEOGRAD 7 - JUŽNI BULEVAR",
 			"ulicaIBroj": "Južni Bulevar 116",
 			"pttBroj": "11118",
-			"radnoVremeRadnimDanom": "08:00-17:00",
-			"radnoVremeSubotom": "08:00-13:00"
+			"radnoVremeRadnimDanom": "8.00h - 17.00h",
+			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "835",
 			"sifra": "835",
 			"naziv": "EKSPOZITURA BEOGRAD 9 - BATAJNICA",
 			"ulicaIBroj": "Majora Zorana Radosavljevića br. 96",
 			"pttBroj": "11273",
-			"radnoVremeRadnimDanom": "08:00-17:00",
-			"radnoVremeSubotom": "08:00-13:00"
+			"radnoVremeRadnimDanom": "8.00h - 17.00h",
+			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "838",
 			"sifra": "838",
 			"naziv": "EKSPOZITURA BEOGRAD 10 - FILMSKI GRAD",
 			"ulicaIBroj": "Kneza Višeslava 136",
 			"pttBroj": "11032",
-			"radnoVremeRadnimDanom": "08:00-19:30",
-			"radnoVremeSubotom": "08:00-13:00"
+			"radnoVremeRadnimDanom": "8.00h - 19.30h",
+			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "841",
 			"sifra": "841",
 			"naziv": "EKSPOZITURA BEOGRAD 11 - KARABURMA",
 			"ulicaIBroj": "Drenovačka br.11",
 			"pttBroj": "11060",
-			"radnoVremeRadnimDanom": "08:00-16:00",
-			"radnoVremeSubotom": "08:00-13:00"
+			"radnoVremeRadnimDanom": "8.00h - 16.00h",
+			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "842",
 			"sifra": "842",
 			"naziv": "EKSPOZITURA BEOGRAD 12 - YU BIZNIS CENTAR",
 			"ulicaIBroj": "Bulevar Mihajla Pupina 10b",
 			"pttBroj": "11070",
-			"radnoVremeRadnimDanom": "08:00-17:00",
-			"radnoVremeSubotom": "08:00-13:00"
+			"radnoVremeRadnimDanom": "8.00h - 18.00h",
+			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "843",
 			"sifra": "843",
 			"naziv": "EKSPOZITURA BEOGRAD 13 - KONJARNIK",
 			"ulicaIBroj": "Ustanička br. 240 b",
 			"pttBroj": "11050",
-			"radnoVremeRadnimDanom": "08:00-17:00",
-			"radnoVremeSubotom": "08:00-13:00"
+			"radnoVremeRadnimDanom": "8.00h - 17.00h",
+			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "861",
 			"sifra": "861",
 			"naziv": "EKSPOZITURA BEOGRAD 14 - BORČA",
 			"ulicaIBroj": "Ivana Milutinovića 39",
 			"pttBroj": "11211",
-			"radnoVremeRadnimDanom": "08:00-16:00",
-			"radnoVremeSubotom": "08:00-13:00"
+			"radnoVremeRadnimDanom": "8.00h - 17.00h",
+			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "862",
 			"sifra": "862",
 			"naziv": "EKSPOZITURA BEOGRAD 15 - KNEZA MIHAILA",
 			"ulicaIBroj": "Knez Mihailova 7",
 			"pttBroj": "11000",
-			"radnoVremeRadnimDanom": "08:00-15:00",
-			"radnoVremeSubotom": "08:00-13:00"
+			"radnoVremeRadnimDanom": "8.00h - 15.00h",
+			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "865",
 			"sifra": "865",
 			"naziv": "EKSPOZITURA BEOGRAD 17 - MIRJEVO",
 			"ulicaIBroj": "Rableova 19",
 			"pttBroj": "11160",
-			"radnoVremeRadnimDanom": "08:00-15:00",
-			"radnoVremeSubotom": "08:00-13:00"
+			"radnoVremeRadnimDanom": "8.00h - 16.00h",
+			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "868",
 			"sifra": "868",
 			"naziv": "EKSPOZITURA BEOGRAD 19 - BULEVAR KRALJA ALEKSANDRA",
 			"ulicaIBroj": "Bul. Kralja Aleksandra 64",
 			"pttBroj": "11000",
-			"radnoVremeRadnimDanom": "08:00-17:00",
-			"radnoVremeSubotom": "08:00-13:00"
+			"radnoVremeRadnimDanom": "8.00h - 17.00h",
+			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "869",
 			"sifra": "869",
 			"naziv": "EKSPOZITURA BEOGRAD 20 - VIDIKOVAC",
 			"ulicaIBroj": "Vidikovački venac 79",
 			"pttBroj": "11090",
-			"radnoVremeRadnimDanom": "08:00-17:00",
-			"radnoVremeSubotom": "08:00-13:00"
+			"radnoVremeRadnimDanom": "8.00h - 17.00h",
+			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "870",
 			"sifra": "870",
 			"naziv": "EKSPOZITURA BEOGRAD 21 - VOJVODE STEPE",
 			"ulicaIBroj": "Vojvode Stepe 81",
 			"pttBroj": "11010",
-			"radnoVremeRadnimDanom": "08:00-17:00",
-			"radnoVremeSubotom": "08:00-13:00"
+			"radnoVremeRadnimDanom": "8.00h - 17.00h",
+			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "871",
 			"sifra": "871",
 			"naziv": "EKSPOZITURA BEOGRAD 22 - RETENZIJA",
 			"ulicaIBroj": "Džona Kenedija 31v - lamela 3 lok. 6",
 			"pttBroj": "11075",
-			"radnoVremeRadnimDanom": "08:00-18:00",
-			"radnoVremeSubotom": "08:00-13:00"
+			"radnoVremeRadnimDanom": "8.00h - 18.00h",
+			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "873",
 			"sifra": "873",
 			"naziv": "EKSPOZITURA BEOGRAD 24 - ZEMUN (MUHAR)",
 			"ulicaIBroj": "Trg Branka Radičevića 4",
 			"pttBroj": "11080",
-			"radnoVremeRadnimDanom": "08:00-17:00",
-			"radnoVremeSubotom": "08:00-13:00"
+			"radnoVremeRadnimDanom": "8.00h - 17.00h",
+			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "956",
 			"sifra": "956",
 			"naziv": "EKSPOZITURA BEOGRAD 18 - CARINA NOVI BEOGRAD",
 			"ulicaIBroj": "Narodnih heroja 63",
 			"pttBroj": "11070",
-			"radnoVremeRadnimDanom": "08:00-17:00",
-			"radnoVremeSubotom": "08:00-13:00"
+			"radnoVremeRadnimDanom": "8.00h - 17.00h",
+			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "970",
 			"sifra": "970",
 			"naziv": "EKSPOZITURA BEOGRAD 25 - ŠEST KAPLARA",
 			"ulicaIBroj": "Bul.Mihajla Pupina 3/L4",
 			"pttBroj": "11070",
-			"radnoVremeRadnimDanom": "08:00-15:00",
-			"radnoVremeSubotom": "08:00-13:00"
+			"radnoVremeRadnimDanom": "8.00h - 17.00h",
+			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "982",
 			"sifra": "982",
 			"naziv": "EKSPOZITURA BEOGRAD 27 - ŽELEZNIK",
 			"ulicaIBroj": "Darinka Radović 21",
 			"pttBroj": "11250",
-			"radnoVremeRadnimDanom": "08:00-17:00",
-			"radnoVremeSubotom": "08:00-13:00"
+			"radnoVremeRadnimDanom": "8.00h - 17.00h",
+			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "990",
 			"sifra": "990",
 			"naziv": "EKSPOZITURA BEOGRAD 28 - SREMČICA",
 			"ulicaIBroj": "Beogradska br. 98",
 			"pttBroj": "11253",
-			"radnoVremeRadnimDanom": "08:00-16:00",
-			"radnoVremeSubotom": "08:00-13:00"
+			"radnoVremeRadnimDanom": "8.00h - 16.00h",
+			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "715",
 			"sifra": "715",
 			"naziv": "EKSPOZITURA BEOGRAD 34 - Trošarina",
 			"ulicaIBroj": "Save Maškovića 2",
 			"pttBroj": "11042",
-			"radnoVremeRadnimDanom": "08:00-17:00",
-			"radnoVremeSubotom": "08:00-13:00"
+			"radnoVremeRadnimDanom": "8.00h - 17.00h",
+			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "866",
 			"sifra": "866",
 			"naziv": "EKSPOZITURA VRŠAC 1",
 			"ulicaIBroj": "Sterijina 19",
 			"pttBroj": "26300",
-			"radnoVremeRadnimDanom": "08:00-15:00",
-			"radnoVremeSubotom": "08:00-13:00"
+			"radnoVremeRadnimDanom": "8.00h - 15.00h",
+			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "814",
 			"sifra": "814",
 			"naziv": "EKSPOZITURA KRAGUJEVAC 1",
 			"ulicaIBroj": "dr Zorana Đinđića 11",
@@ -277,6 +311,7 @@
 			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "758",
 			"sifra": "758",
 			"naziv": "EKSPOZITURA KRAGUJEVAC 2",
 			"ulicaIBroj": "Kralja Milana IV 24",
@@ -285,6 +320,7 @@
 			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "920",
 			"sifra": "920",
 			"naziv": "EKSPOZITURA KRALJEVO 1",
 			"ulicaIBroj": "Oktobarskih žrtava 5",
@@ -293,6 +329,7 @@
 			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "860",
 			"sifra": "860",
 			"naziv": "EKSPOZITURA KRALJEVO 2",
 			"ulicaIBroj": "Proleterska 1",
@@ -301,6 +338,7 @@
 			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "728",
 			"sifra": "728",
 			"naziv": "EKSPOZITURA LUČANI",
 			"ulicaIBroj": "Dositejeva 1",
@@ -309,22 +347,34 @@
 			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "753 930",
 			"sifra": "753 930",
-			"naziv": "EKSPOZITURA NIŠ 1",
+			"naziv": "Samostalni šalter Niš 1",
 			"ulicaIBroj": "Generala Milojka Lešjanina 10",
 			"pttBroj": "18105",
 			"radnoVremeRadnimDanom": "8.00h - 19.30h",
 			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "831",
 			"sifra": "831",
-			"naziv": "EKSPOZITURA NIŠ 2",
+			"naziv": "EKSPOZITURA NIŠ 3",
 			"ulicaIBroj": "Bulevar dr Zorana Đinđića 15 v",
 			"pttBroj": "18108",
-			"radnoVremeRadnimDanom": "8.00h - 18.00h",
+			"radnoVremeRadnimDanom": "8.00h - 17.00h",
 			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "nis-4",
+			"sifra": null,
+			"naziv": "EKSPOZITURA NIŠ 4",
+			"ulicaIBroj": "Knjaževačka 112",
+			"pttBroj": "18103",
+			"radnoVremeRadnimDanom": "8.00h - 17.00h",
+			"radnoVremeSubotom": "8.00h - 13.00h"
+		},
+		{
+			"id": "839",
 			"sifra": "839",
 			"naziv": "EKSPOZITURA NOVI PAZAR 1",
 			"ulicaIBroj": "AVNOJ -a 31",
@@ -333,6 +383,7 @@
 			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "910",
 			"sifra": "910",
 			"naziv": "EKSPOZITURA NOVI SAD 1",
 			"ulicaIBroj": "Bulevar Oslobođenja 13",
@@ -341,6 +392,7 @@
 			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "837",
 			"sifra": "837",
 			"naziv": "EKSPOZITURA NOVI SAD 2",
 			"ulicaIBroj": "Đorđa Nilkšića Johana 16",
@@ -349,6 +401,7 @@
 			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "891",
 			"sifra": "891",
 			"naziv": "EKSPOZITURA NOVI SAD 3",
 			"ulicaIBroj": "Bulevar Cara Lazara 7a",
@@ -357,6 +410,7 @@
 			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "938",
 			"sifra": "938",
 			"naziv": "EKSPOZITURA NOVI SAD 4",
 			"ulicaIBroj": "Železnika 4",
@@ -365,6 +419,7 @@
 			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "981",
 			"sifra": "981",
 			"naziv": "EKSPOZITURA NOVI SAD 5",
 			"ulicaIBroj": "Dunavska 5",
@@ -373,6 +428,7 @@
 			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "737",
 			"sifra": "737",
 			"naziv": "EKSPOZITURA NOVI SAD 6",
 			"ulicaIBroj": "Kralja Petra I 22 v",
@@ -381,6 +437,7 @@
 			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "721",
 			"sifra": "721",
 			"naziv": "EKSPOZITURA NOVI SAD 7",
 			"ulicaIBroj": "Bulevar Evrope 11",
@@ -389,6 +446,7 @@
 			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "892",
 			"sifra": "892",
 			"naziv": "EKSPOZITURA STARA PAZOVA",
 			"ulicaIBroj": "Svetosavska 10/1",
@@ -397,6 +455,7 @@
 			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "825",
 			"sifra": "825",
 			"naziv": "EKSPOZITURA SUBOTICA",
 			"ulicaIBroj": "Trg Slobode 1",
@@ -405,6 +464,7 @@
 			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "813",
 			"sifra": "813",
 			"naziv": "EKSPOZITURA UŽICE 1",
 			"ulicaIBroj": "Slanuška 7",
@@ -413,6 +473,7 @@
 			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "972",
 			"sifra": "972",
 			"naziv": "EKSPOZITURA UŽICE 2",
 			"ulicaIBroj": "Trg Svetog Save 50",
@@ -421,6 +482,7 @@
 			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "818",
 			"sifra": "818",
 			"naziv": "EKSPOZITURA ČAČAK 1",
 			"ulicaIBroj": "Gospodar Jovanova 22",
@@ -429,11 +491,30 @@
 			"radnoVremeSubotom": "8.00h - 13.00h"
 		},
 		{
+			"id": "806",
 			"sifra": "806",
 			"naziv": "EKSPOZITURA ŠABAC",
 			"ulicaIBroj": "Pop Lukina 10",
 			"pttBroj": "15000",
 			"radnoVremeRadnimDanom": "8.00h - 18.00h",
+			"radnoVremeSubotom": "8.00h - 13.00h"
+		},
+		{
+			"id": "krusevac",
+			"sifra": null,
+			"naziv": "EKSPOZITURA KRUŠEVAC",
+			"ulicaIBroj": "Stevana Sinđelića 2",
+			"pttBroj": "37000",
+			"radnoVremeRadnimDanom": "8.00h - 19.30h",
+			"radnoVremeSubotom": "8.00h - 13.00h"
+		},
+		{
+			"id": "sombor",
+			"sifra": null,
+			"naziv": "EKSPOZITURA SOMBOR",
+			"ulicaIBroj": "Samka Radosavljevića 15",
+			"pttBroj": "25101",
+			"radnoVremeRadnimDanom": "8.00h - 17.00h",
 			"radnoVremeSubotom": "8.00h - 13.00h"
 		}
 	]
