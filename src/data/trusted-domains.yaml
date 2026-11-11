@@ -94,8 +94,8 @@
 - domain: posted.co.rs
   name: "Banka Poštanska štedionica a.d. Beograd — государственный банк «Почтовая сберкасса», банк-выплатчик"
   category: bank
-  proof: "WHOIS RNIDS, регистрант: BANKA POŠTANSKA ŠTEDIONICA A.D.; проверено 07.11.2026"
-  hosts: [www.posted.co.rs]
+  proof: "WHOIS RNIDS, регистрант: BANKA POŠTANSKA ŠTEDIONICA A.D.; проверено 07.11.2026; info.* — форма записи на выплату (тестовый адрес этой формы — в коде страницы www.posted.co.rs/promo/zakazivanje-isplate.html, 11.11.2026)"
+  hosts: [www.posted.co.rs, info.posted.co.rs]
 
 - domain: unicreditgroup.eu
   name: "UniCredit Group — банковская группа UniCredit (сайт с обзорами прессы)"
