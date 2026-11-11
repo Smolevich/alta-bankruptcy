@@ -22,8 +22,9 @@ export default defineConfig({
 		// i18n — как у Starlight, иначе пропадут hreflang в карте сайта.
 		sitemap({
 			i18n: { defaultLocale: 'root', locales: { root: 'ru', en: 'en', sr: 'sr-Latn' } },
-			// Страницы отдаёт backend, в сборке Astro их нет. Дату не ставим: данные меняются с каждым ответом.
-			customPages: [`${SITE}/account`, `${SITE}/account/stats`],
+			// Страницу отдаёт backend, в сборке Astro её нет; форма /account закрыта noindex и в карту не идёт.
+			// Дату не ставим: данные меняются с каждым ответом.
+			customPages: [`${SITE}/account/stats`],
 			serialize(item) {
 				const lastmod = LASTMOD.get(new URL(item.url).pathname);
 				return lastmod ? { ...item, lastmod } : item;

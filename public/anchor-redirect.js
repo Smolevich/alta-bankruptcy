@@ -9,8 +9,16 @@
 		var p = location.pathname.replace(/index\.html$/, '');
 		return p.charAt(p.length - 1) === '/' ? p : p + '/';
 	}
+	// Свёрнутый блок с пометкой data-open-on="<якорь>" раскрываем, когда пришли по этому якорю.
+	function openFor(hash) {
+		var blocks = document.querySelectorAll('details[data-open-on]');
+		for (var i = 0; i < blocks.length; i++) {
+			if (blocks[i].getAttribute('data-open-on') === hash) blocks[i].open = true;
+		}
+	}
 	function redirect() {
 		var old = current();
+		openFor(old);
 		if (!old || document.getElementById(old)) return;
 		fetch('/anchor-redirects.json')
 			.then(function (r) { return r.ok ? r.json() : {}; })
@@ -21,6 +29,7 @@
 				history.replaceState(history.state, '', location.pathname + location.search + '#' + next);
 				// replaceState не шлёт hashchange: блокам, которые выбирают содержимое по якорю (город в списке отделений), сообщаем сами.
 				window.dispatchEvent(new Event('anchor-redirect'));
+				openFor(next);
 				target.scrollIntoView();
 			})
 			.catch(function () {});
