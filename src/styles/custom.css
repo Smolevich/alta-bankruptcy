@@ -756,7 +756,11 @@ select:focus-visible, .bc-seg input:focus-visible + span, .branch-controls butto
 .q-details-body { display: flex; flex-direction: column; gap: 6px; padding: 0 0 10px; }
 .q-details-body .q-week { margin-top: 2px; }
 .bl-obs, .q-obs { margin: 4px 0; }
-.bl-obs > summary, .q-details .q-obs > summary { min-height: 32px; font-size: 0.9em; font-weight: 600; color: var(--sl-color-gray-3); cursor: pointer; }
+.bl-obs > summary, .q-details .q-obs > summary { display: flex; align-items: center; gap: 8px; min-height: 32px; font-size: 0.9em; font-weight: 600; color: var(--sl-color-gray-3); cursor: pointer; list-style: none; }
+/* Шеврон как у «Ещё фильтры» (.bc-more): без него свёрнутый блок на телефоне читается как подзаголовок. */
+.bl-obs > summary::-webkit-details-marker, .q-details .q-obs > summary::-webkit-details-marker { display: none; }
+.bl-obs > summary::after, .q-details .q-obs > summary::after { content: ''; flex: none; width: 7px; height: 7px; border: solid currentColor; border-width: 0 2px 2px 0; transform: translateY(-2px) rotate(45deg); transition: transform 0.15s; }
+.bl-obs[open] > summary::after, .q-details .q-obs[open] > summary::after { transform: translateY(2px) rotate(-135deg); }
 .q-status { --tc: var(--ok); --tb: var(--ok-soft); display: flex; gap: 12px; align-items: center; padding: 14px 16px; border-radius: 12px; background: var(--tb); }
 .q-status[data-tone='soon'] { --tc: var(--amber); --tb: var(--amber-soft); }
 .q-status[data-tone='closed'] { --tc: var(--seal); --tb: var(--seal-soft); }

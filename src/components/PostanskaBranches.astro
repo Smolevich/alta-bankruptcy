@@ -209,22 +209,6 @@ function busyText(e?: Extra): string | null {
 
 type Hist = { weekday: (number | null)[]; sat: (number | null)[] | null };
 const GOOGLE_BUSY = 'https://support.google.com/business/answer/6263531';
-const HOURS = [8, 12, 16, 20];
-// Столбики 8–20 ч, inline SVG: цвета — через currentColor и var(--sl-color-text-accent), чтобы работало в любой теме.
-function row(label: string, v: (number | null)[]): string {
-	const W = 13 * 10;
-	const bars = v
-		.map((p, i) => `<rect x="${i * 10 + 1}" y="${30 - (p ?? 0) * 0.28}" width="8" height="${(p ?? 0) * 0.28}" class="bar"/>`)
-		.join('');
-	const ticks = HOURS.map((h) => `<text x="${(h - 8) * 10 + 5}" y="40" text-anchor="middle" class="tick">${h}</text>`).join('');
-	return `<div class="hist-lbl">${esc(label)}</div><svg viewBox="0 0 ${W} 43" class="hist-svg" role="img" aria-label="${esc(label)}: ${v.map((p) => p ?? 0).join(', ')}%"><line x1="0" y1="30.5" x2="${W}" y2="30.5" class="axis"/>${bars}${ticks}</svg>`;
-}
-// Пояснение к графику одно на раздел — в «Как читать», а не под каждым графиком.
-function chart(e?: Extra): string {
-	const h = (e as { hist?: Hist | null } | undefined)?.hist;
-	if (!h) return '';
-	return `<div class="hist" role="group" aria-label="${esc(T.chartLabel)}">${row(T.chartWd, h.weekday)}${h.sat ? row(T.chartSat, h.sat) : ''}</div>`;
-}
 // Значок «булавка карты» у внешней ссылки на Google Maps: наша карта — без значка, Google — всегда с ним.
 const PIN = '<svg class="gm-pin" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7z" fill="#ea4335"/><circle cx="12" cy="9" r="2.6" fill="#fff"/></svg>';
 const histOf = (id: string) => (extraOf(id) as { hist?: Hist | null } | undefined)?.hist ?? null;
@@ -249,7 +233,7 @@ const order = [...FIRST, ...[...groups.keys()].filter((k) => !FIRST.includes(k))
 const slug = (k: string) => `branches-${CITIES[k].latin.toLowerCase().normalize('NFD').replace(/[^a-z ]/g, '').replace(/ /g, '-')}`;
 const S = LIST.specijalizovana;
 const SPECIAL_PT: Point = { id: S.id, name: S.naziv, addr: `${S.ulicaIBroj}, ${S.pttBroj} ${CITIES.BEOGRAD.latin}`, hours: S.radnoVremeRadnimDanom, sat: S.radnoVremeSubotom, code: S.sifra, city: 'BEOGRAD' };
-// Всё, что нужно карточке и списку очередей: часы — строками из PDF AOD, график Google — готовым SVG.
+// Всё, что нужно карточке и списку очередей: часы — строками из PDF AOD; график Google рисует скрипт из data-wd/data-sat строки списка.
 const points = [
 	SPECIAL_PT,
 	...LIST.ekspoziture.map((b) => ({ id: b.id, name: b.naziv.replace(/^EKSPOZITURA /, ''), addr: `${b.ulicaIBroj}, ${b.pttBroj} ${CITIES[cityKey(b.naziv)].latin}`, hours: b.radnoVremeRadnimDanom, sat: b.radnoVremeSubotom, code: b.sifra ?? '', city: cityKey(b.naziv) })),
@@ -257,7 +241,7 @@ const points = [
 	.filter((p) => extraOf(p.id))
 	.map((p) => ({
 		id: p.id, lat: extraOf(p.id)!.lat, lng: extraOf(p.id)!.lng, city: p.city, cityName: CITIES[p.city][lang], name: p.name, addr: p.addr,
-		note: addrNote(p.id), wd: p.hours, sat: p.sat, gmaps: extraOf(p.id)!.maps_url ?? '', chart: chart(extraOf(p.id)), code: p.code, tag: p.id === S.id ? S.oznaka : '',
+		note: addrNote(p.id), wd: p.hours, sat: p.sat, gmaps: extraOf(p.id)!.maps_url ?? '', code: p.code, tag: p.id === S.id ? S.oznaka : '',
 		sz: sizeLine(extraOf(p.id), extraOf(p.id)!.maps_url ?? `https://www.google.com/maps/dir/?api=1&destination=${extraOf(p.id)!.lat},${extraOf(p.id)!.lng}`), busy: busyText(extraOf(p.id)) ? `${T.busy}: ${busyText(extraOf(p.id))}` : '',
 	}));
 const STATES = ['none', 'few', 'full', 'outside'] as const;
@@ -321,7 +305,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 		</details>
 	</div>
 
-	<section class="qmap" id="branches-map" data-points={JSON.stringify(points)} data-text={JSON.stringify(QT)} data-style={styleUrl} data-lang={lang} data-voice-lang={VOICE_LANG} aria-label={QT.title}>
+	<section class="qmap" id="branches-map" data-points={JSON.stringify(points)} data-text={JSON.stringify({ ...QT, chartWd: T.chartWd, chartSat: T.chartSat, chartLabel: T.chartLabel })} data-style={styleUrl} data-lang={lang} data-voice-lang={VOICE_LANG} aria-label={QT.title}>
 		<header class="qmap-head">
 			<p class="qmap-title"><Fragment set:html={BANK} /><span>{QT.title}</span></p>
 		</header>
@@ -373,7 +357,8 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 															{sizeText(extraOf(r.id)) && <p class="bl-extra" set:html={sizeLine(extraOf(r.id), gmapsOf(r, k))} />}
 															{busyText(extraOf(r.id)) && <p class="bl-extra">{T.busy}: {busyText(extraOf(r.id))}</p>}
 															{noData(r.id) && <p class="bl-extra bl-nodata">{T.noData}</p>}
-															{histOf(r.id) && <Fragment set:html={chart(extraOf(r.id))} />}
+															{/* График рисует скрипт при раскрытии (src/lib/branch-hist.mjs); без него остаётся строка «обычно людно». */}
+															{histOf(r.id) && <div data-hist></div>}
 														</details>
 													)}
 													<div class="bl-actions">
@@ -432,6 +417,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 	import { branchStatus, canReport, parseRange, reportsFrom } from '../lib/branch-hours.mjs';
 	import { MIXED, splitText, statusTone, weekTiles } from '../lib/branch-card.mjs';
 	import { belgradeParts, clockOffset } from '../lib/server-clock.mjs';
+	import { histHtml, histValues } from '../lib/branch-hist.mjs';
 
 	type Info = { el: HTMLDetailsElement; li: HTMLElement; city: string; size: string; wd: number[]; sat: number[] };
 	const nums = (v?: string) => (v ? v.split(',').map(Number) : []);
@@ -444,7 +430,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 	// Карта очередей Poštanska (ТЗ ux-spec, этап 1). MapLibre, подложка и шрифты — с нашего адреса
 	// (public/vendor/maplibre, public/map): сторонние скрипты и тайлы CSP сайта не пускает.
 
-	type Pt = { id: string; lat: number; lng: number; city: string; cityName: string; name: string; addr: string; note: string; wd: string; sat: string; gmaps: string; chart: string; code: string; tag: string; sz: string; busy: string };
+	type Pt = { id: string; lat: number; lng: number; city: string; cityName: string; name: string; addr: string; note: string; wd: string; sat: string; gmaps: string; code: string; tag: string; sz: string; busy: string };
 	type Mark = { state: string; count: number; minutes_ago: number; sure?: boolean; split?: Record<string, number> };
 	type Tx = Record<string, any>;
 	type Hours = { open: boolean; text: string; preOpen: boolean; reportsAt: string; next: string };
@@ -902,6 +888,8 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			const near = hint ?? '';
 			const staleLine = stale ? `<p class="q-stale">${ICON('alert')}<span>${esc(note.textContent ?? '')}</span></p>` : '';
 			const code = p.code ? `${tx.code} ${p.code}` : '';
+			const info = infos.get(p.id);
+			const chart = info ? histHtml(info.wd, info.sat, tx) : '';
 			const tag = p.tag ? `<div class="q-tag"><p class="q-tag-t">${esc(tx.special)}</p><p class="q-tag-o" lang="sr-Latn">${esc(p.tag)}</p><p class="q-tag-n">${esc(tx.specialNote)}</p></div>` : '';
 			return `${head(p.name, code ? `${shortAddr(p.addr)} · ${code}` : shortAddr(p.addr))}<div class="q-card-body">
 				${tag}
@@ -916,9 +904,9 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 				<details class="q-acc q-details"${moreOpen ?? !narrow() ? ' open' : ''}><summary><span>${esc(tx.details)}</span>${ICON('chevron')}</summary>
 					<div class="q-details-body">
 					<p class="q-lbl">${esc(tx.hLabel)}</p>${weekHtml(p)}
-					${p.sz || p.busy || p.chart ? `<details class="q-obs"><summary>${esc(tx.obs)}</summary>
+					${p.sz || p.busy || chart ? `<details class="q-obs"><summary>${esc(tx.obs)}</summary>
 					${p.sz ? `<p>${p.sz}</p>` : ''}${p.busy ? `<p>${esc(p.busy)}</p>` : ''}
-					${p.chart ? `<p class="q-lbl">${esc(tx.googleSum)}</p>${p.chart}<p class="q-google-note">${esc(tx.googleNote)}</p>` : ''}
+					${chart ? `<p class="q-lbl">${esc(tx.googleSum)}</p>${chart}<p class="q-google-note">${esc(tx.googleNote)}</p>` : ''}
 					</details>` : ''}
 					<p class="q-foot">${ICON('info')}<span>${esc(tx.foot)} <button type="button" class="q-legend-link">${esc(tx.legend)}</button></span></p>
 					</div>
@@ -1507,6 +1495,15 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 	}
 
 	document.querySelectorAll<HTMLElement>('.qmap').forEach(initQueue);
+	// График загрузки в строке списка — только когда раскрыли «Наши наблюдения»: в HTML его нет.
+	const histText = JSON.parse(document.querySelector<HTMLElement>('.qmap')?.dataset.text ?? '{}');
+	document.addEventListener('toggle', (e) => {
+		const obs = e.target;
+		if (!(obs instanceof HTMLDetailsElement) || !obs.open || !obs.classList.contains('bl-obs')) return;
+		const slot = obs.querySelector<HTMLElement>('[data-hist]');
+		const row = obs.closest<HTMLElement>('.bl-row');
+		if (slot && row) slot.outerHTML = histHtml(histValues(row.dataset.wd), histValues(row.dataset.sat), histText);
+	}, true);
 	// Печать и сохранение в PDF: все строки и группа «Закрыто сейчас» раскрыты (name снимаем — иначе раскрыта только одна).
 	const opened = new Set<HTMLDetailsElement>();
 	window.addEventListener('beforeprint', () => {
