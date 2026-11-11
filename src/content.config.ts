@@ -52,6 +52,8 @@ export const collections = {
 			forms: z.array(z.enum(['prijava', 'fizicka', 'pravna'])).optional(),
 			// Короткая пометка над текстом: новость рядом с выплатами, но о другом (например, «не о вкладах»).
 			aside: z.string().min(3).optional(),
+			// Ссылки на наши страницы под текстом новости.
+			links: z.array(z.object({ label: z.string().min(1), href: z.string().startsWith('/') })).optional(),
 			// Новость устарела по более поздним официальным сообщениям: текст не трогаем, пометку показываем над ним.
 			outdated: z
 				.object({
