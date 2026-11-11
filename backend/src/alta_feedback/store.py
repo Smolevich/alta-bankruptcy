@@ -421,6 +421,12 @@ class Store:
         with self.connect() as db:
             return [decode_row(row) for row in db.execute(query, args)]
 
+    def last_accepted_account_at(self) -> datetime | None:
+        """Когда пришёл самый свежий из принятых ответов: дата обновления страницы статистики."""
+        with self.connect() as db:
+            (raw,) = db.execute("SELECT MAX(created_at) FROM accounts WHERE status = 'accepted'").fetchone()
+        return datetime.fromisoformat(raw) if raw else None
+
     def public_branch_counts(self) -> Counter:
         """Число принятых ответов по (банк, отделение) — по всем, без фильтров и страниц."""
         query = (

@@ -62,15 +62,19 @@ from alta_feedback.site import (
     index_file,
 )
 from alta_feedback.stats import (
+    DISCLAIMER,
     PAGE_SIZE,
     AnswerFilter,
     account_stats,
     answer_cards,
     answer_page,
     hide_rare_branches,
+    meta_description,
     parse_cursor,
     parse_filter,
     shown_before,
+    summarize,
+    summary_lines,
 )
 from alta_feedback.store import Store
 from alta_feedback.validate import (
@@ -490,6 +494,10 @@ async def account_stats_page(request: Request) -> HTMLResponse:
     case_filter = parse_case_filter(request.query_params)
     keep = case_filter.query()
     stats = account_stats(items, counts)
+    # Вводный ответ — по всем ответам, а не по фильтру: это ответ на вопрос страницы целиком.
+    summary = summarize(items if not answer_filter.active else store.public_accounts(with_person=True))
+    today = today_local().date()
+    last_at = store.last_accepted_account_at()
     page = answer_page(store.public_accounts(answer_filter, before, PAGE_SIZE + 1), PAGE_SIZE)
     first = shown_before(items, before) + 1
     has_any = bool(stats.total or store.public_accounts(limit=1))
@@ -507,6 +515,9 @@ async def account_stats_page(request: Request) -> HTMLResponse:
         case_filter=case_filter, cases=CASES, vnzh_options=VNZH,
         case_cards=case_banks(items, case_filter, criteria()), criteria_checked=criteria_checked(),
         bank_forms=for_page(forms, answer_filter.bank), forms_codes=codes_by_name(forms),
+        summary_lines=summary_lines(summary), today=today, disclaimer=DISCLAIMER,
+        updated=last_at.astimezone(LOCAL_TZ).date() if last_at else None,
+        description=meta_description(summary, today), canonical=f"{DEFAULT_RETURN_URL}/account/stats",
     )
 
 
@@ -811,6 +822,15 @@ def slash_twins(routes: list[Route]) -> list[Route]:
     ]
 
 
+def to_temporary(path: str) -> Callable[[Request], Awaitable[Response]]:
+    """Временный редирект с query: пока у страницы нет перевода, en и sr ведут на русскую."""
+    async def handler(request: Request) -> Response:
+        query = request.url.query
+        return RedirectResponse(f"{path}?{query}" if query else path, status_code=302)
+
+    return handler
+
+
 def to_slash(path: str) -> Callable[[Request], Awaitable[Response]]:
     async def handler(request: Request) -> Response:
         return RedirectResponse(path, status_code=308)
@@ -929,6 +949,9 @@ def create_app(
         Route("/account/branches", account_branches, methods=["GET"]),
         Route("/account/spasibo", account_thanks, methods=["GET"]),
         Route("/account/stats", account_stats_page, methods=["GET"]),
+        # Адреса спрашивают поисковики и ИИ-ассистенты; перевода страницы пока нет.
+        Route("/en/account/stats", to_temporary("/account/stats"), methods=["GET"]),
+        Route("/sr/account/stats", to_temporary("/account/stats"), methods=["GET"]),
         Route("/static/{name}", static_script, methods=["GET"]),
         Route("/map/serbia.pmtiles", tiles_endpoint(tiles), methods=["GET", "HEAD"]),
         Route("/api/accounts/public", public_accounts, methods=["GET"]),

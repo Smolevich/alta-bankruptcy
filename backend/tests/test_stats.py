@@ -1,10 +1,15 @@
+import pytest
+
 from alta_feedback.stats import (
     AnswerFilter,
     account_stats,
     answer_page,
+    checked_answers,
     parse_cursor,
     parse_filter,
     shown_before,
+    summarize,
+    summary_lines,
 )
 
 
@@ -89,3 +94,26 @@ def test_empty_filter_is_inactive():
 def test_shown_before_counts_answers_up_to_cursor():
     items = [item(id=3), item(id=2), item(id=9, visit_date="2026-10-01")]
     assert shown_before(items, ("2026-10-31", 2)) == 2
+
+
+@pytest.mark.parametrize(
+    ("n", "text"),
+    [
+        (1, "1 проверенный ответ"), (3, "3 проверенных ответа"),
+        (11, "11 проверенных ответов"), (22, "22 проверенных ответа"),
+    ],
+)
+def test_checked_answers_agrees_with_number(n, text):
+    assert checked_answers(n) == text
+
+
+def test_summary_without_answers_says_nothing():
+    assert summary_lines(summarize([])) == []
+
+
+def test_top_banks_skip_banks_without_that_result():
+    items = [
+        {"bank": "A", "result": "opened", "account_type": "personal"},
+        {"bank": "B", "result": "refused", "account_type": "personal"},
+    ]
+    assert summarize(items).top_opened == [("A", 1)]
