@@ -20,6 +20,7 @@ sources:
   - { title: "Портал судов Сербии: ход дел хозяйственных судов", url: "https://tpson.portal.sud.rs/tpprvs/", kind: official, date: 2026-11-03 }
   - { title: "AOD: квартальный отчёт по Univerzal banka, II кв. 2026", url: "https://www.aod.rs/uploads/dokumenti/kvartalniizvestaj/Univerzal%20banka_II%20kvartal%202026.pdf", kind: official, date: 2026-06-30 }
   - { title: "AOD, Univerzal banka: призыв к кредиторам прислать реквизиты", url: "https://www.aod.rs/uploads/dokumenti/oglas/19_1_oglas.pdf", kind: official, date: 2020-08-31 }
+  - { title: "AOD: вопросы и ответы по ALTA banka (кто застрахован, лимит, сроки)", url: "https://www.aod.rs/clan/altabanka/pitanja_odgovori_altabanka", kind: official, date: 2026-11-11 }
   - { title: "AOD: вопросы и ответы о страховании вкладов", url: "https://www.aod.rs/clan/osigdepoz/pitanja_odgovori", kind: official, date: 2026-11-03 }
   - { title: "AOD: вопросы и ответы о банкротстве и ликвидации", url: "https://www.aod.rs/clan/stecajlikv/pitanja_odgovori", kind: official, date: 2026-11-03 }
   - { title: "AOD: формы для вкладчиков ALTA (образец требования, бланки доверенности)", url: "https://www.aod.rs/clan/altabanka/obrasci_altabanka", kind: official, date: 2026-11-04 }
@@ -32,7 +33,7 @@ import NewsList from '../../components/NewsList.astro';
 import Flow from '../../components/Flow.astro';
 import Faq from '../../components/Faq.astro';
 
-Сайт для вкладчиков ALTA, у которых в банке больше 50 000 €. До 50 000 € вернёт AOD — государственное Агентство по страхованию вкладов, оно же ведёт банкротство банка. Остальное можно вернуть только через банкротство банка, и для этого нужно самому подать требование в суд.
+Сайт для вкладчиков ALTA, у которых в банке больше 50 000 €. До 50 000 € на вкладчика вернёт AOD — государственное Агентство по страхованию вкладов, оно же ведёт банкротство банка. Остальное можно вернуть только через банкротство банка, и для этого нужно самому подать требование в суд.
 
 <Status />
 
@@ -86,7 +87,7 @@ import Faq from '../../components/Faq.astro';
 
 </div>
 
-Если у вас меньше 50 000 €, всё вернёт AOD: в суд подавать ничего не нужно. Страховку выдают в отделениях Poštanska с 13.11.2026 до 03.11.2029 ([объявление AOD, 06.11.2026](https://www.aod.rs/uploads/dokumenti/altabanka/Obave%C5%A1tenje_o_po%C4%8Detku_isplate_OD_6nov2026.pdf)); что взять — [чек-лист](/vyplata/#what-to-bring).
+Если у вас меньше 50 000 € и вы физлицо, ИП, микро-, малая или средняя фирма, всё вернёт AOD: в суд подавать ничего не нужно. Крупные фирмы, связанные с банком лица и некоторые другие вклады не застрахованы ([AOD, вопросы и ответы по ALTA](https://www.aod.rs/clan/altabanka/pitanja_odgovori_altabanka)). Страховку выдают в отделениях Poštanska с 13.11.2026 до 03.11.2029 ([объявление AOD, 06.11.2026](https://www.aod.rs/uploads/dokumenti/altabanka/Obave%C5%A1tenje_o_po%C4%8Detku_isplate_OD_6nov2026.pdf)); что взять — [чек-лист](/vyplata/#what-to-bring).
 
 Почему отозвали лицензию, по словам Нацбанка: финансовое положение банка «значительно ухудшилось», и под угрозой интересы вкладчиков ([цитата целиком](/bank/#why)).
 
