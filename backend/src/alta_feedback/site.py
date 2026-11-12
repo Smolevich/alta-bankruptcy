@@ -59,6 +59,10 @@ class SiteFiles(StaticFiles):
 
     async def get_response(self, path: str, scope: Scope):
         response = await super().get_response(path, without_conditionals_on_range(scope))
+        if response.status_code == 307:
+            # Starlette шлёт 307 на адрес папки без слеша; это постоянное правило, и Google должен
+            # переносить сигналы на вариант со слешем, а не считать его временным.
+            response.status_code = 308
         response.headers["Content-Security-Policy"] = PDF_CSP if path.endswith(".pdf") else SITE_CSP
         cache = IMMUTABLE if path.startswith("_astro/") and response.status_code == 200 else REVALIDATE
         response.headers["Cache-Control"] = cache
