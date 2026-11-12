@@ -105,3 +105,9 @@ def test_range_request_from_revalidating_browser_gets_partial_content(client):
 def test_plain_revalidation_still_gets_not_modified(client):
     etag = client.get("/map/tiles.pmtiles").headers["etag"]
     assert client.get("/map/tiles.pmtiles", headers={"If-None-Match": etag}).status_code == 304
+
+
+def test_page_without_trailing_slash_redirects_permanently(client):
+    response = client.get("/trebovanie", follow_redirects=False)
+
+    assert (response.status_code, response.headers["location"]) == (308, "http://testserver/trebovanie/")

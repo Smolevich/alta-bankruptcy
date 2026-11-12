@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
+# Cloudflare подменяет e-mail ссылкой /cdn-cgi/l/email-protection, у краулера это 404.
+Disallow: /cdn-cgi/
 
 Sitemap: https://alta.smolevich.com/sitemap-index.xml
