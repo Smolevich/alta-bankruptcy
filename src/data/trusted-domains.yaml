@@ -172,6 +172,12 @@
   proof: "WHOIS RNIDS, регистрант: MONDO INC DOO BEOGRAD; проверено 07.11.2026"
   hosts: [biznis.kurir.rs]
 
+- domain: rts.rs
+  name: "Radio-televizija Srbije — общественный вещатель Сербии"
+  category: press
+  proof: "WHOIS RNIDS, регистрант: RDU RTS; проверено 12.11.2026"
+  hosts: [www.rts.rs]
+
 - domain: rtv.rs
   name: "Radio-televizija Vojvodine — общественный вещатель Воеводины"
   category: press
