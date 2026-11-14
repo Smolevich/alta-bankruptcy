@@ -305,7 +305,9 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 		</details>
 	</div>
 
-	<section class="qmap" id="branches-map" data-points={JSON.stringify(points)} data-text={JSON.stringify({ ...QT, chartWd: T.chartWd, chartSat: T.chartSat, chartLabel: T.chartLabel })} data-style={styleUrl} data-lang={lang} data-voice-lang={VOICE_LANG} aria-label={QT.title}>
+	<section class="qmap" id="branches-map" data-text={JSON.stringify({ ...QT, chartWd: T.chartWd, chartSat: T.chartSat, chartLabel: T.chartLabel })} data-style={styleUrl} data-lang={lang} data-voice-lang={VOICE_LANG} aria-label={QT.title}>
+		{/* JSON в теге script, а не в атрибуте: в атрибуте каждая кавычка становится &quot;, и страница выходила за бюджет веса. */}
+		<script is:inline type="application/json" class="qmap-points" set:html={JSON.stringify(points).replace(/</g, '\\u003c')} />
 		<header class="qmap-head">
 			<p class="qmap-title"><Fragment set:html={BANK} /><span>{QT.title}</span></p>
 		</header>
@@ -568,7 +570,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 	}
 
 	function initQueue(root: HTMLElement) {
-		const pts: Pt[] = JSON.parse(root.dataset.points ?? '[]');
+		const pts: Pt[] = JSON.parse(root.querySelector('.qmap-points')?.textContent ?? '[]');
 		const tx: Tx = JSON.parse(root.dataset.text ?? '{}');
 		const lang = root.dataset.lang ?? 'ru';
 		const $ = <T extends HTMLElement>(sel: string) => root.querySelector<T>(sel)!;
