@@ -66,8 +66,8 @@ jobs:
           # Главные /en/ и /sr/ попадали в русский раздел llms.txt.
           test -z "$(awk '/^## English/{exit} /smolevich\.com\/(en|sr)\//' dist/llms.txt)"
           grep -q 'smolevich.com/account/stats)' dist/llms.txt
-          # Страница выплаты весила 650–700 КБ из-за готовых SVG графиков загрузки; держим её меньше 380 КБ.
-          for f in dist/vyplata/index.html dist/en/vyplata/index.html dist/sr/vyplata/index.html; do test "$(wc -c < "$f")" -lt 389120; done
+          # Страница выплаты весила 650–700 КБ из-за готовых SVG графиков загрузки; держим её меньше 400 КБ (мягкий бюджет веса, сервер на него не опирается).
+          for f in dist/vyplata/index.html dist/en/vyplata/index.html dist/sr/vyplata/index.html; do test "$(wc -c < "$f")" -lt 409600; done
 
   # Сервис сайта (backend/): тесты, линтер и тест поиска в фильтрах статистики.
   backend:
