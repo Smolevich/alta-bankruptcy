@@ -27,12 +27,14 @@ sources:
   - { title: "Banka Poštanska štedionica: obrazac za onlajn zakazivanje isplate «Заказивање термина за исплату осигураног износа депозита», izmenjen 11.11.2026", url: "https://info.posted.co.rs/osiguranje/osiguranje.html", kind: official, date: 2026-11-11, copy: "https://web.archive.org/web/20261111194519/https://info.posted.co.rs/osiguranje/osiguranje.html" }
   - { title: "AOD: «Заказивање термина за преузимање осигураних износа депозита» — onlajn zakazivanje u Poštanskoj štedionici od 12.11.2026, 11.11.2026", url: "https://www.aod.rs/clan/vest/vest_forma/147", kind: official, date: 2026-11-11, copy: "https://web.archive.org/web/20261111144021/https://www.aod.rs/clan/vest/vest_forma/147" }
   - { title: "RTS: Čortan: Sredstva obezbeđena, nema razloga za žurbu, 12.11.2026", url: "https://www.rts.rs/lat/vesti/ekonomija/6082133/pocinje-isplata-novca-stedisama-alta-banke--cortan-sredstva-obezbedjena-nema-razloga-za-zurbu-.html", kind: reliable_media, date: 2026-11-12, copy: "https://web.archive.org/web/20261112194627/https://www.rts.rs/lat/vesti/ekonomija/6082133/pocinje-isplata-novca-stedisama-alta-banke--cortan-sredstva-obezbedjena-nema-razloga-za-zurbu-.html" }
+  - { title: "Narodna banka Srbije: kursna lista br. 210, srednji kurs na dan 3.11.2026. (117,5698 din za 1 €)", url: "https://webappcenter.nbs.rs/ExchangeRateWebApp/ExchangeRate/IndexByDate?isSearchExecuted=true&Date=03.11.2026.&ExchangeRateListTypeID=3", kind: official, date: 2026-11-03, copy: "https://web.archive.org/web/20261115163739/https://webappcenter.nbs.rs/ExchangeRateWebApp/ExchangeRate/IndexByDate?isSearchExecuted=true&Date=03.11.2026.&ExchangeRateListTypeID=3" }
 ---
 
 import FormCards from '../../../components/FormCards.astro';
 import PostanskaBranches from '../../../components/PostanskaBranches.astro';
 import Shot from '../../../components/Shot.astro';
 import Checklist from '../../../components/Checklist.astro';
+import PayoutCalc from '../../../components/PayoutCalc.astro';
 
 <aside class="legal-note not-content"><strong>Nije pravni savet.</strong> Ovde su prepričani pitanja i odgovori, obrasci i procedura Agencije za osiguranje depozita; uz ključne tačke je doslovni citat i link na izvor.</aside>
 
@@ -43,7 +45,7 @@ Osiguranim deponentima (ko su oni — [niže](#who-is-eligible)) Agencija za osi
 AOD je 06.11.2026. zvanično objavila datum ([obaveštenje AOD, 06.11.2026](https://www.aod.rs/uploads/dokumenti/altabanka/Obave%C5%A1tenje_o_po%C4%8Detku_isplate_OD_6nov2026.pdf)):
 
 - **Osigurani iznos isplaćuje se od 13.11.2026.** preko Banke Poštanska štedionica (banka isplatilac). Poslednji dan je **03.11.2029**: tri godine od rešenja suda o pokretanju stečaja ([AOD, pitanja i odgovori o Alta banci](https://www.aod.rs/clan/altabanka/pitanja_odgovori_altabanka)).
-- **Iznos: do 50.000 € po deponentu.** Za dinarske depozite isplata je u dinarima, za devizne u evrima (vidi [„Koliko i u kojoj valuti”](#how-much)).
+- **Iznos: do 50.000 € po deponentu.** Za dinarske depozite isplata je u dinarima, za devizne u evrima (vidi [„Koliko i u kojoj valuti”](#how-much), tamo je i [kalkulator isplate](#payout-calc)).
 - **Kome:** fizičkim licima (rezidentima i nerezidentima), preduzetnicima, mikro, malim i srednjim pravnim licima registrovanim u Srbiji. Detaljnije: [„Ko ima pravo na isplatu”](#who-is-eligible).
 - **Gde:** na isplatnim mestima Poštanske štedionice sa spiska AOD, verzija od 11.11.2026. Na spisku je 57 isplatnih mesta u 15 gradova. Jedna od njih, u Beogradu (Kraljice Marije 3), u spisku nosi oznaku „SPECIJALIZOVANA EKSPOZITURA SAMO ZA ISPLATU”. Banka u vesti od 10.11.2026. objašnjava: to je novootvorena specijalizovana ekspozitura u centrali Banke, sa 28 isplatnih šaltera, namenjena isključivo ovom poslu ([Poštanska, 10.11.2026](https://www.posted.co.rs/media/novosti.html), [kopija](https://web.archive.org/web/20261110134231/https://www.posted.co.rs/media/novosti.html)). Adrese i radno vreme su [ispod](#postanska-branches) ([spisak AOD, PDF](https://www.aod.rs/uploads/dokumenti/altabanka/ekspoziture.pdf)). Po obaveštenju AOD, adrese i radno vreme mogu se saznati i u bilo kojoj ekspozituri Poštanske štedionice.
 - **Zakazivanje:** banka je u vesti od 10.11.2026. najavila portal za zakazivanje od četvrtka 12.11.2026 ([Poštanska, 10.11.2026](https://www.posted.co.rs/media/novosti.html), [kopija](https://web.archive.org/web/20261110134231/https://www.posted.co.rs/media/novosti.html)). Od večeri 11.11.2026. na stranici banke „Заказивање исплате депозита” postoji dugme «Онлајн заказивање ➜» koje vodi na obrazac za zakazivanje: [„Kako zakazati termin onlajn”](#online-booking). Na toj stranici banka navodi da je isplata moguća samo uz kompletnu propisanu dokumentaciju; informacije — Kontakt centar 011/20-20-292, opcija 4 ([Poštanska, pitanja i odgovori](https://www.posted.co.rs/promo/zakazivanje-isplate.html)).
@@ -315,6 +317,8 @@ Poštanska na stranici pitanja i odgovora od 10.11.2026. opisuje zahtev drugači
 - Ugovorena kamata obračunata zaključno sa 03.11.2026. ulazi u osigurani iznos i u limit od 50.000 €. Ne čeka se istek oročenja; banka isplatilac ne obračunava kamatu, već isplaćuje iznos koji je utvrdila AOD ([Poštanska, pitanja i odgovori, tač. 8–9](https://www.posted.co.rs/promo/zakazivanje-isplate.html)).
 - Plaćanja karticom neposredno pred stečaj mogu biti u statusu rezervacije i ne ulaze odmah u iznos. Prema banci isplatiocu, ostatak rezervisanih sredstava biće dostupan najkasnije 30 dana od otvaranja stečaja ([Poštanska, pitanja i odgovori, tač. 35](https://www.posted.co.rs/promo/zakazivanje-isplate.html)).
 - Prema iskustvu učesnika četa, 14.11.2026: u Novom Sadu su sa deviznog računa isplatili 5.000 € u gotovini, a deo u dinarima u gotovini, uz obrazloženje da nema dovoljno gotovine u evrima ([poruka](https://t.me/Altadef50k/10872)); u Kragujevcu, u ekspozituri u Kralja Milana, „nema novca“ i nisu mogli da otvore račun za prenos ([poruka](https://t.me/Altadef50k/10863)). To je iskustvo pojedinih deponenata, a ne pravilo AOD-a ili banke.
+
+<div id="payout-calc"><PayoutCalc lang="sr" /></div>
 
 > „Средства са динарских рачуна исплаћују се у динарима, а са девизних у еврима, прерачунато по средњем курсу Народне банке Србије на дан доношења решења о отварању стечајног поступка (3. новембар 2026. године).” — [AOD, pitanja i odgovori za Alta banku](https://www.aod.rs/clan/altabanka/pitanja_odgovori_altabanka).
 
