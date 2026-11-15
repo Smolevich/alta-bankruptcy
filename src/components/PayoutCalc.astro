@@ -1,0 +1,115 @@
+---
+// Калькулятор страховой выплаты: считает только в браузере, ничего не отправляет и не сохраняет.
+// Формулы — src/lib/payout-calc.mjs (повторяют таблицу владельца, тесты — scripts/payout-calc.test.mjs).
+import type { Lang } from '../i18n';
+import { RATE } from '../lib/payout-calc.mjs';
+
+const { lang = 'ru' } = Astro.props as { lang?: Lang };
+const NBS = 'https://webappcenter.nbs.rs/ExchangeRateWebApp/ExchangeRate/IndexByDate?isSearchExecuted=true&Date=03.11.2026.&ExchangeRateListTypeID=3';
+
+const T = {
+	ru: {
+		title: 'Калькулятор выплаты',
+		intro: 'Остатки в ALTA на 03.11.2026 вместе с процентами по договору, начисленными по этот день. Всё считается в этом браузере, никуда не отправляется и не сохраняется.',
+		eur: 'Остаток в евро',
+		rsd: 'Остаток в динарах',
+		other: 'Другие валюты, уже пересчитанные в евро по курсу на 03.11',
+		otherHint: ['Доллары, франки и др. переведите в евро по курсу НБС на 03.11 — ', 'курсовой лист № 210', '; требование сверх лимита по такой валюте подают в её валюте.'],
+		pay: 'Poštanska выплатит',
+		claim: 'Требование в суд сверх 50 000 €',
+		none: 'ничего: страховка покрывает весь вклад',
+		and: 'и',
+		aod: 'Как в процедуре AOD (доли до 6 знаков):',
+		rate: 'Курс НБС на 03.11.2026: 117,5698 дин за 1 €.',
+		note: ['Расчёт ориентировочный, итог — по справке Poštanska/AOD. Источник курса: ', 'НБС, курсовой лист № 210 от 03.11.2026', '.'],
+		rsdU: 'дин', locale: 'ru-RU',
+	},
+	en: {
+		title: 'Payout calculator',
+		intro: 'Balances at ALTA on 03.11.2026, including contractual interest accrued up to that day. Everything is calculated in this browser; nothing is sent or saved.',
+		eur: 'Balance in euros',
+		rsd: 'Balance in dinars',
+		other: 'Other currencies, already converted to euros at the 03.11 rate',
+		otherHint: ['Convert dollars, francs etc. to euros at the NBS rate of 03.11 — ', 'exchange rate list No. 210', '; the claim above the limit for such a currency is filed in that currency.'],
+		pay: 'Poštanska will pay',
+		claim: 'Court claim above €50,000',
+		none: 'nothing: insurance covers the whole deposit',
+		and: 'and',
+		aod: 'As in the AOD procedure (shares to 6 decimals):',
+		rate: 'NBS rate on 03.11.2026: 117.5698 RSD per €1.',
+		note: ['Indicative calculation; the final amount is the one on the Poštanska/AOD statement. Rate source: ', 'NBS, exchange rate list No. 210 of 03.11.2026', '.'],
+		rsdU: 'RSD', locale: 'en-GB',
+	},
+	sr: {
+		title: 'Kalkulator isplate',
+		intro: 'Stanja u ALTA banci na dan 3.11.2026. sa ugovorenom kamatom obračunatom do tog dana. Sve se računa u ovom pregledaču; ništa se ne šalje i ne čuva.',
+		eur: 'Stanje u evrima',
+		rsd: 'Stanje u dinarima',
+		other: 'Druge valute, već preračunate u evre po kursu na dan 3.11.',
+		otherHint: ['Dolare, franke i dr. preračunajte u evre po kursu NBS na dan 3.11. — ', 'kursna lista br. 210', '; potraživanje iznad limita u toj valuti prijavljuje se u valuti potraživanja.'],
+		pay: 'Poštanska će isplatiti',
+		claim: 'Potraživanje iznad 50.000 € (sud)',
+		none: 'ništa: osiguranje pokriva ceo depozit',
+		and: 'i',
+		aod: 'Kao u proceduri AOD (udeli na 6 decimala):',
+		rate: 'Kurs NBS na dan 3.11.2026: 117,5698 din za 1 €.',
+		note: ['Obračun je okviran; konačan iznos je onaj iz obračuna Poštanske/AOD. Izvor kursa: ', 'NBS, kursna lista br. 210 od 3.11.2026', '.'],
+		rsdU: 'din', locale: 'sr-Latn-RS',
+	},
+}[lang];
+---
+
+<section class="payout-calc not-content" data-payout-calc data-locale={T.locale} data-rsd={T.rsdU} data-and={T.and} data-none={T.none} data-rate={RATE}>
+	<h3 class="payout-calc-title">{T.title}</h3>
+	<p class="payout-calc-intro">{T.intro}</p>
+	<label>{T.eur}<input type="text" inputmode="decimal" autocomplete="off" name="eur" placeholder="30000" /></label>
+	<label>{T.rsd}<input type="text" inputmode="decimal" autocomplete="off" name="rsd" placeholder="23000000" /></label>
+	<label>{T.other}<input type="text" inputmode="decimal" autocomplete="off" name="other" placeholder="0" /></label>
+	<p class="payout-calc-hint">{T.otherHint[0]}<a href={NBS}>{T.otherHint[1]}</a>{T.otherHint[2]}</p>
+	<dl class="payout-calc-out">
+		<dt>{T.pay}</dt><dd data-out="pay">—</dd>
+		<dt>{T.claim}</dt><dd data-out="claim">—</dd>
+	</dl>
+	<p class="payout-calc-small">{T.aod} <span data-out="aod">—</span></p>
+	<p class="payout-calc-small">{T.rate}</p>
+	<p class="payout-calc-small">{T.note[0]}<a href={NBS}>{T.note[1]}</a>{T.note[2]}</p>
+</section>
+
+<style>
+	.payout-calc { border: 1px solid var(--sl-color-gray-5); border-radius: 0.5rem; padding: 1rem; margin: 1.5rem 0; max-width: 100%; box-sizing: border-box; }
+	.payout-calc-title { margin: 0 0 0.5rem; font-size: var(--sl-text-h4); }
+	.payout-calc-intro, .payout-calc-hint, .payout-calc-small { font-size: var(--sl-text-sm); margin: 0.5rem 0; }
+	.payout-calc label { display: block; margin: 0.75rem 0 0; font-weight: 600; font-size: var(--sl-text-sm); }
+	.payout-calc input { display: block; width: 100%; box-sizing: border-box; margin-top: 0.25rem; padding: 0.5rem; font: inherit; font-size: 1rem; border: 1px solid var(--sl-color-gray-4); border-radius: 0.375rem; background: var(--sl-color-bg); color: var(--sl-color-text); }
+	.payout-calc-out { margin: 1rem 0 0.5rem; }
+	.payout-calc-out dt { font-size: var(--sl-text-sm); color: var(--sl-color-gray-2); }
+	.payout-calc-out dd { margin: 0 0 0.5rem; font-size: var(--sl-text-lg); font-weight: 700; overflow-wrap: anywhere; }
+	.payout-calc-small { color: var(--sl-color-gray-2); overflow-wrap: anywhere; }
+</style>
+
+<script>
+	import { payout } from '../lib/payout-calc.mjs';
+
+	// Пробелы и точки-разделители тысяч убираем, запятую считаем десятичной — как пишут в Сербии и в России.
+	const parse = (s: string) => {
+		const t = s.replace(/[\s ']/g, '');
+		const n = Number(/,/.test(t) ? t.replace(/\./g, '').replace(',', '.') : t);
+		return Number.isFinite(n) && n > 0 ? n : 0;
+	};
+
+	for (const box of document.querySelectorAll<HTMLElement>('[data-payout-calc]')) {
+		const { locale, rsd: rsdU, and, none } = box.dataset;
+		const fmt = new Intl.NumberFormat(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+		const pair = (e: number, d: number) => `${fmt.format(e)} € ${and} ${fmt.format(d)} ${rsdU}`;
+		const val = (n: string) => parse(box.querySelector<HTMLInputElement>(`input[name="${n}"]`)!.value);
+		const out = (k: string, v: string) => { box.querySelector(`[data-out="${k}"]`)!.textContent = v; };
+		const render = () => {
+			const r = payout({ eur: val('eur'), rsd: val('rsd'), other: val('other') });
+			out('pay', pair(r.payEur, r.payRsd));
+			out('claim', r.overLimit ? pair(r.claimEur, r.claimRsd) : none!);
+			out('aod', pair(r.aodEur, r.aodRsd));
+		};
+		box.addEventListener('input', render);
+		render();
+	}
+</script>
