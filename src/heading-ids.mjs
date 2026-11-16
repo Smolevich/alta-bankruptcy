@@ -10,6 +10,7 @@ export const HEADING_IDS = {
 	'kak-bylo': ['in-short', 'univerzal-2014', 'univerzal-still-open', 'other-cases'],
 	'nalog-kvartira': ['in-short', 'completed-flat', 'mutual-cancellation', 'notary-cancellation', 'under-construction', 'transfer-tax', 'full-answer'],
 	'otkaz-scheta': ['in-short', 'your-rights', 'step-1', 'step-2', 'step-3', 'citizenship', 'complaint-template', 'chat-example', 'compare-banks', 'record-result'],
+	'obrazcy-trebovaniya': ['differences', 'sample-1', 'sample-2', 'how-to-file'],
 	pomoch: ['rule', 'source-levels', 'how-to-correct', 'three-languages', 'news-item', 'report-account'],
 	procedura: ['licence-revoked', 'bankruptcy-opened', 'paying-bank', 'payout-up-to-50000', 'claim-above-50000', 'claims-verified', 'payouts-above-50000'],
 	ssylki: ['chats', 'food-help', 'official-contacts', 'our-tools'],
