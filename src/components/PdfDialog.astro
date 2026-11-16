@@ -87,6 +87,8 @@ const t = UI[lang];
 			const my = ++session;
 			title.textContent = el.dataset.title || el.textContent?.trim() || '';
 			orig.href = el.dataset.orig || (el as HTMLAnchorElement).href || src;
+			// У образцов от вкладчиков официального оригинала нет: ссылку «Оригинал» прячем.
+			orig.hidden = 'noOrig' in el.dataset;
 			down.href = src;
 			message(dlg.dataset.loading ?? '…');
 			dlg.showModal();

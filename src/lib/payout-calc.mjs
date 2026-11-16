@@ -41,3 +41,17 @@ export function payout({ eur = 0, rsd = 0, other = 0 }, rate = RATE, limit = LIM
 		aodRsd: round(insured * round(rsdShare, 6) * rate, 2),
 	};
 }
+
+const AMOUNT = /^(\d{1,3}(?:[.,]\d{3})+|\d+)(?:[.,](\d{1,2}))?$/;
+
+/**
+ * Разбирает сумму так, как её пишут в Сербии, России и по-английски: «60.000», «60,000», «50.000,50», «60 000».
+ * Точка или запятая перед группой ровно из трёх цифр — разделитель тысяч, перед 1–2 последними цифрами — десятичная.
+ * @param {string} s
+ * @returns {number | null} null — строка не похожа на сумму (в том числе пустая): считать её нулём нельзя.
+ */
+export function parseAmount(s) {
+	const m = AMOUNT.exec(String(s).replace(/[\s  ']/g, ''));
+	if (!m) return null;
+	return Number(`${m[1].replace(/[.,]/g, '')}.${m[2] ?? '0'}`);
+}

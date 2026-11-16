@@ -7,10 +7,11 @@ import { INSTAGRAM_URL, TELEGRAM_CHANNEL_URL, TELEGRAM_CHAT_URL } from './src/si
 import { unified } from '@astrojs/markdown-remark';
 import rehypeNewTab from './src/rehype-new-tab.mjs';
 import rehypeHeadingIds from './src/rehype-heading-ids.mjs';
-import { lastmodByPath } from './src/sitemap-lastmod.mjs';
+import { lastmodByPath, noindexPaths } from './src/sitemap-lastmod.mjs';
 
 const SITE = 'https://alta.smolevich.com';
 const LASTMOD = lastmodByPath('./src/content/docs', './src/content/news');
+const NOINDEX = noindexPaths('./src/content/docs');
 
 // Сайт живёт в корне alta.smolevich.com: статику отдаёт сервис из backend/
 // (см. docs/deploy.md), поэтому base не задаём.
@@ -25,6 +26,7 @@ export default defineConfig({
 			// Страницу отдаёт backend, в сборке Astro её нет; форма /account закрыта noindex и в карту не идёт.
 			// Дату не ставим: данные меняются с каждым ответом.
 			customPages: [`${SITE}/account/stats`],
+			filter: (page) => !NOINDEX.has(new URL(page).pathname),
 			serialize(item) {
 				const lastmod = LASTMOD.get(new URL(item.url).pathname);
 				return lastmod ? { ...item, lastmod } : item;
@@ -114,6 +116,7 @@ export default defineConfig({
 					collapsed: true,
 					items: [
 						{ label: 'Кейсы вкладчиков', slug: 'kejsy', translations: { en: 'Depositor cases', 'sr-Latn': 'Slučajevi štediša' } },
+						{ label: 'Образец требования от вкладчиков', slug: 'obrazcy-trebovaniya', translations: { en: 'Claim sample from depositors', 'sr-Latn': 'Primer prijave od štediša' } },
 						{ label: 'Адвокат: как выбрать и проверить', slug: 'advokat', translations: { en: 'Lawyer: how to choose and check', 'sr-Latn': 'Advokat: kako izabrati i proveriti' } },
 						{ label: 'Чаты и помощь', slug: 'ssylki', translations: { en: 'Chats and help', 'sr-Latn': 'Četovi i pomoć' } },
 					],
