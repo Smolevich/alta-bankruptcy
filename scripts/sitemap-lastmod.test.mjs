@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdtempSync, mkdirSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { frontmatterDate, lastmodByPath, pagePath } from '../src/sitemap-lastmod.mjs';
+import { frontmatterDate, isNoindex, lastmodByPath, noindexPaths, pagePath } from '../src/sitemap-lastmod.mjs';
 
 test('home pages of every language map to their root path', () => {
 	assert.deepEqual(['index.mdx', 'en/index.mdx', 'sr/vyplata.mdx'].map(pagePath), ['/', '/en/', '/sr/vyplata/']);
@@ -25,4 +25,16 @@ test('news page takes the newest news date of its own language', () => {
 	writeFileSync(join(news, 'en', 'a.md'), '---\ndate: 2026-11-05\n---\n');
 	const map = lastmodByPath(docs, news);
 	assert.deepEqual([map.get('/novosti/'), map.get('/en/novosti/')], ['2026-11-09', '2026-11-05']);
+});
+
+test('pages with robots noindex in frontmatter head are left out of the sitemap', () => {
+	const docs = mkdtempSync(join(tmpdir(), 'noindex-'));
+	mkdirSync(join(docs, 'en'));
+	writeFileSync(join(docs, 'kejsy.mdx'), '---\nhead:\n  - { tag: meta, attrs: { name: robots, content: "noindex, follow" } }\n---\n');
+	writeFileSync(join(docs, 'en', 'vyplata.mdx'), '---\ntitle: x\n---\n\nname: robots noindex\n');
+	assert.deepEqual([...noindexPaths(docs)], ['/kejsy/']);
+});
+
+test('robots meta without noindex keeps the page indexable', () => {
+	assert.equal(isNoindex('---\nhead:\n  - { tag: meta, attrs: { name: robots, content: "index, follow" } }\n---\n'), false);
 });
