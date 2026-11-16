@@ -14,9 +14,9 @@
     "check": "npm run check:i18n && npm run build"
   },
   "dependencies": {
-    "@astrojs/markdown-remark": "^7.3.5",
+    "@astrojs/markdown-remark": "^7.3.8",
     "@astrojs/sitemap": "^3.7.4",
-    "@astrojs/starlight": "^0.42.9",
+    "@astrojs/starlight": "^0.42.11",
     "@pdf-lib/fontkit": "1.1.1",
     "astro": "^7.4.12",
     "pdf-lib": "1.17.1",
