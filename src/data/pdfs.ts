@@ -58,6 +58,8 @@ const EXTRA_COPIES: Record<string, string> = {
 		'aod-2026-11-10-uputstvo-prijava-potrazivanja.pdf',
 	'https://www.aod.rs/uploads/dokumenti/oglas/243_1_oglas.pdf':
 		'aod-2026-11-09-javni-konkurs-poverenik.pdf',
+	'https://www.aod.rs/uploads/dokumenti/oglas/244_1_oglas.pdf':
+		'aod-2026-11-16-korekcija-konkursa-poverenik.pdf',
 	'https://www.aod.rs/uploads/dokumenti/pravnareg/40_pravnareg.pdf':
 		'aod-zahtev-isplata-zasticenog-potrazivanja.pdf',
 	'https://www.javnidug.gov.rs/static/uploads/Lista%20ovlascenih%20ucesnika_cir.pdf':
