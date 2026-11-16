@@ -49,3 +49,17 @@ export function lastmodByPath(docsDir, newsDir) {
 	}
 	return result;
 }
+
+/** Закрыта ли страница от индекса через `head` во frontmatter (robots noindex). */
+export function isNoindex(src) {
+	const head = src.match(/^---\n([\s\S]*?)\n---/)?.[1] ?? '';
+	return /name:\s*["']?robots["']?[^\n]*noindex/.test(head);
+}
+
+/**
+ * Пути страниц с noindex: в карте сайта им не место. Источник правды — frontmatter,
+ * чтобы вернуть страницу в индекс одной правкой — удалением её `head`.
+ */
+export function noindexPaths(docsDir) {
+	return new Set(readDir(docsDir).filter(({ src }) => isNoindex(src)).map(({ file }) => pagePath(file)));
+}
