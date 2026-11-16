@@ -67,7 +67,7 @@ jobs:
           test -z "$(awk '/^## English/{exit} /smolevich\.com\/(en|sr)\//' dist/llms.txt)"
           grep -q 'smolevich.com/account/stats)' dist/llms.txt
           # Страница выплаты весила 650–700 КБ из-за готовых SVG графиков загрузки (#176); сторож от их возврата.
-          # 410 КБ: к 16.11 текст дорос до 389 087 байт при пороге 380 КБ, места на правки читаемости не было.
+          # Порог 420 000 байт: к 16.11 текст дорос до 389 087 байт при пороге 380 КБ, места на правки читаемости не было.
           for f in dist/vyplata/index.html dist/en/vyplata/index.html dist/sr/vyplata/index.html; do test "$(wc -c < "$f")" -lt 420000; done
 
   # Сервис сайта (backend/): тесты, линтер и тест поиска в фильтрах статистики.
