@@ -1,0 +1,71 @@
+---
+// Образцы требования, которые составили вкладчики: та же карточка и тот же просмотр PDF (data-pdf → PdfDialog),
+// что у бланков AOD, но без ссылок «оригинал AOD» — у этих документов официального оригинала нет.
+import type { Lang } from '../i18n';
+
+type Text = Record<Lang, string>;
+type Sample = { file: string; title: Text; who: Text; pages: number };
+
+const SAMPLES: Sample[] = [
+	{
+		file: 'uzorak-deponenata-prijava-potrazivanja',
+		title: { ru: 'Образец 1: требование после выплаты страховки', en: 'Sample 1: claim after the insured payout', sr: 'Primer 1: prijava posle isplate osiguranog iznosa' },
+		who: {
+			ru: 'Для тех, кто уже получил до 50 000 € в Poštanska: остаток считается по бумаге о выплате.',
+			en: 'For those who already received up to €50,000 at Poštanska: the remainder is based on the payout sheet.',
+			sr: 'Za one koji su već primili do 50.000 € u Poštanskoj: ostatak se računa prema ispravi o isplati.',
+		},
+		pages: 2,
+	},
+	{
+		file: 'uzorak-deponenata-prijava-potrazivanja-stranac-bez-jmbg',
+		title: { ru: 'Образец 2: иностранец без JMBG', en: 'Sample 2: foreigner without a JMBG', sr: 'Primer 2: stranac bez JMBG' },
+		who: {
+			ru: 'Для иностранцев без JMBG: паспорт и ЕБС, по пунктам ст. 111 закона о банкротстве.',
+			en: 'For foreigners without a JMBG: passport and EBS, following the points of art. 111 of the Bankruptcy Law.',
+			sr: 'Za strance bez JMBG: pasoš i EBS, po tačkama člana 111 Zakona o stečaju.',
+		},
+		pages: 2,
+	},
+];
+
+const T = {
+	ru: { label: 'Образцы от вкладчиков', open: 'Открыть', word: 'Word для заполнения', pages: 'стр.' },
+	en: { label: 'Samples from depositors', open: 'Open', word: 'Word to fill in', pages: 'pp.' },
+	sr: { label: 'Primeri od štediša', open: 'Otvori', word: 'Word za popunjavanje', pages: 'str.' },
+};
+
+const { lang = 'ru' } = Astro.props as { lang?: Lang };
+const t = T[lang];
+---
+
+<ul class="form-cards not-content" aria-label={t.label}>
+	{
+		SAMPLES.map((s) => {
+			const pdf = `/docs/${s.file}.pdf`;
+			const view = { href: pdf, target: '_blank', rel: 'noopener', 'data-pdf': pdf, 'data-title': s.title.sr, 'data-no-orig': '' };
+			return (
+				<li>
+					<article class="form-card">
+						<a class="form-thumb" {...view} tabindex="-1" aria-hidden="true">
+							<img src={`/img/forms/${s.file}.webp`} width="360" height="510" alt="" loading="lazy" decoding="async" />
+						</a>
+						<div class="form-body">
+							<h3>{s.title[lang]}</h3>
+							<p class="form-what">{s.who[lang]}</p>
+							<div class="form-actions">
+								<a class="form-btn" {...view}>
+									{t.open}
+									<span class="form-btn-note">PDF, {s.pages} {t.pages}</span>
+								</a>
+								<a class="form-btn form-btn-2" href={`/docs/${s.file}.docx`} download>
+									{t.word}
+								</a>
+							</div>
+						</div>
+					</article>
+				</li>
+			);
+		})
+	}
+</ul>
