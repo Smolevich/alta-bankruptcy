@@ -16,7 +16,8 @@ jobs:
         env:
           BODY: ${{ github.event.pull_request.body }}
         run: |
-          body=$(printf '%s' "$BODY" | tr -d '\r')
+          # Template hints are HTML comments; a section holding only a hint counts as empty.
+          body=$(printf '%s' "$BODY" | tr -d '\r' | perl -0pe 's/<!--.*?-->//gs')
           if [ -z "$(printf '%s' "$body" | tr -d '[:space:]')" ]; then
             echo "::error::PR description is empty. Add sections: ## What, ## Why, ## Checks."
             exit 1
