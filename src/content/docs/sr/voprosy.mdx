@@ -1,7 +1,7 @@
 ---
 title: "Česta pitanja štediša ALTA banke"
 description: "Kratki odgovori uz zakon, AOD ili sud: prijava potraživanja iznad 50.000 € do 04.02.2027, osigurani iznos u Poštanskoj od 13.11.2026; advokat, preduzetnici, krediti."
-checked: 2026-11-15
+checked: 2026-11-16
 sources:
   - { title: "NBS: obaveštenje za korisnike kredita Alta banke u stečaju i ALTA GROUP DOO Beograd, 06.11.2026", url: "https://www.nbs.rs/sr_RS/scripts/showcontent/index.html?id=21884", kind: official, date: 2026-11-06 }
   - { title: "AOD: Spisak ekspozitura banke isplatioca Banka Poštanska štedionica, verzija od 11.11.2026 (PDF)", url: "https://www.aod.rs/uploads/dokumenti/altabanka/ekspoziture.pdf", kind: official, date: 2026-11-11 }
@@ -34,9 +34,12 @@ sources:
   - { title: "Banka Poštanska štedionica: zakazivanje isplate depozita, pitanja i odgovori, 10.11.2026; dugme za onlajn zakazivanje od 11.11.2026", url: "https://www.posted.co.rs/promo/zakazivanje-isplate.html", kind: official, date: 2026-11-11, copy: "https://web.archive.org/web/20261111194454/https://www.posted.co.rs/promo/zakazivanje-isplate.html" }
   - { title: "Banka Poštanska štedionica: obrazac za onlajn zakazivanje isplate «Заказивање термина за исплату осигураног износа депозита», izmenjen 11.11.2026", url: "https://info.posted.co.rs/osiguranje/osiguranje.html", kind: official, date: 2026-11-11 }
   - { title: "AOD: «Заказивање термина за преузимање осигураних износа депозита» — onlajn zakazivanje u Poštanskoj štedionici od 12.11.2026, 11.11.2026", url: "https://www.aod.rs/clan/vest/vest_forma/147", kind: official, date: 2026-11-11, copy: "https://web.archive.org/web/20261111144021/https://www.aod.rs/clan/vest/vest_forma/147" }
+  - { title: "Odgovor AOD vlasniku uloga e-poštom o sefovima ALTA banke, 06.11.2026 (snimak ekrana)", url: "https://alta.smolevich.com/img/sefovi/aod-odgovor-sef.webp", kind: own, date: 2026-11-06 }
+  - { title: "Odgovor AOD vlasnici uloga e-poštom o sefovima ALTA banke, 16.11.2026 (tekst)", url: "https://alta.smolevich.com/voprosy/#safe-deposit-aod", kind: own, date: 2026-11-16 }
 ---
 
 import Faq from '../../../components/Faq.astro';
+import Shot from '../../../components/Shot.astro';
 
 <aside class="legal-note not-content"><strong>Nije pravni savet.</strong> Odgovori prepričavaju zakon i zvanična saopštenja AOD, suda i APR; ispod svakog je link na detalje ili izvor.</aside>
 
@@ -104,5 +107,26 @@ import Faq from '../../../components/Faq.astro';
 
 <Faq items={[
   { id: "loans", q: "Imam kredit u ALTA banci. Da li nastavljam da plaćam?", a: "Da. Dugovi klijenata prema banci deo su njene imovine, koju prikuplja stečajni upravnik (član 101 Zakona o stečaju). AOD je 06.11.2026. objavila: uplate na dinarski račun Alta banke u stečaju kod NBS, broj 780-282-42, u polje „poziv na broj“ upisati broj partije kredita. Ako je kredit kod ALTA GROUP DOO Beograd (a ne kod banke), uplata na račun 200-3408551901000-45 kod Poštanske štedionice, u poziv na broj — broj partije kredita (NBS, 06.11.2026). NBS: «Важно је истаћи да се ради о два различита правна лица, која се тренутно налазе у различитом правном статусу.» Uplaćivati isključivo na ova dva računa. Naša napomena: kod kog od ova dva pravna lica imate kredit, piše u vašem ugovoru o kreditu. Pitanja o kreditu: kontakt-centar Alta banke u stečaju, 011/220-5500, radnim danima od 9.00 do 16.00 (AOD, 10.11.2026).", more: [["AOD: kontakt-centar za kreditne obaveze, 10.11.2026", "https://www.aod.rs/clan/vest/vest_forma/149"], ["NBS: dva pravna lica — dva računa, 06.11.2026", "https://www.nbs.rs/sr_RS/scripts/showcontent/index.html?id=21884"], ["Uputstvo AOD za korisnike kredita, 06.11.2026", "https://www.aod.rs/uploads/dokumenti/altabanka/uputstvo_novi_ra%C4%8Dun_6_11_2026.pdf"], ["Obaveštenje AOD, 2014", "https://web.archive.org/web/20160830213118/http://aod.rs/pdf/2014-02-06-obavestenje-o-nacinu-izmirivanja.pdf"]] },
-  { id: "safe-deposit", q: "Kako da preuzmem stvari iz sefa?", a: "Sadržina sefova ne ulazi u stečajnu masu i preuzima se bez ograničenja, uz prethodni dogovor sa stečajnim upravnikom (AOD). Kako tačno, AOD će objaviti na aod.rs.", more: [["AOD: pitanja i odgovori za Alta banku", "https://www.aod.rs/clan/altabanka/pitanja_odgovori_altabanka"]] },
+  { id: "safe-deposit", q: "Kako da preuzmem stvari iz sefa?", a: "Sadržina sefova ne ulazi u stečajnu masu (odgovor AOD vlasniku uloga e-poštom, 06.11.2026). Pristup sefovima još nije omogućen (odgovor AOD vlasnici uloga e-poštom, 16.11.2026): poziv zakupcima, sa kontaktima i uputstvom, AOD će objaviti na aod.rs. Za sada treba sačekati to obaveštenje; zvaničnog postupka za preuzimanje stvari još nema.", more: [["AOD: pitanja i odgovori za Alta banku", "https://www.aod.rs/clan/altabanka/pitanja_odgovori_altabanka"]] },
 ]} />
+
+<div id="safe-deposit-aod">
+
+**Šta je AOD odgovorila o sefovima**
+
+Sadržina sefova ne ulazi u stečajnu masu banke. Pristup sefovima još nije omogućen (na dan 16.11.2026). Poziv zakupcima, sa kontaktima i uputstvom, AOD će objaviti na [www.aod.rs](https://www.aod.rs/). Šta sada: sačekati obaveštenje na aod.rs; zvaničnog postupka za preuzimanje stvari još nema.
+
+Odgovor AOD vlasniku uloga e-poštom, 06.11.2026 (bez izmena):
+
+> «Sadržina sefova ne ulazi u stečajnu masu, a poziv vlasnicima sefova da preuzmu svoje stvari, s kontaktima i instrukcijama, biće objavljen uskoro na [www.aod.rs](https://www.aod.rs/). Molimo za malo strpljenja.»
+
+<Shot lang="sr" dir="sefovi" name="aod-odgovor-sef" alt="E-pošta AOD od 6. novembra 2026, tema «RE: ALTA banka – zahtev za pristup sefu»: sadržina sefova ne ulazi u stečajnu masu, poziv vlasnicima sefova biće na aod.rs" w={760} h={342}>Odgovor AOD (pošiljalac „Info AOD“) vlasniku uloga e-poštom, 6. novembar 2026, 14:25. Podaci primaoca su uklonjeni, tekst je neizmenjen.</Shot>
+
+Odgovor AOD vlasnici uloga e-poštom, 16.11.2026 (bez izmena):
+
+> «Nažalost, pristup sefovima još nije omogućen. Obaveštenje za zakupce biće objavljeno na [www.aod.rs](https://www.aod.rs/) čim bude moguće organizovati preuzimanje sadržaja sefova. Zahvaljujemo na strpljenju.»
+
+Oba odgovora su vlasnici uloga dobili e-poštom i navode se onako kako su ih preneli; AOD još nije objavila obaveštenje za zakupce sefova na svom sajtu.
+
+</div>
+

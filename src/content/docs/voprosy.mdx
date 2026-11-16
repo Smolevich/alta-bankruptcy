@@ -1,7 +1,7 @@
 ---
 title: "Частые вопросы вкладчиков ALTA"
 description: "Короткие ответы со ссылкой на закон, AOD или суд: требование сверх 50 000 € — до 04.02.2027, страховка в Poštanska — с 13.11.2026; адвокат, ИП, валюта, кредиты."
-checked: 2026-11-15
+checked: 2026-11-16
 sources:
   - { title: "Нацбанк: кредиты ALTA banka в банкротстве и ALTA GROUP DOO Beograd — разные счета, 06.11.2026 (сербский)", url: "https://www.nbs.rs/sr_RS/scripts/showcontent/index.html?id=21884", kind: official, date: 2026-11-06 }
   - { title: "AOD: список мест выплаты Banka Poštanska štedionica для вкладчиков ALTA, версия от 11.11.2026 (PDF)", url: "https://www.aod.rs/uploads/dokumenti/altabanka/ekspoziture.pdf", kind: official, date: 2026-11-11 }
@@ -34,9 +34,12 @@ sources:
   - { title: "Banka Poštanska štedionica: заказ выплаты депозитов, вопросы и ответы, 10.11.2026; кнопка онлайн-записи с 11.11.2026", url: "https://www.posted.co.rs/promo/zakazivanje-isplate.html", kind: official, date: 2026-11-11, copy: "https://web.archive.org/web/20261111194454/https://www.posted.co.rs/promo/zakazivanje-isplate.html" }
   - { title: "Banka Poštanska štedionica: форма онлайн-записи на выплату «Заказивање термина за исплату осигураног износа депозита», изменена 11.11.2026", url: "https://info.posted.co.rs/osiguranje/osiguranje.html", kind: official, date: 2026-11-11 }
   - { title: "AOD: «Заказивање термина за преузимање осигураних износа депозита» — онлайн-запись в Poštanska с 12.11.2026, 11.11.2026", url: "https://www.aod.rs/clan/vest/vest_forma/147", kind: official, date: 2026-11-11, copy: "https://web.archive.org/web/20261111144021/https://www.aod.rs/clan/vest/vest_forma/147" }
+  - { title: "Ответ AOD вкладчику по e-mail о сейфах ALTA, 06.11.2026 (скриншот)", url: "https://alta.smolevich.com/img/sefovi/aod-odgovor-sef.webp", kind: own, date: 2026-11-06 }
+  - { title: "Ответ AOD вкладчице по e-mail о сейфах ALTA, 16.11.2026 (текст)", url: "https://alta.smolevich.com/voprosy/#safe-deposit-aod", kind: own, date: 2026-11-16 }
 ---
 
 import Faq from '../../components/Faq.astro';
+import Shot from '../../components/Shot.astro';
 
 <aside class="legal-note not-content"><strong>Не юридическая консультация.</strong> Ответы пересказывают закон и официальные сообщения AOD, суда и APR; под каждым — ссылка на подробности или первоисточник.</aside>
 
@@ -104,5 +107,26 @@ import Faq from '../../components/Faq.astro';
 
 <Faq items={[
   { id: "loans", q: "У меня кредит в ALTA. Платить дальше?", a: "Да. Долги клиентов перед банком входят в его имущество, которое собирает управляющий (ст. 101 закона о банкротстве). AOD 06.11.2026 объявил: платить на динарный счёт ALTA в банкротстве в НБС № 780-282-42, в поле «позив на број» указать номер партии кредита. Если кредит у ALTA GROUP DOO Beograd (а не у банка), платить на счёт 200-3408551901000-45 в Poštanska štedionica, в поле «позив на број» — номер партии кредита (Нацбанк, 06.11.2026). Нацбанк: «Важно је истаћи да се ради о два различита правна лица, која се тренутно налазе у различитом правном статусу.» Платить только на эти два счёта. Подсказка от нас: с каким из двух юрлиц у вас кредит — указано в вашем кредитном договоре. Вопросы по кредиту: контакт-центр ALTA банка в банкротстве, 011/220-5500, по рабочим дням с 9:00 до 16:00 (AOD, 10.11.2026).", more: [["AOD: контакт-центр по кредитным обязательствам, 10.11.2026", "https://www.aod.rs/clan/vest/vest_forma/149"], ["Нацбанк: два юрлица — два счёта, 06.11.2026", "https://www.nbs.rs/sr_RS/scripts/showcontent/index.html?id=21884"], ["Инструкция AOD для заёмщиков, 06.11.2026", "https://www.aod.rs/uploads/dokumenti/altabanka/uputstvo_novi_ra%C4%8Dun_6_11_2026.pdf"], ["Объявление AOD по Univerzal banka, 2014", "https://web.archive.org/web/20160830213118/http://aod.rs/pdf/2014-02-06-obavestenje-o-nacinu-izmirivanja.pdf"]] },
-  { id: "safe-deposit", q: "Как забрать вещи из сейфа?", a: "Содержимое сейфов не входит в имущество банка в банкротстве и выдаётся без ограничений, по предварительной договорённости с управляющим (AOD). Как именно это сделать, AOD объявит на aod.rs.", more: [["AOD: вопросы и ответы по ALTA", "https://www.aod.rs/clan/altabanka/pitanja_odgovori_altabanka"]] },
+  { id: "safe-deposit", q: "Как забрать вещи из сейфа?", a: "Содержимое сейфов не входит в имущество банка в банкротстве (ответ AOD вкладчику по e-mail, 06.11.2026). Доступа к сейфам пока нет (ответ AOD вкладчице по e-mail, 16.11.2026): приглашение арендаторам, с контактами и инструкцией, AOD опубликует на aod.rs. Сейчас остаётся ждать этого объявления; официального порядка получения вещей ещё нет.", more: [["AOD: вопросы и ответы по ALTA", "https://www.aod.rs/clan/altabanka/pitanja_odgovori_altabanka"]] },
 ]} />
+
+<div id="safe-deposit-aod">
+
+**Что AOD ответил про сейфы**
+
+Содержимое сейфов в имущество банка в банкротстве не входит. Доступа к сейфам пока нет (на 16.11.2026). Приглашение арендаторам, с контактами и инструкцией, AOD опубликует на [www.aod.rs](https://www.aod.rs/). Что делать сейчас: ждать объявления на aod.rs; официального порядка получения вещей пока нет.
+
+Ответ AOD вкладчику по e-mail, 06.11.2026 (на сербском, без изменений):
+
+> «Sadržina sefova ne ulazi u stečajnu masu, a poziv vlasnicima sefova da preuzmu svoje stvari, s kontaktima i instrukcijama, biće objavljen uskoro na [www.aod.rs](https://www.aod.rs/). Molimo za malo strpljenja.»
+
+<Shot lang="ru" dir="sefovi" name="aod-odgovor-sef" alt="Письмо AOD от 6 ноября 2026, тема «RE: ALTA banka – zahtev za pristup sefu»: содержимое сейфов не входит в конкурсную массу, приглашение владельцам сейфов будет на aod.rs" w={760} h={342}>Ответ AOD (адрес отправителя «Info AOD») вкладчику по e-mail, 6 ноября 2026, 14:25. Данные получателя убраны, текст без изменений.</Shot>
+
+Ответ AOD вкладчице по e-mail, 16.11.2026 (на сербском, без изменений):
+
+> «Nažalost, pristup sefovima još nije omogućen. Obaveštenje za zakupce biće objavljeno na [www.aod.rs](https://www.aod.rs/) čim bude moguće organizovati preuzimanje sadržaja sefova. Zahvaljujemo na strpljenju.»
+
+Оба ответа получены вкладчиками по e-mail, со слов вкладчиков; на сайте AOD объявления для арендаторов сейфов пока нет.
+
+</div>
+
