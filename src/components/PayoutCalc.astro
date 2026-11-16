@@ -22,6 +22,7 @@ const T = {
 		aod: 'Как в процедуре AOD (доли до 6 знаков):',
 		rate: 'Курс НБС на 03.11.2026: 117,5698 дин за 1 €.',
 		note: ['Расчёт ориентировочный, итог — по справке Poštanska/AOD. Источник курса: ', 'НБС, курсовой лист № 210 от 03.11.2026', '.'],
+		error: 'Не получилось прочитать сумму. Введите число, например 60000, 60.000 или 50.000,50.',
 		rsdU: 'дин', locale: 'ru-RU',
 	},
 	en: {
@@ -38,6 +39,7 @@ const T = {
 		aod: 'As in the AOD procedure (shares to 6 decimals):',
 		rate: 'NBS rate on 03.11.2026: 117.5698 RSD per €1.',
 		note: ['Indicative calculation; the final amount is the one on the Poštanska/AOD statement. Rate source: ', 'NBS, exchange rate list No. 210 of 03.11.2026', '.'],
+		error: 'Could not read the amount. Enter a number, e.g. 60000, 60,000 or 50,000.50.',
 		rsdU: 'RSD', locale: 'en-GB',
 	},
 	sr: {
@@ -54,23 +56,25 @@ const T = {
 		aod: 'Kao u proceduri AOD (udeli na 6 decimala):',
 		rate: 'Kurs NBS na dan 3.11.2026: 117,5698 din za 1 €.',
 		note: ['Obračun je okviran; konačan iznos je onaj iz obračuna Poštanske/AOD. Izvor kursa: ', 'NBS, kursna lista br. 210 od 3.11.2026', '.'],
+		error: 'Iznos nije prepoznat. Unesite broj, npr. 60000, 60.000 ili 50.000,50.',
 		rsdU: 'din', locale: 'sr-Latn-RS',
 	},
 }[lang];
 ---
 
-<section class="payout-calc not-content" data-payout-calc data-locale={T.locale} data-rsd={T.rsdU} data-and={T.and} data-none={T.none} data-rate={RATE}>
+<section class="payout-calc not-content" data-payout-calc data-locale={T.locale} data-rsd={T.rsdU} data-and={T.and} data-none={T.none} data-error={T.error} data-rate={RATE}>
 	<h3 class="payout-calc-title">{T.title}</h3>
 	<p class="payout-calc-intro">{T.intro}</p>
 	<label>{T.eur}<input type="text" inputmode="decimal" autocomplete="off" name="eur" placeholder="30000" /></label>
 	<label>{T.rsd}<input type="text" inputmode="decimal" autocomplete="off" name="rsd" placeholder="23000000" /></label>
 	<label>{T.other}<input type="text" inputmode="decimal" autocomplete="off" name="other" placeholder="0" /></label>
 	<p class="payout-calc-hint">{T.otherHint[0]}<a href={NBS}>{T.otherHint[1]}</a>{T.otherHint[2]}</p>
+	<p class="payout-calc-error" data-out="error" role="alert" hidden></p>
 	<dl class="payout-calc-out">
 		<dt>{T.pay}</dt><dd data-out="pay">—</dd>
 		<dt>{T.claim}</dt><dd data-out="claim">—</dd>
 	</dl>
-	<p class="payout-calc-small">{T.aod} <span data-out="aod">—</span></p>
+	<p class="payout-calc-small" data-aod hidden>{T.aod} <span data-out="aod">—</span></p>
 	<p class="payout-calc-small">{T.rate}</p>
 	<p class="payout-calc-small">{T.note[0]}<a href={NBS}>{T.note[1]}</a>{T.note[2]}</p>
 </section>
@@ -84,29 +88,41 @@ const T = {
 	.payout-calc-out { margin: 1rem 0 0.5rem; }
 	.payout-calc-out dt { font-size: var(--sl-text-sm); color: var(--sl-color-gray-2); }
 	.payout-calc-out dd { margin: 0 0 0.5rem; font-size: var(--sl-text-lg); font-weight: 700; overflow-wrap: anywhere; }
+	.payout-calc-error { color: var(--sl-color-red); font-weight: 600; margin: 1rem 0 0.5rem; }
 	.payout-calc-small { color: var(--sl-color-gray-2); overflow-wrap: anywhere; }
 </style>
 
 <script>
-	import { payout } from '../lib/payout-calc.mjs';
-
-	// Пробелы и точки-разделители тысяч убираем, запятую считаем десятичной — как пишут в Сербии и в России.
-	const parse = (s: string) => {
-		const t = s.replace(/[\s ']/g, '');
-		const n = Number(/,/.test(t) ? t.replace(/\./g, '').replace(',', '.') : t);
-		return Number.isFinite(n) && n > 0 ? n : 0;
-	};
+	import { parseAmount, payout } from '../lib/payout-calc.mjs';
 
 	for (const box of document.querySelectorAll<HTMLElement>('[data-payout-calc]')) {
-		const { locale, rsd: rsdU, and, none } = box.dataset;
+		const { locale, rsd: rsdU, and, none, error } = box.dataset;
 		const fmt = new Intl.NumberFormat(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 		const pair = (e: number, d: number) => `${fmt.format(e)} € ${and} ${fmt.format(d)} ${rsdU}`;
-		const val = (n: string) => parse(box.querySelector<HTMLInputElement>(`input[name="${n}"]`)!.value);
+		// Пустое поле — это «нет остатка», а нераспознанная сумма — ошибка: молча считать её нулём нельзя.
+		const val = (n: string) => {
+			const s = box.querySelector<HTMLInputElement>(`input[name="${n}"]`)!.value;
+			return s.trim() === '' ? 0 : parseAmount(s);
+		};
 		const out = (k: string, v: string) => { box.querySelector(`[data-out="${k}"]`)!.textContent = v; };
 		const render = () => {
-			const r = payout({ eur: val('eur'), rsd: val('rsd'), other: val('other') });
+			const eur = val('eur'), rsd = val('rsd'), other = val('other');
+			const err = box.querySelector<HTMLElement>('[data-out="error"]')!;
+			const aod = box.querySelector<HTMLElement>('[data-aod]')!;
+			if (eur === null || rsd === null || other === null) {
+				err.textContent = error!;
+				err.hidden = false;
+				out('pay', '—');
+				out('claim', '—');
+				aod.hidden = true;
+				return;
+			}
+			err.hidden = true;
+			const r = payout({ eur, rsd, other });
 			out('pay', pair(r.payEur, r.payRsd));
 			out('claim', r.overLimit ? pair(r.claimEur, r.claimRsd) : none!);
+			// До лимита строка AOD лишь повторяет выплату с ошибкой округления (49 999,99 € + 1 дин → 50 000,00 €).
+			aod.hidden = !r.overLimit;
 			out('aod', pair(r.aodEur, r.aodRsd));
 		};
 		box.addEventListener('input', render);
