@@ -116,7 +116,7 @@ export default defineConfig({
 					collapsed: true,
 					items: [
 						{ label: 'Кейсы вкладчиков', slug: 'kejsy', translations: { en: 'Depositor cases', 'sr-Latn': 'Slučajevi štediša' } },
-						{ label: 'Образцы требования от вкладчиков', slug: 'obrazcy-trebovaniya', translations: { en: 'Claim samples from depositors', 'sr-Latn': 'Primeri prijave od štediša' } },
+						{ label: 'Образец требования от вкладчиков', slug: 'obrazcy-trebovaniya', translations: { en: 'Claim sample from depositors', 'sr-Latn': 'Primer prijave od štediša' } },
 						{ label: 'Адвокат: как выбрать и проверить', slug: 'advokat', translations: { en: 'Lawyer: how to choose and check', 'sr-Latn': 'Advokat: kako izabrati i proveriti' } },
 						{ label: 'Чаты и помощь', slug: 'ssylki', translations: { en: 'Chats and help', 'sr-Latn': 'Četovi i pomoć' } },
 					],

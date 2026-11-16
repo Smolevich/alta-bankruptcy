@@ -1,5 +1,5 @@
 ---
-// Образцы требования, которые составили вкладчики: та же карточка и тот же просмотр PDF (data-pdf → PdfDialog),
+// Образец требования, который составили вкладчики: та же карточка и тот же просмотр PDF (data-pdf → PdfDialog),
 // что у бланков AOD, но без ссылок «оригинал AOD» — у этих документов официального оригинала нет.
 import type { Lang } from '../i18n';
 
@@ -9,21 +9,11 @@ type Sample = { file: string; title: Text; who: Text; pages: number };
 const SAMPLES: Sample[] = [
 	{
 		file: 'uzorak-deponenata-prijava-potrazivanja',
-		title: { ru: 'Образец 1: требование после выплаты страховки', en: 'Sample 1: claim after the insured payout', sr: 'Primer 1: prijava posle isplate osiguranog iznosa' },
+		title: { ru: 'Образец требования от вкладчиков', en: 'Claim sample from depositors', sr: 'Primer prijave od štediša' },
 		who: {
-			ru: 'Для тех, кто уже получил до 50 000 € в Poštanska: остаток считается по бумаге о выплате.',
-			en: 'For those who already received up to €50,000 at Poštanska: the remainder is based on the payout sheet.',
-			sr: 'Za one koji su već primili do 50.000 € u Poštanskoj: ostatak se računa prema ispravi o isplati.',
-		},
-		pages: 2,
-	},
-	{
-		file: 'uzorak-deponenata-prijava-potrazivanja-stranac-bez-jmbg',
-		title: { ru: 'Образец 2: иностранец без JMBG', en: 'Sample 2: foreigner without a JMBG', sr: 'Primer 2: stranac bez JMBG' },
-		who: {
-			ru: 'Для иностранцев без JMBG: паспорт и ЕБС, по пунктам ст. 111 закона о банкротстве.',
-			en: 'For foreigners without a JMBG: passport and EBS, following the points of art. 111 of the Bankruptcy Law.',
-			sr: 'Za strance bez JMBG: pasoš i EBS, po tačkama člana 111 Zakona o stečaju.',
+			ru: 'Остаток после выплаты до 50 000 € в Poštanska. Для граждан Сербии (JMBG) и иностранцев (EBS).',
+			en: 'The remainder after the payout of up to €50,000 at Poštanska. For Serbian citizens (JMBG) and foreigners (EBS).',
+			sr: 'Ostatak posle isplate do 50.000 € u Poštanskoj. Za državljane Srbije (JMBG) i strance (EBS).',
 		},
 		pages: 2,
 	},
