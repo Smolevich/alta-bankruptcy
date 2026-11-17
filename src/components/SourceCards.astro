@@ -3,6 +3,7 @@
 import { isPdf, viewerSrc } from '../data/pdfs';
 import { LOOK, UNIVERZAL_SOURCES } from '../data/univerzal-sources';
 import { UI, type Lang } from '../i18n';
+import { bindPercent } from '../rehype-nbsp-percent.mjs';
 
 const { lang = 'ru' } = Astro.props as { lang?: Lang };
 const t = UI[lang];
@@ -17,20 +18,20 @@ const t = UI[lang];
 			return (
 				<li>
 					<article class="doc">
-						<h3>{s.title[lang]}</h3>
-						<p>{s.main[lang]}</p>
+						<h3>{bindPercent(s.title[lang])}</h3>
+						<p>{bindPercent(s.main[lang])}</p>
 						<dl class="doc-meta">
 							<dt>{t.srcCards.date}</dt>
 							<dd>{s.date[lang]}</dd>
 							<dt>{t.srcCards.type}</dt>
 							<dd>
-								<span class="kind kind-official">{t.official}</span> {s.meta[lang]}
+								<span class="kind kind-official">{t.official}</span> {bindPercent(s.meta[lang])}
 							</dd>
 						</dl>
 						{look && (
 							<div class="doc-look">
 								<strong>{t.srcCards.look}</strong>
-								<ul>{look.look[lang].map((x) => <li>{x}</li>)}</ul>
+								<ul>{look.look[lang].map((x) => <li>{bindPercent(x)}</li>)}</ul>
 							</div>
 						)}
 						<span class="doc-go">
