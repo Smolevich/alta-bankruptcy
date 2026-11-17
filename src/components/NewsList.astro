@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 
 import { viewerSrc } from '../data/pdfs';
 import FormCards from './FormCards.astro';
+import { bindPercent } from '../rehype-nbsp-percent.mjs';
 import { formatDate, UI, type Lang } from '../i18n';
 
 const { limit, lang = 'ru' } = Astro.props as { limit?: number; lang?: Lang };
@@ -23,7 +24,7 @@ const fmt = (d: Date) => formatDate(d, lang);
 					<time datetime={n.data.date.toISOString().slice(0, 10)}>{fmt(n.data.date)}</time>
 					<span class={`pub pub-${n.data.publisher}`}>{PUBLISHER[n.data.publisher]}</span>
 				</div>
-				<h3>{n.data.title}</h3>
+				<h3>{bindPercent(n.data.title)}</h3>
 				{n.data.outdated && (
 					<p class="news-outdated">
 						<strong>{UI[lang].outdated}:</strong> {n.data.outdated.note}
@@ -36,7 +37,7 @@ const fmt = (d: Date) => formatDate(d, lang);
 					</p>
 				)}
 				{n.data.aside && <p class="news-aside">{n.data.aside}</p>}
-				<p>{n.data.summary}</p>
+				<p>{bindPercent(n.data.summary)}</p>
 				{n.data.links && (
 					<p>
 						{n.data.links.map((l, i) => (

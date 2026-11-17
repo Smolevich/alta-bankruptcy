@@ -7,6 +7,7 @@ import { INSTAGRAM_URL, TELEGRAM_CHANNEL_URL, TELEGRAM_CHAT_URL } from './src/si
 import { unified } from '@astrojs/markdown-remark';
 import rehypeNewTab from './src/rehype-new-tab.mjs';
 import rehypeHeadingIds from './src/rehype-heading-ids.mjs';
+import rehypeNbspPercent from './src/rehype-nbsp-percent.mjs';
 import { lastmodByPath, noindexPaths } from './src/sitemap-lastmod.mjs';
 
 const SITE = 'https://alta.smolevich.com';
@@ -17,7 +18,7 @@ const NOINDEX = noindexPaths('./src/content/docs');
 // (см. docs/deploy.md), поэтому base не задаём.
 export default defineConfig({
 	site: SITE,
-	markdown: { processor: unified({ rehypePlugins: [rehypeNewTab, rehypeHeadingIds] }) },
+	markdown: { processor: unified({ rehypePlugins: [rehypeNewTab, rehypeHeadingIds, rehypeNbspPercent] }) },
 	integrations: [
 		// Свой экземпляр вместо встроенного в Starlight: тот не умеет lastmod и страниц backend.
 		// i18n — как у Starlight, иначе пропадут hreflang в карте сайта.
