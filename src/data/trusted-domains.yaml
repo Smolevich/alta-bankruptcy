@@ -84,6 +84,12 @@
   proof: "WHOIS RNIDS, регистрант: NARODNA BANKA SRBIJE; проверено 07.11.2026"
   hosts: ["*"]
 
+- domain: nbrm.mk
+  name: "Народна банка на Република Северна Македонија — Национальный банк Северной Македонии (центробанк и надзор за банками, в том числе за ALTA banka a.d. Bitola)"
+  category: regulator
+  proof: "WHOIS MARnet (whois.marnet.mk), регистрант: Народна Банка на Република Македонија, контакты на @nbrm.mk, домен с 29.11.2008; BIS в списке центробанков-членов (https://www.bis.org/about/member_cb.htm) ведёт North Macedonia на https://www.nbrm.mk/; проверено 18.11.2026"
+  hosts: ["*"]
+
 # --- Banks ---
 - domain: altabanka.rs
   name: "ALTA banka a.d. Beograd — банк ALTA (в банкротстве)"
