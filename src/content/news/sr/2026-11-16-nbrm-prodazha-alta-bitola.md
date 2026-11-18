@@ -8,7 +8,7 @@ summary: >-
 links:
   - { label: "Ko je vlasnik banke →", href: "/sr/bank/#ownership" }
 sources:
-  - { title: "NBRSM, 16.11.2026. (makedonski)", url: "https://www.nbrm.mk/ns-newsarticle-soopstenie-16112026.nspx", kind: official, date: 2026-11-16 }
-  - { title: "Kurs NBRSM za 16.11.2026.", url: "https://www.nbrm.mk/KLServiceNOV/GetExchangeRate?StartDate=16.11.2026&EndDate=16.11.2026&format=json", kind: official, date: 2026-11-16, copy: "https://web.archive.org/web/20261118133730/https://www.nbrm.mk/KLServiceNOV/GetExchangeRate?StartDate=16.11.2026&EndDate=16.11.2026&format=json" }
+  - { title: "NBRSM, 16.11.2026. (makedonski)", url: "https://www.nbrm.mk/ns-newsarticle-soopstenie-16112026.nspx", kind: official, date: 2026-11-16, copy: "/docs/nbrm-2026-11-16-soopstenie-alta-bitola.pdf" }
+  - { title: "Kurs NBRSM za 16.11.2026.", url: "https://www.nbrm.mk/KLServiceNOV/GetExchangeRate?StartDate=16.11.2026&EndDate=16.11.2026&format=json", kind: official, date: 2026-11-16, copy: "/docs/nbrm-2026-11-16-kursna-lista.pdf" }
   - { title: "Zakon o stečaju, čl. 101", url: "https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2009/104/25/reg", kind: official, date: 2026-11-18 }
 ---

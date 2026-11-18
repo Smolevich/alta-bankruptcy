@@ -8,7 +8,7 @@ summary: >-
 links:
   - { label: "Who owns the bank →", href: "/en/bank/#ownership" }
 sources:
-  - { title: "NBRM, 16.11.2026 (Macedonian)", url: "https://www.nbrm.mk/ns-newsarticle-soopstenie-16112026.nspx", kind: official, date: 2026-11-16 }
-  - { title: "NBRM exchange rate for 16.11.2026", url: "https://www.nbrm.mk/KLServiceNOV/GetExchangeRate?StartDate=16.11.2026&EndDate=16.11.2026&format=json", kind: official, date: 2026-11-16, copy: "https://web.archive.org/web/20261118133730/https://www.nbrm.mk/KLServiceNOV/GetExchangeRate?StartDate=16.11.2026&EndDate=16.11.2026&format=json" }
+  - { title: "NBRM, 16.11.2026 (Macedonian)", url: "https://www.nbrm.mk/ns-newsarticle-soopstenie-16112026.nspx", kind: official, date: 2026-11-16, copy: "/docs/nbrm-2026-11-16-soopstenie-alta-bitola.pdf" }
+  - { title: "NBRM exchange rate for 16.11.2026", url: "https://www.nbrm.mk/KLServiceNOV/GetExchangeRate?StartDate=16.11.2026&EndDate=16.11.2026&format=json", kind: official, date: 2026-11-16, copy: "/docs/nbrm-2026-11-16-kursna-lista.pdf" }
   - { title: "Bankruptcy Law, art. 101", url: "https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2009/104/25/reg", kind: official, date: 2026-11-18 }
 ---
