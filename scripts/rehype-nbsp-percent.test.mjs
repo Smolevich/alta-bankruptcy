@@ -1,6 +1,26 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import rehypeNbspPercent, { bindPercent } from '../src/rehype-nbsp-percent.mjs';
+import rehypeNbspPercent, { bindFileExt, bindPercent } from '../src/rehype-nbsp-percent.mjs';
+
+// Регрессия 18.11.2026: на /vyplata/ при 390 px ссылка «бланк .docx» рвалась перед «.docx».
+test('space before a file extension in link text becomes non-breaking', () => {
+	assert.equal(bindFileExt('бланк .docx'), 'бланк\u00a0.docx');
+	assert.equal(bindFileExt('complaint form .docx, items'), 'complaint form\u00a0.docx, items');
+	assert.equal(bindFileExt('obrazac .DOC i PDF .pdf'), 'obrazac\u00a0.DOC i PDF\u00a0.pdf');
+});
+
+test('a dot followed by a longer word is not treated as an extension', () => {
+	assert.equal(bindFileExt('см .docsend и .pdfs'), 'см .docsend и .pdfs');
+});
+
+test('extension inside a link element is bound by the plugin', () => {
+	const tree = {
+		type: 'root',
+		children: [{ type: 'element', tagName: 'a', children: [{ type: 'text', value: 'бланк .docx' }] }],
+	};
+	rehypeNbspPercent()(tree);
+	assert.equal(tree.children[0].children[0].value, 'бланк\u00a0.docx');
+});
 
 test('space between a number and % becomes non-breaking', () => {
 	assert.equal(bindPercent('в кассе — 0,5 % (мин. 300)'), 'в кассе — 0,5 % (мин. 300)');
