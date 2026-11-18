@@ -10,6 +10,7 @@ import {
 const REG = [
 	{ domain: 'aod.rs', name: 'Agencija za osiguranje depozita — АСВ', category: 'official-rs-gov', proof: 'whois', hosts: ['aod.rs', 'www.aod.rs'] },
 	{ domain: 'nbs.rs', name: 'Narodna banka Srbije — НБС', category: 'regulator', proof: 'whois', hosts: ['*'] },
+	{ domain: 'nbrm.mk', name: 'Народна банка на РСМ — НБРСМ', category: 'regulator', proof: 'whois', hosts: ['*'] },
 	{ domain: 'posted.co.rs', name: 'Poštanska štedionica — банк', category: 'bank', proof: 'whois', hosts: ['www.posted.co.rs'] },
 	{ domain: 'altabanka.rs', name: 'ALTA banka — банк', category: 'bank', proof: 'whois', hosts: ['*'] },
 	{ domain: 'sud.rs', name: 'Portal sudova — суды', category: 'court', proof: 'whois', hosts: ['*'], http_ok: ['www.bg.pr.sud.rs'] },
@@ -39,6 +40,8 @@ test('настоящие ссылки проходят', () => {
 	ok('https://aod.rs/');
 	ok('https://www.nbs.rs/sr/');
 	ok('https://webappcenter.nbs.rs/WebApp/x');
+	ok('https://www.nbrm.mk/ns-newsarticle-soopstenie-16112026.nspx');
+	ok('https://www.nbrm.mk/KLServiceNOV/GetExchangeRate?StartDate=16.11.2026&EndDate=16.11.2026&format=json');
 	ok('https://www.posted.co.rs/media/novosti.html');
 	ok('https://t.me/Altadef50k/123');
 });
@@ -52,6 +55,9 @@ test('гомоглифы: кириллица и греческий в хосте
 		['https://www.роsted.co.rs/', 'www.posted.co.rs'],
 		['https://www.posted.сo.rs/', 'www.posted.co.rs'],
 		['https://www.nbѕ.rs/', 'nbs.rs'],
+		['https://www.nbrм.mk/', 'nbrm.mk'],
+		['https://www.nbrm.мk/', 'nbrm.mk'],
+		['https://www.пbrm.mk/', 'nbrm.mk'],
 		['https://www.aοd.rs/', 'www.aod.rs'],
 	]) {
 		const r = bad(url, 'idn');
@@ -81,6 +87,8 @@ test('опечатки и комбосквоттинг → lookalike «похо�
 	}
 	assert.match(bad('https://altabanka-isplata.com/', 'lookalike').message, /altabanka\.rs/);
 	assert.match(bad('https://nbs-rs.info/', 'lookalike').message, /nbs\.rs/);
+	assert.match(bad('https://nbrm-mk.com/', 'lookalike').message, /nbrm\.mk/);
+	assert.match(bad('https://nbrm.mk.evil.com/', 'lookalike').message, /nbrm\.mk/);
 	assert.match(bad('https://posted.co.rs.login.net/', 'lookalike').message, /posted\.co\.rs/);
 });
 
