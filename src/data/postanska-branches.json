@@ -110,7 +110,8 @@
 			"ulicaIBroj": "Milana Uzelca br. 23a",
 			"pttBroj": "11080",
 			"radnoVremeRadnimDanom": "8.00h - 17.00h",
-			"radnoVremeSubotom": "8.00h - 13.00h"
+			"radnoVremeSubotom": "8.00h - 13.00h",
+			"mesto": "Zemun"
 		},
 		{
 			"id": "819",
@@ -137,7 +138,8 @@
 			"ulicaIBroj": "Majora Zorana Radosavljevića br. 96",
 			"pttBroj": "11273",
 			"radnoVremeRadnimDanom": "8.00h - 17.00h",
-			"radnoVremeSubotom": "8.00h - 13.00h"
+			"radnoVremeSubotom": "8.00h - 13.00h",
+			"mesto": "Batajnica"
 		},
 		{
 			"id": "838",
@@ -182,7 +184,8 @@
 			"ulicaIBroj": "Ivana Milutinovića 39",
 			"pttBroj": "11211",
 			"radnoVremeRadnimDanom": "8.00h - 17.00h",
-			"radnoVremeSubotom": "8.00h - 13.00h"
+			"radnoVremeSubotom": "8.00h - 13.00h",
+			"mesto": "Borča"
 		},
 		{
 			"id": "862",
@@ -191,7 +194,11 @@
 			"ulicaIBroj": "Knez Mihailova 7",
 			"pttBroj": "11000",
 			"radnoVremeRadnimDanom": "8.00h - 15.00h",
-			"radnoVremeSubotom": "8.00h - 13.00h"
+			"radnoVremeSubotom": "8.00h - 13.00h",
+			"ispravka": {
+				"ulicaIBroj": "Kneza Mihaila 7",
+				"izvor": "https://www.posted.co.rs/o-nama/ekspoziture.html"
+			}
 		},
 		{
 			"id": "865",
@@ -245,7 +252,8 @@
 			"ulicaIBroj": "Trg Branka Radičevića 4",
 			"pttBroj": "11080",
 			"radnoVremeRadnimDanom": "8.00h - 17.00h",
-			"radnoVremeSubotom": "8.00h - 13.00h"
+			"radnoVremeSubotom": "8.00h - 13.00h",
+			"mesto": "Zemun"
 		},
 		{
 			"id": "956",
@@ -272,7 +280,12 @@
 			"ulicaIBroj": "Darinka Radović 21",
 			"pttBroj": "11250",
 			"radnoVremeRadnimDanom": "8.00h - 17.00h",
-			"radnoVremeSubotom": "8.00h - 13.00h"
+			"radnoVremeSubotom": "8.00h - 13.00h",
+			"mesto": "Železnik",
+			"ispravka": {
+				"ulicaIBroj": "Darinke Radović 21",
+				"izvor": "https://www.posted.co.rs/o-nama/ekspoziture.html"
+			}
 		},
 		{
 			"id": "990",
@@ -281,7 +294,8 @@
 			"ulicaIBroj": "Beogradska br. 98",
 			"pttBroj": "11253",
 			"radnoVremeRadnimDanom": "8.00h - 16.00h",
-			"radnoVremeSubotom": "8.00h - 13.00h"
+			"radnoVremeSubotom": "8.00h - 13.00h",
+			"mesto": "Sremčica"
 		},
 		{
 			"id": "715",
@@ -362,7 +376,12 @@
 			"ulicaIBroj": "Bulevar dr Zorana Đinđića 15 v",
 			"pttBroj": "18108",
 			"radnoVremeRadnimDanom": "8.00h - 17.00h",
-			"radnoVremeSubotom": "8.00h - 13.00h"
+			"radnoVremeSubotom": "8.00h - 13.00h",
+			"ispravka": {
+				"ulicaIBroj": "Strahinjića Bana 8",
+				"pttBroj": "18101",
+				"izvor": "https://www.posted.co.rs/promo/zakazivanje-isplate.html"
+			}
 		},
 		{
 			"id": "nis-4",
@@ -398,7 +417,11 @@
 			"ulicaIBroj": "Đorđa Nilkšića Johana 16",
 			"pttBroj": "21137",
 			"radnoVremeRadnimDanom": "8.00h - 16.00h",
-			"radnoVremeSubotom": "8.00h - 13.00h"
+			"radnoVremeSubotom": "8.00h - 13.00h",
+			"ispravka": {
+				"ulicaIBroj": "Đorđa Nikšića Johana 16",
+				"izvor": "https://www.posted.co.rs/o-nama/ekspoziture.html"
+			}
 		},
 		{
 			"id": "891",
@@ -416,7 +439,12 @@
 			"ulicaIBroj": "Železnika 4",
 			"pttBroj": "21208",
 			"radnoVremeRadnimDanom": "8.00h - 15.00h",
-			"radnoVremeSubotom": "8.00h - 13.00h"
+			"radnoVremeSubotom": "8.00h - 13.00h",
+			"mesto": "Sremska Kamenica",
+			"ispravka": {
+				"ulicaIBroj": "Železnička 1",
+				"izvor": "https://www.posted.co.rs/o-nama/ekspoziture.html"
+			}
 		},
 		{
 			"id": "981",
@@ -434,7 +462,8 @@
 			"ulicaIBroj": "Kralja Petra I 22 v",
 			"pttBroj": "21203",
 			"radnoVremeRadnimDanom": "8.00h - 15.00h",
-			"radnoVremeSubotom": "8.00h - 13.00h"
+			"radnoVremeSubotom": "8.00h - 13.00h",
+			"mesto": "Veternik"
 		},
 		{
 			"id": "721",

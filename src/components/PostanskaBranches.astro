@@ -65,8 +65,7 @@ const T = {
 		legend: 'Размер отделения (наша оценка):',
 		unknown: 'не определён',
 		hint: 'Показать карту',
-		bankSite: 'на сайте банка указан другой адрес',
-		addrCheck: 'Источники расходятся: уточните в контакт-центре Poštanska 011/20-20-292, опция 4.',
+		aodDiff: 'Адрес — по сайту банка Poštanska. В списке AOD указано другое написание или адрес: «%a». Если сомневаетесь — уточните в контакт-центре 011/20-20-292, опция 4.',
 		chartWd: 'будни (среднее пн–пт)',
 		chartSat: 'суббота',
 		chartNote: 'Обычная загрузка по данным Google — по геолокации телефонов, обезличенно, за прошлые недели. 100% — обычный пик этого отделения. Наплыв вкладчиков ALTA здесь не учтён.',
@@ -111,8 +110,7 @@ const T = {
 		legend: 'Branch size (our estimate):',
 		unknown: 'unknown',
 		hint: 'Show map',
-		bankSite: 'the bank’s website gives a different address',
-		addrCheck: 'The sources differ: check with the Poštanska contact centre, 011/20-20-292, option 4.',
+		aodDiff: 'Address as on the Poštanska bank website. The AOD list gives a different spelling or address: “%a”. If in doubt, check with the contact centre, 011/20-20-292, option 4.',
 		chartWd: 'weekdays (Mon–Fri average)',
 		chartSat: 'Saturday',
 		chartNote: 'Usual busyness per Google data — from phone geolocation, anonymised, over past weeks. 100% is this branch’s usual peak. The influx of ALTA depositors is not reflected here.',
@@ -157,8 +155,7 @@ const T = {
 		legend: 'Veličina ekspoziture (naša procena):',
 		unknown: 'nije određena',
 		hint: 'Prikaži mapu',
-		bankSite: 'na sajtu banke je druga adresa',
-		addrCheck: 'Izvori se razlikuju: proverite u kontakt centru Poštanske štedionice 011/20-20-292, opcija 4.',
+		aodDiff: 'Adresa prema sajtu Poštanske štedionice. U spisku AOD stoji drugačije: „%a“. Ako sumnjate, proverite u kontakt centru 011/20-20-292, opcija 4.',
 		chartWd: 'radnim danom (prosek pon–pet)',
 		chartSat: 'subota',
 		chartNote: 'Uobičajena opterećenost prema Google podacima — iz geolokacije telefona, anonimizovano, za prethodne nedelje. 100% je uobičajeni vrhunac ove ekspoziture. Priliv štediša ALTA ovde nije uračunat.',
@@ -184,12 +181,22 @@ function cityKey(naziv: string): string {
 	return key;
 }
 
-const mapUrl = (b: Pick<Branch, 'ulicaIBroj' | 'pttBroj'>, city: string) =>
-	`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${b.ulicaIBroj}, ${b.pttBroj} ${CITIES[city].latin}, Srbija`)}`;
+// mesto — населённый пункт по индексу (если он не совпадает с городом из названия); ispravka — адрес по сайту самой Poštanska,
+// когда он расходится со списком AOD: основным показываем адрес банка, а как в AOD — в пометке.
+type Loc = { ulicaIBroj: string; pttBroj: string; mesto?: string; ispravka?: { ulicaIBroj: string; pttBroj?: string; izvor: string } };
+const placeOf = (b: Loc, city: string) => b.mesto ?? CITIES[city].latin;
+const streetOf = (b: Loc) => b.ispravka?.ulicaIBroj ?? b.ulicaIBroj;
+const pttOf = (b: Loc) => b.ispravka?.pttBroj ?? b.pttBroj;
+const addrOf = (b: Loc, city: string) => `${streetOf(b)}, ${pttOf(b)} ${placeOf(b, city)}`;
+const mapUrl = (b: Loc, city: string) =>
+	`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${addrOf(b, city)}, Srbija`)}`;
 
-// Адрес из таблицы «ИСПЛАТНА МЕСТА» на posted.co.rs/promo/zakazivanje-isplate.html, если он не совпадает со списком AOD.
-const ADDR_NOTE: Record<string, string> = { '831': 'Strahinjića Bana 8, 18101 Niš' };
-const addrNote = (id: string) => (ADDR_NOTE[id] ? `${T.bankSite}: ${ADDR_NOTE[id]}. ${T.addrCheck}` : '');
+const LOCS = new Map<string, Loc>(LIST.ekspoziture.map((b) => [b.id, b as Loc]));
+const addrNote = (id: string) => {
+	const b = LOCS.get(id);
+	return b?.ispravka ? T.aodDiff.replace('%a', b.ulicaIBroj) : '';
+};
+const noteSource = (id: string) => LOCS.get(id)?.ispravka?.izvor ?? '';
 const esc = (v: string) => v.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
 
 type Extra = (typeof EXTRA)[keyof typeof EXTRA];
@@ -232,11 +239,11 @@ for (const b of LIST.ekspoziture) {
 const order = [...FIRST, ...[...groups.keys()].filter((k) => !FIRST.includes(k)).sort((a, b) => CITIES[a][lang].localeCompare(CITIES[b][lang], lang))];
 const slug = (k: string) => `branches-${CITIES[k].latin.toLowerCase().normalize('NFD').replace(/[^a-z ]/g, '').replace(/ /g, '-')}`;
 const S = LIST.specijalizovana;
-const SPECIAL_PT: Point = { id: S.id, name: S.naziv, addr: `${S.ulicaIBroj}, ${S.pttBroj} ${CITIES.BEOGRAD.latin}`, hours: S.radnoVremeRadnimDanom, sat: S.radnoVremeSubotom, code: S.sifra, city: 'BEOGRAD' };
+const SPECIAL_PT: Point = { id: S.id, name: S.naziv, addr: addrOf(S, 'BEOGRAD'), hours: S.radnoVremeRadnimDanom, sat: S.radnoVremeSubotom, code: S.sifra, city: 'BEOGRAD' };
 // Всё, что нужно карточке и списку очередей: часы — строками из PDF AOD; график Google рисует скрипт из data-wd/data-sat строки списка.
 const points = [
 	SPECIAL_PT,
-	...LIST.ekspoziture.map((b) => ({ id: b.id, name: b.naziv.replace(/^EKSPOZITURA /, ''), addr: `${b.ulicaIBroj}, ${b.pttBroj} ${CITIES[cityKey(b.naziv)].latin}`, hours: b.radnoVremeRadnimDanom, sat: b.radnoVremeSubotom, code: b.sifra ?? '', city: cityKey(b.naziv) })),
+	...LIST.ekspoziture.map((b) => ({ id: b.id, name: b.naziv.replace(/^EKSPOZITURA /, ''), addr: addrOf(b as Loc, cityKey(b.naziv)), hours: b.radnoVremeRadnimDanom, sat: b.radnoVremeSubotom, code: b.sifra ?? '', city: cityKey(b.naziv) })),
 ]
 	.filter((p) => extraOf(p.id))
 	.map((p) => ({
@@ -249,11 +256,11 @@ const BANK = '<svg viewBox="0 0 24 24" aria-hidden="true" class="q-bank"><path d
 const VOICE_LANG = { ru: 'ru-RU', en: 'en-US', sr: 'sr-RS' }[lang];
 const styleUrl = `/map/style-${lang}.json`;
 // Строки нижнего списка по городам: карточка AOD (шифра 864) — первой строкой Белграда.
-type Row = { id: string; code: string; name: string; addr: string; street: Pick<Branch, 'ulicaIBroj' | 'pttBroj'>; wd: string; sat: string; special: boolean };
+type Row = { id: string; code: string; name: string; addr: string; street: Loc; wd: string; sat: string; special: boolean };
 const gmapsOf = (r: Row, city: string) => extraOf(r.id)?.maps_url || mapUrl(r.street, city);
 const rowsByCity = new Map<string, Row[]>(order.map((k) => [k, [
-	...(k === 'BEOGRAD' ? [{ id: S.id, code: S.sifra, name: S.naziv, addr: `${S.ulicaIBroj}, ${S.pttBroj} ${CITIES.BEOGRAD.latin}`, street: S, wd: S.radnoVremeRadnimDanom, sat: S.radnoVremeSubotom, special: true }] : []),
-	...groups.get(k)!.map((b) => ({ id: b.id, code: b.sifra ?? '', name: b.naziv.replace(/^EKSPOZITURA /, ''), addr: `${b.ulicaIBroj}, ${b.pttBroj} ${CITIES[k].latin}`, street: b, wd: b.radnoVremeRadnimDanom, sat: b.radnoVremeSubotom, special: false })),
+	...(k === 'BEOGRAD' ? [{ id: S.id, code: S.sifra, name: S.naziv, addr: addrOf(S, 'BEOGRAD'), street: S, wd: S.radnoVremeRadnimDanom, sat: S.radnoVremeSubotom, special: true }] : []),
+	...groups.get(k)!.map((b) => ({ id: b.id, code: b.sifra ?? '', name: b.naziv.replace(/^EKSPOZITURA /, ''), addr: addrOf(b as Loc, k), street: b as Loc, wd: b.radnoVremeRadnimDanom, sat: b.radnoVremeSubotom, special: false })),
 ]]));
 const cityCount = (k: string) => rowsByCity.get(k)!.length;
 const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST.url };
@@ -350,7 +357,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 														</div>
 													)}
 													<p class="bl-hours">{T.weekdays} {r.wd} · {T.saturday} {r.sat}{r.code && <> · <span class="branch-code">{T.code} {r.code}</span></>}</p>
-													{addrNote(r.id) && <p class="bl-extra">{addrNote(r.id)}</p>}
+													{addrNote(r.id) && <p class="bl-extra">{addrNote(r.id)} <a href={noteSource(r.id)} rel="noopener" target="_blank">posted.co.rs</a></p>}
 													<p class="bl-extra f-free" hidden></p>
 													{/* Размер и загрузка — наши наблюдения и данные Google, не банка: свёрнуты, чтобы не стоять в одном ряду с официальным адресом. */}
 													{(sizeText(extraOf(r.id)) || busyText(extraOf(r.id)) || noData(r.id) || histOf(r.id)) && (
