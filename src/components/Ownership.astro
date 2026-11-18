@@ -1,0 +1,240 @@
+---
+// Схема «кто кем владеет» на странице банка: сверху вниз, чтобы на телефоне не было
+// горизонтальной прокрутки. Каждый факт — с номером источника из списка под схемой;
+// в схеме только реестры, документы банка и сообщения Нацбанка.
+import type { Lang } from '../i18n';
+
+const { lang = 'ru' } = Astro.props as { lang?: Lang };
+
+const PDF_2025 = '/docs/alta-2025-izvestaj-revizora.pdf';
+
+// Порядок = номер в схеме. Ссылки одинаковые во всех языках, подписи переведены.
+const SOURCES = [
+	{
+		url: 'https://pretraga.apr.gov.rs/',
+		label: {
+			ru: 'АПР, реестр компаний: ALTA GROUP DOO Beograd (МБ 21035254), раздел «Чланови» — Давор Мацура, доля 100 %; статус «Активан». Поиск по регистрационному номеру, проверено 18.11.2026',
+			en: 'APR business register: ALTA GROUP DOO Beograd (reg. no. 21035254), section “Članovi” — Davor Macura, 100% share; status “Aktivan”. Search by registration number, checked 18 Nov 2026',
+			sr: 'APR, Registar privrednih subjekata: ALTA GROUP DOO Beograd (MB 21035254), odeljak „Članovi” — Davor Macura, udeo 100 %; status „Aktivan”. Pretraga po matičnom broju, provereno 18.11.2026.',
+		},
+	},
+	{
+		url: 'https://www.crhov.rs/Home/Index/71?par_pISIN=RSJUBME48945',
+		copy: 'https://web.archive.org/web/20261106022634/https://www.crhov.rs/Home/Index/71?par_pISIN=RSJUBME48945',
+		label: {
+			ru: 'CRHoV (центральный депозитарий): реестр акционеров ALTA banka на 05.11.2026 — ALTA GROUP, 2 211 690 акций, 100 %',
+			en: 'CRHoV (central securities depository): ALTA banka shareholder register as of 5 Nov 2026 — ALTA GROUP, 2,211,690 shares, 100%',
+			sr: 'CRHoV: registar akcionara ALTA banke na dan 05.11.2026 — ALTA GROUP, 2.211.690 akcija, 100 %',
+		},
+	},
+	{
+		url: 'https://webappcenter.nbs.rs/WebApp/FinInstBank/LegalEntityFinInstitution/Details?id=c721ac7e-6856-4402-b8cc-2d5b3c46308e',
+		copy: 'https://web.archive.org/web/20261106022826/https://webappcenter.nbs.rs/WebApp/FinInstBank/LegalEntityFinInstitution/Details?id=c721ac7e-6856-4402-b8cc-2d5b3c46308e',
+		label: {
+			ru: 'Нацбанк: реестр банков, ALTA banka — акционер ALTA GROUP',
+			en: 'National Bank of Serbia: register of banks, ALTA banka — shareholder ALTA GROUP',
+			sr: 'Narodna banka Srbije: registar banaka, ALTA banka — akcionar ALTA GROUP',
+		},
+	},
+	{
+		url: 'https://altabanka.rs/static/uploads/2026/04/Alta-banka_Izvestaj-revizora_2025_Final-potpisan.pdf',
+		copy: `${PDF_2025}#page=13`,
+		label: {
+			ru: 'Годовой отчёт банка за 2025 с заключением аудитора, с. 13 и 100: 100 % у ALTA Group; ALTA Leasing — 100 % с июля 2024; ALTA banka Bitola — 93,29 % на 31.12.2025',
+			en: 'Bank’s 2025 annual report with the auditor’s opinion, pp. 13 and 100: 100% held by ALTA Group; ALTA Leasing — 100% since July 2024; ALTA banka Bitola — 93.29% at 31 Dec 2025',
+			sr: 'Godišnji izveštaj banke za 2025. sa mišljenjem revizora, str. 13 i 100: 100 % ALTA Group; ALTA Leasing — 100 % od jula 2024; ALTA banka Bitola — 93,29 % na dan 31.12.2025.',
+		},
+	},
+	{
+		url: 'https://www.nbs.rs/sr/scripts/showcontent/index.html?id=21849',
+		copy: 'https://web.archive.org/web/20261102131612/https://www.nbs.rs/sr/scripts/showcontent/index.html?id=21849',
+		label: {
+			ru: 'Нацбанк, 30.10.2026: отзыв лицензии у ALTA banka',
+			en: 'National Bank of Serbia, 30 Oct 2026: ALTA banka licence revoked',
+			sr: 'Narodna banka Srbije, 30.10.2026: oduzeta dozvola za rad ALTA banci',
+		},
+	},
+	{
+		url: 'https://www.nbs.rs/sr/scripts/showcontent/index.html?id=21858',
+		copy: 'https://web.archive.org/web/20261118131850/https://www.nbs.rs/sr/scripts/showcontent/index.html?id=21858',
+		label: {
+			ru: 'Нацбанк, 02.11.2026: отзыв лицензии у ALTA GROUP — «nije banka i ne prima depozite»',
+			en: 'National Bank of Serbia, 2 Nov 2026: ALTA GROUP licence revoked — “nije banka i ne prima depozite” (not a bank, takes no deposits)',
+			sr: 'Narodna banka Srbije, 02.11.2026: oduzeta dozvola ALTA GROUP — „nije banka i ne prima depozite”',
+		},
+	},
+	{
+		url: 'https://www.nbs.rs/sr_RS/scripts/showcontent/index.html?id=21884',
+		copy: 'https://web.archive.org/web/20261118131954/https://www.nbs.rs/sr_RS/scripts/showcontent/index.html?id=21884',
+		label: {
+			ru: 'Нацбанк, 06.11.2026: банк и ALTA GROUP — «два различита правна лица»; банкротство банка по решению суда 10 Ст 275/2026 от 03.11.2026, управляющий — AOD',
+			en: 'National Bank of Serbia, 6 Nov 2026: the bank and ALTA GROUP are “two different legal entities”; the bank’s bankruptcy by court decision 10 St 275/2026 of 3 Nov 2026, AOD as receiver',
+			sr: 'Narodna banka Srbije, 06.11.2026: banka i ALTA GROUP su „dva različita pravna lica”; stečaj banke po rešenju suda 10 St 275/2026 od 03.11.2026, stečajni upravnik je AOD',
+		},
+	},
+	{
+		url: 'https://webappcenter.nbs.rs/PnWebApp/EnforcedCollectionDebtor/EnforcedCollectionDebtor?isSearchExecuted=true&NationalCode=21035254&TaxCode=&OrderBy=',
+		copy: 'https://archive.ph/l33B6',
+		label: {
+			ru: 'Нацбанк: реестр должников в принудительном взыскании, ALTA GROUP (МБ 21035254), на 18.11.2026 — сумма блокировки 676 589 472,96 динаров без процентов, блокировка с 13.11.2026',
+			en: 'National Bank of Serbia: register of debtors in enforced collection, ALTA GROUP (reg. no. 21035254), as of 18 Nov 2026 — blocked amount RSD 676,589,472.96 excluding interest, blocked since 13 Nov 2026',
+			sr: 'Narodna banka Srbije: Registar dužnika u prinudnoj naplati, ALTA GROUP (MB 21035254), na dan 18.11.2026 — ukupan iznos blokade 676.589.472,96 dinara bez kamate, u blokadi od 13.11.2026.',
+		},
+	},
+] as const;
+
+const T = {
+	ru: {
+		aria: 'Схема владения: Давор Мацура — ALTA GROUP — банк ALTA — дочерние компании банка',
+		person: 'Давор Мацура',
+		personKind: 'человек, владелец',
+		group: 'ALTA GROUP doo Beograd',
+		groupId: 'МБ 21035254',
+		groupWhat: 'Не банк: электронные деньги и платежи (кошельки, переводы, карты). Вкладов не принимает',
+		groupLic: 'Лицензия Нацбанка отозвана 02.11.2026',
+		groupBlock: 'Счета заблокированы: 676,6 млн динаров неоплаченных взысканий (на 18.11.2026, с 13.11.2026). Кто взыскивает, реестр не показывает',
+		groupApr: 'В реестре АПР — действующая компания',
+		bank: 'ALTA banka a.d. Beograd',
+		bankId: 'МБ 07074433 · бывшая JUBMES banka',
+		bankWhat: 'Банк, в котором лежали вклады',
+		bankLic: 'Лицензия отозвана 30.10.2026',
+		bankStecaj: 'Банкротство с 03.11.2026, управляющий — AOD',
+		leasing: 'ALTA Leasing d.o.o. Beograd',
+		leasingNote: 'бывшая Vantage leasing, Сербия',
+		bitola: 'ALTA banka a.d. Bitola',
+		bitolaNote: 'бывшая Stopanska banka, Северная Македония',
+		e1: '100 % долей',
+		e2: '100 % акций · 2 211 690 шт.',
+		e3: 'банку принадлежат',
+		since: '100 % · с 07.2024',
+		at: '93,29 % · на 31.12.2025',
+		split: 'Два разных юрлица в разном правовом статусе — Нацбанк, 06.11.2026. Долги и счета у них разные',
+		srcTitle: 'Источники схемы',
+		copy: 'копия',
+	},
+	en: {
+		aria: 'Ownership chart: Davor Macura — ALTA GROUP — ALTA bank — the bank’s subsidiaries',
+		person: 'Davor Macura',
+		personKind: 'individual, owner',
+		group: 'ALTA GROUP doo Beograd',
+		groupId: 'reg. no. 21035254',
+		groupWhat: 'Not a bank: e-money and payments (wallets, transfers, cards). Takes no deposits',
+		groupLic: 'National Bank licence revoked 2 Nov 2026',
+		groupBlock: 'Accounts blocked: RSD 676.6 million in unpaid enforced collection (as of 18 Nov 2026, since 13 Nov 2026). The register does not show who is collecting',
+		groupApr: 'Active company in the APR register',
+		bank: 'ALTA banka a.d. Beograd',
+		bankId: 'reg. no. 07074433 · formerly JUBMES banka',
+		bankWhat: 'The bank that held the deposits',
+		bankLic: 'Licence revoked 30 Oct 2026',
+		bankStecaj: 'In bankruptcy since 3 Nov 2026, receiver — AOD',
+		leasing: 'ALTA Leasing d.o.o. Beograd',
+		leasingNote: 'formerly Vantage leasing, Serbia',
+		bitola: 'ALTA banka a.d. Bitola',
+		bitolaNote: 'formerly Stopanska banka, North Macedonia',
+		e1: '100% stake',
+		e2: '100% of shares · 2,211,690',
+		e3: 'owned by the bank',
+		since: '100% · since Jul 2024',
+		at: '93.29% · at 31 Dec 2025',
+		split: 'Two different legal entities with different legal status — National Bank, 6 Nov 2026. Their debts and accounts are separate',
+		srcTitle: 'Sources for the chart',
+		copy: 'copy',
+	},
+	sr: {
+		aria: 'Šema vlasništva: Davor Macura — ALTA GROUP — ALTA banka — zavisna društva banke',
+		person: 'Davor Macura',
+		personKind: 'fizičko lice, vlasnik',
+		group: 'ALTA GROUP doo Beograd',
+		groupId: 'MB 21035254',
+		groupWhat: 'Nije banka: elektronski novac i platne usluge (novčanici, prenosi, kartice). Ne prima depozite',
+		groupLic: 'Dozvola NBS oduzeta 02.11.2026.',
+		groupBlock: 'Računi u blokadi: 676,6 miliona dinara u prinudnoj naplati (na dan 18.11.2026, od 13.11.2026). Ko naplaćuje, registar ne prikazuje',
+		groupApr: 'U registru APR — aktivno društvo',
+		bank: 'ALTA banka a.d. Beograd',
+		bankId: 'MB 07074433 · ranije JUBMES banka',
+		bankWhat: 'Banka u kojoj su bili depoziti',
+		bankLic: 'Dozvola za rad oduzeta 30.10.2026.',
+		bankStecaj: 'U stečaju od 03.11.2026, stečajni upravnik — AOD',
+		leasing: 'ALTA Leasing d.o.o. Beograd',
+		leasingNote: 'ranije Vantage leasing, Srbija',
+		bitola: 'ALTA banka a.d. Bitola',
+		bitolaNote: 'ranije Stopanska banka, Severna Makedonija',
+		e1: '100 % udela',
+		e2: '100 % akcija · 2.211.690',
+		e3: 'vlasnik je banka',
+		since: '100 % · od 07.2024',
+		at: '93,29 % · na dan 31.12.2025.',
+		split: 'Dva različita pravna lica u različitom pravnom statusu — NBS, 06.11.2026. Dugovi i računi su im odvojeni',
+		srcTitle: 'Izvori šeme',
+		copy: 'kopija',
+	},
+}[lang];
+
+const id = `own-src-${lang}`;
+---
+
+<figure class="own not-content" aria-label={T.aria}>
+	<div class="own-node own-person">
+		<span class="own-kind">{T.personKind}</span>
+		<strong class="own-name">{T.person}</strong>
+	</div>
+
+	<div class="own-edge">
+		<span class="own-edge-label">{T.e1} {[1].map((n) => <a class="own-ref" href={`#${id}-${n}`}>{n}</a>)}</span>
+	</div>
+
+	<div class="own-node own-group">
+		<strong class="own-name">{T.group}</strong>
+		<span class="own-id">{T.groupId}</span>
+		<ul class="own-facts">
+			<li>{T.groupWhat} <a class="own-ref" href={`#${id}-6`}>6</a></li>
+			<li class="own-bad">{T.groupLic} <a class="own-ref" href={`#${id}-6`}>6</a></li>
+			<li class="own-warn">{T.groupBlock} <a class="own-ref" href={`#${id}-8`}>8</a></li>
+			<li>{T.groupApr} <a class="own-ref" href={`#${id}-1`}>1</a></li>
+		</ul>
+	</div>
+
+	<div class="own-edge own-edge-split">
+		<span class="own-edge-label">{T.e2} {[2, 3, 4].map((n) => <a class="own-ref" href={`#${id}-${n}`}>{n}</a>)}</span>
+		<p class="own-split">{T.split} <a class="own-ref" href={`#${id}-7`}>7</a></p>
+	</div>
+
+	<div class="own-node own-bank">
+		<strong class="own-name">{T.bank}</strong>
+		<span class="own-id">{T.bankId}</span>
+		<ul class="own-facts">
+			<li>{T.bankWhat} <a class="own-ref" href={`#${id}-5`}>5</a></li>
+			<li class="own-bad">{T.bankLic} <a class="own-ref" href={`#${id}-5`}>5</a></li>
+			<li class="own-bad">{T.bankStecaj} <a class="own-ref" href={`#${id}-7`}>7</a></li>
+		</ul>
+	</div>
+
+	<div class="own-edge own-edge-fork">
+		<span class="own-edge-label">{T.e3} <a class="own-ref" href={`#${id}-4`}>4</a></span>
+	</div>
+
+	<div class="own-kids">
+		<div class="own-node own-kid">
+			<span class="own-share">{T.since}</span>
+			<strong class="own-name">{T.leasing}</strong>
+			<span class="own-id">{T.leasingNote}</span>
+		</div>
+		<div class="own-node own-kid">
+			<span class="own-share">{T.at}</span>
+			<strong class="own-name">{T.bitola}</strong>
+			<span class="own-id">{T.bitolaNote}</span>
+		</div>
+	</div>
+
+	<figcaption class="own-src">
+		<p class="own-src-h">{T.srcTitle}</p>
+		<ol>
+			{SOURCES.map((s, i) => (
+				<li id={`${id}-${i + 1}`}>
+					<a href={s.url} target="_blank" rel="noopener">{s.label[lang]}</a>
+					{'copy' in s && s.copy && (<>{' ('}<a href={s.copy} target="_blank" rel="noopener">{T.copy}</a>{')'}</>)}
+				</li>
+			))}
+		</ol>
+	</figcaption>
+</figure>
