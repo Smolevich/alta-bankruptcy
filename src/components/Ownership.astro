@@ -1,6 +1,6 @@
 ---
-// Схема «кто кем владеет» на странице банка: сверху вниз, чтобы на телефоне не было
-// горизонтальной прокрутки. Каждый факт — с номером источника из списка под схемой;
+// Схема «кто кем владеет» на странице банка: дерево сверху вниз, статус каждого звена — цветом
+// по легенде; на телефоне дочки банка уходят на вертикальную «рельсу», без прокрутки вбок. Каждый факт — с номером источника из списка под схемой;
 // в схеме только реестры, документы банка и сообщения Нацбанка.
 import type { Lang } from '../i18n';
 
@@ -90,7 +90,8 @@ const T = {
 		personKind: 'человек, владелец',
 		group: 'ALTA GROUP doo Beograd',
 		groupId: 'МБ 21035254',
-		groupWhat: 'Не банк: электронные деньги и платежи (кошельки, переводы, карты). Вкладов не принимает',
+		groupNotBank: 'компания, не банк',
+		groupWhat: 'Электронные деньги и платежи (кошельки, переводы, карты). Вкладов не принимает',
 		groupLic: 'Лицензия Нацбанка отозвана 02.11.2026',
 		groupBlock: 'Счета заблокированы: 676,6 млн динаров неоплаченных взысканий (на 18.11.2026, с 13.11.2026). Кто взыскивает, реестр не показывает',
 		groupApr: 'В реестре АПР — действующая компания',
@@ -106,9 +107,13 @@ const T = {
 		e1: '100 % долей',
 		e2: '100 % акций · 2 211 690 шт.',
 		e3: 'банку принадлежат',
-		since: '100 % · с 07.2024',
-		at: '93,29 % · на 31.12.2025',
-		split: 'Два разных юрлица в разном правовом статусе — Нацбанк, 06.11.2026. Долги и счета у них разные',
+		sinceShare: '100 %',
+		since: 'с 07.2024',
+		atShare: '93,29 %',
+		at: 'на 31.12.2025',
+		splitHead: 'Два разных юрлица',
+		split: 'в разном правовом статусе — Нацбанк, 06.11.2026. Долги и счета у них разные',
+		legend: ['действует', 'лицензия отозвана', 'банкротство', 'счета заблокированы'],
 		srcTitle: 'Источники схемы',
 		copy: 'копия',
 	},
@@ -118,7 +123,8 @@ const T = {
 		personKind: 'individual, owner',
 		group: 'ALTA GROUP doo Beograd',
 		groupId: 'reg. no. 21035254',
-		groupWhat: 'Not a bank: e-money and payments (wallets, transfers, cards). Takes no deposits',
+		groupNotBank: 'a company, not a bank',
+		groupWhat: 'E-money and payments (wallets, transfers, cards). Takes no deposits',
 		groupLic: 'National Bank licence revoked 2 Nov 2026',
 		groupBlock: 'Accounts blocked: RSD 676.6 million in unpaid enforced collection (as of 18 Nov 2026, since 13 Nov 2026). The register does not show who is collecting',
 		groupApr: 'Active company in the APR register',
@@ -134,9 +140,13 @@ const T = {
 		e1: '100% stake',
 		e2: '100% of shares · 2,211,690',
 		e3: 'owned by the bank',
-		since: '100% · since Jul 2024',
-		at: '93.29% · at 31 Dec 2025',
-		split: 'Two different legal entities with different legal status — National Bank, 6 Nov 2026. Their debts and accounts are separate',
+		sinceShare: '100%',
+		since: 'since Jul 2024',
+		atShare: '93.29%',
+		at: 'at 31 Dec 2025',
+		splitHead: 'Two different legal entities',
+		split: 'with different legal status — National Bank, 6 Nov 2026. Their debts and accounts are separate',
+		legend: ['active', 'licence revoked', 'bankruptcy', 'accounts blocked'],
 		srcTitle: 'Sources for the chart',
 		copy: 'copy',
 	},
@@ -146,7 +156,8 @@ const T = {
 		personKind: 'fizičko lice, vlasnik',
 		group: 'ALTA GROUP doo Beograd',
 		groupId: 'MB 21035254',
-		groupWhat: 'Nije banka: elektronski novac i platne usluge (novčanici, prenosi, kartice). Ne prima depozite',
+		groupNotBank: 'društvo, nije banka',
+		groupWhat: 'Elektronski novac i platne usluge (novčanici, prenosi, kartice). Ne prima depozite',
 		groupLic: 'Dozvola NBS oduzeta 02.11.2026.',
 		groupBlock: 'Računi u blokadi: 676,6 miliona dinara u prinudnoj naplati (na dan 18.11.2026, od 13.11.2026). Ko naplaćuje, registar ne prikazuje',
 		groupApr: 'U registru APR — aktivno društvo',
@@ -162,67 +173,94 @@ const T = {
 		e1: '100 % udela',
 		e2: '100 % akcija · 2.211.690',
 		e3: 'vlasnik je banka',
-		since: '100 % · od 07.2024',
-		at: '93,29 % · na dan 31.12.2025.',
-		split: 'Dva različita pravna lica u različitom pravnom statusu — NBS, 06.11.2026. Dugovi i računi su im odvojeni',
+		sinceShare: '100 %',
+		since: 'od 07.2024',
+		atShare: '93,29 %',
+		at: 'na dan 31.12.2025.',
+		splitHead: 'Dva različita pravna lica',
+		split: 'u različitom pravnom statusu — NBS, 06.11.2026. Dugovi i računi su im odvojeni',
+		legend: ['aktivno', 'dozvola oduzeta', 'stečaj', 'računi u blokadi'],
 		srcTitle: 'Izvori šeme',
 		copy: 'kopija',
 	},
 }[lang];
 
 const id = `own-src-${lang}`;
+const ref = (n: number) => `#${id}-${n}`;
+
+// Иконки инлайном, без <use>: на странице может оказаться больше одной схемы, id не должны совпасть.
+const ICON = {
+	person: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4.5 4.4-7 8-7s7 2.5 8 7"/></svg>',
+	office: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="11" height="18"/><path d="M15 9h5v12h-5M7.5 7h1M10.5 7h1M7.5 11h1M10.5 11h1M7.5 15h1M10.5 15h1M9 21v-3"/></svg>',
+	bank: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M3 9.5 12 4l9 5.5H3ZM5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 20.5h18"/></svg>',
+	car: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M3 16v-4l2.5-5h13l2.5 5v4H3Z"/><circle cx="7.5" cy="16.5" r="1.8"/><circle cx="16.5" cy="16.5" r="1.8"/></svg>',
+	ok: '<svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="currentColor"/><path d="m6 10.5 2.6 2.5L14 7.5" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/></svg>',
+	bad: '<svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="currentColor"/><path d="m7 7 6 6M13 7l-6 6" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>',
+	dead: '<svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="#fff"/><path d="M6 10h8" stroke="#1b2430" stroke-width="2.4" stroke-linecap="round"/></svg>',
+	lock: '<svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="currentColor"/><rect x="6.5" y="9" width="7" height="5.5" rx="1" fill="#fff"/><path d="M8 9V7.5a2 2 0 0 1 4 0V9" stroke="#fff" stroke-width="1.6" fill="none"/></svg>',
+};
 ---
 
 <figure class="own not-content" aria-label={T.aria}>
+	<div class="own-legend">
+		{(['ok', 'bad', 'dead', 'warn'] as const).map((k, i) => <span><i class={`own-dot own-d-${k}`}></i>{T.legend[i]}</span>)}
+	</div>
+
 	<div class="own-node own-person">
+		<span class="own-ico" set:html={ICON.person} />
 		<span class="own-kind">{T.personKind}</span>
 		<strong class="own-name">{T.person}</strong>
 	</div>
 
-	<div class="own-edge">
-		<span class="own-edge-label">{T.e1} {[1].map((n) => <a class="own-ref" href={`#${id}-${n}`}>{n}</a>)}</span>
-	</div>
+	<div class="own-edge"><span class="own-pill">{T.e1} <a class="own-ref" href={ref(1)}>1</a></span></div>
 
 	<div class="own-node own-group">
+		<span class="own-ico" set:html={ICON.office} />
 		<strong class="own-name">{T.group}</strong>
-		<span class="own-id">{T.groupId}</span>
-		<ul class="own-facts">
-			<li>{T.groupWhat} <a class="own-ref" href={`#${id}-6`}>6</a></li>
-			<li class="own-bad">{T.groupLic} <a class="own-ref" href={`#${id}-6`}>6</a></li>
-			<li class="own-warn">{T.groupBlock} <a class="own-ref" href={`#${id}-8`}>8</a></li>
-			<li>{T.groupApr} <a class="own-ref" href={`#${id}-1`}>1</a></li>
-		</ul>
+		<span class="own-id">{T.groupId} · {T.groupNotBank}</span>
+		<div class="own-body">
+			<p class="own-what">{T.groupWhat} <a class="own-ref" href={ref(6)}>6</a></p>
+			<p class="own-st own-st-ok"><Fragment set:html={ICON.ok} /><span>{T.groupApr} <a class="own-ref" href={ref(1)}>1</a></span></p>
+			<p class="own-st own-st-bad"><Fragment set:html={ICON.bad} /><span>{T.groupLic} <a class="own-ref" href={ref(6)}>6</a></span></p>
+			<p class="own-st own-st-warn"><Fragment set:html={ICON.lock} /><span>{T.groupBlock} <a class="own-ref" href={ref(8)}>8</a></span></p>
+		</div>
 	</div>
 
-	<div class="own-edge own-edge-split">
-		<span class="own-edge-label">{T.e2} {[2, 3, 4].map((n) => <a class="own-ref" href={`#${id}-${n}`}>{n}</a>)}</span>
-		<p class="own-split">{T.split} <a class="own-ref" href={`#${id}-7`}>7</a></p>
-	</div>
+	<div class="own-edge"><span class="own-pill">{T.e2} {[2, 3, 4].map((n) => <a class="own-ref" href={ref(n)}>{n}</a>)}</span></div>
+
+	<div class="own-wall"><p><strong>{T.splitHead}</strong>{T.split} <a class="own-ref" href={ref(7)}>7</a></p></div>
+	<div class="own-edge own-edge-short"><span></span></div>
 
 	<div class="own-node own-bank">
+		<span class="own-ico" set:html={ICON.bank} />
 		<strong class="own-name">{T.bank}</strong>
 		<span class="own-id">{T.bankId}</span>
-		<ul class="own-facts">
-			<li>{T.bankWhat} <a class="own-ref" href={`#${id}-5`}>5</a></li>
-			<li class="own-bad">{T.bankLic} <a class="own-ref" href={`#${id}-5`}>5</a></li>
-			<li class="own-bad">{T.bankStecaj} <a class="own-ref" href={`#${id}-7`}>7</a></li>
-		</ul>
+		<div class="own-body">
+			<span><span class="own-here">{T.bankWhat} <a class="own-ref" href={ref(5)}>5</a></span></span>
+			<p class="own-st own-st-bad"><Fragment set:html={ICON.bad} /><span>{T.bankLic} <a class="own-ref" href={ref(5)}>5</a></span></p>
+			<p class="own-st own-st-dead"><Fragment set:html={ICON.dead} /><span>{T.bankStecaj} <a class="own-ref" href={ref(7)}>7</a></span></p>
+		</div>
 	</div>
 
-	<div class="own-edge own-edge-fork">
-		<span class="own-edge-label">{T.e3} <a class="own-ref" href={`#${id}-4`}>4</a></span>
-	</div>
+	<div class="own-fork-label"><span class="own-pill">{T.e3} <a class="own-ref" href={ref(4)}>4</a></span></div>
+	<div class="own-fork"></div>
 
 	<div class="own-kids">
 		<div class="own-node own-kid">
-			<span class="own-share">{T.since}</span>
-			<strong class="own-name">{T.leasing}</strong>
-			<span class="own-id">{T.leasingNote}</span>
+			<span class="own-ico" set:html={ICON.car} />
+			<span class="own-share">{T.sinceShare} <small>{T.since}</small></span>
+			<div class="own-body">
+				<strong class="own-name">{T.leasing}</strong>
+				<span class="own-id">{T.leasingNote}</span>
+			</div>
 		</div>
 		<div class="own-node own-kid">
-			<span class="own-share">{T.at}</span>
-			<strong class="own-name">{T.bitola}</strong>
-			<span class="own-id">{T.bitolaNote}</span>
+			<span class="own-ico" set:html={ICON.bank} />
+			<span class="own-share">{T.atShare} <small>{T.at}</small></span>
+			<div class="own-body">
+				<strong class="own-name">{T.bitola}</strong>
+				<span class="own-id">{T.bitolaNote}</span>
+			</div>
 		</div>
 	</div>
 

@@ -919,27 +919,57 @@ select:focus-visible, .bc-seg input:focus-visible + span, .branch-controls butto
 /* Пометка утверждения без официального источника («со слов вкладчика»). */
 .unofficial { color: var(--seal); font-weight: 700; }
 
-/* ---- Bank: схема владения (Ownership.astro). Одна колонка сверху вниз — на телефоне без прокрутки вбок ---- */
-.own { margin: 1rem 0 1.6rem; padding: 1rem 0.8rem; background: #fffdf7; border: 1px solid var(--line); border-radius: 4px; }
-.own-node { position: relative; min-width: 0; padding: 0.7rem 0.9rem; background: #fff; border: 2px solid var(--ink); border-radius: 4px; overflow-wrap: anywhere; }
-.own-person { max-width: 18rem; margin: 0 auto; text-align: center; border-style: dashed; }
-.own-bank { border-color: var(--seal); border-top-width: 6px; box-shadow: 4px 4px 0 var(--seal-soft); }
-.own-name { display: block; font: 700 1.1rem/1.25 var(--serif); }
-.own-kind, .own-share { display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: #5a5448; }
-.own-share { color: var(--seal); font-weight: 700; margin-bottom: 0.15rem; }
-.own-id { display: block; font-size: 0.85rem; color: #5a5448; }
-.own-facts { list-style: none; margin: 0.5rem 0 0; padding: 0; display: grid; gap: 0.3rem; font-size: 0.88rem; line-height: 1.35; }
-.own-facts li { margin: 0; padding: 0.25rem 0.5rem; border-left: 3px solid var(--line); }
-.own-facts .own-bad { border-left-color: var(--seal); background: var(--seal-soft); }
-.own-facts .own-warn { border-left-color: var(--amber); background: var(--amber-soft); }
+/* ---- Bank: схема владения (Ownership.astro). Дерево сверху вниз: на телефоне дочки уходят на «рельсу», чтобы не было прокрутки вбок ---- */
+.own { margin: 1rem 0 1.6rem; padding: 16px 14px; background: #fffdf7; border: 1px solid var(--line); border-radius: 4px; }
+.own-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 0 0 16px; padding: 0 0 12px; border-bottom: 1px solid var(--line); font-size: 0.8rem; color: #5a5448; }
+.own-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.own-dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.own-d-ok { background: var(--ok); } .own-d-bad { background: var(--seal); } .own-d-dead { background: var(--ink); } .own-d-warn { background: var(--amber); }
+.own-node { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 4px 12px; min-width: 0; padding: 12px; background: #fff; border: 1.5px solid var(--line); border-radius: 8px; overflow-wrap: anywhere; }
+.own-ico { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 10px; background: var(--paper-2); color: var(--ink); grid-row: span 2; }
+.own-ico svg { width: 26px; height: 26px; }
+.own-kind { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: #5a5448; }
+.own-name { display: block; font: 700 1.12rem/1.2 var(--serif); }
+.own-id { display: block; font-size: 0.82rem; color: #5a5448; }
+.own-body { grid-column: 1 / -1; display: grid; gap: 6px; margin-top: 6px; }
+.own-what { margin: 0; font-size: 0.88rem; line-height: 1.35; }
+.own-st { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 8px; align-items: start; margin: 0; padding: 6px 8px; border-radius: 6px; font-size: 0.86rem; line-height: 1.3; }
+.own-st svg { width: 18px; height: 18px; margin-top: 1px; }
+.own-st-ok { background: var(--ok-soft); color: #1f4d39; }
+.own-st-bad { background: var(--seal-soft); color: #6f1d16; }
+.own-st-dead { background: var(--ink); color: #fff; }
+.own-st-dead .own-ref { background: #3a4554; color: #fff; }
+.own-st-warn { background: var(--amber-soft); color: #5e3d00; }
+.own-st b { font-weight: 700; }
+.own-person { max-width: 320px; margin: 0 auto; border-style: dashed; border-color: #5a5448; }
+.own-group .own-ico { background: var(--amber-soft); color: var(--amber); }
+.own-bank { border: 2px solid var(--seal); box-shadow: 4px 4px 0 var(--seal-soft); }
+.own-bank .own-ico { background: var(--seal); color: #fff; }
+.own-here { display: inline-block; margin-top: 4px; padding: 2px 8px; border-radius: 999px; background: var(--ink); color: #fff; font-size: 0.75rem; font-weight: 700; }
+.own-here .own-ref { background: #3a4554; color: #fff; }
 /* Связь: вертикальная линия со стрелкой и подписью «сколько принадлежит». */
-.own-edge { position: relative; display: flex; flex-direction: column; align-items: center; gap: 0.35rem; padding: 0.55rem 0 0.9rem; }
-.own-edge::before { content: ''; position: absolute; top: 0; bottom: 0.35rem; left: calc(50% - 1px); width: 2px; background: var(--ink); }
+.own-edge { position: relative; display: flex; justify-content: center; padding: 10px 0 16px; }
+.own-edge-short { padding-top: 6px; }
+.own-edge::before { content: ''; position: absolute; top: 0; bottom: 6px; left: calc(50% - 1px); width: 2px; background: var(--ink); }
 .own-edge::after { content: ''; position: absolute; bottom: 0; left: calc(50% - 6px); border: 6px solid transparent; border-top-color: var(--ink); border-bottom-width: 0; }
-.own-edge-label { position: relative; padding: 0.15rem 0.6rem; background: #fffdf7; border: 1.5px solid var(--ink); border-radius: 999px; font-size: 0.85rem; font-weight: 700; text-align: center; }
-.own-split { position: relative; margin: 0; max-width: 30rem; padding: 0.4rem 0.7rem; background: #fffdf7; border: 2px dashed var(--seal); border-radius: 4px; color: var(--seal); font-size: 0.85rem; font-weight: 700; line-height: 1.3; text-align: center; }
-.own-kids { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.8rem; }
-.own-kid { border-width: 1.5px; }
+.own-pill { position: relative; padding: 3px 10px; background: #fffdf7; border: 1.5px solid var(--ink); border-radius: 999px; font-size: 0.84rem; font-weight: 700; text-align: center; }
+/* Граница между ALTA GROUP и банком — через всю ширину рамки схемы. */
+.own-wall { position: relative; display: flex; justify-content: center; margin: 2px -14px 0; padding: 8px 14px; }
+.own-wall::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; border-top: 2px dashed var(--seal); }
+.own-wall p { position: relative; margin: 0; max-width: 420px; padding: 6px 10px; background: #fffdf7; border: 2px solid var(--seal); border-radius: 6px; color: var(--seal); font-size: 0.84rem; font-weight: 700; line-height: 1.3; text-align: center; }
+.own-wall p strong { display: block; font: 700 1rem/1.2 var(--serif); }
+.own-fork { position: relative; height: 34px; }
+.own-fork::before { content: ''; position: absolute; top: 0; height: 16px; left: calc(50% - 1px); width: 2px; background: var(--ink); }
+.own-fork::after { content: ''; position: absolute; top: 16px; left: 25%; right: 25%; height: 18px; border: 2px solid var(--ink); border-bottom: 0; border-radius: 6px 6px 0 0; }
+.own-fork-label { position: relative; display: flex; justify-content: center; padding-top: 10px; }
+.own-fork-label::before { content: ''; position: absolute; top: 0; bottom: 0; left: calc(50% - 1px); width: 2px; background: var(--ink); }
+.own-kids { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.own-kid { grid-template-columns: 36px minmax(0, 1fr); border-color: var(--ink); }
+.own-kid .own-ico { width: 36px; height: 36px; grid-row: auto; }
+.own-kid .own-ico svg { width: 20px; height: 20px; }
+.own-kid .own-body { margin-top: 2px; }
+.own-share { display: block; font: 700 1.5rem/1 var(--serif); color: var(--seal); }
+.own-share small { font: 600 0.75rem/1 var(--sl-font-system); color: #5a5448; letter-spacing: 0.03em; }
 .own-ref { display: inline-block; min-width: 1.15rem; padding: 0 0.2rem; border-radius: 3px; background: var(--paper-2); color: var(--seal); font-size: 0.72rem; font-weight: 700; line-height: 1.15rem; text-align: center; text-decoration: none; vertical-align: 0.1em; }
 .own-ref:hover, .own-ref:focus-visible { background: var(--seal); color: #fff; }
 .own-src { margin-top: 1rem; padding-top: 0.6rem; border-top: 1px solid var(--line); font-size: 0.82rem; line-height: 1.35; overflow-wrap: anywhere; }
@@ -948,7 +978,15 @@ select:focus-visible, .bc-seg input:focus-visible + span, .branch-controls butto
 .own-src li { margin: 0; }
 .own-src li:target { background: var(--amber-soft); }
 .own-src a { color: var(--seal); }
-@media (max-width: 520px) {
-	.own { padding: 0.8rem 0.5rem; }
-	.own-kids { grid-template-columns: 1fr; }
+@media (max-width: 560px) {
+	.own { padding: 12px 10px; }
+	.own-wall { margin: 2px -10px 0; padding: 8px 10px; }
+	.own-fork { display: none; }
+	.own-kids { position: relative; grid-template-columns: 1fr; padding-top: 10px; padding-left: 22px; }
+	.own-kids::before { content: ''; position: absolute; left: 6px; top: 0; bottom: 30px; width: 2px; background: var(--ink); }
+	.own-kid { position: relative; }
+	.own-kid::before { content: ''; position: absolute; left: -16px; top: 28px; width: 14px; height: 2px; background: var(--ink); }
+	.own-fork-label { justify-content: flex-start; }
+	.own-fork-label::before { left: 6px; }
+	.own-fork-label .own-pill { margin-left: 18px; }
 }
