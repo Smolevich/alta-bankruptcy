@@ -3,6 +3,7 @@
 // `more` — ссылки «подробнее/источник» под ответом; в JSON-LD не попадают, ответ там без них.
 // Пропсы не проходят через rehype-new-tab, поэтому новая вкладка и просмотр PDF — здесь.
 import { opensInNewTab } from '../links';
+import { bindPercent } from '../rehype-nbsp-percent.mjs';
 import { viewerSrc } from '../data/pdfs';
 
 interface Item {
@@ -31,8 +32,8 @@ const ld = {
 	{
 		items.map((i) => (
 			<details id={i.id} open={open}>
-				<summary>{i.q}</summary>
-				<p>{i.a}</p>
+				<summary>{bindPercent(i.q)}</summary>
+				<p>{bindPercent(i.a)}</p>
 				{i.more && (
 					<p class="faq-more">
 						{i.more.map(([label, url], n) => (

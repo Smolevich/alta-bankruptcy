@@ -53,7 +53,7 @@ const fmt = (d: Date) => formatDate(d, lang);
 					{n.data.sources.map((s, i) => (
 						<>
 							{i > 0 && ' · '}
-							<a href={s.url} target="_blank" rel="noopener" data-pdf={viewerSrc(s.url)}>{s.title}</a>
+							<a href={s.url} target="_blank" rel="noopener" data-pdf={viewerSrc(s.url)}>{bindPercent(s.title)}</a>
 						</>
 					))}
 				</p>

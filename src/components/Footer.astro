@@ -3,6 +3,7 @@
 import Default from '@astrojs/starlight/components/Footer.astro';
 import { formatDate, UI, href, langOf } from '../i18n';
 import { opensInNewTab } from '../links';
+import { bindPercent } from '../rehype-nbsp-percent.mjs';
 import { viewerSrc } from '../data/pdfs';
 import PdfDialog from './PdfDialog.astro';
 
@@ -28,7 +29,7 @@ const fmt = (d: Date) => formatDate(d, lang);
 					<li>
 						<span class={`kind kind-${s.kind}`}>{t[s.kind]}</span>
 						<span>
-							<a href={s.url} target={opensInNewTab(s.url) ? '_blank' : undefined} rel="noopener" data-pdf={viewerSrc(s.url)}>{s.title}</a>
+							<a href={s.url} target={opensInNewTab(s.url) ? '_blank' : undefined} rel="noopener" data-pdf={viewerSrc(s.url)}>{bindPercent(s.title)}</a>
 							{s.copy && (
 								<>
 									{' · '}
