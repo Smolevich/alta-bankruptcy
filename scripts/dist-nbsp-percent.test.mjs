@@ -14,10 +14,28 @@ function htmlFiles(dir) {
 	);
 }
 
+const SKIP = new Set(['script', 'style', 'code', 'pre']);
+
+// Текст страницы без тегов и без содержимого script/style/code/pre: делим по тегам, а не
+// вырезаем их заменой — это чтение готового HTML, а не очистка ввода.
+function visibleText(html) {
+	const parts = html.split('</head>').pop().split(/(<[^>]*>)/);
+	let skipping = null;
+	const out = [];
+	for (const part of parts) {
+		const tag = /^<(\/?)([a-z0-9]+)/i.exec(part);
+		if (tag) {
+			const name = tag[2].toLowerCase();
+			if (!skipping && !tag[1] && SKIP.has(name)) skipping = name;
+			else if (skipping === name && tag[1]) skipping = null;
+			out.push(' ');
+		} else if (!skipping) out.push(part);
+	}
+	return out.join('');
+}
+
 export function breakablePercents(html) {
-	const body = html.split('</head>').pop();
-	const text = body.replace(/<(script|style|code|pre)\b[\s\S]*?<\/\1>/gi, '').replace(/<[^>]+>/g, ' ');
-	return [...text.matchAll(/.{0,30}\d[ \t]+%/g)].map((m) => m[0].trim());
+	return [...visibleText(html).matchAll(/.{0,30}\d[ \t]+%/g)].map((m) => m[0].trim());
 }
 
 test('breakablePercents finds an ordinary space before % and ignores a non-breaking one', () => {
