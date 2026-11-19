@@ -103,6 +103,12 @@
   proof: "WHOIS RNIDS, регистрант: BANKA POŠTANSKA ŠTEDIONICA A.D.; проверено 07.11.2026; info.* — форма записи на выплату (тестовый адрес этой формы — в коде страницы www.posted.co.rs/promo/zakazivanje-isplate.html, 11.11.2026)"
   hosts: [www.posted.co.rs, info.posted.co.rs]
 
+- domain: yettelbank.rs
+  name: "Yettel Bank a.d. Beograd — банк Yettel Bank (официальный сайт)"
+  category: bank
+  proof: "WHOIS RNIDS: whois privacy, регистратор mCloud doo, домен с 04.10.2022; сайт называет себя Yettel Bank, контакт-центр +381 63 9005, разделы «Opšti uslovi poslovanja» и «Prigovori klijenata»; тот же адрес объявления банка — в данных статистики по банкам (backend/src/alta_feedback/data/bank_criteria.json); проверено 19.11.2026"
+  hosts: [www.yettelbank.rs]
+
 - domain: unicreditgroup.eu
   name: "UniCredit Group — банковская группа UniCredit (сайт с обзорами прессы)"
   category: bank

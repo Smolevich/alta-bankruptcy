@@ -14,7 +14,7 @@ const T = {
 const loc = LOCALE_TAG[lang];
 const mln = (k: number) => Math.round(k / 1000).toLocaleString(loc);
 const eur = (k: number) => (k / 1000 / EUR_RATE).toLocaleString(loc, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
-const pct = (k: number) => `${((k / ASSETS_TOTAL) * 100).toLocaleString(loc, { minimumFractionDigits: 1, maximumFractionDigits: 1 })} %`;
+const pct = (k: number) => `${((k / ASSETS_TOTAL) * 100).toLocaleString(loc, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}\u00a0%`;
 const rate = EUR_RATE.toLocaleString(loc, { minimumFractionDigits: 4 });
 ---
 
@@ -43,7 +43,7 @@ const rate = EUR_RATE.toLocaleString(loc, { minimumFractionDigits: 4 });
 			<th scope="row">{T.total}</th>
 			<td data-label={T.rsd}>{mln(ASSETS_TOTAL)}</td>
 			<td data-label={T.eur}>{eur(ASSETS_TOTAL)}</td>
-			<td data-label={T.share}>100 %</td>
+			<td data-label={T.share}>{'100\u00a0%'}</td>
 		</tr>
 	</tfoot>
 </table>

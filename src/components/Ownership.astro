@@ -3,6 +3,7 @@
 // по легенде; на телефоне дочки банка уходят на вертикальную «рельсу», без прокрутки вбок. Каждый факт — с номером источника из списка под схемой;
 // в схеме только реестры, документы банка и сообщения Нацбанка.
 import type { Lang } from '../i18n';
+import { bindPercent } from '../rehype-nbsp-percent.mjs';
 
 const { lang = 'ru' } = Astro.props as { lang?: Lang };
 
@@ -212,7 +213,7 @@ const ICON = {
 		<strong class="own-name">{T.person}</strong>
 	</div>
 
-	<div class="own-edge"><span class="own-pill">{T.e1} <a class="own-ref" href={ref(1)}>1</a></span></div>
+	<div class="own-edge"><span class="own-pill">{bindPercent(T.e1)} <a class="own-ref" href={ref(1)}>1</a></span></div>
 
 	<div class="own-node own-group">
 		<span class="own-ico" set:html={ICON.office} />
@@ -226,7 +227,7 @@ const ICON = {
 		</div>
 	</div>
 
-	<div class="own-edge"><span class="own-pill">{T.e2} {[2, 3, 4].map((n) => <a class="own-ref" href={ref(n)}>{n}</a>)}</span></div>
+	<div class="own-edge"><span class="own-pill">{bindPercent(T.e2)} {[2, 3, 4].map((n) => <a class="own-ref" href={ref(n)}>{n}</a>)}</span></div>
 
 	<div class="own-wall"><p><strong>{T.splitHead}</strong>{T.split} <a class="own-ref" href={ref(7)}>7</a></p></div>
 	<div class="own-edge own-edge-short"><span></span></div>
@@ -248,7 +249,7 @@ const ICON = {
 	<div class="own-kids">
 		<div class="own-node own-kid">
 			<span class="own-ico" set:html={ICON.car} />
-			<span class="own-share">{T.sinceShare} <small>{T.since}</small></span>
+			<span class="own-share">{bindPercent(T.sinceShare)} <small>{T.since}</small></span>
 			<div class="own-body">
 				<strong class="own-name">{T.leasing}</strong>
 				<span class="own-id">{T.leasingNote}</span>
@@ -256,7 +257,7 @@ const ICON = {
 		</div>
 		<div class="own-node own-kid">
 			<span class="own-ico" set:html={ICON.bank} />
-			<span class="own-share">{T.atShare} <small>{T.at}</small></span>
+			<span class="own-share">{bindPercent(T.atShare)} <small>{T.at}</small></span>
 			<div class="own-body">
 				<strong class="own-name">{T.bitola}</strong>
 				<span class="own-id">{T.bitolaNote}</span>
@@ -269,7 +270,7 @@ const ICON = {
 		<ol>
 			{SOURCES.map((s, i) => (
 				<li id={`${id}-${i + 1}`}>
-					<a href={s.url} target="_blank" rel="noopener">{s.label[lang]}</a>
+					<a href={s.url} target="_blank" rel="noopener">{bindPercent(s.label[lang])}</a>
 					{'copy' in s && s.copy && (<>{' ('}<a href={s.copy} target="_blank" rel="noopener">{T.copy}</a>{')'}</>)}
 				</li>
 			))}
