@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import rehypeNbspPercent, { bindFileExt, bindPercent } from '../src/rehype-nbsp-percent.mjs';
 
-// Регрессия 18.11.2026: на /vyplata/ при 390 px ссылка «бланк .docx» рвалась перед «.docx».
+// Regression: on /vyplata/ at 390 px the link "бланк .docx" broke before ".docx".
 test('space before a file extension in link text becomes non-breaking', () => {
 	assert.equal(bindFileExt('бланк .docx'), 'бланк\u00a0.docx');
 	assert.equal(bindFileExt('complaint form .docx, items'), 'complaint form\u00a0.docx, items');

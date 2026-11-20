@@ -1,7 +1,7 @@
 name: Deploy backend to Hetzner
 
-# Сервис из backend/ (формы, статистика, админка, архив AOD, раздача собранного сайта со строгим CSP).
-# Юнит alta-bankruptcy.service на 127.0.0.1:8102 и таймер проверки архива AOD alta-aod-check. См. docs/deploy.md.
+# Service from backend/ (forms, statistics, admin, AOD archive, serving the built site under a strict CSP).
+# Unit alta-bankruptcy.service on 127.0.0.1:8102 and the AOD archive check timer alta-aod-check. See docs/deploy.md.
 on:
   push:
     branches: [main]
@@ -24,13 +24,13 @@ concurrency:
 
 env:
   UV_VERSION: "0.8.11"
-  # preview — сервис работает на копии базы, которую снимает каждый деплой, и не может писать в живую;
-  # live — на живой базе /opt/alta-feedback/data. live ставится вместе с переключением трафика.
+  # preview: the service works on a copy of the database taken by each deploy and cannot write to the live one;
+  # live: on the live database /opt/alta-feedback/data. live is set together with the traffic switch.
   DATA_MODE: live
 
 jobs:
-  # Код репозитория (uv sync, тесты) исполняется только здесь, где секретов нет: иначе правка
-  # с правом записи могла бы вытащить ключи из памяти раннера.
+  # Repository code (uv sync, tests) runs only here, where there are no secrets: otherwise an edit
+  # by a writer could pull keys out of the runner memory.
   preflight:
     runs-on: ubuntu-latest
     outputs:
@@ -58,8 +58,8 @@ jobs:
           uv run --frozen pytest -q
           node --test tests/js/filters.test.js
 
-  # Секреты деплоя лежат в environment production, который пускает только main: workflow
-  # из чужой ветки их не получит, а в main попадают только через PR с ревью CODEOWNERS.
+  # Deploy secrets live in the production environment, which admits only main: a workflow
+  # from another branch does not get them, and main is reached only through a PR with CODEOWNERS review.
   deploy:
     needs: preflight
     environment: production
@@ -76,8 +76,8 @@ jobs:
           oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
           tags: tag:gha-runner
 
-      # Хост сверяется с known_hosts из секрета: подменённый сервер не получит ни код, ни
-      # подпись ключа. HostKeyAlias отвязывает проверку от того, IP или имя лежит в VDS_HOST.
+      # The host is checked against known_hosts from a secret: a spoofed server gets neither the code nor the
+      # key signature. HostKeyAlias decouples the check from whether VDS_HOST holds an IP or a name.
       - name: Set up SSH
         env:
           SSH_KEY: ${{ secrets.VDS_SSH_KEY }}
@@ -147,8 +147,8 @@ jobs:
           fi
           sudo uv sync --frozen --no-dev
 
-          # preview: свежая копия живой базы (онлайн-бэкап SQLite, безопасен при записи) и архив AOD
-          # ссылкой. Сервис пишет только в копию; тестовые записи пропадают со следующим деплоем.
+          # preview: a fresh copy of the live database (SQLite online backup, safe during writes) and the AOD archive
+          # by link. The service writes only to the copy; test records vanish with the next deploy.
           case "$DATA_MODE" in
             preview)
               sudo install -d -m 700 "$PREVIEW_DATA"
@@ -165,9 +165,9 @@ jobs:
           printf '[Service]\nReadWritePaths=%s\n' "$DATA_DIR" \
             | sudo tee "/etc/systemd/system/$UNIT.service.d/data.conf" > /dev/null
 
-          # Вход в Vault по AppRole: role_id и secret_id лежат файлами на сервере, не секретом
-          # репо. Пути — в переменных репозитория. Тело логина через stdin, токен отзывается
-          # сразу после чтения.
+          # Vault login via AppRole: role_id and secret_id are files on the server, not a repo secret.
+          # Paths are in repository variables. The login body goes through stdin, the token is revoked
+          # right after reading.
           export VAULT_ADDR=http://127.0.0.1:8200
           ROLE_ID_FILE="${{ vars.VAULT_ROLE_ID_FILE }}"
           SECRET_ID_FILE="${{ vars.VAULT_SECRET_ID_FILE }}"
@@ -195,8 +195,8 @@ jobs:
             echo "::warning::вход AppRole не прошёл — Vault недоступен или role_id/secret_id неверны"
           fi
           unset VAULT_TOKEN
-          # Не прочитали — берём прежнее значение (своё, иначе старого сервиса): смена соли
-          # обнулила бы лимит по IP, а пустой токен молча закрыл бы админку.
+          # If not read, take the previous value (its own, else the old service's): changing the salt
+          # would reset the IP limit, and an empty token would silently close the admin.
           prev() {
             for f in "$APP_DIR/.env" /opt/alta-feedback/.env; do
               v=$(sudo sed -n "s/^$1=//p" "$f" 2>/dev/null | head -1 || true)
@@ -211,8 +211,8 @@ jobs:
             exit 1
           fi
 
-          # Ключи R2 с подложкой карты: не прочитали — оставляем прежние строки .env, иначе
-          # карта осталась бы без файла (сервис ответит 503, а не подсунет чужое).
+          # R2 keys for the map base layer: if not read, keep the previous .env lines, otherwise
+          # the map would be left without a file (the service answers 503 rather than serving someone else's).
           R2_MAP_ENV=""
           if [ -n "$R2_MAP_JSON" ]; then
             R2_MAP_ENV=$(printf '%s' "$R2_MAP_JSON" | jq -r '
@@ -240,7 +240,7 @@ jobs:
           sudo systemctl restart "$UNIT"
           sudo systemctl enable --now alta-aod-check.timer
 
-          # Type=simple: active ещё до того, как uvicorn займёт сокет — ждём ответ.
+          # Type=simple: active before uvicorn takes the socket, so we wait for a response.
           for _ in $(seq 1 30); do
             curl -fsS -o /dev/null "http://127.0.0.1:$PORT/healthz" && break
             sleep 1

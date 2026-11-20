@@ -1,6 +1,6 @@
-// Проверка собранного сайта: id элементов — только ASCII, а старые якоря из public/anchor-redirects.json
-// ведут на id, которые на странице есть. Кириллический id в ссылке превращается в %D0%…, и такой
-// ссылкой неудобно делиться; битая запись в карте молча ломает уже разосланную ссылку.
+// Built-site check: element ids are ASCII only, and the old anchors from public/anchor-redirects.json
+// lead to ids that exist on the page. A Cyrillic id in a link becomes %D0%…, and such a
+// link is awkward to share; a broken map entry silently breaks an already sent link.
 import { readFileSync, readdirSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';

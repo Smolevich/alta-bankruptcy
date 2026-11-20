@@ -23,22 +23,26 @@ jobs:
 
       - run: npm ci
 
-      # У каждой страницы и новости есть ru, en и sr; источники и внешние ссылки в версиях совпадают.
+      # Fails only on high and critical advisories, so low-severity noise does not block PRs.
+      - name: Dependency audit (npm)
+        run: npm audit --audit-level=high
+
+      # Every page and news item has ru, en and sr; sources and external links match across versions.
       - name: Translations are complete
         run: npm run check:i18n
 
-      # Сборка падает, если у страницы или новости нет `sources`/`checked` (схема в
-      # src/content.config.ts) или если внутренняя ссылка или якорь ведёт в никуда
-      # (starlight-links-validator). Внешние сайты не проверяем: они могут лежать.
-      # Каждая внешняя ссылка — на домен из src/data/trusted-domains.yaml: только https, без гомоглифов,
-      # punycode, логина@, портов и сокращателей; kind: official — только у госорганов, судов, банков.
+      # The build fails if a page or news item has no `sources`/`checked` (schema in
+      # src/content.config.ts) or if an internal link or anchor leads nowhere
+      # (starlight-links-validator). External sites are not checked: they may be down.
+      # Every external link goes to a domain from src/data/trusted-domains.yaml: https only, no homoglyphs,
+      # punycode, user@, ports or shorteners; kind: official only for government bodies, courts, banks.
       - name: Source links are on trusted domains
         run: npm run check:sources
 
       - name: Build (schema and internal links)
         run: npm run build
 
-      # Собранный сайт: ловит автоссылки (голый «www.aod.rs» в тексте становится http-ссылкой).
+      # The built site: catches autolinks (a bare "www.aod.rs" in text becomes an http link).
       - name: Built site links are on trusted domains
         run: npm run check:sources -- --dist
 
@@ -56,21 +60,21 @@ jobs:
           test -s dist/sitemap-index.xml
           test -s dist/llms.txt
           grep -q 'hreflang="sr-Latn"' dist/index.html
-          # Второй ключ head в конфиге Starlight молча затирал первый, и тег Bing пропадал.
+          # A second head key in the Starlight config silently overwrites the first, so the Bing tag would disappear.
           grep -q 'name="msvalidate.01"' dist/index.html
-          # У каждой страницы Astro в карте сайта есть дата сверки; страница backend /account/stats — без даты.
+          # Every Astro page in the sitemap has a verification date; the backend page /account/stats has none.
           test "$(grep -o '<url>' dist/sitemap-0.xml | wc -l)" -eq "$(( $(grep -o '<lastmod>' dist/sitemap-0.xml | wc -l) + 1 ))"
-          # Форма /account отдаётся с noindex: в карте сайта её быть не должно.
+          # The /account form is served with noindex: it must not be in the sitemap.
           test -z "$(grep -o '<loc>https://alta.smolevich.com/account</loc>' dist/sitemap-0.xml)"
           grep -q '<loc>https://alta.smolevich.com/account/stats</loc>' dist/sitemap-0.xml
-          # Главные /en/ и /sr/ попадали в русский раздел llms.txt.
+          # The main /en/ and /sr/ pages must not land in the Russian section of llms.txt.
           test -z "$(awk '/^## English/{exit} /smolevich\.com\/(en|sr)\//' dist/llms.txt)"
           grep -q 'smolevich.com/account/stats)' dist/llms.txt
-          # Страница выплаты весила 650–700 КБ из-за готовых SVG графиков загрузки (#176); сторож от их возврата.
-          # Порог 420 000 байт: к 16.11 текст дорос до 389 087 байт при пороге 380 КБ, места на правки читаемости не было.
+          # The payout page weighed 650–700 KB because of prebuilt load-chart SVGs; this guards against their return.
+          # Threshold 420 000 bytes: leaves room for readability edits to the text.
           for f in dist/vyplata/index.html dist/en/vyplata/index.html dist/sr/vyplata/index.html; do test "$(wc -c < "$f")" -lt 420000; done
 
-  # Сервис сайта (backend/): тесты, линтер и тест поиска в фильтрах статистики.
+  # Site service (backend/): tests, linter and the stats filter search test.
   backend:
     runs-on: ubuntu-latest
     defaults:
@@ -84,6 +88,12 @@ jobs:
         with:
           version: '0.8.11'
       - run: uv sync --frozen
+      # pip-audit has no severity filter: any known advisory in the locked backend dependencies fails.
+      - name: Dependency audit (Python)
+        run: uv export --frozen --no-hashes --no-emit-project -o /tmp/requirements.txt && uvx --from 'pip-audit==2.9.0' pip-audit --disable-pip --no-deps -r /tmp/requirements.txt
       - run: uv run --frozen ruff check src tests
       - run: uv run --frozen pytest -q
       - run: node --test tests/js/filters.test.js
+      # The editor bundle is built from editor/ and committed; audit its lockfile too.
+      - name: Dependency audit (editor)
+        run: npm audit --audit-level=high --prefix editor

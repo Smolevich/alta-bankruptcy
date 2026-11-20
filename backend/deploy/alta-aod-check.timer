@@ -2,7 +2,7 @@
 Description=ALTA: daily check of the AOD PDF archive
 
 [Timer]
-# До ночного бэкапа ботов (04:15 UTC) и его копии в R2 (04:35).
+# Before the nightly bot backup (04:15 UTC) and its copy to R2 (04:35).
 OnCalendar=*-*-* 03:20:00 UTC
 RandomizedDelaySec=10min
 Persistent=true

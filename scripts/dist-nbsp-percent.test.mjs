@@ -3,9 +3,9 @@ import assert from 'node:assert/strict';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-// Регрессия 19.11.2026: на /sr/bank/ при 1280 px строка начиналась с «%» — текст компонента
-// (Ownership.astro) идёт мимо rehype-плагина, и «100 %» с обычным пробелом переносился.
-// Проверяем готовые страницы: так ловится любой компонент, а не только тот, что сломался.
+// Regression: on /sr/bank/ at 1280 px a line started with "%": the component text
+// (Ownership.astro) bypasses the rehype plugin, and "100 %" with a regular space wrapped.
+// We check the built pages: this catches any component, not only the one that broke.
 const DIST = new URL('../dist/', import.meta.url).pathname;
 
 function htmlFiles(dir) {
@@ -16,8 +16,8 @@ function htmlFiles(dir) {
 
 const SKIP = new Set(['script', 'style', 'code', 'pre']);
 
-// Текст страницы без тегов и без содержимого script/style/code/pre: делим по тегам, а не
-// вырезаем их заменой — это чтение готового HTML, а не очистка ввода.
+// Page text without tags and without the contents of script/style/code/pre: split by tags rather than
+// cut out by replacement: this is reading built HTML, not sanitizing input.
 function visibleText(html) {
 	const parts = html.split('</head>').pop().split(/(<[^>]*>)/);
 	let skipping = null;
