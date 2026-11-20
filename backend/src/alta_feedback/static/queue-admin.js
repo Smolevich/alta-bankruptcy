@@ -1,5 +1,5 @@
-// Админка отметок очереди: свежие отметки по источникам и кнопка «снять все отметки этого источника».
-// Токен живёт только в sessionStorage этой вкладки.
+// Queue marks admin: fresh marks by source and a "remove all marks from this source" button.
+// The token lives only in this tab's sessionStorage.
 (() => {
   const KEY = "alta-admin-token";
   const FRESH_MS = 2 * 60 * 60 * 1000;
@@ -7,8 +7,8 @@
   const $ = (id) => document.getElementById(id);
   const storage = {
     get() { try { return sessionStorage.getItem(KEY) || ""; } catch { return ""; } },
-    set(v) { try { sessionStorage.setItem(KEY, v); } catch { /* приватный режим */ } },
-    clear() { try { sessionStorage.removeItem(KEY); } catch { /* нечего чистить */ } },
+    set(v) { try { sessionStorage.setItem(KEY, v); } catch { /* private mode */ } },
+    clear() { try { sessionStorage.removeItem(KEY); } catch { /* nothing to clear */ } },
   };
   let token = storage.get();
   const el = (tag, text, cls) => { const n = document.createElement(tag); if (text) n.textContent = text; if (cls) n.className = cls; return n; };

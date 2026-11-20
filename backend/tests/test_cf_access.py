@@ -53,7 +53,7 @@ def prime(bits: int, rng: random.Random) -> int:
 
 
 def new_key(seed: int) -> tuple[RsaKey, int]:
-    """Тестовая пара RSA-1024: открытый ключ и закрытая экспонента."""
+    """Test RSA-1024 pair: the public key and the private exponent."""
     rng = random.Random(seed)
     while True:
         p, q = prime(512, rng), prime(512, rng)
@@ -192,7 +192,7 @@ def test_empty_env_value_turns_access_off(missing):
 
 
 def test_access_works_from_defaults_without_env():
-    """Деплой не кладёт настройки Access в .env — без значений по умолчанию админка была бы без входа."""
+    """Deploy does not put Access settings into .env: without defaults the admin would have no login."""
     assert config_from_env({}) is not None
 
 
@@ -252,7 +252,7 @@ def test_monitor_sets_account_status_by_bearer(client):
 
 
 def test_access_token_does_not_open_account_reports(client):
-    """Access стоит только перед админкой предложений; отчёты о счетах — по-прежнему только Bearer."""
+    """Access sits only in front of the proposals admin; account reports are still Bearer only."""
     assert client.get("/admin/accounts", headers=access(make_token())).status_code == 401
 
 
@@ -272,7 +272,7 @@ def test_admin_page_has_no_token_field_behind_access(client):
 
 
 def test_admin_page_shows_token_field_when_access_is_off(tmp_path, monkeypatch):
-    """С выключенным Access без поля токена в админку было бы не войти."""
+    """With Access disabled and no token field, the admin could not be entered."""
     monkeypatch.setenv("CF_ACCESS_AUD", "")
     client = TestClient(create_app(data_dir=tmp_path, admin_token=TOKEN, ip_salt="salt"))
     assert 'type="password"' in client.get("/predlozheniya/admin/").text

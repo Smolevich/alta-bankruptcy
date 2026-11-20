@@ -1,7 +1,8 @@
-"""Вход в админку предложений через Cloudflare Access: проверка JWT из `Cf-Access-Jwt-Assertion`.
+"""Admin proposals login through Cloudflare Access: verifies the JWT from `Cf-Access-Jwt-Assertion`.
 
-Access сам пускает на страницу только владельца; сервис ещё раз проверяет подпись токена, его
-`aud` и `iss` и сверяет email со своим списком админов, чтобы запрос мимо туннеля не прошёл.
+Access itself lets only the owner onto the page; the service checks the token signature, its
+`aud` and `iss` again and matches the email against its own admin list, so a request bypassing the
+tunnel fails.
 """
 
 import base64
@@ -16,14 +17,15 @@ from dataclasses import dataclass, field
 
 HEADER = "cf-access-jwt-assertion"
 KEYS_TTL = 3600
-# Неизвестный kid после ротации ключей — повод перечитать список, но не чаще раза в минуту.
+# An unknown kid after key rotation is a reason to refetch the key list, but not more than once a minute.
 KEYS_RETRY = 60
 LEEWAY = 60
-# DigestInfo SHA-256 из RFC 8017, 9.2: подпись сравниваем с полной ожидаемой записью, а не разбираем её —
-# так не пройдут подделки с «мусором» в разборе ASN.1.
+# DigestInfo SHA-256 from RFC 8017, 9.2: compare the signature with the full expected record instead of
+# parsing it,
+# so forgeries with garbage in the ASN.1 parse do not pass.
 SHA256_PREFIX = bytes.fromhex("3031300d060960864801650304020105000420")
-# Настройки по умолчанию — не секреты: домен команды Zero Trust, aud приложения alta-admin и email админа.
-# Переменная окружения перекрывает значение, пустая — выключает вход через Access.
+# Defaults are not secrets: the Zero Trust team domain, the alta-admin app aud and the admin email.
+# An environment variable overrides the value; an empty one disables Access login.
 DEFAULTS = {
     "CF_ACCESS_TEAM_DOMAIN": "sparkling-pine-a39b.cloudflareaccess.com",
     "CF_ACCESS_AUD": "9578f393790da8c36a371e9ade797bcb2e68684d9fb68952fd2a486dc2248ba2",
@@ -32,7 +34,7 @@ DEFAULTS = {
 
 
 class AccessError(Exception):
-    """Токен не прошёл проверку."""
+    """The token failed verification."""
 
 
 @dataclass(frozen=True)
@@ -57,7 +59,7 @@ class AccessConfig:
 
 
 def config_from_env(env: Mapping[str, str], defaults: Mapping[str, str] = DEFAULTS) -> AccessConfig | None:
-    """Без домена команды, aud или хотя бы одного админа вход через Access выключен."""
+    """Without a team domain, aud or at least one admin, Access login is disabled."""
     def get(name: str) -> str:
         return env.get(name, defaults.get(name, "")).strip()
 
@@ -76,7 +78,7 @@ def to_int(text: str) -> int:
 
 
 def parse_keys(raw: bytes) -> dict[str, RsaKey]:
-    """JWKS Cloudflare → ключи RS256 по kid."""
+    """Cloudflare JWKS -> RS256 keys by kid."""
     keys = json.loads(raw).get("keys", [])
     return {
         k["kid"]: RsaKey(to_int(k["n"]), to_int(k["e"]))
@@ -129,7 +131,7 @@ def check_claims(claims: dict, config: AccessConfig, now: float) -> str:
 
 
 def verify_token(token: str, keys: Mapping[str, RsaKey], config: AccessConfig, now: float) -> str:
-    """Возвращает email из проверенного токена Access."""
+    """Returns the email from a verified Access token."""
     header, claims, signed, signature = split_token(token)
     if header.get("alg") != "RS256":
         raise AccessError("alg")
@@ -155,7 +157,7 @@ def fetch_url(url: str) -> bytes:
 
 @dataclass
 class AccessKeys:
-    """Открытые ключи команды Access с кэшем: перечитываются по сроку или при новом kid."""
+    """The team's Access public keys, cached: refetched on expiry or on a new kid."""
 
     url: str
     fetch: Callable[[str], bytes] = fetch_url
@@ -177,7 +179,7 @@ class AccessKeys:
 
 
 def admin_email(token: str, config: AccessConfig, keys: AccessKeys, now: float) -> str | None:
-    """Email админа из токена, иначе None (подпись, срок, aud или email не из списка)."""
+    """Admin email from the token, otherwise None (signature, expiry, aud, or an email not on the list)."""
     try:
         email = verify_token(token, keys.get(kid_of(token)), config, now)
     except AccessError:

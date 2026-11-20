@@ -1,5 +1,5 @@
-// Пријава потраживања физичког лица — описание для DocEditor. Должник и дело вписаны по решению суда
-// 10 Ст 275/2026, ПИБ — по списку Управы за јавни дуг; всё правится.
+// Claim form of a natural person ("Пријава потраживања физичког лица"): description for DocEditor. The debtor and the case are filled in per the court decision
+// 10 Ст 275/2026, the PIB per the Public Debt Administration list; everything is editable.
 import regularUrl from '../../assets/fonts/LiberationSerif-Regular-sub.ttf?url';
 import boldUrl from '../../assets/fonts/LiberationSerif-Bold-sub.ttf?url';
 import type { DocSpec } from '../../lib/doc-editor/spec';

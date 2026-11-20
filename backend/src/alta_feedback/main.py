@@ -1,4 +1,4 @@
-"""Формы и админка для страницы про ALTA; админ-API — по токену, админка предложений — и через Access."""
+"""Forms and admin for the ALTA page; the admin API is by token, the proposals admin also through Access."""
 
 import hmac
 import json
@@ -90,12 +90,13 @@ from alta_feedback.validate import (
 )
 
 BODY_MAX = 16_384
-# Кириллица в urlencoded — до 6 байт на знак (текст и источники), разметка редактора — до 3 байт.
+# Cyrillic in urlencoded is up to 6 bytes per character (text and sources), editor markup up to 3 bytes.
 PROPOSAL_BODY_MAX = 6 * (proposals.TEXT_MAX + proposals.SOURCES_TEXT_MAX) + 3 * proposals.HTML_MAX + 65_536
 PROPOSALS_SHOWN = 300
 RATE_LIMIT = 5
 RATE_WINDOW = timedelta(hours=1)
-# Сколько держим хэш IP и браузер: лимиту хватает часа, остальное — чтобы разобрать волну спама.
+# How long we keep the IP hash and browser: an hour is enough for the rate limit, the rest is to analyze a
+# spam wave.
 TRACE_TTL = timedelta(days=30)
 ADMIN_PAGE_MAX = 500
 PUBLIC_ACCOUNTS_MAX = 2000
@@ -105,16 +106,17 @@ SCRIPTS = frozenset({
     "branch.js", "combo.js", "filters.js", "pdfview.js", "pow.js", "proposal-form.js", "proposals-admin.js",
     "queue-admin.js", "richtext.js", "select-combo.js", "voice.js",
 })
-# Перебор запускает отметка «Я не робот»; среднее число попыток — половина, на Mac ~0,4 с, на телефоне 1–3 с.
+# The "I am not a robot" checkbox starts the brute force; the average is half the attempts, ~0.4 s on a
+# Mac, 1-3 s on a phone.
 POW_MAX_NUMBER = 200_000
 POW_FAILED = "Не прошла проверка от ботов. Подождите пару секунд и отправьте ещё раз."
 DEFAULT_RETURN_URL = "https://alta.smolevich.com"
 
-# Счётчик посещений Cloudflare Web Analytics: единственный разрешённый чужой скрипт и адрес отправки данных.
+# Cloudflare Web Analytics visit counter: the only allowed third-party script and data endpoint.
 CF_SCRIPT = "https://static.cloudflareinsights.com"
 CF_CONNECT = "https://cloudflareinsights.com"
 
-# Своих скриптов на странице нет; стили только встроенные.
+# No scripts of our own on the page; styles are inline only.
 SECURITY_HEADERS = {
     "Content-Security-Policy": (
         f"default-src 'none'; script-src {CF_SCRIPT}; connect-src {CF_CONNECT}; style-src 'unsafe-inline'; "
@@ -125,8 +127,8 @@ SECURITY_HEADERS = {
     "Cache-Control": "no-store",
 }
 
-# Страница отчёта о счёте грузит только свои скрипты: списки с поиском и микрофон;
-# connect-src — только за новой задачей, когда старая протухла, пока форма была открыта.
+# The account report page loads only its own scripts: searchable lists and the microphone;
+# connect-src is only for a new challenge when the old one expired while the form was open.
 ACCOUNT_PAGE_HEADERS = {
     "Content-Security-Policy": (
         f"default-src 'none'; script-src 'self' {CF_SCRIPT}; connect-src 'self' {CF_CONNECT}; "
@@ -136,19 +138,20 @@ ACCOUNT_PAGE_HEADERS = {
     "Permissions-Policy": "microphone=(self)",
 }
 
-# Сводке нужны свои скрипты (фильтры и просмотр PDF; в сеть они не ходят) и встроенный просмотр
-# бланков банков со своего адреса: Chrome показывает PDF в <object> как фрейм, поэтому нужны и object-src,
-# и frame-src; сам PDF разрешает показывать себя только своим страницам.
+# The summary needs its own scripts (filters and PDF viewing; they do not hit the network) and an embedded
+# viewer
+# of bank forms from its own origin: Chrome shows a PDF in <object> as a frame, so both object-src
+# and frame-src are needed; the PDF itself allows only its own pages to show it.
 STATS_PAGE_HEADERS = {
     "Content-Security-Policy": SECURITY_HEADERS["Content-Security-Policy"].replace(
         f"script-src {CF_SCRIPT};", f"script-src 'self' {CF_SCRIPT}; object-src 'self'; frame-src 'self';"
     ),
 }
 
-# Страница предложений — служебная для рабочей группы: в поиск не попадает и ссылкам вес не передаёт.
+# The proposals page is internal for the working group: kept out of search and passes no weight to links.
 NOINDEX = {"X-Robots-Tag": "noindex, nofollow"}
-# Страницам нужны свои скрипты (редактор, проверка полей, проверка от ботов), а проверка за новой
-# задачей ходит на свой же адрес.
+# The pages need their own scripts (editor, field checks, bot check), and the check for a new
+# challenge goes to our own origin.
 PROPOSALS_PAGE_HEADERS = {
     **NOINDEX,
     "Content-Security-Policy": SECURITY_HEADERS["Content-Security-Policy"].replace(
@@ -156,7 +159,8 @@ PROPOSALS_PAGE_HEADERS = {
         f"script-src 'self' {CF_SCRIPT}; connect-src 'self' {CF_CONNECT};",
     ),
 }
-# Админке нужен свой скрипт и запросы к /admin/proposals со своего адреса; вход — Cloudflare Access.
+# The admin needs its own script and requests to /admin/proposals from its own origin; login is Cloudflare
+# Access.
 PROPOSALS_ADMIN_HEADERS = {
     **NOINDEX,
     "Content-Security-Policy": (
@@ -164,8 +168,8 @@ PROPOSALS_ADMIN_HEADERS = {
         "img-src 'self' data: blob:; form-action 'none'; frame-ancestors 'none'; base-uri 'none'"
     ),
 }
-# Файлы кейсов: картинка показывается как есть, PDF только скачивается; sandbox — на случай,
-# если браузер всё же попробует исполнить что-то внутри.
+# Case files: an image is shown as is, a PDF is only downloaded; sandbox is in case
+# the browser tries to execute something inside anyway.
 CASE_FILE_HEADERS = {
     "Content-Security-Policy": "default-src 'none'; img-src 'self'; style-src 'unsafe-inline'; sandbox",
     "X-Content-Type-Options": "nosniff",
@@ -199,7 +203,7 @@ def body_limit(path: str) -> int:
 
 
 def client_ip(request: Request) -> str:
-    """cloudflared ставит CF-Connecting-IP; uvicorn слушает только петлю, поэтому заголовку верим."""
+    """cloudflared sets CF-Connecting-IP; uvicorn listens only on loopback, so we trust the header."""
     return request.headers.get("cf-connecting-ip") or (request.client.host if request.client else "")
 
 
@@ -217,7 +221,8 @@ def ip_hash_of(request: Request) -> str:
 
 
 async def home(request: Request) -> Response:
-    """«/» — справочник; со ссылкой «Предложить правку» (?s=…, ?t=…) и без справочника — форма."""
+    """The root is the reference; with the 'Suggest an edit' link (?s=..., ?t=...) and without the
+    reference it is the form."""
     index = index_file(request.app.state.site_dir)
     if index is None or request.query_params.keys() & {"s", "t"}:
         return await form_page(request)
@@ -260,7 +265,7 @@ async def submit(request: Request) -> Response:
 
 
 async def queue_submit(request: Request) -> JSONResponse:
-    """Отметка «какая сейчас очередь» с карты отделений: без полей о человеке, без формы."""
+    """A "what is the queue now" mark from the branch map: no fields about the person, no form."""
     try:
         data = await request.json()
     except ValueError:
@@ -270,7 +275,8 @@ async def queue_submit(request: Request) -> JSONResponse:
         return JSONResponse({"error": error}, status_code=400)
     store: Store = request.app.state.store
     now = datetime.now(UTC)
-    # Закрытое отделение отвечает раньше проверки PoW: задачу не тратим, человеку сразу говорим, когда можно.
+    # A closed branch answers before the PoW check: the challenge is not spent, and the person is told
+    # right away when to come.
     closed = queues.closed_until(report.branch_id, request.app.state.clock().astimezone(LOCAL_TZ))
     if closed is not None:
         return JSONResponse({"error": "closed", **asdict(closed)}, status_code=403)
@@ -278,7 +284,7 @@ async def queue_submit(request: Request) -> JSONResponse:
     if solved is None:
         return JSONResponse({"error": "pow"}, status_code=400)
     ip_hash = ip_hash_of(request)
-    # Лимит на отделение — по человеку: двое на Wi-Fi отделения не должны блокировать друг друга.
+    # The per-branch limit is per person: two people on branch Wi-Fi must not block each other.
     voter = hash_ip(f"device:{report.device_id}", request.app.state.ip_salt) if report.device_id else ip_hash
     if store.queue_report_since(voter, report.branch_id, now - queues.SAME_BRANCH_GAP):
         return JSONResponse({"error": "rate_limit", "scope": "branch"}, status_code=429)
@@ -295,20 +301,23 @@ async def queue_public(request: Request) -> JSONResponse:
     now = datetime.now(UTC)
     rows = request.app.state.store.fresh_queue_reports(now - queues.FRESH)
     return JSONResponse(
-        # 30 с в Cloudflare: в день выплат карту открывают тысячи раз, свежесть в полминуты не важна.
-        # now — часы сервера для клиента: у телефона часы могут врать, а часы работы и отметки считаем по ним.
+        # 30 s in Cloudflare: on payout day the map is opened thousands of times, half-minute freshness is
+        # not important.
+        # now is the server clock for the client: a phone clock can lie, and opening hours and marks are
+        # counted by it.
         {"branches": queues.summarize(rows, now), "now": now.isoformat(timespec="seconds")},
         headers={"Cache-Control": "public, max-age=30"},
     )
 
 
 def queue_source(item: dict) -> dict:
-    """Источник отметки для модератора: хэш голосующего, тот же, по которому считаем людей."""
+    """Mark source for the moderator: the voter hash, the same one used to count people."""
     return {**item, "source": item["voter"] or item["ip_hash"] or f"id{item['id']}"}
 
 
 async def queue_admin(request: Request) -> Response:
-    """Браузер получает страницу (данные она берёт этим же адресом с токеном), мониторы и терминал — JSON."""
+    """A browser gets the page (it takes data from the same address with a token), monitors and the
+    terminal get JSON."""
     wants_page = "text/html" in request.headers.get("accept", "") and "authorization" not in request.headers
     if wants_page:
         return render("queue_admin.html", headers=PROPOSALS_ADMIN_HEADERS)
@@ -333,7 +342,7 @@ def bearer_ok(request: Request) -> bool:
 
 
 async def access_ok(request: Request) -> bool:
-    """Вход через Cloudflare Access: подписанный токен команды с email из списка админов."""
+    """Login through Cloudflare Access: a signed team token with an email from the admin list."""
     config, token = request.app.state.access, request.headers.get(ACCESS_HEADER, "")
     if config is None or not token:
         return False
@@ -343,12 +352,12 @@ async def access_ok(request: Request) -> bool:
 
 
 async def authorized(request: Request, via_access: bool = False) -> bool:
-    """Bearer-токен — для мониторов и терминала; Access — только там, где он стоит перед сервисом."""
+    """Bearer token is for monitors and the terminal; Access only where it stands in front of the service."""
     return bearer_ok(request) or (via_access and await access_ok(request))
 
 
 def parse_since(raw: str | None) -> str | None:
-    """since — ISO-время в UTC; пусто значит «с начала»."""
+    """since: ISO time in UTC; empty means "from the beginning"."""
     if not raw:
         return "0000"
     try:
@@ -442,7 +451,7 @@ async def account_submit(request: Request) -> Response:
     form = {key: str(value) for key, value in raw.items()}
     if is_bot(form):
         return RedirectResponse("/account/spasibo", status_code=303)
-    # Без JS документы приходят одной строкой через запятую, со скриптом — тегами.
+    # Without JS documents arrive as one comma-separated string, with the script as tags.
     docs = [str(value) for value in raw.getlist("docs")] + form.get("docs_text", "").split(",")
     report, errors = parse_account_form(form, docs, today_local().date(), directory())
     now = datetime.now(UTC)
@@ -464,7 +473,8 @@ async def account_submit(request: Request) -> Response:
 
 
 async def account_branches(request: Request) -> JSONResponse:
-    """Подсказки для поля «Отделение» по введённым банку и городу; банк не из списка — только «Не помню»."""
+    """Suggestions for the "Branch" field by the entered bank and city; a bank not from the list gets
+    only NOT_SURE."""
     params = request.query_params
     city_text = params.get("city", "")
     bank_code = match_label(params.get("bank", ""), BANKS)
@@ -485,7 +495,7 @@ def stats_url(
 
 
 async def account_stats_page(request: Request) -> HTMLResponse:
-    """Сводка и все ответы по фильтру; ответы листаются по 20 курсором before."""
+    """The summary and all answers for the filter; answers are paged 20 at a time by the before cursor."""
     store: Store = request.app.state.store
     answer_filter = parse_filter(request.query_params)
     before = parse_cursor(request.query_params.get("before"))
@@ -494,7 +504,7 @@ async def account_stats_page(request: Request) -> HTMLResponse:
     case_filter = parse_case_filter(request.query_params)
     keep = case_filter.query()
     stats = account_stats(items, counts)
-    # Вводный ответ — по всем ответам, а не по фильтру: это ответ на вопрос страницы целиком.
+    # The intro answer covers all answers, not the filter: it answers the question of the whole page.
     summary = summarize(items if not answer_filter.active else store.public_accounts(with_person=True))
     today = today_local().date()
     last_at = store.last_accepted_account_at()
@@ -522,14 +532,15 @@ async def account_stats_page(request: Request) -> HTMLResponse:
 
 
 def parse_limit(raw: str | None) -> int:
-    """Размер страницы JSON: 1…PUBLIC_ACCOUNTS_MAX; не число — как раньше, максимум."""
+    """JSON page size: 1..PUBLIC_ACCOUNTS_MAX; a non-number gives the maximum."""
     if not (raw or "").isdigit() or int(raw) < 1:
         return PUBLIC_ACCOUNTS_MAX
     return min(int(raw), PUBLIC_ACCOUNTS_MAX)
 
 
 async def public_accounts(request: Request) -> JSONResponse:
-    """Без limit и cursor ответ прежний; с ними — ещё next_cursor для следующей страницы."""
+    """Without limit and cursor the response keeps the legacy shape; with them it adds next_cursor for
+    the next page."""
     store: Store = request.app.state.store
     params = request.query_params
     limit = parse_limit(params.get("limit"))
@@ -559,7 +570,7 @@ def number_param(request: Request, name: str) -> int | None:
 def proposals_page(
     request: Request, lang: str, values: dict, errors: list[str], status_code: int = 200, kind: str = "",
 ) -> HTMLResponse:
-    """Одна страница, две формы: «Материал» (по умолчанию) и «Мой кейс» (?type=case)."""
+    """One page, two forms: "Material" (default) and "My case" (?type=case)."""
     kind = kind or ("case" if request.query_params.get("type") == "case" else "material")
     path = proposals.page_path(lang)
     return render(
@@ -581,12 +592,12 @@ def proposals_page(
 
 
 def with_html(item: dict) -> dict:
-    """Текст для показа — только через очистку; Markup, чтобы шаблон не экранировал теги второй раз."""
+    """Display text only after sanitizing; Markup so the template does not escape the tags a second time."""
     return {**item, "html": Markup(proposals.display_html(item))}
 
 
 def with_original_html(item: dict) -> dict:
-    """Админке — текст автора отдельно от правки редактора."""
+    """For the admin: the author's text separate from the editor's edit."""
     return {**item, "text_html": proposals.display_html({**item, "edited_text": None})}
 
 
@@ -609,7 +620,7 @@ def proposals_submit(lang: str) -> Callable[[Request], Awaitable[Response]]:
         if solved is None:
             errors.append(casebook.TEXTS[lang]["errors"]["pow"])
         if errors:
-            # В редактор возвращаем уже очищенный HTML, а не то, что пришло.
+            # Return the already sanitized HTML to the editor, not what came in.
             values = {**form, "text": proposal.text} if form.get("text_format") == "html" else form
             return proposals_page(request, lang, values, errors, status_code=400)
         store: Store = request.app.state.store
@@ -635,7 +646,7 @@ type RawFile = tuple[str, bytes]
 
 
 async def read_uploads(raw_files: list[UploadFile], msg: dict[str, str]) -> tuple[list[RawFile], list[str]]:
-    """Сырые байты выбранных файлов; пустые поля пропускаем. Читаем не больше лимита + 1 байт."""
+    """Raw bytes of the selected files; empty fields are skipped. Reads no more than the limit + 1 byte."""
     picked = [f for f in raw_files if f.filename]
     if len(picked) > uploads.MAX_FILES:
         return [], [msg["files_many"].format(uploads.MAX_FILES)]
@@ -668,7 +679,8 @@ def case_form(request: Request, lang: str, values: dict, errors: list[str], stat
 
 def case_submit(lang: str) -> Callable[[Request], Awaitable[Response]]:
     async def handler(request: Request) -> Response:
-        # Без Content-Length размер тела заранее не проверить, а файлы большие — такие запросы не берём.
+        # Without Content-Length the body size cannot be checked beforehand, and files are large: such
+        # requests are rejected.
         if not request.headers.get("content-length", "").isdigit():
             return PlainTextResponse("Нужен Content-Length", status_code=411)
         page = case_path(lang).removesuffix("case")
@@ -731,12 +743,12 @@ def case_file_response(request: Request, name: str, cache: str) -> Response:
 
 
 async def public_case_file(request: Request) -> Response:
-    """Файл кейса наружу — только если кейс принят, опубликован и его файлы разрешены к показу."""
+    """A case file goes out only if the case is accepted, published and its files are allowed to be shown."""
     name = request.path_params["name"]
     case = request.app.state.store.case_of_file(name)
     if case is None or not casebook.files_public(case):
         return PlainTextResponse("not found", status_code=404)
-    # no-cache: снятый с публикации файл не должен остаться в кэше Cloudflare.
+    # no-cache: a file taken off publication must not stay in the Cloudflare cache.
     return case_file_response(request, name, "no-cache")
 
 
@@ -747,7 +759,8 @@ async def admin_case_file(request: Request) -> Response:
 
 
 async def public_cases(request: Request) -> JSONResponse:
-    """Лента «Кейсы» на сайте берёт отсюда: принятые и опубликованные, без контакта и служебных полей."""
+    """The "Cases" feed on the site reads from here: accepted and published, without contact and service
+    fields."""
     store: Store = request.app.state.store
     items = store.public_cases(CASES_SHOWN)
     files = store.case_files([item["id"] for item in items]) if items else {}
@@ -798,12 +811,12 @@ async def admin_delete_case(request: Request) -> JSONResponse:
     return JSONResponse({"id": item_id, "deleted": True})
 
 
-# Служебные и JSON-маршруты: человек по ним не ходит, ссылок со слешем не бывает.
+# Service and JSON routes: people do not visit them, there are no slash-terminated links.
 SLASHLESS_PREFIXES = ("/admin", "/api", "/static", "/healthz", "/account/challenge", "/account/branches")
 
 
 def to_canonical(path: str) -> Callable[[Request], Awaitable[Response]]:
-    """Вариант со слешем на конце → канонический адрес; query сохраняем, ссылки в чатах бывают с ней."""
+    """Trailing-slash variant -> canonical address; query is kept, links in chats may carry it."""
     async def handler(request: Request) -> Response:
         query = request.url.query
         return RedirectResponse(f"{path}?{query}" if query else path, status_code=308)
@@ -812,7 +825,8 @@ def to_canonical(path: str) -> Callable[[Request], Awaitable[Response]]:
 
 
 def slash_twins(routes: list[Route]) -> list[Route]:
-    """Для каждой GET-страницы без слеша ставит редирект с адреса со слешем (иначе справочник отдаёт 404)."""
+    """For every GET page without a slash, adds a redirect from the slash address (otherwise the
+    reference returns 404)."""
     return [
         Route(f"{route.path}/", to_canonical(route.path), methods=["GET"])
         for route in routes
@@ -823,7 +837,7 @@ def slash_twins(routes: list[Route]) -> list[Route]:
 
 
 def to_temporary(path: str) -> Callable[[Request], Awaitable[Response]]:
-    """Временный редирект с query: пока у страницы нет перевода, en и sr ведут на русскую."""
+    """Temporary redirect with query: until a page has a translation, en and sr lead to the Russian one."""
     async def handler(request: Request) -> Response:
         query = request.url.query
         return RedirectResponse(f"{path}?{query}" if query else path, status_code=302)
@@ -839,7 +853,7 @@ def to_slash(path: str) -> Callable[[Request], Awaitable[Response]]:
 
 
 async def proposals_admin_page(request: Request) -> HTMLResponse:
-    """Оболочка без данных: предложения скрипт берёт из /admin/proposals, вход — Cloudflare Access."""
+    """Shell without data: the script takes proposals from /admin/proposals, login is Cloudflare Access."""
     return render(
         "proposals_admin.html", headers=PROPOSALS_ADMIN_HEADERS, t=proposals.TEXTS["ru"],
         c=casebook.TEXTS["ru"], case_statuses=casebook.STATUSES, case_status_labels=casebook.ADMIN_STATUSES,
@@ -894,7 +908,7 @@ def proposal_routes() -> list[Route]:
         ),
         Route("/admin/proposals/{id:int}", admin_update_proposal, methods=["POST"]),
         Route("/admin/proposals/{id:int}", admin_delete_proposal, methods=["DELETE"]),
-        # Кейсы — под тем же префиксом /admin/proposals, который закрывает Cloudflare Access.
+        # Cases are under the same /admin/proposals prefix that Cloudflare Access protects.
         Route("/admin/proposals/cases", admin_cases, methods=["GET"]),
         Route("/admin/proposals/cases/{id:int}", admin_update_case, methods=["POST"]),
         Route("/admin/proposals/cases/{id:int}", admin_delete_case, methods=["DELETE"]),
@@ -949,7 +963,7 @@ def create_app(
         Route("/account/branches", account_branches, methods=["GET"]),
         Route("/account/spasibo", account_thanks, methods=["GET"]),
         Route("/account/stats", account_stats_page, methods=["GET"]),
-        # Адреса спрашивают поисковики и ИИ-ассистенты; перевода страницы пока нет.
+        # Search engines and AI assistants ask for these addresses; the page has no translation yet.
         Route("/en/account/stats", to_temporary("/account/stats"), methods=["GET"]),
         Route("/sr/account/stats", to_temporary("/account/stats"), methods=["GET"]),
         Route("/static/{name}", static_script, methods=["GET"]),
@@ -975,7 +989,7 @@ def create_app(
             *slash_twins(page_routes),
             *proposal_routes(),
             Mount("/docs/aod", app=ArchiveFiles(aod_public, load_manifest()), name="aod"),
-            # Последним: всё, чего нет среди маршрутов выше, ищем в собранном справочнике.
+            # Last: anything not among the routes above is looked up in the built reference.
             Mount("/", app=SiteFiles(site), name="site"),
         ],
         middleware=[Middleware(SecurityHeaders)],
@@ -986,7 +1000,7 @@ def create_app(
     if not app.state.ip_salt:
         raise RuntimeError("IP_SALT не задан: без соли хэш IP подбирается перебором")
     app.state.pow_key = derive_key(app.state.ip_salt)
-    # Часы для окна приёма отметок очереди: в тестах подменяются, чтобы не зависеть от времени прогона.
+    # Clock for the queue-mark acceptance window: replaced in tests so they do not depend on the run time.
     app.state.clock = clock or (lambda: datetime.now(UTC))
     app.state.pow_max_number = pow_max_number
     app.state.site_dir = site

@@ -1,4 +1,4 @@
-"""Предложения материалов для сайта и канала: разбор формы, правки редактора и тексты страницы."""
+"""Proposals of materials for the site and channel: form parsing, editor edits and page texts."""
 
 import re
 from dataclasses import dataclass
@@ -8,17 +8,17 @@ from alta_feedback.richtext import plain_to_html, sanitize, visible_text
 
 TITLE_MAX = 200
 TEXT_MAX = 50_000
-# Разметка поверх текста: лимит текста считается по видимым знакам, а HTML целиком — с запасом на теги.
+# Markup over the text: the text limit counts visible characters, and the whole HTML gets headroom for tags.
 HTML_MAX = 4 * TEXT_MAX
 URL_MAX = 1000
-# Источники — свободный текст в любом формате; ограничиваем только поле целиком.
+# Sources are free text in any format; only the whole field is limited.
 SOURCES_TEXT_MAX = 20_000
-# Подставляется, если автор не выбрал: «куда» решает редактор, автору выбор не обязателен.
+# Substituted if the author did not choose: the editor decides "where", the author need not choose.
 DEFAULT_TARGET = "both"
 CONTACT_MAX = 200
 COMMENT_MAX = 1000
 TARGETS = ("site", "channel", "both")
-# spam в публичный список не попадает: так убирают мусор, не теряя строку для лимита по IP.
+# spam does not reach the public list: this is how junk is removed without losing the row for the IP limit.
 STATUSES = ("new", "in_review", "needs_changes", "approved", "published", "rejected", "spam")
 PUBLIC_STATUSES = STATUSES[:-1]
 LANGS = ("ru", "en", "sr")
@@ -40,14 +40,14 @@ def is_http_url(value: str) -> bool:
     return parts.scheme in {"http", "https"} and bool(parts.netloc) and not any(c.isspace() for c in value)
 
 
-# Конец ссылки: перед пробелом, концом строки или «,»/«;», за которыми идёт следующая ссылка.
+# End of a link: before a space, end of line, or a "," / ";" followed by the next link.
 LINK = re.compile(r"https?://\S+?(?=[,;]?(?:\s|$)|[,;]\s*https?://)")
 SEPARATORS = " \t,;"
 
 
 def split_line(line: str) -> list[str]:
-    """Строку с несколькими ссылками (через запятую, «;» или пробел) режет на источники по ссылке;
-    подпись перед ссылкой остаётся с ней, хвост после последней — с последней."""
+    """Splits a string with several links (comma, ";" or space separated) into sources, one per link;
+    the label before a link stays with it, the tail after the last link stays with the last."""
     ends = [m.end() for m in LINK.finditer(line)]
     if len(ends) < 2:
         return [line]
@@ -58,28 +58,29 @@ def split_line(line: str) -> list[str]:
 
 
 def split_sources(raw: str) -> tuple[str, ...]:
-    """Источники из поля: каждый с новой строки или ссылки через запятую; пустые строки не считаются."""
+    """Sources from the field: each on a new line or links separated by commas; empty lines do not count."""
     return tuple(part for line in raw.splitlines() if line.strip() for part in split_line(line.strip()))
 
 
 def grouped(number: int) -> str:
-    """50000 → «50 000»: так лимит читается в подсказках и ошибках на всех трёх языках."""
+    """50000 -> "50 000": this is how the limit reads in hints and errors in all three languages."""
     return f"{number:,}".replace(",", " ")
 
 
 def with_scheme(url: str) -> str:
-    """Ссылку, вставленную без https:// (docs.google.com/…), дополняет схемой."""
+    """Adds the scheme to a link pasted without https:// (docs.google.com/...)."""
     return url if not url or "://" in url or ":" in url.split("/")[0] else f"https://{url}"
 
 
 def fallback_title(text_html: str, doc_url: str) -> str:
-    """Заголовок, если автор его не написал: начало текста, иначе ссылка на документ."""
+    """Title if the author did not write one: the start of the text, otherwise the document link."""
     words = " ".join(visible_text(text_html).split()) or doc_url
     return words if len(words) <= 80 else words[:80].rsplit(" ", 1)[0] + "…"
 
 
 def clean_text(raw: str, is_html: bool) -> str:
-    """Текст из редактора (HTML) или из простого поля без JS → очищенный HTML; пустой — ""."""
+    """Text from the editor (HTML) or from a plain field without JS -> sanitized HTML; empty gives an
+    empty string."""
     clean = sanitize(raw) if is_html else plain_to_html(raw.strip())
     return clean if visible_text(clean) else ""
 
@@ -89,9 +90,10 @@ def too_long(clean: str) -> bool:
 
 
 def display_html(item: dict) -> str:
-    """Что показать как текст предложения: правка редактора, иначе текст автора; всегда очищенный HTML.
+    """What to show as the proposal text: the editor's edit, otherwise the author's text; always
+    sanitized HTML.
 
-    Старые предложения хранят простой текст (text_format пустой)."""
+    Old proposals store plain text (text_format is empty)."""
     if item.get("edited_text"):
         return sanitize(item["edited_text"])
     if item.get("text_format") == "html":
@@ -100,7 +102,7 @@ def display_html(item: dict) -> str:
 
 
 def parse_proposal(form: dict[str, str], lang: str = "ru") -> tuple[Proposal, list[str]]:
-    """Собирает предложение из полей формы и возвращает его вместе со списком ошибок на языке страницы."""
+    """Builds a proposal from form fields and returns it with a list of errors in the page language."""
     msg = TEXTS[lang]["errors"]
     text = clean_text(form.get("text") or "", form.get("text_format") == "html")
     doc_url = with_scheme((form.get("doc_url") or "").strip())
@@ -124,7 +126,7 @@ def parse_proposal(form: dict[str, str], lang: str = "ru") -> tuple[Proposal, li
 
 
 def parse_editor_update(body: object) -> tuple[dict[str, str], str | None]:
-    """Поля, которые меняет редактор; пустая строка стирает ссылку или комментарий. Вторым — ошибка."""
+    """Fields the editor changes; an empty string erases a link or comment. The second value is the error."""
     if not isinstance(body, dict):
         return {}, "нужен JSON-объект"
     changes = {key: body[key] for key in EDITOR_FIELDS if key in body}

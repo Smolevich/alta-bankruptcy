@@ -1,5 +1,5 @@
-// Официальные документы ALTA. Файлы в public/docs лежат у нас, чтобы остались, если банк снимет их со своего сайта,
-// и чтобы открывались в просмотре на сайте: CSP пускает во встроенный просмотр только свой домен.
+// Official ALTA documents. Files in public/docs are kept by us so they survive if the bank removes them from its site,
+// and so they open in the on-site viewer: CSP allows only its own domain in the embedded viewer.
 import type { Lang } from '../i18n';
 
 type Text = Record<Lang, string>;
@@ -10,7 +10,7 @@ export type Doc = {
 	period: Text;
 	source: 'apr' | 'bank' | 'aod';
 	sourceUrl: string;
-	/** Имя копии в public/docs. */
+	/** Name of the copy in public/docs. */
 	file: string;
 	bytes: number;
 	pages: number;

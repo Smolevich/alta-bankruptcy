@@ -1,5 +1,5 @@
-// Клиент DocEditor: модалка, живой предпросмотр (pdf.js) и скачивание. Предпросмотр и скачивание
-// собираются одним сборщиком из одних данных — скачанный PDF совпадает с показанным.
+// DocEditor client: modal, live preview (pdf.js) and download. Preview and download
+// are built by one builder from the same data, so the downloaded PDF matches what is shown.
 import workerSrc from 'pdfjs-dist/legacy/build/pdf.worker.min.mjs?url';
 import { builders } from './builders';
 import type { DocFonts, DocValues } from './spec';
@@ -66,7 +66,7 @@ function initEditor(root: HTMLElement) {
 		return fn(readValues(form), f);
 	};
 
-	// Старые страницы видны, пока новые не готовы: вместо белого листа — пометка «Обновляем…».
+	// Old pages stay visible until the new ones are ready: an "Updating…" note instead of a white sheet.
 	const render = async () => {
 		const my = ++run;
 		updating.hidden = false;
@@ -104,7 +104,7 @@ function initEditor(root: HTMLElement) {
 			document.body.append(a);
 			a.click();
 			a.remove();
-			// Встроенные браузеры (Telegram на iOS) не умеют download у blob: оставляем ссылку на открытие.
+			// Embedded browsers (Telegram on iOS) cannot download a blob: keep the open link.
 			const open = document.createElement('a');
 			open.href = lastUrl;
 			open.target = '_blank';
@@ -120,7 +120,7 @@ function initEditor(root: HTMLElement) {
 		tabs.forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === tab)));
 	};
 
-	// Форма живёт в DOM страницы и при закрытии не сбрасывается: введённое сохраняется до перезагрузки.
+	// The form lives in the page DOM and is not reset on close: typed input is kept until reload.
 	const open = () => {
 		if (!dlg.open) dlg.showModal();
 		document.documentElement.style.overflow = 'hidden';

@@ -1,16 +1,17 @@
-"""Отметки посетителей об очереди в отделениях Poštanska (карта на /vyplata/).
+"""Visitor marks about queues at Poštanska branches (map on /vyplata/).
 
-Отметка — одно из четырёх состояний «глазами», без чисел и без персональных данных.
-Список отделений — data/postanska_branch_ids.json, часы работы — data/postanska_branch_hours.json
-(копии шифр и часов из src/data/postanska-branches.json, сверяет тест). Отметки принимаем в том же окне,
-что и кнопка на сайте (canReport в src/lib/branch-hours.mjs):
-от часа до открытия до часа после закрытия, по Белграду.
-Комментарий хранится для модерации и публично не показывается.
+A mark is one of four states judged by eye, with no numbers and no personal data.
+Branch list: data/postanska_branch_ids.json, opening hours: data/postanska_branch_hours.json
+(copies of the branch codes and hours from src/data/postanska-branches.json, checked by a test).
+Marks are accepted in the same window as the site button (canReport in src/lib/branch-hours.mjs):
+from one hour before opening to one hour after closing, Belgrade time.
+The comment is kept for moderation and never shown publicly.
 
-Считаем людей, а не отметки: голосующий — хэш device_id из localStorage браузера, без него — хэш IP;
-в окне FRESH у каждого голосующего по отделению в счёт идёт только последняя отметка.
-Координаты посетителя приходят только чтобы решить «рядом ли» (NEAR_M до отделения, координаты отделений —
-data/postanska_branch_coords.json, копия из src/data/postanska-branches-extra.json); храним лишь этот флаг.
+We count people, not marks: the voter is the hash of the browser's localStorage device_id, or of
+the IP without it; within the FRESH window only each voter's last mark per branch counts.
+Visitor coordinates arrive only to decide "is the visitor nearby" (NEAR_M from the branch; branch
+coordinates are in data/postanska_branch_coords.json, a copy of
+src/data/postanska-branches-extra.json); only that flag is stored.
 """
 
 import json
@@ -30,16 +31,16 @@ HIDDEN_STATUSES = ("rejected", "test", "spam")
 COMMENT_MAX = 140
 FRESH = timedelta(hours=2)
 SAME_BRANCH_GAP = timedelta(minutes=15)
-# Общий Wi-Fi в отделении и CGNAT у мобильных операторов: десятки людей за одним адресом.
+# Shared Wi-Fi at a branch and carrier CGNAT: dozens of people behind one address.
 PER_HOUR_LIMIT = 60
-# Люди собираются у двери до открытия — отметки принимаем за час.
+# People gather at the door before opening, so marks are accepted an hour earlier.
 PRE_OPEN = 60
-# Отделение закрывается не ровно в срок, а часы могут продлить — принимаем ещё час после закрытия.
+# A branch does not close exactly on time and hours can be extended, so accept one more hour after closing.
 POST_CLOSE = 60
 HOURS_RE = re.compile(r"(\d{1,2})[.:](\d{2})h?\s*-\s*(\d{1,2})[.:](\d{2})")
-# Телефон или почта в комментарии: такие отметки не принимаем, чтобы не копить контакты.
+# A phone number or email in a comment: such marks are rejected so we do not collect contacts.
 CONTACT = re.compile(r"@|\d[\d\s()+-]{5,}\d")
-# Человек в отделении или у его двери; дальше — может, и не там.
+# The person is in the branch or at its door; farther away they may not be there.
 NEAR_M = 500
 DEVICE_RE = re.compile(r"[A-Za-z0-9-]{16,64}")
 EARTH_M = 6371000
@@ -58,14 +59,15 @@ def branch_coords() -> dict[str, tuple[float, float]]:
 
 
 def distance_m(a: tuple[float, float], b: tuple[float, float]) -> float:
-    """Расстояние по гаверсинусу, метры."""
+    """Haversine distance, meters."""
     lat1, lng1, lat2, lng2 = map(math.radians, (*a, *b))
     h = math.sin((lat2 - lat1) / 2) ** 2 + math.cos(lat1) * math.cos(lat2) * math.sin((lng2 - lng1) / 2) ** 2
     return 2 * EARTH_M * math.asin(math.sqrt(h))
 
 
 def near_branch(branch_id: str, data: dict) -> bool | None:
-    """None — координат нет или они не числа; сами координаты дальше этой функции не уходят."""
+    """None: coordinates are missing or not numbers; the coordinates themselves go no further than this
+    function."""
     lat, lng = data.get("lat"), data.get("lng")
     if not all(isinstance(v, int | float) and not isinstance(v, bool) for v in (lat, lng)):
         return None
@@ -78,7 +80,7 @@ type Hours = tuple[int, int]
 
 
 def parse_hours(text: str | None) -> Hours | None:
-    """«08:00-15:00» и «8.00h - 15.00h» из PDF AOD → минуты от полуночи."""
+    """'08:00-15:00' and '8.00h - 15.00h' from the AOD PDF -> minutes from midnight."""
     m = HOURS_RE.search(text or "")
     return (int(m[1]) * 60 + int(m[2]), int(m[3]) * 60 + int(m[4])) if m else None
 
@@ -90,7 +92,7 @@ def branch_hours() -> dict[str, tuple[Hours | None, Hours | None]]:
 
 
 def hours_on(weekday: int, wd: Hours | None, sat: Hours | None) -> Hours | None:
-    """weekday как у datetime: 0 — пн … 6 — вс."""
+    """weekday as in datetime: 0 is Mon ... 6 is Sun."""
     if weekday == 6:
         return None
     return sat if weekday == 5 else wd
@@ -98,7 +100,7 @@ def hours_on(weekday: int, wd: Hours | None, sat: Hours | None) -> Hours | None:
 
 @dataclass(frozen=True)
 class Closed:
-    """Отметки закрыты; откроются в reports_from (чч:мм) через days_ahead дней, weekday — 0 пн … 6 вс."""
+    """Marks are closed; they open at reports_from (hh:mm) in days_ahead days, weekday: 0 Mon ... 6 Sun."""
 
     reports_from: str
     days_ahead: int
@@ -106,7 +108,7 @@ class Closed:
 
 
 def closed_until(branch_id: str, local: datetime) -> Closed | None:
-    """None — отметку можно принять; у отделения без часов в данных не мешаем."""
+    """None: the mark can be accepted; a branch with no hours in the data is not blocked."""
     wd, sat = branch_hours().get(branch_id, (None, None))
     if wd is None and sat is None:
         return None
@@ -133,7 +135,7 @@ class QueueReport:
 
 
 def parse_report(data: object) -> tuple[QueueReport | None, str | None]:
-    """Разбирает тело POST; вторым значением — причина отказа."""
+    """Parses the POST body; the second value is the rejection reason."""
     if not isinstance(data, dict):
         return None, "body"
     branch_id, state = str(data.get("branch_id", "")), str(data.get("state", ""))
@@ -161,7 +163,7 @@ class Vote:
 
 
 def latest_votes(rows: list[Vote]) -> dict[str, list[Vote]]:
-    """Последняя отметка каждого голосующего по отделению; rows — по возрастанию времени."""
+    """Each voter's last mark per branch; rows are in ascending time order."""
     last: dict[tuple[str, str], Vote] = {}
     for vote in rows:
         last.pop((vote.branch_id, vote.voter), None)
@@ -173,10 +175,10 @@ def latest_votes(rows: list[Vote]) -> dict[str, list[Vote]]:
 
 
 def branch_summary(votes: list[Vote], now: datetime) -> dict:
-    """Состояние — самое частое среди людей рядом, а если рядом никого — среди всех.
+    """State is the most frequent among nearby people, or among everyone if no one is nearby.
 
-    Ничья верхних состояний — «mixed» (мнения расходятся); «split» — сколько голосов у каждого.
-    «Точно» (sure) — только когда состояние выбрали двое разных и хотя бы один из них рядом.
+    A tie among the top states is "mixed" (opinions differ); "split" is how many votes each has.
+    "Sure" is set only when two different people chose the state and at least one of them is nearby.
     """
     near = [v for v in votes if v.near]
     pool = near or votes
@@ -193,5 +195,5 @@ def branch_summary(votes: list[Vote], now: datetime) -> dict:
 
 
 def summarize(rows: list[Vote], now: datetime) -> dict[str, dict]:
-    """rows — отметки за окно свежести по возрастанию времени; count — сколько людей в расчёте."""
+    """rows: marks within the freshness window in ascending time order; count: how many people are counted."""
     return {branch_id: branch_summary(votes, now) for branch_id, votes in latest_votes(rows).items()}

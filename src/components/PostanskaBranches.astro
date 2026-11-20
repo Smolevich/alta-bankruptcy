@@ -1,8 +1,8 @@
 ---
-// Отделения Poštanska для выплаты вкладчикам ALTA. Данные — src/data/postanska-branches.json,
-// поля дословно из списка AOD (PDF от 11.11.2026, часы приведены к виду «8.00h - 17.00h»); город выводится
-// из названия отделения. id — шифра из списка AOD от 06.11.2026 (в новом списке шифр нет); у мест,
-// которых тогда не было, id — slug, а шифра пустая.
+// Poštanska branches for ALTA depositor payouts. Data is src/data/postanska-branches.json,
+// fields verbatim from the AOD list (PDF of 11.11.2026, hours normalized to "8.00h - 17.00h"); the city is derived
+// from the branch name. id is the branch code from the AOD list of 06.11.2026 (the new list has no codes); for places
+// absent then, id is a slug and the code is empty.
 import LIST from '../data/postanska-branches.json';
 import EXTRA from '../data/postanska-branches-extra.json';
 import { type Lang } from '../i18n';
@@ -15,7 +15,7 @@ type Branch = (typeof LIST.ekspoziture)[number];
 const COPY = '/docs/aod-2026-11-11-ekspoziture-postanska.pdf';
 const POSTED_SEARCH = 'https://www.posted.co.rs/o-nama/ekspoziture.html';
 
-// Ключ — город так, как он написан в названии отделения в PDF.
+// Key is the city as written in the branch name in the PDF.
 const CITIES: Record<string, { latin: string; ru: string; en: string; sr: string }> = {
 	BEOGRAD: { latin: 'Beograd', ru: 'Белград', en: 'Belgrade', sr: 'Beograd' },
 	'NOVI SAD': { latin: 'Novi Sad', ru: 'Нови-Сад', en: 'Novi Sad', sr: 'Novi Sad' },
@@ -181,8 +181,8 @@ function cityKey(naziv: string): string {
 	return key;
 }
 
-// mesto — населённый пункт по индексу (если он не совпадает с городом из названия); ispravka — адрес по сайту самой Poštanska,
-// когда он расходится со списком AOD: основным показываем адрес банка, а как в AOD — в пометке.
+// mesto is the settlement by postal code (if it differs from the city in the name); ispravka is the address per Poštanska's own site,
+// when it differs from the AOD list: we show the bank's address as the main one, and the AOD one in a note.
 type Loc = { ulicaIBroj: string; pttBroj: string; mesto?: string; ispravka?: { ulicaIBroj: string; pttBroj?: string; izvor: string } };
 const placeOf = (b: Loc, city: string) => b.mesto ?? CITIES[city].latin;
 const streetOf = (b: Loc) => b.ispravka?.ulicaIBroj ?? b.ulicaIBroj;
@@ -202,7 +202,7 @@ const esc = (v: string) => v.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&l
 type Extra = (typeof EXTRA)[keyof typeof EXTRA];
 const extraOf = (id: string): Extra | undefined => (EXTRA as Record<string, Extra>)[id];
 const sizeText = (e?: Extra) => (e?.size ? T.sizes[e.size as 'small' | 'medium' | 'large'] : null);
-// Без ссылки на фото подпись не обещает фото, которого на странице нет.
+// Without a photo link the caption does not promise a photo that is not on the page.
 const sizeLine = (e: Extra | undefined, url: string): string => {
 	const size = sizeText(e);
 	if (!size) return '';
@@ -216,10 +216,10 @@ function busyText(e?: Extra): string | null {
 
 type Hist = { weekday: (number | null)[]; sat: (number | null)[] | null };
 const GOOGLE_BUSY = 'https://support.google.com/business/answer/6263531';
-// Значок «булавка карты» у внешней ссылки на Google Maps: наша карта — без значка, Google — всегда с ним.
+// A "map pin" icon on an external Google Maps link: our own map has no icon, Google always has one.
 const PIN = '<svg class="gm-pin" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7z" fill="#ea4335"/><circle cx="12" cy="9" r="2.6" fill="#fff"/></svg>';
 const histOf = (id: string) => (extraOf(id) as { hist?: Hist | null } | undefined)?.hist ?? null;
-// Данные для фильтров: часы 8–20 в атрибутах карточки, скрипт читает их же для карты.
+// Filter data: hours 8-20 in card attributes, the script reads the same ones for the map.
 const fa = (id: string, city: string) => ({
 	'data-branch': id,
 	'data-city': city,
@@ -240,7 +240,7 @@ const order = [...FIRST, ...[...groups.keys()].filter((k) => !FIRST.includes(k))
 const slug = (k: string) => `branches-${CITIES[k].latin.toLowerCase().normalize('NFD').replace(/[^a-z ]/g, '').replace(/ /g, '-')}`;
 const S = LIST.specijalizovana;
 const SPECIAL_PT: Point = { id: S.id, name: S.naziv, addr: addrOf(S, 'BEOGRAD'), hours: S.radnoVremeRadnimDanom, sat: S.radnoVremeSubotom, code: S.sifra, city: 'BEOGRAD' };
-// Всё, что нужно карточке и списку очередей: часы — строками из PDF AOD; график Google рисует скрипт из data-wd/data-sat строки списка.
+// Everything the card and the queue list need: hours as strings from the AOD PDF; the Google chart is drawn by the script from the list row's data-wd/data-sat.
 const points = [
 	SPECIAL_PT,
 	...LIST.ekspoziture.map((b) => ({ id: b.id, name: b.naziv.replace(/^EKSPOZITURA /, ''), addr: addrOf(b as Loc, cityKey(b.naziv)), hours: b.radnoVremeRadnimDanom, sat: b.radnoVremeSubotom, code: b.sifra ?? '', city: cityKey(b.naziv) })),
@@ -255,7 +255,7 @@ const STATES = ['none', 'few', 'full', 'outside'] as const;
 const BANK = '<svg viewBox="0 0 24 24" aria-hidden="true" class="q-bank"><path d="M12 2 2 7v2h20V7L12 2zm-7 9v7h3v-7H5zm5.5 0v7h3v-7h-3zM16 11v7h3v-7h-3zM2 20v2h20v-2H2z" fill="currentColor"/></svg>';
 const VOICE_LANG = { ru: 'ru-RU', en: 'en-US', sr: 'sr-RS' }[lang];
 const styleUrl = `/map/style-${lang}.json`;
-// Строки нижнего списка по городам: карточка AOD (шифра 864) — первой строкой Белграда.
+// Rows of the bottom list by city: the AOD card (code 864) is the first row of Belgrade.
 type Row = { id: string; code: string; name: string; addr: string; street: Loc; wd: string; sat: string; special: boolean };
 const gmapsOf = (r: Row, city: string) => extraOf(r.id)?.maps_url || mapUrl(r.street, city);
 const rowsByCity = new Map<string, Row[]>(order.map((k) => [k, [
@@ -313,7 +313,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 	</div>
 
 	<section class="qmap" id="branches-map" data-text={JSON.stringify({ ...QT, chartWd: T.chartWd, chartSat: T.chartSat, chartLabel: T.chartLabel })} data-style={styleUrl} data-lang={lang} data-voice-lang={VOICE_LANG} aria-label={QT.title}>
-		{/* JSON в теге script, а не в атрибуте: в атрибуте каждая кавычка становится &quot;, и страница выходила за бюджет веса. */}
+		{/* JSON in a script tag, not in an attribute: in an attribute every quote becomes &quot;, and the page exceeded the weight budget. */}
 		<script is:inline type="application/json" class="qmap-points" set:html={JSON.stringify(points).replace(/</g, '\\u003c')} />
 		<header class="qmap-head">
 			<p class="qmap-title"><Fragment set:html={BANK} /><span>{QT.title}</span></p>
@@ -359,14 +359,14 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 													<p class="bl-hours">{T.weekdays} {r.wd} · {T.saturday} {r.sat}{r.code && <> · <span class="branch-code">{T.code} {r.code}</span></>}</p>
 													{addrNote(r.id) && <p class="bl-extra">{addrNote(r.id)} <a href={noteSource(r.id)} rel="noopener" target="_blank">posted.co.rs</a></p>}
 													<p class="bl-extra f-free" hidden></p>
-													{/* Размер и загрузка — наши наблюдения и данные Google, не банка: свёрнуты, чтобы не стоять в одном ряду с официальным адресом. */}
+													{/* Size and load are our observations and Google data, not the bank's: collapsed so they do not stand in the same row as the official address. */}
 													{(sizeText(extraOf(r.id)) || busyText(extraOf(r.id)) || noData(r.id) || histOf(r.id)) && (
 														<details class="bl-obs">
 															<summary>{T.obs}</summary>
 															{sizeText(extraOf(r.id)) && <p class="bl-extra" set:html={sizeLine(extraOf(r.id), gmapsOf(r, k))} />}
 															{busyText(extraOf(r.id)) && <p class="bl-extra">{T.busy}: {busyText(extraOf(r.id))}</p>}
 															{noData(r.id) && <p class="bl-extra bl-nodata">{T.noData}</p>}
-															{/* График рисует скрипт при раскрытии (src/lib/branch-hist.mjs); без него остаётся строка «обычно людно». */}
+															{/* The script draws the chart on expand (src/lib/branch-hist.mjs); without it the "usually busy" line remains. */}
 															{histOf(r.id) && <div data-hist></div>}
 														</details>
 													)}
@@ -419,7 +419,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 	</p>
 </div>
 
-<!-- Выпадающие списки в стиле сайта вместо системных; тот же скрипт у форм бэкенда. Без него остаются обычные <select>. -->
+<!-- Site-style dropdowns instead of system ones; the same script as the backend forms. Without it plain <select> remain. -->
 <script is:inline src="/static/select-combo.js" defer></script>
 <script>
 	import { attachVoice, voiceSupported } from '../scripts/voice';
@@ -430,14 +430,14 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 
 	type Info = { el: HTMLDetailsElement; li: HTMLElement; city: string; size: string; wd: number[]; sat: number[] };
 	const nums = (v?: string) => (v ? v.split(',').map(Number) : []);
-	// Значение — процент от пика самого отделения в этот час; 0 в часы без данных (закрыто) считаем «нет данных».
+	// The value is a percent of the branch's own peak at that hour; 0 in hours with no data (closed) counts as "no data".
 	function pctAt(i: Info, day: string, hour: number): number | null {
 		const v = (day === 'sat' ? i.sat : i.wd)[hour - 8];
 		return v ? v : null;
 	}
 
-	// Карта очередей Poštanska (ТЗ ux-spec, этап 1). MapLibre, подложка и шрифты — с нашего адреса
-	// (public/vendor/maplibre, public/map): сторонние скрипты и тайлы CSP сайта не пускает.
+	// Poštanska queue map (ux-spec, stage 1). MapLibre, the base layer and fonts come from our own origin
+	// (public/vendor/maplibre, public/map): the site CSP blocks third-party scripts and tiles.
 
 	type Pt = { id: string; lat: number; lng: number; city: string; cityName: string; name: string; addr: string; note: string; wd: string; sat: string; gmaps: string; code: string; tag: string; sz: string; busy: string };
 	type Mark = { state: string; count: number; minutes_ago: number; sure?: boolean; split?: Record<string, number> };
@@ -452,7 +452,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 	const REPEAT_MS = 15 * 60 * 1000;
 	const GEO_MIN_M = 150;
 	const GEO_SECOND_M = 250;
-	// Как на сервере (queues.py NEAR_M): дальше — отметка принимается, но весит меньше отметок рядом.
+	// As on the server (queues.py NEAR_M): farther away, the mark is accepted but weighs less than marks nearby.
 	const NEAR_M = 500;
 	const GEO_GIVE_UP_MS = 12000;
 	const POLL_MS = 120000;
@@ -460,7 +460,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 	const BANK_PATH = 'M12 2 2 7v2h20V7L12 2zm-7 9v7h3v-7H5zm5.5 0v7h3v-7h-3zM16 11v7h3v-7h-3zM2 20v2h20v-2H2z';
 	const LOCK_PATH = 'M7 10V7a5 5 0 0 1 10 0v3h1.5v11h-13V10H7zm2 0h6V7a3 3 0 0 0-6 0v3z';
 	const LOCK_SVG = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${LOCK_PATH}" fill="currentColor"/></svg>`;
-	// Глифы состояний: галочка, один человек, группа, дверь — чтобы цвет не был единственным признаком.
+	// State glyphs: check, one person, group, door, so that color is not the only signal.
 	const GLYPH: Record<string, string> = {
 		none: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12.5 9.5 18 20 6.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>',
 		few: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="7" r="4" fill="currentColor"/><path d="M4 21a8 8 0 0 1 16 0z" fill="currentColor"/></svg>',
@@ -469,7 +469,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 		mixed: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9h14M5 15h14M16 4 8 20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>',
 		unknown: '', closed: LOCK_SVG,
 	};
-	// Контурные иконки карточки в духе Lucide, свои пути — без иконочных пакетов.
+	// Contour card icons in the Lucide style, our own paths, no icon packages.
 	const ICON_PATHS: Record<string, string> = {
 		lock: '<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
 		check: '<circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/>',
@@ -492,10 +492,10 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 	const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 	const store = {
 		get: (k: string) => { try { return window.localStorage.getItem(k); } catch { return null; } },
-		set: (k: string, v: string) => { try { window.localStorage.setItem(k, v); } catch { /* приватный режим */ } },
+		set: (k: string, v: string) => { try { window.localStorage.setItem(k, v); } catch { /* private mode */ } },
 	};
 
-	// Номер браузера для подсчёта людей: случайный, живёт в localStorage, ни с чем не связан.
+	// Browser id for counting people: random, lives in localStorage, linked to nothing.
 	function deviceId(): string {
 		const have = store.get('q-device');
 		if (have && /^[A-Za-z0-9-]{16,64}$/.test(have)) return have;
@@ -504,7 +504,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 		return id;
 	}
 
-	// Место для флага «рядом»: только если разрешение уже дано, отдельно не спрашиваем.
+	// Space for the "nearby" flag: only if permission is already granted, we do not ask separately.
 	async function grantedPosition(): Promise<{ lat: number; lng: number } | null> {
 		try {
 			const perm = await navigator.permissions?.query({ name: 'geolocation' as PermissionName });
@@ -525,7 +525,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 		return Math.hypot(x, (b.lat - a.lat) * r) * 6371000;
 	}
 
-	// Часы сервера вместо часов телефона: поправка приходит с GET /api/queue; пока её нет — часы устройства.
+	// Server clock instead of the phone clock: the correction comes with GET /api/queue; until then, the device clock.
 	let offset = 0;
 	const nowMs = () => Date.now() + offset;
 	const belgradeNow = () => belgradeParts(nowMs());
@@ -581,7 +581,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 		const tx: Tx = JSON.parse(root.dataset.text ?? '{}');
 		const lang = root.dataset.lang ?? 'ru';
 		const $ = <T extends HTMLElement>(sel: string) => root.querySelector<T>(sel)!;
-		// Панель фильтров над картой — одна на раздел: город, день, час, размер, порядок действуют и на пины, и на нижний список.
+		// The filter panel above the map is one per section: city, day, hour, size and order affect both pins and the bottom list.
 		const box = document.querySelector<HTMLElement>('.branch-controls')!;
 		const citySel = box.querySelector<HTMLSelectElement>('.f-city')!;
 		const hourSel = box.querySelector<HTMLSelectElement>('.f-hour')!;
@@ -593,7 +593,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 		});
 		const aodIdx = new Map([...infos.keys()].map((id, i) => [id, i]));
 		const inCity = (p: { city: string }) => !citySel.value || p.city === citySel.value;
-		// Куда вернуть фокус при закрытии карточки, если её открыли кнопкой «Показать на карте».
+		// Where to return focus when the card closes, if it was opened with the "Show on map" button.
 		let returnTo: HTMLElement | null = null;
 		const card = $('.q-card');
 		const canvas = $('.qmap-canvas');
@@ -616,24 +616,24 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 		let stale = false;
 		let me: { lat: number; lng: number } | null = null;
 		let current: string | null = null;
-		// Раскрытая строка списка: её пин подсвечен на карте, но карточка на карте не открывается — отделение на экране один раз.
+		// An expanded list row: its pin is highlighted on the map, but the card on the map does not open, so the branch is on screen once.
 		let picked: string | null = null;
-		// Перед печатью раскрываются все строки: их toggle не должен двигать карту.
+		// Before printing all rows expand: their toggle must not move the map.
 		let printing = false;
-		// «Подробнее» в карточке: на телефоне свёрнуто, на компьютере раскрыто; выбор человека живёт до закрытия карточки.
+		// "Details" in the card: collapsed on a phone, expanded on desktop; the person's choice lasts until the card closes.
 		let moreOpen: boolean | null = null;
 		let sheet: 'half' | 'full' = 'half';
 		let chooser: { title: string; ids: string[] } | null = null;
 		let hint: string | null = null;
-		// Карточка, в которой нажали «Отметить очередь»: в ней вместо ряда кнопок — выбор состояния.
+		// The card where "Mark the queue" was pressed: it shows a state choice instead of the button row.
 		let asking: string | null = null;
-		// Карточку или выбор отделения открыла верхняя кнопка «Я стою в очереди»: сразу спрашиваем, какая очередь.
+		// The top "I am in the queue" button opened a card or the branch choice: ask immediately which queue.
 		let fromReport = false;
 		let map: any = null;
 		let lib: any = null;
 		const pins = new Map<string, HTMLButtonElement>();
 		const optimistic = new Map<string, Mark | undefined>();
-		// Отметка в работе: выбор, таймер отмены и решение PoW — одно на открытую карточку.
+		// A mark in progress: the choice, the cancel timer and the PoW solution are one per open card.
 		let rep: { id: string; phase: Phase; pick: string; comment: string; error: string; timer: number; pow: Promise<string> | null } | null = null;
 
 		const point = (id: string) => pts.find((p) => p.id === id);
@@ -656,10 +656,10 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			const text = st.closedAt === null ? tx.closedOff.replace('%s', next) : tx.closedDay.replace('%t', hhmm(st.closedAt)).replace('%s', next);
 			return { open: false, text, preOpen: false, reportsAt: hhmm(reportsFrom(opens)), next };
 		}
-		// «Точно» решает сервер: двое разных сошлись и хотя бы один был рядом.
+		// "Sure" is decided by the server: two different people agreed and at least one was nearby.
 		const sure = (m?: Mark) => Boolean(m && !stale && m.sure && m.minutes_ago <= SURE_MINUTES);
 		const pinState = (p: Pt) => (!hoursOf(p).open && !marks[p.id] ? 'closed' : marks[p.id]?.state ?? 'unknown');
-		// Всё для блока статуса и кнопки отметки — из того же branchStatus, что и строки списка.
+		// Everything for the status block and the mark button comes from the same branchStatus as the list rows.
 		function cardState(p: Pt): Card {
 			const { day, min } = belgradeNow();
 			const st = branchStatus(range(p.wd), range(p.sat), day, min);
@@ -677,7 +677,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			const opens = st.opensAt ?? 480;
 			const dayWord = st.tomorrow ? tx.tomorrow : tx.onDay.replace('%d', tx.days[st.nextDay ?? 1]);
 			const next = st.tomorrow ? tx.opensTomorrow.replace('%t', hhmm(opens)) : tx.opensOn.replace('%d', tx.days[st.nextDay ?? 1]).replace('%t', hhmm(opens));
-			// «сегодня до …» после закрытия только путает: сегодняшние часы уже прошли.
+			// "today until ..." after closing only confuses: today's hours have already passed.
 			const sub = tx.stNext.replace('%s', next);
 			const when = `${hhmm(reportsFrom(opens))} ${dayWord}`;
 			return { tone, icon, title: tx.stClosed, sub, canMark: mark, markWhen: when, marksWhen: when, closed: true, later: false, inside: mark };
@@ -685,12 +685,12 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 		const splitLine = (m: Mark) => splitText(m.split, tx.split, tx.splitTail);
 		const ago = (m: number) => (m >= 60 ? `${Math.floor(m / 60)}${tx.h} ${m % 60}${tx.min.charAt(0)}` : `${m}${tx.min.charAt(0)}`);
 
-		// ---------- пины ----------
+		// ---------- pins ----------
 		function pinHtml(p: Pt): string {
 			const st = pinState(p);
 			const m = marks[p.id];
 			const icon = st === 'closed' ? LOCK_PATH : BANK_PATH;
-			// Капля 32×42, остриё — в нижней точке; иконка внутри SVG, чтобы масштабироваться вместе с каплей.
+			// A 32x42 drop, the tip at the bottom point; the icon is inside the SVG so it scales with the drop.
 			return `<svg class="q-drop" viewBox="0 0 32 42" aria-hidden="true"><path class="q-drop-body" d="M16 42C16 42 2.5 26.5 2.5 15.5a13.5 13.5 0 0 1 27 0C29.5 26.5 16 42 16 42z"/><svg x="8" y="7.5" width="16" height="16" viewBox="0 0 24 24"><path class="q-drop-ico" d="${icon}"/></svg></svg>`
 				+ (m ? `<span class="q-pin-ago">${esc(ago(m.minutes_ago))}</span>` : '')
 				+ `<span class="q-pin-name">${esc(p.name)}</span>`;
@@ -704,7 +704,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 		function paintPins() {
 			pins.forEach((el, id) => {
 				const p = point(id)!;
-				// Только data-атрибуты: класс maplibregl-marker (position: absolute) трогать нельзя — иначе пины уплывают.
+				// Only data attributes: the maplibregl-marker class (position: absolute) must not be touched, or pins drift away.
 				el.dataset.q = pinState(p);
 				el.dataset.sure = sure(marks[id]) ? '1' : '0';
 				const on = id === current || id === picked;
@@ -716,8 +716,8 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			});
 		}
 
-		// ---------- список ----------
-		// «Свободнее»: сначала отметки посетителей, при равенстве — обычная загрузка Google в этот час.
+		// ---------- list ----------
+		// "Freer": visitor marks first, on a tie the usual Google load at this hour.
 		function rank(p: Pt): number {
 			const m = marks[p.id];
 			if (!hoursOf(p).open && !hoursOf(p).preOpen) return 100;
@@ -738,7 +738,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			if (order === 'free') return rank(a) - rank(b) || busyNow(a.id) - busyNow(b.id) || aod;
 			return aod;
 		}
-		// Фильтры размера и часа: null — не проходит; число — процент загрузки в выбранный час (подсветка «свободнее»).
+		// Size and hour filters: null means it does not pass; a number is the load percent at the chosen hour (the "freer" highlight).
 		function passes(id: string): { ok: boolean; free: number | null } {
 			const i = infos.get(id);
 			if (!i) return { ok: true, free: null };
@@ -749,7 +749,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			if (v === null) return { ok: true, free: null };
 			return v < 50 ? { ok: true, free: v } : { ok: false, free: null };
 		}
-		// Коротко, чтобы влезало в одну строку на 390: «Открыто до 17:00», «Закрыто · откроется в пн в 8:00».
+		// Short, to fit one line at 390: "Open until 17:00", "Closed · opens Mon at 8:00".
 		function rowHours(p: Pt): string {
 			const { day, min } = belgradeNow();
 			const st = branchStatus(range(p.wd), range(p.sat), day, min);
@@ -758,7 +758,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			const next = tx.stNext.replace('%s', hoursOf(p).next);
 			return `${tx.stClosed} · ${next.charAt(0).toLowerCase()}${next.slice(1)}`;
 		}
-		// Свёрнутая строка: значок очереди, название, «открыто до …» / «закрыто, откроется …», адрес.
+		// Collapsed row: queue icon, name, "open until ..." / "closed, opens ...", address.
 		function paintRow(i: Info, p: Pt, free: number | null) {
 			const m = marks[p.id];
 			const st = pinState(p);
@@ -778,7 +778,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			fr.hidden = free === null;
 			fr.textContent = free === null ? '' : box.dataset.free!.replace('%p', String(free));
 		}
-		// Узлы переставляем, только если порядок изменился: иначе каждое обновление сбивало бы фокус в строке.
+		// Nodes are reordered only if the order changed: otherwise every update would drop focus in the row.
 		function place(parent: HTMLElement, items: HTMLElement[]) {
 			const now = [...parent.children];
 			if (now.length === items.length && now.every((el, k) => el === items[k])) return;
@@ -789,7 +789,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			if (id) url.searchParams.set('b', id); else url.searchParams.delete('b');
 			history.replaceState(history.state, '', url);
 		}
-		// Один список: открытые сейчас сверху, закрытые — свёрнутой группой в конце; если закрыты все — одна строка вместо них.
+		// One list: open now on top, closed ones as a collapsed group at the end; if all are closed, one line instead.
 		function renderLists() {
 			const hour = Number(hourSel.value) || 0;
 			const open: Pt[] = [], closed: Pt[] = [];
@@ -823,13 +823,13 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			const anyOpen = pts.some((x) => { const h = hoursOf(x); return h.open || h.preOpen; });
 			reportBtn.dataset.closed = anyOpen ? '0' : '1';
 			if (anyOpen) reportBtn.removeAttribute('aria-describedby'); else reportBtn.setAttribute('aria-describedby', 'q-msg');
-			// Кнопка скрыта, пока всё закрыто, поэтому причину и время открытия показываем сразу, а не после нажатия.
+			// The button is hidden while everything is closed, so the reason and opening time are shown at once, not after a press.
 			const closedMsg = tx.closedAll.replace('%t', hoursOf(pts[0]).reportsAt).replace('%s', hoursOf(pts[0]).next);
 			if (!anyOpen) msg.textContent = closedMsg;
 			else if (msg.textContent === closedMsg) msg.textContent = '';
 			box.querySelector<HTMLElement>('.bc-near')!.hidden = !me;
 		}
-		// Раскрыли строку: пин подсвечен и в центре карты, ?b= запомнен; открытая карточка другого отделения закрывается.
+		// A row was expanded: the pin is highlighted and centered, ?b= is remembered; an open card of another branch closes.
 		function pickRow(id: string) {
 			if (current) closeCard(false);
 			picked = id;
@@ -847,7 +847,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			renderLists();
 		}
 
-		// ---------- карточка ----------
+		// ---------- card ----------
 		function reportBlock(p: Pt): string {
 			const since = nowMs() - sentAt(p.id);
 			const r = rep?.id === p.id ? rep : null;
@@ -889,7 +889,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			const sub = addr ? `<p class="q-addr">${esc(addr)}</p>` : '';
 			return `<div class="q-card-head">${toggle}${back}<div class="q-title"><h3 tabindex="-1">${esc(title)}</h3>${sub}</div><button type="button" class="q-x" aria-label="${esc(tx.close)}">${ICON('x')}</button></div>`;
 		}
-		// Адрес без почтового индекса: «Vase Čarapića 18, Beograd».
+		// Address without the postal code: "Vase Čarapića 18, Beograd".
 		const shortAddr = (addr: string) => addr.replace(/,\s*\d{5}\s+/, ', ');
 		function cardHtml(p: Pt): string {
 			const c = cardState(p);
@@ -922,7 +922,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 				</details>
 			</div>`;
 		}
-		// «Сегодня 08:00–17:00» — одна строка вместо сетки недели; сетка — под «Подробнее».
+		// "Today 08:00–17:00" is one line instead of a week grid; the grid is under "Details".
 		function todayText(p: Pt): string {
 			const today = weekTiles(range(p.wd), range(p.sat), belgradeNow().day).find((d) => d.today);
 			return `<b>${esc(tx.today)}</b> ${today?.hours ? esc(today.hours) : esc(tx.dayOff)}`;
@@ -934,7 +934,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			}).join('');
 			return `<ul class="q-week">${tiles}</ul>`;
 		}
-		// Ряд «Маршрут | Отметить очередь»; после нажатия отметки на его месте — выбор состояния и таймер.
+		// A "Route | Mark the queue" row; after the mark is pressed, a state choice and a timer take its place.
 		function actionsHtml(p: Pt, c: Card): string {
 			const route = p.gmaps || `https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}`;
 			const routeBtn = `<a class="q-route" href="${esc(route)}" target="_blank" rel="noopener">${GM_PIN}<span>${esc(tx.route)}</span><span class="sr-only"> (${esc(tx.newTab)})</span></a>`;
@@ -983,7 +983,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			wireCard();
 			if (focus) card.querySelector<HTMLElement>('h3')?.focus({ preventScroll: true });
 		}
-		// Перерисовать только блок отметки: поле комментария и микрофон при этом живут, пока идёт таймер.
+		// Redraw only the mark block: the comment field and microphone stay alive while the timer runs.
 		function renderReport() {
 			if (!current) return;
 			const box = card.querySelector<HTMLElement>('.q-report-box');
@@ -1003,7 +1003,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 
 		function easeToPin(p: Pt) {
 			if (!map) return;
-			// Сдвиг вместо padding: padding в MapLibre копится между вызовами, а нужен ровно центр видимой над листом части карты.
+			// An offset instead of padding: MapLibre padding accumulates between calls, but we need exactly the center of the map part visible above the sheet.
 			let dy = 0;
 			if (narrow() && !card.hidden) {
 				const v = $('.qmap-view').getBoundingClientRect();
@@ -1014,7 +1014,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			map.easeTo({ center: [p.lng, p.lat], zoom: Math.max(map.getZoom(), 15), offset: [0, dy], duration: reduced() ? 0 : 500 });
 		}
 		const navBottom = () => parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
-		// Телефон: лист прижат к низу экрана, карта ставится сразу под шапку сайта — пин виден над листом.
+		// Phone: the sheet sticks to the bottom of the screen, the map sits right under the site header so the pin is visible above the sheet.
 		function mapAboveSheet() {
 			if (!narrow() || sheet === 'full') return;
 			const v = $('.qmap-view');
@@ -1026,7 +1026,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			if (rep && rep.id !== id && rep.phase !== 'done') flush();
 			const ask = opts.ask ?? (fromReport && chooser !== null);
 			fromReport = false;
-			// Карточка и раскрытая строка с тем же содержимым одновременно не показываются.
+			// A card and an expanded row with the same content are not shown at the same time.
 			if (picked) { const was = infos.get(picked)?.el; picked = null; if (was) was.open = false; }
 			if (current !== id) moreOpen = null;
 			current = id;
@@ -1037,20 +1037,20 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			if (citySel.value !== p.city) { citySel.value = p.city; store.set('q-city', p.city); fitCity(); }
 			setB(id);
 			if (!rep || rep.id !== id) rep = { id, phase: 'idle', pick: '', comment: '', error: '', timer: 0, pow: null };
-			// Задачу от ботов решаем сразу, пока человек читает карточку, — тап по варианту не ждёт.
+			// Solve the bot challenge right away while the person reads the card, so a tap on an option does not wait.
 			if (!rep.pow) { rep.pow = solvePow(); rep.pow.catch(() => { if (rep) rep.pow = null; }); }
 			paintPins();
 			renderLists();
 			render(opts.focus !== false);
 			mapAboveSheet();
 			easeToPin(p);
-			// На телефоне карта с карточкой ниже верхней кнопки: без прокрутки выбор состояния оказывается за экраном.
+			// On a phone the map with a card sits below the top button: without scrolling the state choice ends up off screen.
 			if (ask) showCard();
 		}
 		function showCard() {
 			const target = narrow() ? card : card.querySelector<HTMLElement>('.q-report-box') ?? card;
 			target.scrollIntoView({ block: narrow() ? 'end' : 'nearest', behavior: reduced() ? 'auto' : 'smooth' });
-			// Внутри листа выбор состояния — под статусом и часами: прокручиваем лист к нему.
+			// Inside the sheet the state choice is under the status and hours: scroll the sheet to it.
 			const box = card.querySelector<HTMLElement>('.q-report-box');
 			if (box) card.scrollTop += box.getBoundingClientRect().bottom - card.getBoundingClientRect().bottom + 16;
 		}
@@ -1085,7 +1085,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			sheet = pos;
 			root.dataset.card = pos;
 			const more = card.querySelector<HTMLDetailsElement>('.q-details');
-			// «Полностью» раскрывает «Подробнее», «кратко» снова сворачивает — иначе в кратком листе нужна прокрутка.
+			// "Full" expands "Details", "brief" collapses it again; otherwise the brief sheet needs scrolling.
 			if (more && narrow()) { more.open = pos === 'full'; moreOpen = pos === 'full'; }
 			if (pos === 'full') card.scrollTop = 0;
 			if (pos === 'half') mapAboveSheet();
@@ -1095,7 +1095,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			if (p) window.setTimeout(() => easeToPin(p), reduced() ? 0 : 260);
 		}
 
-		// ---------- отметка ----------
+		// ---------- mark ----------
 		function choose(state: string) {
 			if (!rep || !current) return;
 			window.clearTimeout(rep.timer);
@@ -1103,7 +1103,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			if (CONTACT.test(rep.comment)) { rep.phase = 'error'; rep.error = tx.badComment; return renderReport(); }
 			rep.pick = state;
 			rep.phase = 'pending';
-			// Пин перекрашиваем сразу, при ошибке вернём как было.
+			// Recolor the pin at once, on error put it back as it was.
 			if (!optimistic.has(p.id)) optimistic.set(p.id, marks[p.id]);
 			const was = optimistic.get(p.id);
 			marks[p.id] = { state, count: (was?.count ?? 0) + 1, minutes_ago: 0 };
@@ -1140,7 +1140,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			asking = null;
 			renderReport();
 		}
-		// Уход со страницы во время таймера: отправляем сразу, keepalive доносит запрос после закрытия вкладки.
+		// Leaving the page during the timer: send at once, keepalive delivers the request after the tab closes.
 		function flush() {
 			if (!rep || (rep.phase !== 'pending' && rep.phase !== 'hold')) return;
 			window.clearTimeout(rep.timer);
@@ -1153,7 +1153,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			r.phase = 'sending';
 			const id = r.id;
 			let altcha = '';
-			try { altcha = r.pow ? await r.pow : await solvePow(); } catch { /* сервер ответит 400, покажем ошибку сети */ }
+			try { altcha = r.pow ? await r.pow : await solvePow(); } catch { /* the server will answer 400, we show a network error */ }
 			const where = me ?? (leaving ? null : await grantedPosition());
 			let status = 0, body: any = {};
 			try {
@@ -1163,7 +1163,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 				});
 				status = res.status;
 				body = await res.json().catch(() => ({}));
-			} catch { /* сеть */ }
+			} catch { /* network */ }
 			if (leaving) return;
 			r.pow = null;
 			if (status === 201) {
@@ -1176,7 +1176,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 				r.pow = solvePow();
 				r.pow.catch(() => { r.pow = null; });
 				if (status === 403 && body.error === 'closed') {
-					// Сервер решает по своим часам: на телефоне со сбитым временем кнопка могла оказаться активной.
+					// The server decides by its own clock: on a phone with a wrong time the button could be active.
 					const when = body.days_ahead === 0 ? '' : body.days_ahead === 1 ? tx.tomorrow : tx.onDay.replace('%d', tx.days[(Number(body.weekday) + 1) % 7]);
 					r.phase = 'limit';
 					r.error = tx.markFrom.replace('%t', String(body.reports_from)).replace('%s', when).trim();
@@ -1195,7 +1195,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			if (current === id) renderReport();
 		}
 
-		// ---------- данные ----------
+		// ---------- data ----------
 		async function refresh() {
 			try {
 				const res = await fetch('/api/queue');
@@ -1209,7 +1209,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 				note.hidden = true;
 				store.set('q-updated', String(nowMs()));
 			} catch {
-				// Отметки оставляем, но все пины — «не точно», и говорим, на какое время данные.
+				// Marks are kept, but all pins are "not exact", and we say what time the data is for.
 				stale = true;
 				const at = Number(store.get('q-updated')) || nowMs();
 				note.textContent = tx.stale.replace('%t', new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Belgrade', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date(at)));
@@ -1220,10 +1220,10 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			if (current && (!rep || rep.phase === 'idle' || rep.phase === 'done' || rep.phase === 'limit')) render();
 		}
 
-		// ---------- геолокация ----------
+		// ---------- geolocation ----------
 		function locate() {
 			const text = reportBtn.querySelector('.q-report-text')!;
-			// Все отделения закрыты: геолокацию не просим, а объясняем, почему отметка недоступна и когда она откроется.
+			// All branches are closed: we do not ask for geolocation, but explain why marking is unavailable and when it opens.
 			const open = pts.map(hoursOf);
 			if (!open.some((h) => h.open || h.preOpen)) {
 				const h = open[0];
@@ -1236,15 +1236,15 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			const fallback = () => {
 				if (settled && !reportBtn.hasAttribute('aria-busy')) return;
 				done();
-				// Места нет: не дублируем весь список в листе, а отправляем к нему — у каждой строки своя «Отметить».
-				// Страницу не прокручиваем: иначе это пояснение под кнопкой уходит за экран.
+				// No room: we do not duplicate the whole list in the sheet but point to it; each row has its own "Mark".
+				// We do not scroll the page: otherwise this explanation under the button goes off screen.
 				msg.textContent = tx.geoOff;
 				if (current || chooser) closeCard(false);
 			};
 			if (!navigator.geolocation) return fallback();
 			text.textContent = tx.finding;
 			reportBtn.setAttribute('aria-busy', 'true');
-			// Браузер может не ответить вовсе (запрос разрешения закрыт, не отвечает служба) — тогда не молчим, а даём список.
+			// The browser may not answer at all (the permission prompt was dismissed, the service does not respond): then we do not stay silent but give the list.
 			giveUp = window.setTimeout(fallback, GEO_GIVE_UP_MS);
 			navigator.geolocation.getCurrentPosition(
 				(pos) => {
@@ -1273,8 +1273,8 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			);
 		}
 
-		// ---------- панель фильтров и события ----------
-		// Карта не поднялась — вместо неё запасной список отделений с отметкой (сценарий П13).
+		// ---------- filter panel and events ----------
+		// The map did not come up: a fallback branch list with marking is shown instead (scenario P13).
 		function showFallback() {
 			canvas.hidden = true;
 		}
@@ -1298,7 +1298,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			renderLists();
 			paintPins();
 		});
-		// «На карте» в строке: без JS — ссылка на блок карты с ?b=, с JS — подсветить пин на нашей карте, строка остаётся раскрытой.
+		// "On map" in a row: without JS a link to the map block with ?b=, with JS highlights the pin on our map and the row stays expanded.
 		document.addEventListener('click', (ev) => {
 			const link = (ev.target as HTMLElement).closest<HTMLAnchorElement>('[data-show]');
 			if (!link || ev.defaultPrevented || ev.metaKey || ev.ctrlKey || ev.shiftKey) return;
@@ -1309,7 +1309,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			$('.qmap-view').scrollIntoView({ block: narrow() ? 'start' : 'nearest', behavior: reduced() ? 'auto' : 'smooth' });
 			pins.get(id)?.focus({ preventScroll: true });
 		});
-		// «Отметить» в строке открывает карточку сразу на выборе состояния — отметка живёт только в карточке.
+		// "Mark" in a row opens the card right on the state choice: a mark lives only in the card.
 		listBox.addEventListener('click', (ev) => {
 			const mk = (ev.target as HTMLElement).closest<HTMLButtonElement>('[data-mark]');
 			if (!mk) return;
@@ -1321,7 +1321,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			const d = ev.target as HTMLDetailsElement;
 			if (!d.classList?.contains('q-details')) return;
 			moreOpen = d.open;
-			// Раскрытое «Подробнее» не должно уводить лист вниз: сводка остаётся сверху, подробности под ней.
+			// An expanded "Details" must not push the sheet down: the summary stays on top, details under it.
 			if (d.open && narrow()) card.scrollTop = 0;
 		}, true);
 		listBox.addEventListener('toggle', (ev) => {
@@ -1360,14 +1360,14 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			if (t.classList.contains('q-comment') && rep) rep.comment = t.value;
 		});
 		root.addEventListener('focusin', (ev) => { if ((ev.target as HTMLElement).classList.contains('q-comment')) hold(); });
-		// Esc с любого места страницы: карточка, открытая по ссылке ?b=, фокуса не получает.
+		// Esc from anywhere on the page: a card opened by the ?b= link does not get focus.
 		document.addEventListener('keydown', (ev) => {
 			if (ev.key !== 'Escape') return;
 			const more = box.querySelector<HTMLDetailsElement>('.bc-more');
 			if (more?.open) { more.open = false; more.querySelector('summary')?.focus(); return; }
 			if (current || chooser) closeCard();
 		});
-		// «Ещё» — выпадающая панель над картой: закрывается кликом мимо неё.
+		// "More" is a dropdown panel above the map: closes on a click outside it.
 		document.addEventListener('click', (ev) => {
 			const more = box.querySelector<HTMLDetailsElement>('.bc-more');
 			if (more?.open && !more.contains(ev.target as Node)) more.open = false;
@@ -1380,7 +1380,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			else void refresh();
 		});
 
-		// Лист тянется за шапку: вверх — «полностью», вниз — «кратко», из «кратко» вниз — закрыть.
+		// The sheet is dragged by the header: up means "full", down means "brief", down from "brief" closes.
 		let dragY: number | null = null;
 		card.addEventListener('pointerdown', (ev) => {
 			if (!narrow() || !(ev.target as HTMLElement).closest('.q-card-head')) return;
@@ -1394,7 +1394,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			else if (dy > 40) (sheet === 'full' ? setSheet('half') : closeCard());
 		});
 
-		// ---------- карта ----------
+		// ---------- map ----------
 		function fitCity() {
 			if (!map || !lib) return;
 			const rows = pts.filter(inCity);
@@ -1435,14 +1435,14 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 				el.type = 'button';
 				el.classList.add('q-pin');
 				el.addEventListener('click', (ev) => { ev.stopPropagation(); openCard(p.id, { focus: false }); });
-				// anchor 'bottom': остриё капли — нижняя середина элемента — стоит ровно на координате.
+				// anchor 'bottom': the drop's tip, the bottom middle of the element, sits exactly on the coordinate.
 				new lib.Marker({ element: el, anchor: 'bottom' }).setLngLat([p.lng, p.lat]).addTo(map);
 				pins.set(p.id, el);
 			}
 			const near = () => root.toggleAttribute('data-near', map.getZoom() >= 15);
 			map.on('zoom', near);
 			map.on('click', (e: any) => { if (!(e.originalEvent?.target as HTMLElement)?.closest?.('.q-pin') && current) closeCard(); });
-			// Открытая по ссылке ?b= карточка важнее обзора города.
+			// A card opened by the ?b= link takes priority over the city overview.
 			map.on('load', () => (current ? easeToPin(point(current)!) : picked ? pickRow(picked) : fitCity()));
 			fitCity();
 			near();
@@ -1450,16 +1450,16 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			if (current) easeToPin(point(current)!);
 		}
 
-		// ---------- старт ----------
+		// ---------- start ----------
 		box.hidden = false;
 		listBox.classList.add('bl-js');
 		listBox.querySelectorAll<HTMLElement>('.bl-mark').forEach((b) => (b.hidden = false));
-		// Приоритет города: ?b= > якорь города в адресе > сохранённый город > Белград.
+		// City priority: ?b= > city anchor in the address > saved city > Belgrade.
 		const has = (v: string | null) => v !== null && [...citySel.options].some((o) => o.value === v);
 		const savedCity = store.get('q-city');
 		const cityFromHash = () => document.querySelector<HTMLElement>(`.bl-city#${CSS.escape(location.hash.slice(1) || '-')}`)?.dataset.city ?? null;
 		const anchorCity = cityFromHash();
-		// Ссылка на город (#branches-nis, в том числе старая #otdeleniya-nis после anchor-redirect.js) выбирает город в фильтре.
+		// A city link (#branches-nis, including the old #otdeleniya-nis after anchor-redirect.js) selects the city in the filter.
 		const followHash = () => {
 			const c = cityFromHash();
 			if (!has(c) || citySel.value === c) return;
@@ -1489,11 +1489,11 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 			void startMap();
 		}, { rootMargin: '400px' });
 		io.observe(root);
-		// Широкий блок заходит на колонку оглавления — пока он на экране, оглавление прячем (CSS: data-qmap-wide).
+		// A wide block overlaps the table-of-contents column: while it is on screen, hide the contents (CSS: data-qmap-wide).
 		new IntersectionObserver((entries) => {
 			document.documentElement.toggleAttribute('data-qmap-wide', entries.some((e) => e.isIntersecting));
 		}).observe(root);
-		// Таймер «обновить можно через мм:сс» в открытой карточке.
+		// The "you can refresh in mm:ss" timer in the open card.
 		window.setInterval(() => {
 			const again = card.querySelector('.q-again');
 			if (!again || !current) return;
@@ -1504,7 +1504,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 	}
 
 	document.querySelectorAll<HTMLElement>('.qmap').forEach(initQueue);
-	// График загрузки в строке списка — только когда раскрыли «Наши наблюдения»: в HTML его нет.
+	// The load chart in a list row only when "Our observations" is expanded: it is not in the HTML.
 	const histText = JSON.parse(document.querySelector<HTMLElement>('.qmap')?.dataset.text ?? '{}');
 	document.addEventListener('toggle', (e) => {
 		const obs = e.target;
@@ -1513,7 +1513,7 @@ const pdfAttrs = { 'data-pdf': COPY, 'data-title': LIST.title, 'data-orig': LIST
 		const row = obs.closest<HTMLElement>('.bl-row');
 		if (slot && row) slot.outerHTML = histHtml(histValues(row.dataset.wd), histValues(row.dataset.sat), histText);
 	}, true);
-	// Печать и сохранение в PDF: все строки и группа «Закрыто сейчас» раскрыты (name снимаем — иначе раскрыта только одна).
+	// Print and save to PDF: all rows and the "Closed now" group are expanded (we remove name, otherwise only one is expanded).
 	const opened = new Set<HTMLDetailsElement>();
 	window.addEventListener('beforeprint', () => {
 		document.querySelectorAll<HTMLDetailsElement>('.bl-row, .bl-closed').forEach((d) => {

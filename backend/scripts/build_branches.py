@@ -2,12 +2,14 @@
 # requires-python = ">=3.13"
 # dependencies = ["pdfplumber>=0.11"]
 # ///
-"""Справочник отделений банков формы «Где открыли счёт» — только с официальных сайтов банков.
+"""Directory of bank branches for the "Where did they open an account" form, from official bank sites only.
 
-Запуск: `uv run scripts/build_branches.py`. Пишет src/alta_feedback/data/branches.json: у каждого
-банка источник, дата сбора и список {city, name, address}. Если сайт банка не ответил, у банка
-остаются прежние данные с прежней датой; если их нет — status "unavailable", в форме только
-свободный ввод.
+Run: `uv run scripts/build_branches.py`. Writes src/alta_feedback/data/branches.json: each
+bank has a source, a collection date and a list of {city, name, address}. If a bank site did not answer,
+the bank
+keeps its previous data with the previous date; if there is none, status is "unavailable" and the form
+allows only
+free input.
 """
 
 import html
@@ -33,7 +35,7 @@ TIMEOUT = 60
 
 type Branch = dict[str, str]
 
-# Районы Белграда, которые банки пишут вместо города: в форме город один — Белград.
+# Belgrade districts that banks write instead of the city: the form has one city, Belgrade.
 BELGRADE_AREAS = frozenset({
     "banovo brdo", "bezanija", "borca", "cukarica", "dorcol", "karaburma", "konjarnik", "krnjaca",
     "mirijevo", "novi beograd", "palilula", "rakovica", "savski venac", "stari grad", "surcin",
@@ -67,7 +69,7 @@ def tidy(text: str) -> str:
 
 
 def to_latin(text: str) -> str:
-    """Сербская кириллица в латиницу; слово заглавными остаётся заглавным (ЉИГ → LJIG)."""
+    """Serbian Cyrillic to Latin; an all-caps word stays all-caps (ЉИГ -> LJIG)."""
     words = []
     for word in text.split(" "):
         latin = "".join(CYRILLIC.get(char, char) for char in word)
@@ -76,7 +78,7 @@ def to_latin(text: str) -> str:
 
 
 def fold(text: str) -> str:
-    """Ключ сравнения: латиница, без диакритики и регистра."""
+    """Comparison key: Latin, no diacritics, no case."""
     decomposed = unicodedata.normalize("NFKD", to_latin(text).replace("đ", "dj").replace("Đ", "Dj"))
     return " ".join("".join(c for c in decomposed if not unicodedata.combining(c)).casefold().split())
 
@@ -90,7 +92,7 @@ def capitalized(word: str) -> str:
 
 
 def smart_title(text: str) -> str:
-    """ЗАГЛАВНЫЕ из реестров банков — в обычный вид; смешанный регистр не трогаем."""
+    """ALL CAPS from bank registries -> normal case; mixed case is left alone."""
     if text != text.upper():
         return text
     return " ".join(capitalized(word) for word in text.split())
@@ -179,7 +181,7 @@ def unicredit() -> list[Branch]:
         for pdf_page in pdf.pages:
             for table in pdf_page.extract_tables():
                 for row in table:
-                    # Таблица отделений — та, где в третьей колонке часы работы кассы.
+                    # The branch table is the one with cashier opening hours in the third column.
                     if len(row) >= 3 and row[2] and "Blagajna" in row[2] and row[0] and row[1]:
                         found.append(branch(row[0], "", smart_title(row[1].replace("\n", " "))))
     return found
@@ -192,7 +194,7 @@ def aik() -> list[Branch]:
         if item.get("desc") != "Filijala":
             continue
         address = tidy(item["address"])
-        # После адреса в заголовке бывает название ТЦ, а бывает объявление о ремонте — его не берём.
+        # After the address the heading may carry a mall name or a repair notice; the notice is skipped.
         rest = tidy(item["title"]).removeprefix(address).strip()
         name = rest if rest and not rest.startswith("-") and len(rest) <= 40 else ""
         found.append(branch(item["city_name"], name, address))
@@ -207,7 +209,7 @@ def nlb() -> list[Branch]:
         location = item["location"]
         street = tidy(location["street"])
         name = tidy(item["name"])
-        # Название вида «Ekspozitura Beograd Kneza Mihaila 38» — просто город и адрес.
+        # A name like "Ekspozitura Beograd Kneza Mihaila 38" is just the city and address.
         if fold(street) in fold(name):
             name = ""
         found.append(branch(location["city"], name, street))
@@ -215,7 +217,8 @@ def nlb() -> list[Branch]:
 
 
 def postanska_city(municipality: str) -> str:
-    """«BEOGRAD VOŽDOVAC» → «BEOGRAD (VOŽDOVAC)», «NIŠ MEDIJANA» → «NIŠ (MEDIJANA)»; Лазаревац — город."""
+    """'BEOGRAD VOŽDOVAC' -> 'BEOGRAD (VOŽDOVAC)', 'NIŠ MEDIJANA' -> 'NIŠ (MEDIJANA)'; Лазаревац is a
+    town in its own right."""
     match = re.fullmatch(r"(BEOGRAD|NIŠ) (.+)", municipality)
     if not match:
         return municipality
@@ -358,7 +361,7 @@ def srpska() -> list[Branch]:
     return found
 
 
-# Код банка из формы → (страница-источник для людей, сборщик).
+# Bank code from the form -> (source page for people, collector).
 SOURCES: dict[str, tuple[str, Callable[[], list[Branch]]]] = {
     "intesa": ("https://www.bancaintesa.rs/stanovnistvo/lokacije-ekspozitura-i-bankomata.html", intesa),
     "otp": ("https://www.otpbanka.rs/lokacije-ekspozitura-i-bankomata/", otp),
@@ -396,7 +399,7 @@ def collect(code: str, previous: dict, today: str) -> dict:
         if not branches:
             raise ValueError("пустой список")
         return {"source": source, "collected_at": today, "status": "ok", "branches": branches}
-    except Exception as error:  # noqa: BLE001 — любой сбой сайта банка не должен ронять сборку остальных
+    except Exception as error:  # noqa: BLE001 - any bank site failure must not break the build of the rest
         print(f"{code}: {error!r}", file=sys.stderr)
         if previous.get("branches"):
             return previous

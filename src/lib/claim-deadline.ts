@@ -1,8 +1,8 @@
-// Срок подачи требования считается от дня публикации объявления в «Службени гласник».
-// Правило счёта: ZPP, Sl. glasnik RS 72/2011, ст. 103 (в банкротстве применяется по ст. 7 ч. 2
-// закона о банкротстве и ст. 22 закона о банкротстве банков): первый день срока — день после
-// публикации; если последний день выпадает на выходной или праздник, срок истекает в следующий
-// рабочий день. Праздники здесь не считаем: даём «день по счёту», а перенос — только с выходных.
+// The claim deadline is counted from the day the notice is published in the Službeni glasnik.
+// Counting rule: ZPP, Sl. glasnik RS 72/2011, art. 103 (applied in bankruptcy via art. 7 para. 2
+// of the bankruptcy law and art. 22 of the bank bankruptcy law): the first day of the term is the day after
+// publication; if the last day falls on a weekend or holiday, the term expires on the next
+// working day. Holidays are not counted here: we give "the day by count", and shift only for weekends.
 export const ORDINARY_DAYS = 90;
 export const LATE_DAYS = 120;
 

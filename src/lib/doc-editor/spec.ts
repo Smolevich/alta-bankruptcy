@@ -1,20 +1,20 @@
-// Описание документа для DocEditor. Подписи и подсказки полей живут в i18n.ts в UI[lang][text]
-// (title, privacy, about, groups[key], fields[name] = [подпись, подсказка]), здесь — только структура.
+// Document description for DocEditor. Field labels and hints live in i18n.ts in UI[lang][text]
+// (title, privacy, about, groups[key], fields[name] = [label, hint]); here is only the structure.
 export type DocField = {
 	name: string;
-	// Как поле называется в самом бланке (сербский), показывается рядом с подписью.
+	// What the field is called in the form itself (Serbian), shown next to the label.
 	sr?: string;
-	// text — одна строка; lines — textarea, в сборщик уходит массив строк.
+	// text is one line; lines is a textarea, an array of lines goes to the builder.
 	type?: 'text' | 'lines';
 	value?: string;
 };
 
 export type DocSpec = {
-	// Ключ сборщика в builders.ts.
+	// Builder key in builders.ts.
 	id: string;
-	// id на странице: ссылка #anchor открывает редактор.
+	// id on the page: an #anchor link opens the editor.
 	anchor: string;
-	// Ключ раздела текстов в UI[lang].
+	// Key of the text section in UI[lang].
 	text: 'prijava';
 	fileName: string;
 	fonts: { regular: string; bold: string };

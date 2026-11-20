@@ -1,6 +1,6 @@
 ---
-// Калькулятор страховой выплаты: считает только в браузере, ничего не отправляет и не сохраняет.
-// Формулы — src/lib/payout-calc.mjs (повторяют таблицу владельца, тесты — scripts/payout-calc.test.mjs).
+// Insurance payout calculator: computes only in the browser, sends and stores nothing.
+// Formulas are in src/lib/payout-calc.mjs (they repeat the owner's table, tests are in scripts/payout-calc.test.mjs).
 import type { Lang } from '../i18n';
 import { RATE } from '../lib/payout-calc.mjs';
 
@@ -99,7 +99,7 @@ const T = {
 		const { locale, rsd: rsdU, and, none, error } = box.dataset;
 		const fmt = new Intl.NumberFormat(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 		const pair = (e: number, d: number) => `${fmt.format(e)} € ${and} ${fmt.format(d)} ${rsdU}`;
-		// Пустое поле — это «нет остатка», а нераспознанная сумма — ошибка: молча считать её нулём нельзя.
+		// An empty field means "no balance", while an unrecognized amount is an error: silently counting it as zero is not allowed.
 		const val = (n: string) => {
 			const s = box.querySelector<HTMLInputElement>(`input[name="${n}"]`)!.value;
 			return s.trim() === '' ? 0 : parseAmount(s);
@@ -121,7 +121,7 @@ const T = {
 			const r = payout({ eur, rsd, other });
 			out('pay', pair(r.payEur, r.payRsd));
 			out('claim', r.overLimit ? pair(r.claimEur, r.claimRsd) : none!);
-			// До лимита строка AOD лишь повторяет выплату с ошибкой округления (49 999,99 € + 1 дин → 50 000,00 €).
+			// Below the limit the AOD row merely repeats the payout with a rounding error (49 999,99 € + 1 din → 50 000,00 €).
 			aod.hidden = !r.overLimit;
 			out('aod', pair(r.aodEur, r.aodRsd));
 		};

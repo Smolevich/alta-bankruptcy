@@ -1,5 +1,5 @@
-// Голосовой ввод в комментарий через распознавание речи браузера (без нашего сервера).
-// Нет SpeechRecognition — кнопка остаётся скрытой, остаётся микрофон клавиатуры телефона.
+// Voice input into the comment through the browser's speech recognition (without our server).
+// No SpeechRecognition: the button stays hidden and the phone keyboard microphone remains.
 (() => {
   const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
@@ -11,7 +11,7 @@
     failed: "Не получилось распознать, можно напечатать.",
   };
 
-  // Карта отделений создаёт поле в попапе на лету и на трёх языках, поэтому привязка — функцией.
+  // The branch map creates the field in a popup on the fly and in three languages, so binding is a function.
   const attach = ({ button, label, status, box, lang = "ru-RU", texts = RU }) => {
     if (!Recognition || !button || !box) return false;
     const limit = Number(box.getAttribute("maxlength")) || 1000;

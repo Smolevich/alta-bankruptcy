@@ -1,4 +1,4 @@
-"""SQLite-хранилище правок и отчётов об открытии счетов."""
+"""SQLite store for edits and account-opening reports."""
 
 import json
 import sqlite3
@@ -122,19 +122,20 @@ CREATE TABLE IF NOT EXISTS pow_used (
 );
 """
 
-# Колонки, добавленные после запуска: (таблица, колонка, тип). Только nullable — старые строки получают NULL.
+# Columns added after launch: (table, column, type). Nullable only, so old rows get NULL.
 ADDED_COLUMNS = (
     ("accounts", "branch", "TEXT"),
-    # html — text хранит очищенный HTML редактора; NULL — простой текст старых предложений.
+    # html: text holds the sanitized editor HTML; NULL means plain text from older proposals.
     ("proposals", "text_format", "TEXT"),
-    # Правка текста редактором перед публикацией; текст автора в text не меняется.
+    # Editor's edit of the text before publishing; the author's text in `text` is unchanged.
     ("proposals", "edited_text", "TEXT"),
-    # Кто отметил очередь: хэш device_id браузера или, без него, хэш IP. Стирается вместе с ip_hash.
+    # Who marked the queue: hash of the browser device_id, or of the IP without it. Erased together with
+    # ip_hash.
     ("queue_reports", "voter", "TEXT"),
-    # 1 — отмечал в пределах NEAR_M от отделения, 0 — дальше, NULL — без геолокации. Координаты не храним.
+    # 1: marked within NEAR_M of the branch, 0: farther, NULL: no geolocation. Coordinates are not stored.
     ("queue_reports", "near", "INTEGER"),
 )
-# Голосующий старой отметки, записанной до колонки voter, — её хэш IP.
+# Voter of an old mark written before the voter column existed: its IP hash.
 VOTER = "COALESCE(NULLIF(voter, ''), NULLIF(ip_hash, ''), 'id' || id)"
 
 COLUMNS = {
@@ -162,7 +163,7 @@ COLUMNS = {
     ),
 }
 CASE_FILE_COLUMNS = ("case_id", "name", "kind", "bytes")
-# Автор, его контакт и следы браузера в публичный список не попадают.
+# The author, their contact and browser traces never reach the public list.
 PUBLIC_PROPOSAL_COLUMNS = (
     "id", "created_at", "title", "text", "doc_url", "sources", "target", "status",
     "review_url", "published_url", "comment", "text_format", "edited_text",
@@ -185,7 +186,7 @@ def add_missing_columns(db: sqlite3.Connection) -> None:
 
 
 def public_conditions(answer_filter: AnswerFilter) -> tuple[list[str], list[str | int]]:
-    """WHERE для публичной выборки; имена колонок — только из equals(), значения — параметрами."""
+    """WHERE for the public query; column names come only from equals(), values go as parameters."""
     clauses = ["status = 'accepted'"]
     args: list[str | int] = []
     for column, value in answer_filter.equals().items():
@@ -219,7 +220,7 @@ class Store:
 
     @contextmanager
     def connect(self) -> Iterator[sqlite3.Connection]:
-        """Соединение на одну операцию: коммит при успехе, закрытие всегда."""
+        """One-operation connection: commit on success, always closed."""
         db = sqlite3.connect(self.path, timeout=5)
         db.row_factory = sqlite3.Row
         try:
@@ -261,7 +262,7 @@ class Store:
             return int(cur.lastrowid or 0)
 
     def update_proposal(self, item_id: int, changes: dict[str, str], now: datetime) -> bool:
-        """changes — уже проверенные поля редактора (proposals.EDITOR_FIELDS)."""
+        """changes: editor fields already validated (proposals.EDITOR_FIELDS)."""
         assignments = ", ".join(f"{column} = ?" for column in changes)
         with self.connect() as db:
             cur = db.execute(
@@ -275,7 +276,7 @@ class Store:
             return db.execute("DELETE FROM proposals WHERE id = ?", (item_id,)).rowcount == 1
 
     def public_proposals(self, limit: int) -> list[dict]:
-        """Все предложения, кроме спама, свежие сверху, без автора и контакта."""
+        """All proposals except spam, newest first, without author and contact."""
         marks = ", ".join("?" for _ in PUBLIC_STATUSES)
         query = (
             f"SELECT {', '.join(PUBLIC_PROPOSAL_COLUMNS)} FROM proposals"
@@ -288,7 +289,8 @@ class Store:
         self, item: CaseReport, files: list[tuple[str, str, int]], ip_hash: str, user_agent: str,
         now: datetime,
     ) -> int:
-        """Кейс и его файлы (имя, вид, байты) одной транзакцией; сами файлы уже лежат на диске."""
+        """A case and its files (name, kind, bytes) in one transaction; the files themselves are already
+        on disk."""
         with self.connect() as db:
             cur = db.execute(
                 "INSERT INTO case_stories (created_at, category, summary, filed, result, event_date, sources,"
@@ -304,7 +306,7 @@ class Store:
             return case_id
 
     def case_files(self, case_ids: list[int] | None = None) -> dict[int, list[dict]]:
-        """Файлы по кейсам; None — все."""
+        """Files per case; None means all."""
         query = f"SELECT {', '.join(CASE_FILE_COLUMNS)} FROM case_files"
         args: list[int] = []
         if case_ids is not None:
@@ -326,7 +328,8 @@ class Store:
             return dict(row) if row else None
 
     def files_from(self, ip_hash: str, now: datetime, window: timedelta) -> int:
-        """Сколько файлов прислали с этого хэша IP за окно — лимит загрузок отдельно от лимита кейсов."""
+        """How many files this IP hash uploaded within the window: the upload limit is separate from the
+        case limit."""
         query = (
             "SELECT COUNT(*) FROM case_files f JOIN case_stories s ON s.id = f.case_id"
             " WHERE s.ip_hash = ? AND f.created_at > ?"
@@ -335,7 +338,7 @@ class Store:
             return int(db.execute(query, (ip_hash, iso(now - window))).fetchone()[0])
 
     def public_cases(self, limit: int) -> list[dict]:
-        """Только принятые и отмеченные к публикации, свежие события сверху."""
+        """Only accepted events marked for publication, newest first."""
         query = (
             f"SELECT {', '.join(COLUMNS['case_stories'])} FROM case_stories"
             " WHERE status = 'accepted' AND published = 1 ORDER BY event_date DESC, id DESC LIMIT ?"
@@ -344,7 +347,7 @@ class Store:
             return [decode_row(row) for row in db.execute(query, (limit,))]
 
     def update_case(self, item_id: int, changes: dict[str, str | int], now: datetime) -> bool:
-        """changes — уже проверенные поля (casebook.EDITOR_FIELDS)."""
+        """changes: already validated fields (casebook.EDITOR_FIELDS)."""
         assignments = ", ".join(f"{column} = ?" for column in changes)
         with self.connect() as db:
             cur = db.execute(
@@ -354,7 +357,7 @@ class Store:
             return cur.rowcount == 1
 
     def delete_case(self, item_id: int) -> list[str] | None:
-        """Удаляет кейс и строки его файлов; возвращает имена файлов, чтобы стереть их с диска."""
+        """Deletes a case and its file rows; returns file names so they can be erased from disk."""
         with self.connect() as db:
             rows = db.execute("SELECT name FROM case_files WHERE case_id = ?", (item_id,))
             names = [row[0] for row in rows]
@@ -400,11 +403,11 @@ class Store:
         limit: int | None = None,
         with_person: bool = False,
     ) -> list[dict]:
-        """Только принятые отчёты и только публичные поля, свежие визиты сверху.
+        """Only accepted reports and only public fields, newest visits first.
 
-        before — (visit_date, id) последней показанной записи: следующая страница идёт строго после неё.
-        with_person — добавить хэш IP как `person`, чтобы сводка считала людей, а не ответы;
-        наружу его не отдавать.
+        before: (visit_date, id) of the last shown row; the next page starts strictly after it.
+        with_person: add the IP hash as `person` so the summary counts people, not answers;
+        do not expose it outward.
         """
         clauses, args = public_conditions(answer_filter or AnswerFilter())
         if before:
@@ -422,13 +425,13 @@ class Store:
             return [decode_row(row) for row in db.execute(query, args)]
 
     def last_accepted_account_at(self) -> datetime | None:
-        """Когда пришёл самый свежий из принятых ответов: дата обновления страницы статистики."""
+        """When the newest accepted answer arrived: the update date of the stats page."""
         with self.connect() as db:
             (raw,) = db.execute("SELECT MAX(created_at) FROM accounts WHERE status = 'accepted'").fetchone()
         return datetime.fromisoformat(raw) if raw else None
 
     def public_branch_counts(self) -> Counter:
-        """Число принятых ответов по (банк, отделение) — по всем, без фильтров и страниц."""
+        """Count of accepted answers per (bank, branch), over all, ignoring filters and pages."""
         query = (
             "SELECT bank, branch, COUNT(*) FROM accounts"
             " WHERE status = 'accepted' AND branch IS NOT NULL AND branch != '' GROUP BY bank, branch"
@@ -461,7 +464,7 @@ class Store:
             return row is not None
 
     def fresh_queue_reports(self, since: datetime) -> list[Vote]:
-        """Отметки без отклонённых модератором, по возрастанию времени."""
+        """Marks without those rejected by a moderator, in ascending time order."""
         marks = ", ".join("?" * len(HIDDEN_STATUSES))
         with self.connect() as db:
             rows = db.execute(
@@ -472,7 +475,7 @@ class Store:
             return [Vote(r[0], r[1], r[2], r[3], bool(r[4])) for r in rows]
 
     def hide_queue_source(self, voter: str) -> int:
-        """Все отметки одного голосующего — в спам; сколько скрыто."""
+        """All marks of one voter go to spam; returns how many were hidden."""
         with self.connect() as db:
             cur = db.execute(
                 f"UPDATE queue_reports SET status = 'spam' WHERE {VOTER} = ? AND status != 'spam'", (voter,)
@@ -480,7 +483,7 @@ class Store:
             return cur.rowcount
 
     def claim_challenge(self, challenge: str, expires_at: int, now: datetime) -> bool:
-        """Отмечает решённую задачу использованной; False — её уже предъявляли."""
+        """Marks a solved challenge as used; False means it was already presented."""
         with self.connect() as db:
             db.execute("DELETE FROM pow_used WHERE expires_at < ?", (int(now.timestamp()),))
             cur = db.execute(
@@ -490,7 +493,8 @@ class Store:
             return cur.rowcount == 1
 
     def forget_old_traces(self, before: datetime) -> None:
-        """Стирает хэш IP и браузер у записей старше срока: лимиту частоты они нужны лишь час."""
+        """Erases the IP hash and browser on records older than the cutoff: the rate limiter needs them
+        only for an hour."""
         with self.connect() as db:
             for table in COLUMNS:
                 db.execute(

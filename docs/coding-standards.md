@@ -30,24 +30,26 @@ Python 3.13). Ruff (`E F I UP B`, line 110) and `astro/tsconfigs/strict` catch t
 
 ## Tests
 
-Tests check behaviour a user or a client sees, not how the code gets there. A refactor that keeps
-behaviour must not break a test.
+Tests follow the described behaviour. Every feature has a description of how it must work, in
+`docs/`, `AGENTS.md` or the task; the test proves that it works exactly so: behaviour plus business
+rules. Checking implementation is allowed when needed, but it is not the base.
 
-- **Behaviour first.** The bulk of the suite is end-to-end through real entry points:
+- **One requirement line → one test that confirms it.** The test name states the rule:
+  `test_branch_hidden_until_two_reports`, `'pages with robots noindex are left out of the sitemap'`.
+- **User and API behaviour → end-to-end and functional tests** through real entry points:
   - backend: the app through Starlette's `TestClient` on a temporary `DATA_DIR`: a form accepts
     valid input and rejects bad input with the right status, rate limit and honeypot hold, public
     JSON matches its contract and never leaks `contact`/`ip_hash`, admin routes refuse without a
     token;
   - site: the build itself (`npm run check`), plus the CI checks on `dist/` (pages exist in three
     languages, sitemap, `llms.txt`, anchors, trusted domains, page size).
-- **Unit tests only for pure logic** with real edge cases: parsers, `scrub_pii`, hours and
-  distance maths, stats aggregation, `src/lib/*`. One test per behaviour; do not add a unit test
-  that repeats what an end-to-end test already proves.
+- **Complex logic → targeted unit tests, one per rule**: calculations (payout, stats, hours,
+  distance), validation (`scrub_pii`, form parsing), i18n rules (`check-i18n`, heading ids). No
+  duplicates: a unit test that repeats what an end-to-end test already proves is not added.
 - **Mocks only at external boundaries**: network (bank sites, AOD, NBS, R2), clock, Cloudflare
   Access keys. Never mock our own functions; if a test needs that, extract a pure function.
-- **Every bug gets a regression test** named after the bug ("branch stays hidden with one report"),
-  written to fail before the fix.
-- One test, one claim. Several asserts are fine when they describe one behaviour.
+- **Every bug gets a regression test** named after the rule it broke, written to fail before the
+  fix.
 - Before calling work done, run the whole suite, not only the new tests.
 
 ## Commands (same as CI)

@@ -1,8 +1,8 @@
-"""Официальные цифры Народного банка Сербии по банкам (data/nbs_banks.json).
+"""Official National Bank of Serbia figures per bank (data/nbs_banks.json).
 
-Числа посчитаны из квартальных форм NBS: баланс (строки A, A.I, A.IV, A.VI, PO.III, PK.XX) и отчёт
-о прибыли (XXI.1 − XXI.2, 12 месяцев); у каждой цифры — ссылка на форму. Цифра без https-ссылки
-не показывается.
+Numbers are computed from NBS quarterly forms: the balance sheet (rows A, A.I, A.IV, A.VI, PO.III,
+PK.XX) and the profit report (XXI.1 − XXI.2, 12 months); each figure has a link to its form.
+A figure without an https link is not shown.
 """
 
 import json
@@ -16,7 +16,7 @@ from alta_feedback.branches import fold
 
 TOP = 10
 SOURCE_URL = "https://webappcenter.nbs.rs/WebApp/FinInstBank/BankFinancialBalanceSheet/IndexArchive"
-# Банк без лицензии: в справке по размеру остаётся для сравнения, с ответами формы не сопоставляется.
+# A bank without a license: kept in the size reference for comparison, not matched with form answers.
 DEFUNCT = frozenset({"alta"})
 
 
@@ -57,7 +57,7 @@ class Figure:
 
 @dataclass(frozen=True)
 class Row:
-    """Строка карточки банка: подпись, число для показа и где его проверить."""
+    """Bank card row: label, number to display and where to verify it."""
 
     label: str
     text: str
@@ -80,7 +80,7 @@ class Bank:
 
     @property
     def size(self) -> Row | None:
-        """Активы банка в млрд динаров; None — у цифры нет источника."""
+        """Bank assets in billion dinars; None means the figure has no source."""
         return row(ASSETS, self.figures.get(ASSETS.key), " млрд RSD")
 
     @property
@@ -93,7 +93,7 @@ class Bank:
 
     @property
     def details(self) -> list[Row]:
-        """Показатели, которые видны после раскрытия строки банка: всё, кроме доли рынка."""
+        """Metrics shown when a bank row is expanded: all except market share."""
         return [r for r in self.rows if r.label != METRICS[0].label]
 
 
@@ -111,7 +111,7 @@ class Snapshot:
         return sorted(self.banks, key=lambda bank: bank.rank)[:count]
 
     def find(self, name: str) -> Bank | None:
-        """Банк NBS для названия из ответа формы: по справочнику формы, иначе по написанию."""
+        """NBS bank for a name from a form answer: by the form directory, otherwise by spelling."""
         code = match_label(name, BANKS)
         wanted = fold(name)
         for bank in self.banks:
@@ -122,7 +122,7 @@ class Snapshot:
         return None
 
     def listing(self, names: list[str]) -> tuple[list[Bank], list[Bank]]:
-        """Банки из ответов формы (в их порядке, без повторов) и остальные из топа по размеру."""
+        """Banks from form answers (in their order, no repeats) and the rest from the top by size."""
         reported: list[Bank] = []
         for name in names:
             bank = self.find(name)
@@ -132,12 +132,12 @@ class Snapshot:
 
 
 def called(wanted: str, alias: str) -> bool:
-    """«Raiffeisen banka Srbija» — тоже Raiffeisen: псевдоним целым первым словом (словами)."""
+    """'Raiffeisen banka Srbija' is also Raiffeisen: alias by the whole first word (words)."""
     return wanted == alias or wanted.startswith(alias + " ")
 
 
 def number(value: float, digits: int) -> str:
-    """Число по-русски: пробел между тысячами, запятая перед дробью, настоящий минус."""
+    """Number in Russian style: space between thousands, comma before the fraction, a real minus."""
     text = f"{abs(value):,.{digits}f}".replace(",", " ").replace(".", ",")
     return f"−{text}" if value < 0 else text
 

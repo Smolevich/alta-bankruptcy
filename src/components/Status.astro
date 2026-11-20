@@ -1,14 +1,14 @@
 ---
-// Крупный блок «Сейчас»: текущая стадия и рельса из всех стадий.
-// На телефоне рельса главной сжата до текущей стадии, чтобы первый шаг был на первом экране.
-// variant="timeline" (страница /procedura/): только вертикальная шкала, на телефоне тоже полная.
+// Large "Now" block: the current stage and a rail of all stages.
+// On a phone the home rail is shrunk to the current stage so the first step is on the first screen.
+// variant="timeline" (the /procedura/ page): only the vertical scale, full on a phone too.
 import { getEntry } from 'astro:content';
 import { formatDate, UI, href, type Lang } from '../i18n';
 
 const { lang = 'ru', variant = 'home' } = Astro.props as { lang?: Lang; variant?: 'home' | 'timeline' };
 const t = UI[lang];
 const status = (await getEntry('status', 'current'))!.data;
-// sr-Latn уже ставит точку после года («3. 11. 2026.»), а фраза ниже добавляет свою.
+// sr-Latn already puts a period after the year ("3. 11. 2026."), and the phrase below adds its own.
 const fmt = (d: Date) => formatDate(d, lang);
 ---
 

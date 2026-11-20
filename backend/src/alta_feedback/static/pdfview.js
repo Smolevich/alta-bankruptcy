@@ -1,8 +1,8 @@
-// Просмотр PDF на странице, как на справочнике (PdfDialog): любой элемент с data-pdf открывает диалог.
-// На узком экране встроенный просмотр неудобен (iOS показывает одну страницу) — PDF открывается вкладкой.
-// Без скрипта ссылка просто ведёт на PDF.
+// PDF viewing on the page, as on the reference (PdfDialog): any element with data-pdf opens a dialog.
+// On a narrow screen the embedded viewer is awkward (iOS shows one page), so the PDF opens in a tab.
+// Without the script the link just leads to the PDF.
 (() => {
-  // Ссылка «Бланки ↓» ведёт к свёрнутому блоку банка — раскрываем его.
+  // The "Forms" link leads to a collapsed bank block: expand it.
   const openTarget = () => {
     const el = location.hash && document.getElementById(decodeURIComponent(location.hash.slice(1)));
     if (el && el.tagName === 'DETAILS') el.open = true;
@@ -20,10 +20,10 @@
     const src = el.dataset.pdf;
     const obj = dlg.querySelector('object');
     title.textContent = el.dataset.title || el.textContent.trim();
-    // Ссылка на сайт банка — только у официальных бланков; бланк от вкладчика и так открыт целиком.
+    // A link to the bank site exists only for official forms; a depositor's form is already fully open.
     orig.hidden = !el.dataset.orig;
     orig.href = el.dataset.orig || '';
-    // <object> не перечитывает data на открытом элементе, поэтому каждый раз новый.
+    // <object> does not reload data on an open element, so a new one each time.
     const fresh = obj.cloneNode(false);
     fresh.data = `${src}#view=FitH`;
     obj.replaceWith(fresh);

@@ -1,15 +1,15 @@
-"""Своя копия PDF с сайта AOD (www.aod.rs), на которые ссылается справочник.
+"""Our own copy of the PDFs from the AOD site (www.aod.rs) that the reference links to.
 
-Справочник показывает их с нашего адреса, чтобы документы не пропали вместе с сайтом AOD.
-Раз в день `python -m alta_feedback.aod_archive` сверяет копию с оригиналом: недостающее
-докачивает, изменившийся оригинал кладёт рядом новой версией с датой, а отдаём всё равно
-первую копию — ту, что описана в манифесте.
+The reference shows them from our address so the documents do not vanish with the AOD site.
+Once a day `python -m alta_feedback.aod_archive` compares the copy with the original: it downloads
+what is missing, stores a changed original beside it as a new dated version, and still serves
+the first copy, the one described in the manifest.
 
-На диске (`$DATA_DIR/aod/`):
-  public/<name>    — отдаётся по /docs/aod/<name>
-  private/<name>   — документы со списками кредиторов-частных лиц, наружу не отдаются
-  versions/<stem>-<YYYY-MM-DD>.pdf — оригинал, который поменялся после первой копии
-  check.log        — строка JSON на каждый прогон
+On disk (`$DATA_DIR/aod/`):
+  public/<name>    - served at /docs/aod/<name>
+  private/<name>   - documents with lists of private-person creditors, never served
+  versions/<stem>-<YYYY-MM-DD>.pdf - an original that changed after the first copy
+  check.log        - one JSON line per run
 """
 
 import hashlib
@@ -75,7 +75,7 @@ def file_sha256(path: Path) -> str:
 
 
 def known_hashes(root: Path, item: ArchivedPdf) -> set[str]:
-    """Хэши всего, что у нас уже лежит для документа: копия и сохранённые версии."""
+    """Hashes of everything we already hold for a document: the copy and saved versions."""
     stem = Path(item.name).stem
     paths = [copy_path(root, item), *(root / "versions").glob(f"{stem}-*.pdf")]
     return {file_sha256(p) for p in paths if p.is_file()}
@@ -88,7 +88,7 @@ def classify(has_copy: bool, fetched_sha: str, known: set[str]) -> str:
 
 
 def fetch_url(url: str) -> str:
-    """Веб-архив без `id_` отдаёт программам HTML-обёртку, а не сам файл."""
+    """The web archive without `id_` gives programs an HTML wrapper, not the file itself."""
     return re.sub(r"(web\.archive\.org/web/\d+)/", r"\1id_/", url)
 
 
@@ -97,9 +97,9 @@ class NotPdf(OSError):
 
 
 def download(url: str, dest: Path) -> str:
-    """Скачивает в dest и возвращает sha256; в память целиком не читает — монография 100 МБ.
+    """Downloads to dest and returns sha256; does not read it all into memory - a 100 MB monograph.
 
-    Ответ, который не начинается с %PDF (страница ошибки с кодом 200), — NotPdf.
+    A response that does not start with %PDF (an error page with code 200) is NotPdf.
     """
     request = urllib.request.Request(fetch_url(url), headers={"User-Agent": USER_AGENT})
     digest = hashlib.sha256()
@@ -142,10 +142,10 @@ def archive_files(root: Path) -> Iterator[Path]:
 
 
 def backup(root: Path, backup_dir: Path, day: str, files: list[Path] | None = None) -> Path:
-    """Архив целиком (или files внутри root) в <backup_dir>/<day>.tar.gz для ночной копии в R2.
+    """The whole archive (or files inside root) into <backup_dir>/<day>.tar.gz for the nightly copy to R2.
 
-    Новый tar — только если в архиве появилось что-то новее прошлого; иначе прошлый
-    просто «освежается», чтобы недельная проверка бэкапов видела, что задача жива.
+    A new tar only if something newer than last time appeared in the archive; otherwise the previous one
+    is just "refreshed", so the weekly backup check sees the job is alive.
     """
     backup_dir.mkdir(mode=0o700, parents=True, exist_ok=True)
     previous = max(backup_dir.glob("*.tar.gz"), key=lambda p: p.stat().st_mtime, default=None)
@@ -190,7 +190,7 @@ def main() -> int:
     started = time.monotonic()
     results = run(data_dir, Path(backup_dir) if backup_dir else None, load_manifest())
     print(f"{summary(results)} ({time.monotonic() - started:.0f}s)")
-    # Недоступный оригинал — не сбой задачи: сайт продолжает отдавать свою копию.
+    # An unavailable original is not a job failure: the site keeps serving its own copy.
     return 0
 
 

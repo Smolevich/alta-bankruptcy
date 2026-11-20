@@ -1,10 +1,10 @@
-// Активы ALTA banka на 30.06.2026 из обязательного раскрытия за I полугодие 2026 (PDF, с. 12),
-// в тысячах динаров, как в отчёте. Одни числа на три языка: перевод меняет только подписи.
+// ALTA banka assets on 30.06.2026 from the mandatory disclosure for H1 2026 (PDF, p. 12),
+// in thousands of dinars, as in the report. The same numbers for three languages: translation changes only labels.
 import type { Lang } from '../i18n';
 
 type Text = Record<Lang, string>;
 
-/** Средний курс Нацбанка на дату отчёта (30.06.2026), динаров за 1 €. */
+/** Average National Bank rate on the report date (30.06.2026), dinars per 1 €. */
 export const EUR_RATE = 117.3697;
 
 export const ASSETS_PDF = '/docs/alta-2026-h1-objavljivanje.pdf#page=12';

@@ -1,7 +1,7 @@
-// Часы отделения: открыто ли сейчас и когда откроется. Чистые функции, время уже по Белграду
-// (day: 0 — вс … 6 — сб, min — минуты от полуночи), чтобы проверять их тестами без часов.
+// Branch hours: is it open now and when it opens. Pure functions, the time is already Belgrade time
+// (day: 0 is Sun ... 6 is Sat, min is minutes from midnight), so tests can check them without clocks.
 
-// «08:00-15:00» и «8.00h - 15.00h» — оба вида записи из PDF AOD.
+// "08:00-15:00" and "8.00h - 15.00h" are both notations from the AOD PDF.
 export function parseRange(text) {
 	const m = (text ?? '').match(/(\d{1,2})[.:](\d{2})h?\s*-\s*(\d{1,2})[.:](\d{2})/);
 	return m ? [Number(m[1]) * 60 + Number(m[2]), Number(m[3]) * 60 + Number(m[4])] : null;
@@ -9,17 +9,17 @@ export function parseRange(text) {
 
 export const hhmm = (min) => `${Math.floor(min / 60)}:${String(min % 60).padStart(2, '0')}`;
 
-/** Часы дня недели: вс закрыто, сб — субботние, остальные — будние. */
+/** Hours of a weekday: Sunday closed, Saturday its own, the rest weekdays. */
 export function hoursOn(day, wd, sat) {
 	if (day === 0) return null;
 	return day === 6 ? sat : wd;
 }
 
 /**
- * Статус «можно ли пойти сейчас».
+ * Status "can I go now".
  * open: { state: 'open', closesAt, left }
- * до открытия сегодня: { state: 'later', opensAt }
- * день закончился или выходной: { state: 'closed', closedAt (null в выходной), nextDay, opensAt, tomorrow }
+ * before opening today: { state: 'later', opensAt }
+ * the day has ended or a day off: { state: 'closed', closedAt (null on a day off), nextDay, opensAt, tomorrow }
  */
 export function branchStatus(wd, sat, day, min) {
 	const today = hoursOn(day, wd, sat);
@@ -33,18 +33,18 @@ export function branchStatus(wd, sat, day, min) {
 	return { state: 'closed', closedAt: today ? today[1] : null, nextDay: null, opensAt: null, tomorrow: false };
 }
 
-// Окно приёма отметок: час до открытия (люди собираются у двери) и час после закрытия (отделение
-// закрывается не ровно в срок, а часы могут продлить). Зеркало на сервере: PRE_OPEN/POST_CLOSE в
-// backend/src/alta_feedback/queues.py, равенство проверяет scripts/branch-hours.test.mjs.
+// Mark acceptance window: an hour before opening (people gather at the door) and an hour after closing (a branch
+// does not close exactly on time, and hours can be extended). Mirrors PRE_OPEN/POST_CLOSE in
+// backend/src/alta_feedback/queues.py, equality is checked by scripts/branch-hours.test.mjs.
 export const PRE_OPEN_MIN = 60;
 export const POST_CLOSE_MIN = 60;
 
-/** Можно ли сейчас отметить очередь: открыто, час до открытия или час после закрытия. */
+/** Whether the queue can be marked now: open, an hour before opening or an hour after closing. */
 export function canReport(status, min) {
 	if (status.state === 'open') return true;
 	if (status.state === 'later') return status.opensAt - min <= PRE_OPEN_MIN;
 	return status.state === 'closed' && status.closedAt !== null && min - status.closedAt < POST_CLOSE_MIN;
 }
 
-/** Во сколько откроются отметки: за час до открытия. */
+/** When marks open: an hour before opening. */
 export const reportsFrom = (opensAt) => Math.max(opensAt - PRE_OPEN_MIN, 0);

@@ -1,5 +1,5 @@
-/* Тон: канцелярский реестр — бумага, чернила, одна «печать» цвета бордо.
-   Шрифты системные: сайт не ходит на чужие хосты (CSP, приватность читателей). */
+/* Tone: an office registry, with paper, ink and one burgundy "seal" color.
+      System fonts: the site does not call foreign hosts (CSP, reader privacy). */
 :root {
 	--serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Charter, Georgia, serif;
 	--paper: #f6f2e8;
@@ -30,12 +30,12 @@
 }
 h1, h2, h3, .site-title { font-family: var(--serif); letter-spacing: -0.01em; }
 .sl-markdown-content h2 { font-weight: 700; }
-/* Ничто не должно давать горизонтальную прокрутку на телефоне. */
+/* Nothing may cause horizontal scrolling on a phone. */
 html, body { overflow-x: clip; }
 .sl-markdown-content table { display: block; overflow-x: auto; }
 .sl-markdown-content pre, .sl-markdown-content code { overflow-wrap: anywhere; }
 
-/* ---- Блок «Сейчас» ---- */
+/* ---- "Now" block ---- */
 .status {
 	position: relative;
 	display: grid;
@@ -114,9 +114,9 @@ html, body { overflow-x: clip; }
 	.steps3 h3 { font-size: 1.05rem; }
 }
 
-/* ---- Три шага ---- */
+/* ---- Three steps ---- */
 .steps3 { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); align-items: stretch; margin: 1rem 0 2rem; }
-/* Starlight даёт каждому следующему блоку margin-top: из-за него плитки в ряду ехали вниз. */
+/* Starlight gives every following block margin-top, which pushed tiles in a row down. */
 .steps3 > div { margin: 0 !important; display: flex; flex-direction: column; min-width: 0; border-top: 4px solid var(--seal); background: #fffdf7; padding: 0.9rem 1rem 1rem; border-radius: 0 0 4px 4px; border-inline: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .steps3 h3 { margin: 0 0 0.4rem !important; font-size: 1.1rem; }
 .steps3 p { margin: 0 0 0.5rem !important; font-size: 0.95rem; }
@@ -128,14 +128,14 @@ html, body { overflow-x: clip; }
 .example { margin: 0 0 2rem; padding: 0.8rem 1rem; border-left: 4px solid var(--ink); background: #fffdf7; }
 .example p, .example ul { margin: 0.3rem 0 !important; }
 
-/* ---- Что дальше после решения суда ---- */
+/* ---- What comes after the court decision ---- */
 .next-steps ol { margin: 0.6rem 0 1rem; padding-left: 1.5rem; }
 .next-steps li { margin: 0 0 0.7rem !important; padding-left: 0.2rem; font-size: 0.95rem; overflow-wrap: anywhere; }
 .next-steps li::marker { font-weight: 700; color: var(--seal); }
 .court-case { margin: 0 0 2rem; padding: 0.8rem 1rem; border-left: 4px solid var(--seal); background: #fffdf7; font-size: 0.95rem; overflow-wrap: anywhere; }
 .court-case p, .court-case ol { margin: 0.3rem 0 !important; }
 
-/* ---- Новости ---- */
+/* ---- News ---- */
 .news { list-style: none; padding: 0; margin: 1rem 0; display: grid; gap: 1rem; }
 .news li { margin: 0; padding: 0.9rem 1rem; background: #fffdf7; border: 1px solid var(--line); border-left: 4px solid var(--ink); border-radius: 3px; }
 .news h3 { margin: 0.3rem 0; font-size: 1.1rem; }
@@ -146,7 +146,7 @@ html, body { overflow-x: clip; }
 .news-src { font-size: 0.85rem !important; color: #5a5448; overflow-wrap: anywhere; }
 .pub { padding: 0.05rem 0.5rem; border-radius: 99px; background: var(--ink); color: #fff; font-size: 0.75rem; }
 
-/* ---- Пометка для ИП ---- */
+/* ---- Sole proprietor (IP) note ---- */
 .for-ip { margin: 1rem 0; padding: 0.6rem 0.9rem; border: 1px dashed var(--ink); background: #fff8e1; border-radius: 3px; font-size: 0.95rem; }
 .for-ip strong { display: inline-block; margin-right: 0.4rem; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.08em; }
 .for-ip p { display: inline; margin: 0; }
@@ -156,13 +156,13 @@ html, body { overflow-x: clip; }
 .faq summary { cursor: pointer; font-weight: 700; }
 .faq p { margin: 0.5rem 0 0; }
 .faq p.faq-more { font-size: 0.9rem; overflow-wrap: anywhere; }
-/* Ссылки под ответом не в markdown-контенте: без этого они браузерные синие и фиолетовые. */
+/* Links under an answer are not in markdown content: without this they are browser blue and purple. */
 .faq a, .faq a:visited { color: var(--sl-color-text-accent); }
 .faq-open summary { list-style: none; cursor: default; pointer-events: none; }
 .faq-open summary::-webkit-details-marker { display: none; }
 .faq-all { margin-top: 0.75rem; font-weight: 700; }
 
-/* ---- Источники под страницей ---- */
+/* ---- Sources under the page ---- */
 .sources { margin-top: 3rem; padding: 1rem; border-top: 3px double var(--ink); font-size: 0.9rem; }
 .sources h2 { font-size: 1rem; margin: 0 0 0.5rem; }
 .sources h2 small { margin-left: 0.6rem; font: 400 0.8rem var(--sl-font-system); color: #5a5448; }
@@ -182,15 +182,15 @@ html, body { overflow-x: clip; }
 	.sources .kind { grid-column: 1 / -1; justify-self: start; }
 }
 
-/* Длинное название сайта не должно обрезаться в шапке на телефоне. */
+/* A long site name must not be cut off in the header on a phone. */
 @media (max-width: 520px) {
 	.site-title { font-size: 1rem; line-height: 1.15; white-space: normal; }
 }
 .site-title { min-width: 0; }
 
-/* ---- Плитки разделов на главной ----
-   Три шага маршрута со стрелками, ниже остальные разделы сеткой на 4 колонки без стрелок;
-   «Открыть» прижато к низу, на телефоне одна колонка. */
+/* ---- Section tiles on the home page ----
+      Three route steps with arrows, below them the other sections in a 4-column grid without arrows;
+      "Open" is pinned to the bottom, one column on a phone. */
 .flow { list-style: none; margin: 1.2rem 0 2rem; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.4rem 1.1rem; align-items: stretch; }
 .flow li { margin: 0; padding: 0; display: flex; position: relative; }
 .flow-tile { display: flex; flex-direction: column; flex: 1; min-width: 0; padding: 0.8rem 0.8rem 0.7rem; background: #fffdf7; border: 2px solid var(--ink); border-top: 5px solid var(--seal); border-radius: 4px; color: var(--ink); text-decoration: none; box-shadow: 4px 4px 0 var(--seal-soft); transition: transform 0.12s, box-shadow 0.12s; }
@@ -217,7 +217,7 @@ html, body { overflow-x: clip; }
 	.flow-acct { grid-column: auto; }
 }
 
-/* ---- Документы: карточки вместо широкой таблицы ---- */
+/* ---- Documents: cards instead of a wide table ---- */
 .docs { list-style: none; margin: 1rem 0 2rem; padding: 0; display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); align-items: stretch; }
 .docs li { margin: 0 !important; display: flex; }
 .doc { display: flex; flex-direction: column; flex: 1; min-width: 0; padding: 0.8rem 0.9rem; background: #fffdf7; border: 1px solid var(--line); border-left: 4px solid var(--ink); border-radius: 3px; }
@@ -228,7 +228,7 @@ html, body { overflow-x: clip; }
 .doc-meta dd { margin: 0; overflow-wrap: anywhere; }
 .doc-go { margin-top: auto; font-weight: 700; font-size: 0.9rem; }
 
-/* ---- Бланки AOD (FormCards.astro) ---- */
+/* ---- AOD forms (FormCards.astro) ---- */
 .form-cards { list-style: none; margin: 1rem 0 1.6rem; padding: 0; display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr)); align-items: stretch; }
 .form-cards > li { margin: 0 !important; min-width: 0; }
 .form-card { display: flex; flex-wrap: wrap; gap: 0.9rem; height: 100%; box-sizing: border-box; padding: 0.8rem 0.9rem; background: #fffdf7; border: 1px solid var(--line); border-left: 4px solid var(--seal); border-radius: 3px; }
@@ -248,7 +248,7 @@ html, body { overflow-x: clip; }
 .form-fields summary { cursor: pointer; font-weight: 700; color: var(--seal); padding: 0.3rem 0; }
 .form-fields ul { margin: 0.2rem 0 0.4rem; padding-left: 1.1rem; }
 .form-fields li { margin: 0 0 0.25rem; }
-/* В новостях карточки короче: без пояснения, оно в тексте новости. */
+/* In news the cards are shorter: no description, it is in the news text. */
 .form-cards.compact .form-what { display: none; }
 .form-cards.compact .form-thumb { width: 4.5rem; }
 @media (max-width: 420px) {
@@ -257,12 +257,12 @@ html, body { overflow-x: clip; }
 	.form-btn { flex: 1 1 100%; }
 }
 
-/* ---- Плашка «осторожно» на главной и предупреждение на страницах ---- */
+/* ---- "Caution" plate on the home page and a warning on pages ---- */
 .safe-strip { margin: 0 0 1.6rem; padding: 0.7rem 1rem; background: #fff8e1; border: 1px dashed var(--ink); border-radius: 3px; font-size: 0.95rem; }
 .safe-strip strong { margin-right: 0.3rem; }
 .safe-strip a { font-weight: 700; white-space: nowrap; }
 
-/* ---- Просмотр PDF и ссылки в новой вкладке ---- */
+/* ---- PDF viewer and links in a new tab ---- */
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .doc-go { display: flex; flex-wrap: wrap; gap: 0.2rem 1rem; }
 .doc-go a { color: var(--seal); }
@@ -279,7 +279,7 @@ html, body { overflow-x: clip; }
 .pdf-pages canvas { display: block; width: 100%; max-width: 60rem; height: auto; margin: 0 auto 0.8rem; background: #fff; box-shadow: 0 1px 4px rgb(0 0 0 / 0.35); }
 .pdf-note { max-width: 40rem; margin: 2rem auto; padding: 1rem; color: #fff; text-align: center; }
 .pdf-note a { color: #fff; font-weight: 700; }
-/* На телефоне просмотр во весь экран: страницы по ширине, листаются вертикально. */
+/* On a phone the viewer is full screen: pages at full width, scrolled vertically. */
 @media (max-width: 767px) {
 	.pdf-dialog { width: 100vw; height: 100vh; height: 100dvh; margin: 0; inset: 0; border: 0; border-radius: 0; }
 	.pdf-dialog header { padding: 0.45rem 0.7rem; }
@@ -294,7 +294,7 @@ html, body { overflow-x: clip; }
 .doc-look ul { margin: 0; padding-left: 1.1rem; }
 .doc-look li { margin: 0 0 0.25rem; }
 
-/* ---- Скриншоты в инструкциях (Shot.astro) и совет «сохраните сейчас» ---- */
+/* ---- Screenshots in instructions (Shot.astro) and the "save it now" tip ---- */
 .shot { margin: 0.8rem 0 1.4rem; max-width: 34rem; }
 .shot-narrow { max-width: 14rem; }
 .shot > a { display: block; }
@@ -307,11 +307,11 @@ html, body { overflow-x: clip; }
 .save-tip a, .save-tip a:visited { color: var(--seal); }
 .shot-row { display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-start; }
 
-/* ---- «Не юридическая консультация» сверху страниц с правовыми сроками ---- */
+/* ---- "Not legal advice" at the top of pages with legal deadlines ---- */
 .legal-note { display: block; margin: 0 0 1.2rem; padding: 0.5rem 0.8rem; border-left: 3px solid var(--ink); background: #fffdf7; font-size: 0.88rem; color: #3d4652; }
 .bank-note { padding-left: 0.7rem; border-left: 3px solid var(--seal); font-size: 0.92rem; color: #3d4652; }
 
-/* ---- Страница «Адвокат»: путь из четырёх шагов, две колонки, схема объединения, чек-лист ---- */
+/* ---- "Lawyer" page: a four-step path, two columns, a pooling diagram, a checklist ---- */
 .adv-lead { font-size: 1.05rem; }
 .adv-path { margin-top: 1.4rem; }
 .adv-path .flow-blurb { margin-bottom: 0; }
@@ -333,7 +333,7 @@ html, body { overflow-x: clip; }
 .adv-more[open] summary { margin-bottom: 0.5rem; }
 .adv-team { margin: 1rem 0; padding: 1rem 0.8rem; background: #fffdf7; border: 1px solid var(--line); border-radius: 4px; text-align: center; }
 .adv-team-top { display: inline-block; padding: 0.4rem 1.1rem; background: var(--seal); color: #fff; font: 700 1.05rem/1.2 var(--serif); border-radius: 4px; position: relative; }
-/* Линии от адвоката к вкладчикам: вертикаль вниз и горизонтальная шина над колонками. */
+/* Lines from the lawyer to the depositors: a vertical drop and a horizontal bus above the columns. */
 .adv-team-top::after { content: ''; position: absolute; left: 50%; top: 100%; width: 2px; height: 0.8rem; background: var(--seal); }
 .adv-team-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.6rem; margin-top: 0.8rem; padding-top: 0.8rem; position: relative; }
 .adv-team-row::before { content: ''; position: absolute; top: 0; left: 16.66%; right: 16.66%; height: 2px; background: var(--seal); }
@@ -365,7 +365,7 @@ html, body { overflow-x: clip; }
 	.adv-team-p { font-size: 0.74rem; padding: 0.45rem 0.3rem; }
 }
 
-/* ---- Два скриншота рядом: одинаковая высота, по центру; на телефоне друг под другом ---- */
+/* ---- Two screenshots side by side: equal height, centered; stacked on a phone ---- */
 .shot-pair { display: flex; justify-content: center; align-items: flex-start; gap: 1.5rem; margin: 1rem 0 1.4rem; }
 .shot-pair .shot { margin: 0; max-width: none; width: min-content; }
 .shot-pair .shot img { height: 26rem; width: auto; max-width: none; }
@@ -374,13 +374,13 @@ html, body { overflow-x: clip; }
 	.shot-pair .shot img { height: 24rem; }
 }
 
-/* ---- Collapsible.astro: архив неактуальных инструкций ---- */
+/* ---- Collapsible.astro: archive of outdated instructions ---- */
 .collapsible { margin: 1rem 0; border: 1px solid var(--line); border-radius: 6px; background: #fffdf7; }
 .collapsible > summary { cursor: pointer; padding: 0.7rem 1rem; font-weight: 600; color: #4a4538; }
 .collapsible[open] > summary { border-bottom: 1px solid var(--line); }
 .collapsible-body { padding: 0.2rem 1rem 0.8rem; }
 
-/* ---- BankAssets.astro: таблица активов; на телефоне строки становятся карточками ---- */
+/* ---- BankAssets.astro: assets table; on a phone rows become cards ---- */
 .assets { width: 100%; margin: 1rem 0 0.4rem; border-collapse: collapse; background: #fffdf7; font-size: 0.93rem; }
 .assets caption { text-align: left; font: 700 1.05rem/1.3 var(--serif); padding-bottom: 0.4rem; }
 .assets th, .assets td { padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--line); vertical-align: top; text-align: left; }
@@ -405,12 +405,12 @@ html, body { overflow-x: clip; }
 	.assets { background: none; }
 }
 
-/* ---- Страница «Что было на балансе ALTA»: блок «коротко» сверху ---- */
+/* ---- "What was on ALTA's balance sheet" page: the "in short" block at the top ---- */
 .assets-lead { margin: 0 0 1.2rem; padding: 0.8rem 1rem; background: #fffdf7; border: 2px solid var(--ink); border-radius: 4px; box-shadow: 4px 4px 0 var(--seal-soft); }
 .assets-lead ul { margin: 0; padding-left: 1.1rem; }
 .assets-lead li { margin: 0 0 0.3rem; }
 
-/* ---- Отделения Poštanska для выплаты (PostanskaBranches.astro): фильтры, карта и один список ---- */
+/* ---- Poštanska payout branches (PostanskaBranches.astro): filters, map and one list ---- */
 .branches { margin: 1rem 0 1.6rem; }
 .branches a { color: var(--sl-color-text-accent); }
 .branches p { margin: 0 0 0.6rem; }
@@ -420,7 +420,7 @@ html, body { overflow-x: clip; }
 .branches-phones { margin-top: 1rem !important; font-size: 0.88rem; }
 .branch-code { font-weight: 400; font-size: 0.78rem; color: #5a5448; white-space: nowrap; }
 .branch-n { color: #5a5448; font-weight: 400; }
-/* График загрузки по часам в строке */
+/* Hourly load chart in a row */
 .hist { margin: 0.2rem 0 0.3rem; max-width: 16rem; }
 .hist-lbl { font-size: 0.78rem; color: #5a5448; margin-top: 0.25rem; }
 .hist-svg { display: block; width: 100%; height: auto; color: #5a5448; }
@@ -428,7 +428,7 @@ html, body { overflow-x: clip; }
 .hist-svg .axis { stroke: currentColor; stroke-width: 0.5; opacity: 0.5; }
 .hist-svg .tick { fill: currentColor; font-size: 7px; }
 
-/* Фильтры: одна строка «Город · Будни|Сб · Ещё»; час, размер и порядок — в выпадающей панели «Ещё». */
+/* Filters: one row "City · Weekdays|Sat · More"; hour, size and order are in the "More" dropdown panel. */
 .branch-controls { position: relative; z-index: 6; display: flex; flex-wrap: nowrap; gap: 8px; align-items: center; margin: 0 0 0.8rem; }
 .branch-controls fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
 .bc-city { flex: 1 1 10rem; min-width: 0; }
@@ -436,12 +436,12 @@ html, body { overflow-x: clip; }
 .bc-field, .bc-more-body legend { display: flex; flex-direction: column; gap: 4px; font-size: 14px; color: #5a5448; min-width: 0; padding: 0; }
 .bc-more-body legend { margin-bottom: 4px; }
 .branch-controls select { width: 100%; }
-/* Все select сайта одного вида; переключатель языка Starlight в шапке — свой, его не трогаем. */
+/* All selects on the site look the same; the Starlight language switcher in the header is its own, we leave it alone. */
 select:not(starlight-lang-select select, starlight-theme-select select) { appearance: none; -webkit-appearance: none; box-sizing: border-box; max-width: 100%; text-overflow: ellipsis; min-height: 48px; margin: 0; padding: 0 44px 0 14px; border: 1px solid var(--line); border-radius: 12px; background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231b2430' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 14px center / 20px 20px; color: var(--ink); font: 400 16px/1.2 var(--sl-font-system); cursor: pointer; }
 select:not(starlight-lang-select select, starlight-theme-select select):hover { border-color: #b9b09a; }
 .bc-city select { padding-right: 36px; background-position: right 10px center; }
-/* Выпадающий список вместо системного (backend/.../static/select-combo.js), тот же вид, что у select выше;
-   его же стили для форм бэкенда — в backend/.../templates/base.html. */
+/* Dropdown instead of the system one (backend/.../static/select-combo.js), the same look as the select above;
+      its styles for the backend forms are in backend/.../templates/base.html. */
 .combo-native { display: none !important; }
 .combo-select { position: relative; min-width: 0; max-width: 100%; }
 .combo-select[hidden] { display: none; }
@@ -456,8 +456,8 @@ select:not(starlight-lang-select select, starlight-theme-select select):hover { 
 .combo-select::after { content: ''; position: absolute; right: 18px; top: 50%; width: 7px; height: 7px; margin-top: -6px; border: solid var(--ink); border-width: 0 2px 2px 0; transform: rotate(45deg); pointer-events: none; transition: transform 0.15s, margin-top 0.15s; }
 .combo-select.open::after { transform: rotate(-135deg); margin-top: -1px; }
 .combo-select.chosen:not(.combo-pick)::after { display: none; }
-/* Переключатель языка Starlight остаётся системным <select> (его слушает Starlight), но там, где браузер
-   умеет appearance: base-select (Chrome), его раскрытый список рисуем в стиле наших списков. */
+/* The Starlight language switcher stays a system <select> (Starlight listens to it), but where the browser
+      supports appearance: base-select (Chrome), its open list is drawn in the style of our lists. */
 @supports (appearance: base-select) {
 	starlight-lang-select select, starlight-lang-select select::picker(select) { appearance: base-select; }
 	starlight-lang-select select { border: 0; background: transparent; cursor: pointer; }
@@ -515,7 +515,7 @@ select:focus-visible, .bc-seg input:focus-visible + span, .branch-controls butto
 .q-tag-n { font-size: 13px; color: var(--q-muted); }
 .q-pin[data-dim='1'] { opacity: 0.35; }
 
-/* Список: строка-<details>; свёрнутая ~64 px — значок, название, статус, адрес. */
+/* List: a <details> row; collapsed ~64 px: icon, name, status, address. */
 .bl { font-family: var(--sl-font-system); }
 .bl p { margin: 0; }
 .bl-count { padding: 0 0 6px; font-size: 13px; color: var(--q-muted); }
@@ -540,7 +540,7 @@ select:focus-visible, .bc-seg input:focus-visible + span, .branch-controls butto
 .bl-far { flex: none; font-style: normal; font-size: 12px; color: var(--q-muted); }
 .bl-status, .bl-addr { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .bl-status { color: var(--ink); }
-/* Строка «мнения расходятся» длиннее обычной: переносим, а не обрезаем число голосов. */
+/* The "opinions differ" row is longer than usual: wrap, do not truncate the vote count. */
 .bl-status[data-wrap='1'] { white-space: normal; }
 .bl-addr { color: var(--q-muted); }
 .bl-body { display: flex; flex-direction: column; gap: 6px; padding: 8px 10px 10px 44px; font-size: 14px; line-height: 1.35; }
@@ -570,9 +570,9 @@ select:focus-visible, .bc-seg input:focus-visible + span, .branch-controls butto
 	.bl-row { break-inside: avoid; }
 }
 
-/* ---- Карта очередей Poštanska (PostanskaBranches.astro, MapLibre; ТЗ ux-spec этап 1) ---- */
-/* Палитра сайта (бумага, чернила, печать); цвета загрузки — смысловые, текст на них ≥ 4.5:1.
-   Граница «телефон / компьютер» — контейнер-запрос 560px: блок живёт в колонке Starlight. */
+/* ---- Poštanska queue map (PostanskaBranches.astro, MapLibre; ux-spec stage 1) ---- */
+/* Site palette (paper, ink, seal); load colors are semantic, text on them is >= 4.5:1.
+      The "phone / desktop" boundary is a 560px container query: the block lives in a Starlight column. */
 .branches { --q-muted: #5a5448; --q-none: #2d6a4f; --q-few: #d9b44a; --q-few-ink: #2b2200; --q-full: #b5541c; --q-outside: var(--seal); --q-unknown: #8a8478; --q-mixed: #6b665b; --q-closed: #1b2430; }
 .qmap { --q-muted: #5a5448; --q-none: #2d6a4f; --q-few: #d9b44a; --q-few-ink: #2b2200; --q-full: #b5541c; --q-outside: var(--seal); --q-unknown: #8a8478; --q-mixed: #6b665b; --q-closed: #1b2430;
 	--q-vh: 37.5rem;
@@ -587,8 +587,8 @@ select:focus-visible, .bc-seg input:focus-visible + span, .branch-controls butto
 .qmap-tabs button { min-height: 44px; font-size: 0.95rem; padding: 0.4rem 0.9rem; border: 1px solid transparent; border-radius: 3px; background: transparent; color: var(--q-muted); cursor: pointer; }
 .qmap-tabs button[aria-selected='true'] { background: #fbf8f0; border-color: var(--line); color: var(--ink); font-weight: 700; box-shadow: inset 0 -2px 0 var(--seal); }
 
-/* Компьютер: панель 15rem слева (список города или карточка), карта справа, легенда под панелью. */
-/* Слева — кнопка отметки и под ней список с прокруткой внутри; справа карта. Ряд списка гибкий: его высоту задаёт карта. */
+/* Desktop: a 15rem panel on the left (city list or card), the map on the right, the legend under the panel. */
+/* Left: the mark button and below it a list that scrolls inside; right: the map. The list row is flexible: the map sets its height. */
 .qmap-body { display: grid; grid-template-columns: 17rem minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto; grid-template-areas: 'panel view' 'list view' 'foot foot'; }
 .bl-box { grid-area: list; position: relative; min-height: 12rem; border-top: 1px solid var(--line); }
 .bl-box > .bl { position: absolute; inset: 0; overflow-y: auto; overscroll-behavior: contain; padding: 8px 0.8rem 0.8rem; }
@@ -601,7 +601,7 @@ select:focus-visible, .bc-seg input:focus-visible + span, .branch-controls butto
 .q-report { display: flex; align-items: center; gap: 0.55rem; min-height: 56px; padding: 0.5rem 0.9rem; border: 0; border-radius: 4px; background: var(--seal); color: #fff !important; font-weight: 700 !important; font-size: 1rem; text-align: left; line-height: 1.2; cursor: pointer; }
 .q-report svg { width: 1.4rem; height: 1.4rem; flex: none; }
 .q-report:hover { background: #6f1d16; }
-/* Всё закрыто: кнопка без действия только занимает экран, причину и время открытия говорит строка под ней. */
+/* Everything is closed: a button with no action only takes up the screen, the line under it gives the reason and opening time. */
 .q-report[data-closed='1'] { display: none; }
 .q-report[aria-busy='true'] svg { animation: q-spin 1s linear infinite; }
 @keyframes q-spin { to { transform: rotate(360deg); } }
@@ -609,7 +609,7 @@ select:focus-visible, .bc-seg input:focus-visible + span, .branch-controls butto
 .q-msg:empty { display: none; }
 .q-scale { font-size: 0.85rem; color: var(--ink); font-weight: 700; }
 
-/* Строки списка: и в панели, и на вкладке «Список», и в выборе отделения. */
+/* List rows: in the panel, on the "List" tab and in the branch choice. */
 .q-rows { list-style: none; margin: 0; padding: 0; }
 .q-rows li { margin: 0 0 0.35rem !important; }
 .q-rows button { display: flex; gap: 0.55rem; align-items: flex-start; width: 100%; min-height: 64px; box-sizing: border-box; text-align: left; font-size: 0.9rem; padding: 0.5rem 0.6rem; border: 1px solid var(--line); border-radius: 3px; background: #fffdf7; cursor: pointer; }
@@ -654,8 +654,8 @@ select:focus-visible, .bc-seg input:focus-visible + span, .branch-controls butto
 .q-mini-closed { background: var(--q-closed); }
 .qmap-caption { font-size: 0.76rem; line-height: 1.35; color: var(--q-muted); }
 
-/* Пин: капля, остриё ровно на координате (Marker anchor 'bottom'). На корне — только размеры:
-   position/transform корня принадлежат MapLibre (класс maplibregl-marker). */
+/* Pin: a drop, the tip exactly on the coordinate (Marker anchor 'bottom'). The root gets only sizes:
+      position/transform of the root belong to MapLibre (the maplibregl-marker class). */
 .q-pin { width: 44px; height: 48px; padding: 0; border: 0; background: none; cursor: pointer; }
 .q-drop { position: absolute; left: 6px; bottom: 0; width: 32px; height: 42px; overflow: visible; transform-origin: 50% 100%; transition: transform 0.15s; filter: drop-shadow(0 1px 2px rgba(27, 36, 48, 0.35)); }
 .q-drop-body { fill: var(--pc); stroke: var(--ink); stroke-width: 2; }
@@ -674,7 +674,7 @@ select:focus-visible, .bc-seg input:focus-visible + span, .branch-controls butto
 .q-pin-name { top: 25px; display: none; max-width: 11rem; overflow: hidden; text-overflow: ellipsis; font-size: 0.72rem; }
 .qmap[data-near] .q-pin-name { display: block; }
 
-/* Карточка отделения: на компьютере — содержимое панели, на телефоне — нижний лист над картой. */
+/* Branch card: on desktop the panel content, on a phone a bottom sheet over the map. */
 .q-card { grid-column: 1; grid-row: 1 / 3; z-index: 4; min-height: 0; overflow-y: auto; overscroll-behavior: contain; background: #fffdf7; border-right: 1px solid var(--line); }
 .q-card-head { position: sticky; top: 0; z-index: 1; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: 0.2rem 0.6rem; padding: 0.8rem 1rem 0.5rem; background: #fffdf7; }
 .q-grip { display: none; }
@@ -696,7 +696,7 @@ select:focus-visible, .bc-seg input:focus-visible + span, .branch-controls butto
 .q-pick svg { width: 1.35rem; height: 1.35rem; flex: none; }
 .q-pick[aria-pressed='true'] { border-color: var(--ink); box-shadow: 0 0 0 2px #fffdf7 inset; }
 .q-short { display: none; }
-/* Компьютер: карточка плотнее, варианты — четыре строки списком, чтобы всё помещалось без прокрутки. */
+/* Desktop: a denser card, options as a four-row list so everything fits without scrolling. */
 @container (min-width: 561px) {
 	.q-card-head { padding: 0.5rem 0.9rem 0.2rem; }
 	.q-ask { margin: 0.2rem 0 0.35rem !important; }
@@ -708,7 +708,7 @@ select:focus-visible, .bc-seg input:focus-visible + span, .branch-controls butto
 	.q-pick:hover { background: #f7f2e6; }
 	.q-pick[aria-pressed='true'] { border-color: var(--ink); border-left-color: var(--pc); background: #f7f2e6; }
 }
-/* Блок шире колонки текста: занимает и место оглавления «На этой странице» (оно прячется, пока блок на экране). */
+/* The block is wider than the text column: it also takes the place of the "On this page" contents (hidden while the block is on screen). */
 @media (min-width: 72em) {
 	.qmap { --q-extra: max(18.75rem, calc(18.75rem + (100vw - 82.5rem) / 2)); width: min(1100px, calc(100% + var(--q-extra) - 2.5rem)); position: relative; z-index: 2; }
 	:root[data-qmap-wide] .right-sidebar-container { visibility: hidden; }
@@ -732,7 +732,7 @@ select:focus-visible, .bc-seg input:focus-visible + span, .branch-controls butto
 .q-done { padding: 0.6rem 0.7rem; border-left: 4px solid var(--q-none); background: #eef5ef; display: flex; flex-direction: column; gap: 0.25rem; }
 .q-choose button { min-height: 56px; }
 
-/* Карточка: шапка, блок статуса, блоки «Очередь» и «Часы работы», ряд кнопок, свёрнутые строки (ТЗ card-redesign). */
+/* Card: header, status block, "Queue" and "Opening hours" blocks, button row, collapsed rows (card-redesign spec). */
 .q-card p { margin: 0; }
 .q-ic { width: 20px; height: 20px; flex: none; }
 .q-title { grid-column: 1; grid-row: 2; min-width: 0; }
@@ -741,7 +741,7 @@ select:focus-visible, .bc-seg input:focus-visible + span, .branch-controls butto
 .q-x { grid-column: 2; grid-row: 2; display: grid; place-items: center; width: 36px; height: 36px; padding: 0; border: 1px solid var(--line); border-radius: 50%; background: #fff; color: var(--ink); cursor: pointer; }
 .q-stale { display: flex; gap: 0.4rem; align-items: center; font-size: 13px; color: var(--seal); }
 .q-stale .q-ic { width: 16px; height: 16px; }
-/* Карточка: статус, очередь и «Сегодня» — по одной строке; неделя, размер, загрузка — под «Подробнее». */
+/* Card: status, queue and "Today" take one line each; week, size, load are under "Details". */
 .q-line { display: flex; gap: 8px; align-items: center; font-size: 15px; line-height: 1.3; }
 .q-line > .q-ic { width: 18px; height: 18px; color: var(--q-muted); }
 .q-line b { font-weight: 600; }
@@ -757,7 +757,7 @@ select:focus-visible, .bc-seg input:focus-visible + span, .branch-controls butto
 .q-details-body .q-week { margin-top: 2px; }
 .bl-obs, .q-obs { margin: 4px 0; }
 .bl-obs > summary, .q-details .q-obs > summary { display: flex; align-items: center; gap: 8px; min-height: 32px; font-size: 0.9em; font-weight: 600; color: var(--sl-color-gray-3); cursor: pointer; list-style: none; }
-/* Шеврон как у «Ещё фильтры» (.bc-more): без него свёрнутый блок на телефоне читается как подзаголовок. */
+/* Chevron like on "More filters" (.bc-more): without it the collapsed block on a phone reads as a subheading. */
 .bl-obs > summary::-webkit-details-marker, .q-details .q-obs > summary::-webkit-details-marker { display: none; }
 .bl-obs > summary::after, .q-details .q-obs > summary::after { content: ''; flex: none; width: 7px; height: 7px; border: solid currentColor; border-width: 0 2px 2px 0; transform: translateY(-2px) rotate(45deg); transition: transform 0.15s; }
 .bl-obs[open] > summary::after, .q-details .q-obs[open] > summary::after { transform: translateY(2px) rotate(-135deg); }
@@ -808,7 +808,7 @@ select:focus-visible, .bc-seg input:focus-visible + span, .branch-controls butto
 .q-foot { display: flex; gap: 8px; align-items: flex-start; padding-top: 10px; font-size: 13px; color: var(--q-muted); }
 .q-foot .q-ic { width: 16px; height: 16px; margin-top: 1px; }
 .q-legend-link { padding: 0; border: 0; background: none; font: inherit; color: var(--seal); text-decoration: underline; cursor: pointer; }
-/* Экран от 900 px: карточка — левая панель 400 px. */
+/* Screen from 900 px: the card is a 400 px left panel. */
 @media (min-width: 900px) {
 	.qmap[data-card] .qmap-body { grid-template-columns: 25rem minmax(0, 1fr); }
 }
@@ -836,12 +836,12 @@ select:focus-visible, .bc-seg input:focus-visible + span, .branch-controls butto
 	.q-scale { display: none; }
 	.qmap-tabs { width: 100%; }
 	.qmap-tabs button { flex: 1; }
-	/* Нижний лист в той же ячейке сетки, что и карта: прижат к низу карты, два положения. */
-	/* Лист прижат к низу экрана; кратко — по высоте содержимого (до 60% экрана), карта видна над ним. */
+	/* The bottom sheet in the same grid cell as the map: pinned to the map bottom, two positions. */
+	/* The sheet is pinned to the screen bottom; brief is content height (up to 60% of the screen), the map is visible above it. */
 	.qmap[data-card='half'] .q-card { position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; height: auto; max-height: 60vh; max-height: 60dvh; }
-	/* Встроенный браузер Telegram рисует плавающую панель (~110px) поверх низа страницы: запас, чтобы кнопки листа были над ней. */
+	/* The Telegram in-app browser draws a floating bar (~110px) over the page bottom: leave room so the sheet buttons are above it. */
 	.q-card { grid-area: view; align-self: end; height: 62%; border: 0; border-top: 1px solid var(--line); border-radius: 14px 14px 0 0; box-shadow: 0 -4px 16px rgba(27, 36, 48, 0.2); padding-bottom: calc(env(safe-area-inset-bottom) + 7rem); overflow-anchor: none; overscroll-behavior: contain; transition: height 0.25s ease; }
-	/* Развёрнутый лист — до 90% экрана поверх страницы; над ним остаётся полоска карты, внутри своя прокрутка. */
+	/* The expanded sheet is up to 90% of the screen over the page; a strip of map stays above it, with its own scrolling inside. */
 	.qmap[data-card='full'] .q-card { position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; height: min(90vh, 100vh - var(--sl-nav-height) - var(--sl-mobile-toc-height) - 2rem); height: min(90dvh, 100dvh - var(--sl-nav-height) - var(--sl-mobile-toc-height) - 2rem); }
 	.q-card-head { grid-template-columns: minmax(0, 1fr) auto; padding-top: 0; touch-action: none; }
 	.q-grip { grid-column: 1 / -1; display: flex; justify-content: center; align-items: center; height: 28px; margin: 0 -0.8rem; border: 0; background: none; cursor: grab; }
@@ -867,18 +867,18 @@ select:focus-visible, .bc-seg input:focus-visible + span, .branch-controls butto
 .cd-scale .cd-no { border-color: var(--seal); }
 .cd-tag { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; }
 .cd-date { font-size: 0.9rem; font-weight: 700; }
-/* Дни 91–120 — запасной вариант, а не второй срок: дату не выделяем наравне с 90-м днём. */
+/* Days 91–120 are a fallback, not a second deadline: do not highlight the date as strongly as day 90. */
 .cd-scale .cd-late .cd-date { font-weight: 400; }
 .deadline-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1rem; margin: 0 0 1rem; font: 700 1.15rem/1.3 var(--serif); }
 .deadline-cta .form-btn { min-height: 2.5rem; }
 
-/* Чек-листы из Markdown (- [ ]): системный флажок там серый и 13 px — рисуем свой, в цвет сайта. */
+/* Checklists from Markdown (- [ ]): the system checkbox there is gray and 13 px, so we draw our own in the site color. */
 .sl-markdown-content .contains-task-list { padding-left: 0; list-style: none; }
 .sl-markdown-content .task-list-item { position: relative; padding-left: 30px; }
 .sl-markdown-content .task-list-item input[type='checkbox'] { position: absolute; left: 0; top: 0.2em; appearance: none; -webkit-appearance: none; width: 20px; height: 20px; margin: 0; border: 1.5px solid var(--ink); border-radius: 5px; background: #fff; opacity: 1; }
 .sl-markdown-content .task-list-item input[type='checkbox']:checked { border-color: var(--seal); background: var(--seal) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 12 5 5 9-10'/%3E%3C/svg%3E") no-repeat center / 14px 14px; }
 
-/* ---- Рабочий чек-лист (Checklist.astro): галочки в localStorage, печать блока на один лист A4 ---- */
+/* ---- Working checklist (Checklist.astro): ticks in localStorage, the block prints on one A4 sheet ---- */
 .checklist { margin: 1rem 0 1.5rem; padding: 0.9rem 1rem 1rem; border: 1px solid var(--line); border-radius: 4px; background: #fffdf7; box-shadow: 6px 6px 0 var(--seal-soft); }
 .checklist-print-head { display: none; }
 .checklist-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin: 0 0 0.6rem; }
@@ -916,10 +916,10 @@ select:focus-visible, .bc-seg input:focus-visible + span, .branch-controls butto
 	html.print-checklist .checklist ul:not(.contains-task-list) { padding-left: 12pt; }
 	@page { size: A4; margin: 11mm; }
 }
-/* Пометка утверждения без официального источника («со слов вкладчика»). */
+/* Mark for a claim without an official source ("per a depositor"). */
 .unofficial { color: var(--seal); font-weight: 700; }
 
-/* ---- Bank: схема владения (Ownership.astro). Дерево сверху вниз: на телефоне дочки уходят на «рельсу», чтобы не было прокрутки вбок ---- */
+/* ---- Bank: ownership diagram (Ownership.astro). A tree top to bottom: on a phone subsidiaries go onto a "rail" so there is no sideways scroll ---- */
 .own { margin: 1rem 0 1.6rem; padding: 16px 14px; background: #fffdf7; border: 1px solid var(--line); border-radius: 4px; }
 .own-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 0 0 16px; padding: 0 0 12px; border-bottom: 1px solid var(--line); font-size: 0.8rem; color: #5a5448; }
 .own-legend span { display: inline-flex; align-items: center; gap: 6px; }
@@ -947,13 +947,13 @@ select:focus-visible, .bc-seg input:focus-visible + span, .branch-controls butto
 .own-bank .own-ico { background: var(--seal); color: #fff; }
 .own-here { display: inline-block; margin-top: 4px; padding: 2px 8px; border-radius: 999px; background: var(--ink); color: #fff; font-size: 0.75rem; font-weight: 700; }
 .own-here .own-ref { background: #3a4554; color: #fff; }
-/* Связь: вертикальная линия со стрелкой и подписью «сколько принадлежит». */
+/* Link: a vertical line with an arrow and a label "how much is owned". */
 .own-edge { position: relative; display: flex; justify-content: center; padding: 10px 0 16px; }
 .own-edge-short { padding-top: 6px; }
 .own-edge::before { content: ''; position: absolute; top: 0; bottom: 6px; left: calc(50% - 1px); width: 2px; background: var(--ink); }
 .own-edge::after { content: ''; position: absolute; bottom: 0; left: calc(50% - 6px); border: 6px solid transparent; border-top-color: var(--ink); border-bottom-width: 0; }
 .own-pill { position: relative; padding: 3px 10px; background: #fffdf7; border: 1.5px solid var(--ink); border-radius: 999px; font-size: 0.84rem; font-weight: 700; text-align: center; }
-/* Граница между ALTA GROUP и банком — через всю ширину рамки схемы. */
+/* The boundary between ALTA GROUP and the bank runs across the whole width of the diagram frame. */
 .own-wall { position: relative; display: flex; justify-content: center; margin: 2px -14px 0; padding: 8px 14px; }
 .own-wall::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; border-top: 2px dashed var(--seal); }
 .own-wall p { position: relative; margin: 0; max-width: 420px; padding: 6px 10px; background: #fffdf7; border: 2px solid var(--seal); border-radius: 6px; color: var(--seal); font-size: 0.84rem; font-weight: 700; line-height: 1.3; text-align: center; }

@@ -1,5 +1,5 @@
-// Первоисточники по Univerzal banka: что в каждом документе, указано по самому тексту PDF/страницы.
-// Списки кредиторов в документах AOD содержат имена людей, здесь их нет: только очередь, процент и сумма.
+// Primary sources on Univerzal banka: what each document contains, stated from the text of the PDF/page itself.
+// Creditor lists in AOD documents contain people's names, they are not here: only queue, percent and amount.
 import type { Lang } from '../i18n';
 
 type Text = Record<Lang, string>;
@@ -9,7 +9,7 @@ export type Source = {
 	date: Text;
 	main: Text;
 	url: string;
-	/** Подпись у ссылки: PDF с размером или страница. */
+	/** Link label: a PDF with its size or a page. */
 	meta: Text;
 };
 
@@ -318,8 +318,8 @@ export const UNIVERZAL_SOURCES: Source[] = [
 	},
 ];
 
-// «На что смотреть»: страница и пункты по самим PDF (pdftotext/OCR). Подсветки внутри PDF нет, только указатели.
-// Имена и адреса из списков кредиторов сюда не попадают: описан только шаблон строки.
+// "What to look at": a page and items taken from the PDFs themselves (pdftotext/OCR). There are no highlights inside the PDF, only pointers.
+// Names and addresses from creditor lists do not land here: only the row template is described.
 type Look = { page: number; look: Record<Lang, string[]> };
 
 const COLUMNS: Record<Lang, string> = {

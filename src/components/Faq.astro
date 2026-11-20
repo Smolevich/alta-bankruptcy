@@ -1,7 +1,7 @@
 ---
-// Вопросы видны на странице и дублируются в JSON-LD: разметка совпадает с текстом.
-// `more` — ссылки «подробнее/источник» под ответом; в JSON-LD не попадают, ответ там без них.
-// Пропсы не проходят через rehype-new-tab, поэтому новая вкладка и просмотр PDF — здесь.
+// Questions are visible on the page and duplicated in JSON-LD: the markup matches the text.
+// `more` is "details/source" links under the answer; they do not go into JSON-LD, the answer there is without them.
+// Props do not pass through rehype-new-tab, so the new tab and PDF viewing are handled here.
 import { opensInNewTab } from '../links';
 import { bindPercent } from '../rehype-nbsp-percent.mjs';
 import { viewerSrc } from '../data/pdfs';

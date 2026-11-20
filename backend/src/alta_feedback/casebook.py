@@ -1,7 +1,7 @@
-"""Картотека кейсов вкладчиков: разбор формы «Мой кейс», правки админа и публичная лента.
+"""Registry of depositor cases: parsing the "My case" form, admin edits and the public feed.
 
-Кейс — личная история: что человек подавал и куда, чем кончилось. Открытие счетов сюда не
-относится — для них отдельная форма /account со статистикой.
+A case is a personal story: what the person filed and where, how it ended. Account opening is not
+covered here: it has its own /account form with statistics.
 """
 
 from dataclasses import dataclass
@@ -41,7 +41,8 @@ class CaseReport:
 
 
 def scrubbed(raw: str | None) -> str:
-    """Свободный текст кейса: обрезаем пробелы и прячем похожее на телефон, email, счёт, JMBG."""
+    """Free text of a case: trim whitespace and hide anything that looks like a phone, email, account,
+    JMBG."""
     return scrub_pii((raw or "").strip())
 
 
@@ -54,7 +55,8 @@ def parse_date(raw: str, today: date) -> str | None:
 
 
 def parse_case(form: dict[str, str], today: date, lang: str = "ru") -> tuple[CaseReport, list[str]]:
-    """Кейс из полей формы и ошибки на языке страницы. Источники необязательны — это личный опыт."""
+    """A case from form fields and errors in the page language. Sources are optional: this is personal
+    experience."""
     msg = TEXTS[lang]["errors"]
     category = (form.get("category") or "").strip()
     summary = scrubbed(form.get("summary"))
@@ -88,7 +90,7 @@ def parse_case(form: dict[str, str], today: date, lang: str = "ru") -> tuple[Cas
 
 
 def parse_case_update(body: object) -> tuple[dict[str, str | int], str | None]:
-    """Поля, которые меняет админ: статус, комментарий, ссылка автора и флаги публикации."""
+    """Fields the admin changes: status, comment, author's link and publication flags."""
     if not isinstance(body, dict):
         return {}, "нужен JSON-объект"
     changes = {key: body[key] for key in EDITOR_FIELDS if key in body}
@@ -121,7 +123,7 @@ def files_public(item: dict) -> bool:
 
 
 def public_card(item: dict, files: list[dict]) -> dict:
-    """Карточка ленты: только то, что видно всем; контакт, хэш IP и комментарий админа не попадают."""
+    """Feed card: only what everyone sees; contact, IP hash and admin comment are excluded."""
     source_url = next((s for s in item["sources"] if is_http_url(s)), "")
     shown = files if files_public(item) else []
     return {

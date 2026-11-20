@@ -259,7 +259,7 @@ def test_site_header_follows_page_language(client, path, header):
 
 
 def public_body(client: TestClient, item_id: int = 1) -> str:
-    """HTML текста предложения на публичной странице."""
+    """HTML of the proposal text on the public page."""
     card = client.get(PAGE).text.split(f'id="p{item_id}"')[1].split("</article>")[0]
     return card.split('<div class="body rich">')[1].split("</div>")[0]
 
@@ -331,7 +331,7 @@ def test_clearing_editor_text_brings_back_author_text(client):
 
 
 def test_editor_text_at_limit_fits_into_request(client):
-    """Кириллица в JSON — по 2 байта на знак: длинный текст не должен упираться в общий лимит тела 16 КБ."""
+    """Cyrillic in JSON is 2 bytes per character: a long text must not hit the overall 16 KB body limit."""
     propose(client)
     assert edit(client, 1, edited_text="<p>" + "а" * 50_000 + "</p>").status_code == 200
 

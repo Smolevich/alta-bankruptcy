@@ -1,5 +1,5 @@
-// Проверка от ботов (proof-of-work в формате ALTCHA): по отметке «Я не робот» браузер
-// подбирает число. Ни сторонних сервисов, ни cookie — задача уже лежит в странице.
+// Bot check (proof-of-work in ALTCHA format): on the "I am not a robot" checkbox the browser
+// searches for a number. No third-party services and no cookies: the challenge is already in the page.
 (() => {
   const root = document.getElementById("pow");
   const box = document.getElementById("pow-box");
@@ -9,7 +9,7 @@
   const form = root && root.closest("form");
   const button = form && form.querySelector("button[type=submit]");
   if (!root || !box || !text || !hint || !field || !form) return;
-  // Подписи на языке страницы приходят в data-texts; без него — русские, как на /account.
+  // Labels in the page language arrive in data-texts; without it they are Russian, as on /account.
   const T = {
     label: "Я не робот", working: "Проверяем…", done: "Проверено",
     expired: "Проверка устарела — отметьте «Я не робот» ещё раз.",
@@ -21,9 +21,9 @@
   };
 
   const BATCH = 500;
-  // Мелькнувший за долю секунды спиннер выглядит как сбой, а не как проверка.
+  // A spinner that flashes for a fraction of a second looks like a failure, not a check.
   const MIN_VISIBLE_MS = 700;
-  // Запас на дорогу до сервера: решение, отправленное за секунду до конца срока, уже не примут.
+  // Margin for the trip to the server: a solution sent a second before the deadline will not be accepted.
   const EXPIRY_MARGIN_MS = 20000;
   const encoder = new TextEncoder();
   const hex = (buffer) => [...new Uint8Array(buffer)].map((b) => b.toString(16).padStart(2, "0")).join("");
@@ -32,7 +32,7 @@
     algorithm: data.algorithm, challenge: data.challenge, salt: data.salt, signature: data.signature,
     maxnumber: Number(data.maxnumber), ttl: Number(data.ttl),
   });
-  // Срок считаем по своим часам от момента получения: часы телефона могут врать.
+  // The deadline is counted by our own clock from the moment of receipt: a phone clock can lie.
   const withDeadline = (task) => ({ ...task, deadline: Date.now() + task.ttl * 1000 - EXPIRY_MARGIN_MS });
 
   let task = withDeadline(fromDataset(root.dataset));

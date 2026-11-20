@@ -1,4 +1,4 @@
-"""Чистые правила формы: что принимаем и как режем входные строки."""
+"""Pure form rules: what we accept and how input strings are trimmed."""
 
 import hashlib
 import re
@@ -23,7 +23,7 @@ class Suggestion:
 
 
 def clean_section_id(raw: str | None) -> str:
-    """id раздела из ссылки; всё, что не похоже на id, превращается в пустую строку."""
+    """Section id from a link; anything that does not look like an id becomes an empty string."""
     value = (raw or "").strip()
     return value if SECTION_ID_RE.match(value) else ""
 
@@ -33,7 +33,7 @@ def clip(raw: str | None, limit: int) -> str:
 
 
 def parse_form(form: dict[str, str]) -> tuple[Suggestion, list[str]]:
-    """Собирает правку из полей формы и возвращает её вместе со списком ошибок."""
+    """Builds an edit from form fields and returns it with a list of errors."""
     text = (form.get("text") or "").strip()
     source = (form.get("source") or "").strip()
     contact = (form.get("contact") or "").strip()
@@ -57,7 +57,7 @@ def parse_form(form: dict[str, str]) -> tuple[Suggestion, list[str]]:
 
 
 def is_bot(form: dict[str, str]) -> bool:
-    """Скрытое поле видят только боты: человек его не заполняет."""
+    """Only bots see the hidden field: a human does not fill it in."""
     return bool((form.get("website") or "").strip())
 
 

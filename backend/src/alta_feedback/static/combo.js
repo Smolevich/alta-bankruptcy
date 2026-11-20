@@ -1,10 +1,10 @@
-// Поля с подсказками: печатаешь — список фильтруется, можно выбрать или оставить своё.
-// Без скрипта работают те же поля через <datalist>; скрипт нужен ради списка на телефоне
-// (iOS показывает datalist неудобно) и тегов у документов.
+// Fields with suggestions: type and the list filters, pick one or keep your own.
+// Without the script the same fields work through <datalist>; the script is needed for the list on phones
+// (iOS shows datalist awkwardly) and for document tags.
 (() => {
   const norm = (text) => text.trim().toLocaleLowerCase("ru");
 
-  // Варианты читаем из <datalist> при каждом показе: у поля «Отделение» их меняет branch.js.
+  // Options are read from the <datalist> on every show: branch.js changes them for the "Branch" field.
   const optionsFor = (input) => {
     const listId = input.getAttribute("list");
     return () => {
@@ -13,7 +13,7 @@
     };
   };
 
-  // Выпадающий список под полем; pick вызывается с выбранной строкой.
+  // Dropdown under the field; pick is called with the chosen row.
   const attachList = (input, allOptions, pick, excluded) => {
     input.removeAttribute("list");
     input.setAttribute("role", "combobox");
@@ -55,7 +55,7 @@
         li.setAttribute("role", "option");
         li.textContent = item.label;
         if (item.custom) li.className = "custom";
-        // pointerdown, а не click: иначе blur поля закроет список раньше выбора.
+        // pointerdown, not click: otherwise the field's blur closes the list before the choice.
         li.addEventListener("pointerdown", (event) => { event.preventDefault(); pick(item.text); });
         return li;
       }));
@@ -93,7 +93,7 @@
     const control = attachList(input, options, (value) => {
       input.value = value;
       control.close();
-      // Выбор из списка — тоже изменение поля: по нему branch.js обновляет подсказки отделений.
+      // A pick from the list is also a field change: branch.js updates branch suggestions on it.
       input.dispatchEvent(new Event("change", { bubbles: true }));
     }, noExclusions);
   };
@@ -117,7 +117,7 @@
       tags.append(tag);
     };
 
-    // Значения, вернувшиеся с сервера после ошибки, превращаем в теги.
+    // Values that came back from the server after an error become tags.
     const restored = chosen();
     tags.replaceChildren();
     restored.forEach(addTag);
@@ -128,7 +128,7 @@
       input.value = "";
       control.render(true);
     }, chosen);
-    // Напечатал своё и ушёл из поля — не теряем.
+    // Typed their own and left the field: do not lose it.
     input.addEventListener("change", () => {
       if (input.value.trim()) { addTag(input.value); input.value = ""; }
     });

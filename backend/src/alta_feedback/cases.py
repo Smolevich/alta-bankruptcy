@@ -1,7 +1,7 @@
-"""«Мой случай» на странице статистики: что просили по каждому банку у людей в такой же ситуации.
+"""The "My case" block on the stats page: what people in the same situation were asked for at each bank.
 
-Числа — только из принятых ответов формы (сколько разных людей); официальные правила банков и
-критерии из открытых чатов вкладчиков — из data/bank_criteria.json, у чатов чисел нет.
+Numbers come only from accepted form answers (how many different people); official bank rules and
+criteria from public depositor chats come from data/bank_criteria.json, and chats have no numbers.
 """
 
 import json
@@ -19,14 +19,14 @@ CASES: dict[str, str] = {
     "both": "Личный и ИП сразу",
 }
 VNZH: dict[str, str] = {"yes": "Есть ВНЖ / ПМЖ", "no": "Нет ВНЖ: белый картон или турист"}
-# «Оба сразу» — это и личная заявка, и заявка ИП.
+# "Both" means both a personal application and a sole-proprietor application.
 CASE_TYPES = {
     "personal": {"personal", "both"},
     "entrepreneur": {"entrepreneur", "both"},
     "both": {"both"},
 }
 VNZH_RESIDENCIES = {"yes": {"boravak"}, "no": {"white_card", "tourist"}}
-# Сколько разных людей нужно, чтобы назвать факт подтверждённым.
+# How many different people are needed to call a fact confirmed.
 CONFIRMED_MIN = 3
 
 
@@ -42,7 +42,7 @@ class CaseFilter:
 
 @dataclass(frozen=True)
 class Mark:
-    """Документ и сколько разных людей его назвали."""
+    """A document and how many different people named it."""
 
     name: str
     people: int
@@ -64,7 +64,7 @@ class Official:
 
 @dataclass(frozen=True)
 class Split:
-    """Документы у тех, кому открыли, и у тех, кому отказали, в одном банке."""
+    """Documents of those who got an account opened and of those who were refused, at one bank."""
 
     opened: int
     refused: int
@@ -97,7 +97,7 @@ def in_case(item: dict, case_filter: CaseFilter) -> bool:
 
 
 def person_of(item: dict) -> str:
-    """Один человек — один хэш IP; когда хэш уже стёрт, каждый ответ считаем отдельным человеком."""
+    """One person is one IP hash; when the hash is already erased, each answer counts as a separate person."""
     return item.get("person") or f"id:{item['id']}"
 
 
@@ -111,7 +111,7 @@ def document_marks(items: list[dict]) -> tuple[Mark, ...]:
 
 
 def split_of(items: list[dict]) -> Split | None:
-    """Есть и открытые, и отказы — показать, чем отличались документы; иначе None."""
+    """Both opened and refused exist: show how the documents differed; otherwise None."""
     opened = [item for item in items if item["result"] == "opened"]
     refused = [item for item in items if item["result"] == "refused"]
     if not opened or not refused:
@@ -129,7 +129,7 @@ def code_of(name: str) -> str | None:
 
 
 def wanted_types(case_filter: CaseFilter) -> set[str]:
-    """Для каких счетов нужны правила: «оба сразу» и «не выбрано» — для обоих."""
+    """Which accounts need rules: "both" and "not chosen" need them for both."""
     if case_filter.case in (None, "both"):
         return {"personal", "entrepreneur"}
     return {case_filter.case}
@@ -167,7 +167,7 @@ def bank_case(name: str, items: list[dict], raw: dict, case_filter: CaseFilter) 
 
 
 def case_banks(items: list[dict], case_filter: CaseFilter, criteria: Mapping[str, dict]) -> list[BankCase]:
-    """Банки с ответами в этом случае (больше людей — выше), потом банки только с правилами или чатами."""
+    """Banks with answers in this case (more people first), then banks with only rules or chats."""
     chosen = [item for item in items if in_case(item, case_filter)]
     by_bank: dict[str, list[dict]] = {}
     for item in chosen:
@@ -204,5 +204,5 @@ def criteria() -> dict[str, dict]:
 
 
 def criteria_checked() -> str:
-    """Дата проверки правил и критериев, ДД.ММ.ГГГГ."""
+    """Date the rules and criteria were checked, DD.MM.YYYY."""
     return ".".join(reversed(criteria_file()["checked"].split("-")))

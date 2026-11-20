@@ -1,6 +1,6 @@
-// Якоря заголовков страниц: короткие английские id, одни и те же для ru/en/sr.
-// Заголовки на всех языках идут в одном порядке, поэтому id задаём по порядку h2–h6.
-// Переименовал якорь — добавь старый в public/anchor-redirects.json, иначе разосланные ссылки сломаются.
+// Page heading anchors: short English ids, the same for ru/en/sr.
+// Headings in all languages come in the same order, so ids are assigned by h2–h6 order.
+// If you rename an anchor, add the old one to public/anchor-redirects.json, otherwise sent-out links break.
 export const HEADING_IDS = {
 	advokat: ['alone-or-lawyer', 'teaming-up', 'law-firm-offer', 'check-lawyer', 'what-to-ask'],
 	bank: ['ownership', 'board', 'executive-board', 'capital', 'unknowns'],

@@ -1,14 +1,14 @@
 ---
-// Единый редактор документов, заполняемых на сайте: кнопка на странице открывает полноэкранную модалку,
-// слева форма, справа живой предпросмотр PDF (на телефоне — вкладки «Форма / Документ»), сверху
-// «Скачать PDF» и «Закрыть». Всё в браузере: pdf-lib собирает PDF, pdf.js его рисует, на сервер не уходит ничего.
+// A single editor for documents filled in on the site: a button on the page opens a full-screen modal,
+// form on the left, live PDF preview on the right (tabs "Form / Document" on a phone), at the top
+// "Download PDF" and "Close". All in the browser: pdf-lib builds the PDF, pdf.js renders it, nothing goes to the server.
 //
-// Как добавить документ:
-// 1. Сборщик PDF: функция (values, fonts) => Uint8Array в src/lib/ (пример — prijava-pdf.ts), ключ в
+// How to add a document:
+// 1. PDF builder: a function (values, fonts) => Uint8Array in src/lib/ (example: prijava-pdf.ts), key in
 //    src/lib/doc-editor/builders.ts.
-// 2. Описание полей и групп: src/data/forms/<id>.ts по типу DocSpec (src/lib/doc-editor/spec.ts).
-// 3. Тексты ru/en/sr: раздел UI[lang][text] в src/i18n.ts — title, privacy, about, groups, fields.
-// 4. На странице: <DocEditor doc={spec} lang="…" />; ссылка #anchor открывает редактор.
+// 2. Fields and groups description: src/data/forms/<id>.ts of type DocSpec (src/lib/doc-editor/spec.ts).
+// 3. ru/en/sr texts: the UI[lang][text] section in src/i18n.ts: title, privacy, about, groups, fields.
+// 4. On the page: <DocEditor doc={spec} lang="…" />; an #anchor link opens the editor.
 import { UI, type Lang } from '../i18n';
 import type { DocSpec } from '../lib/doc-editor/spec';
 
@@ -53,7 +53,7 @@ const formId = `de-form-${doc.id}`;
 						<fieldset>
 							<legend>{t.groups[g.key]}</legend>
 							{g.fields.map((f) => {
-								// Третий элемент — предупреждение, которое надо прочесть до ввода, поэтому оно над полем.
+								// The third element is a warning that must be read before typing, so it sits above the field.
 								const [label, hint, warn] = t.fields[f.name] as readonly string[];
 								return (
 									<label>

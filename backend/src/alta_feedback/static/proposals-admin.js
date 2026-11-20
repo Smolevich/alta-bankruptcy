@@ -1,5 +1,5 @@
-// Админка предложений: вход — Cloudflare Access перед этой страницей, его cookie браузер шлёт сам.
-// Пока на сервере Access не настроен, страница показывает поле токена (он живёт только в sessionStorage).
+// Proposals admin: login is Cloudflare Access in front of this page, the browser sends its cookie itself.
+// While Access is not configured on the server, the page shows a token field (kept only in sessionStorage).
 (() => {
   const KEY = "alta-admin-token";
   const $ = (id) => document.getElementById(id);
@@ -12,8 +12,8 @@
 
   const storage = {
     get() { try { return sessionStorage.getItem(KEY) || ""; } catch { return ""; } },
-    set(v) { try { sessionStorage.setItem(KEY, v); } catch { /* приватный режим: токен живёт до перезагрузки */ } },
-    clear() { try { sessionStorage.removeItem(KEY); } catch { /* нечего чистить */ } },
+    set(v) { try { sessionStorage.setItem(KEY, v); } catch { /* private mode: the token lives until reload */ } },
+    clear() { try { sessionStorage.removeItem(KEY); } catch { /* nothing to clear */ } },
   };
   let token = login ? storage.get() : "";
 
@@ -25,7 +25,7 @@
   async function api(path, options = {}) {
     let response;
     try {
-      // manual: истёкшая сессия Access отвечает переходом на свою страницу входа, а не данными.
+      // manual: an expired Access session answers with a redirect to its login page, not data.
       const headers = { ...(token ? { Authorization: `Bearer ${token}` } : {}), ...(options.headers || {}) };
       response = await fetch(path, { ...options, headers, cache: "no-store", redirect: "manual" });
     } catch {
@@ -43,7 +43,7 @@
     return body;
   }
 
-  // Файлы кейсов закрыты так же, как список: берём их тем же запросом с входом, а показываем из blob.
+  // Case files are closed just like the list: fetch them with the same authenticated request and show from a blob.
   async function fileUrl(name) {
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
     const response = await fetch(`/admin/proposals/cases/files/${encodeURIComponent(name)}`, {
@@ -70,7 +70,7 @@
     f("title").textContent = item.title;
     f("meta").textContent = `№${item.id} · ${day(item.created_at)} · ${labels.targets[item.target] || item.target}`;
     f("contact").textContent = item.contact || "—";
-    // text_html и edited_text сервер отдаёт уже очищенными (richtext.py) — только разрешённые теги.
+    // text_html and edited_text come from the server already sanitized (richtext.py): only allowed tags.
     f("text").innerHTML = item.text_html;
     f("text").hidden = !item.text_html;
     redactor(row, item);
@@ -93,7 +93,7 @@
     f("edit-reset").hidden = !item.edited_text;
   }
 
-  // Редактор поднимается только по кнопке: на сотню строк сотня редакторов не нужна.
+  // The editor is created only on a button press: a hundred rows do not need a hundred editors.
   function redactor(row, item) {
     const f = (name) => row.querySelector(`[data-f="${name}"]`);
     let editor = null;
@@ -271,7 +271,7 @@
     $("heading").textContent = kind === "case" ? "Кейсы" : "Предложения";
   }
   $("kind").addEventListener("change", () => { chooseKind(); items = []; load(); });
-  // ?type=case — сразу на кейсы: ссылку удобно держать в закладках.
+  // ?type=case goes straight to cases: handy to keep the link in bookmarks.
   if (new URLSearchParams(window.location.search).get("type") === "case") {
     $("kind").value = "case";
     chooseKind();
