@@ -19,7 +19,7 @@ def client(tmp_path) -> TestClient:
 
 
 def challenge_from_page(page: str) -> Challenge:
-    """Задача ровно так, как её видит браузер: из data-атрибутов формы."""
+    """The challenge exactly as the browser sees it: from the form's data attributes."""
     def attr(name: str) -> str:
         return html.unescape(re.search(rf'data-{name}="([^"]*)"', page).group(1))
 
@@ -238,7 +238,7 @@ def test_stats_page_counts_only_accepted(client):
     raiffeisen = admin_items(client)[0]
     client.post(f"/admin/accounts/{raiffeisen['id']}/status", json={"status": "accepted"}, headers=AUTH)
     page = client.get("/account/stats").text
-    # Блок NBS называет все крупные банки, поэтому смотрим именно заголовки групп ответов.
+    # The NBS block names all major banks, so we look specifically at the answer group headings.
     heads = ('<div class="group-head"><b>Raiffeisen</b>', '<div class="group-head"><b>Banca Intesa</b>')
     assert tuple(head in page for head in heads) == (True, False)
 
@@ -427,7 +427,7 @@ def test_stats_page_lists_largest_banks_even_without_answers(client):
 
 
 def seed(client: TestClient, count: int, start: date = date(2026, 10, 31), **fields) -> None:
-    """count принятых ответов, по одному в день назад от start; id растут от свежих к старым."""
+    """count accepted answers, one per day back from start; ids grow from fresh to old."""
     rows = []
     for day in range(count):
         values = {

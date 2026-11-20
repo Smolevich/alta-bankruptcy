@@ -1,6 +1,6 @@
-// Плагин rehype: «50 %» и «бланк .docx» с обычным пробелом браузер переносит, и строка
-// начинается со знака «%» или с «.docx». Такие пробелы делаем неразрывными; код и
-// цитаты-исходники в markdown не трогаем.
+// rehype plugin: with a regular space the browser wraps "50 %" and "бланк .docx", and a line
+// starts with the "%" sign or with ".docx". Such spaces are made non-breaking; code and
+// markdown source quotes are left alone.
 const NBSP = '\u00a0';
 const SKIP = new Set(['code', 'pre', 'script', 'style']);
 const DIGIT_SPACE_PERCENT = /(\d)[ \t]+%/g;

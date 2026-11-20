@@ -1,8 +1,8 @@
 ---
-// Один просмотр PDF на страницу: его открывает любой элемент с data-pdf (кнопка «Просмотр» в карточках,
-// ссылка на PDF в тексте и в источниках). Страницы рисует pdf.js канвасами по ширине экрана: встроенный
-// просмотр браузера на iOS (Safari, браузер Telegram) показывает в <object> только первую страницу,
-// а открытый вкладкой PDF выглядит голым файлом. Без скрипта ссылки ведут на файл, кнопки скрыты.
+// One PDF viewer per page: any element with data-pdf opens it (the "View" button in cards,
+// a PDF link in the text and in sources). pdf.js draws pages on canvases at screen width: the browser's built-in
+// viewer on iOS (Safari, the Telegram browser) shows only the first page in <object>,
+// and a PDF opened in a tab looks like a bare file. Without the script links lead to the file, buttons are hidden.
 import { UI, type Lang } from '../i18n';
 
 const { lang = 'ru' } = Astro.props as { lang?: Lang };
@@ -31,7 +31,7 @@ const t = UI[lang];
 	import type { PDFDocumentProxy } from 'pdfjs-dist/legacy/build/pdf.mjs';
 	import workerSrc from 'pdfjs-dist/legacy/build/pdf.worker.min.mjs?url';
 
-	// pdf.js тяжёлый: грузим при первом открытии, а не на каждой странице.
+	// pdf.js is heavy: load on first open, not on every page.
 	const loadPdfjs = async () => {
 		const pdfjs = await import('pdfjs-dist/legacy/build/pdf.mjs');
 		pdfjs.GlobalWorkerOptions.workerSrc = workerSrc;
@@ -68,7 +68,7 @@ const t = UI[lang];
 			pages.append(p);
 		};
 
-		// Рисуем страницу, только когда она рядом с экраном: документы бывают на сотни страниц.
+		// Draw a page only when it is near the screen: documents can run to hundreds of pages.
 		const draw = async (canvas: HTMLCanvasElement, n: number, my: number) => {
 			if (!doc || my !== session || canvas.dataset.drawn) return;
 			canvas.dataset.drawn = '1';
@@ -87,7 +87,7 @@ const t = UI[lang];
 			const my = ++session;
 			title.textContent = el.dataset.title || el.textContent?.trim() || '';
 			orig.href = el.dataset.orig || (el as HTMLAnchorElement).href || src;
-			// У образцов от вкладчиков официального оригинала нет: ссылку «Оригинал» прячем.
+			// Depositor-supplied samples have no official original: hide the "Original" link.
 			orig.hidden = 'noOrig' in el.dataset;
 			down.href = src;
 			message(dlg.dataset.loading ?? '…');
@@ -114,7 +114,7 @@ const t = UI[lang];
 				},
 				{ root: pages, rootMargin: '150% 0px' },
 			);
-			// Размер первой страницы задаёт заготовки всех, чтобы прокрутка и #page=N работали до отрисовки.
+			// The first page's size sets placeholders for all, so scrolling and #page=N work before rendering.
 			const first = (await doc.getPage(1)).getViewport({ scale: 1 });
 			if (my !== session) return;
 			for (let n = 1; n <= doc.numPages; n++) {

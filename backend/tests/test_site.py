@@ -96,7 +96,7 @@ def test_site_csp_allows_map_worker_from_own_origin(client):
 
 
 def test_range_request_from_revalidating_browser_gets_partial_content(client):
-    # Регрессия: повторный визит слал Range с If-None-Match, получал 304, и карта была серой.
+    # Regression: Range with If-None-Match got 304 and the map stayed gray.
     etag = client.get("/map/tiles.pmtiles").headers["etag"]
     response = client.get("/map/tiles.pmtiles", headers={"Range": "bytes=0-9", "If-None-Match": etag})
     assert (response.status_code, response.content) == (206, bytes(range(10)))

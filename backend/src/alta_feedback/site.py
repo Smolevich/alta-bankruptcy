@@ -1,4 +1,4 @@
-"""Статичный справочник alta-bankruptcy на «/»: собранную CI папку отдаём как есть."""
+"""Static alta-bankruptcy reference at "/": the folder built by CI is served as is."""
 
 from pathlib import Path
 
@@ -11,37 +11,39 @@ from alta_feedback.aod_archive import ArchivedPdf
 
 DEFAULT_SITE_DIR = Path("/var/www/alta-bankruptcy")
 
-# Starlight вставляет встроенные скрипты и стили, а поиск Pagefind грузит wasm со своего же
-# адреса; всё остальное закрыто. Формы сервиса в этот CSP не попадают: у них свой.
+# Starlight inlines scripts and styles, and Pagefind search loads wasm from the same
+# origin; everything else is blocked. The service forms are not under this CSP: they have their own.
 SITE_CSP = (
     "default-src 'none'; "
     "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://static.cloudflareinsights.com; "
     "style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; "
-    # Карта отделений: MapLibre рисует в своём модульном воркере с нашего же адреса.
+    # Branch map: MapLibre draws in its own module worker from our own origin.
     "worker-src 'self' blob:; "
     "connect-src 'self' https://cloudflareinsights.com; "
     "form-action 'self'; frame-ancestors 'none'; base-uri 'none'"
 )
-# Встроенный просмотр PDF на странице документов: страница разрешает object и frame со своего адреса,
-# а сам PDF разрешает показывать себя только странице с того же адреса.
-# aod.rs остаётся в списке ради запасного пути ArchiveFiles: пока копии нет, просмотр уходит на оригинал.
+# Embedded PDF viewer on the documents page: the page allows object and frame from its own origin,
+# and the PDF itself allows only a page from the same origin to show it.
+# aod.rs stays in the list for the ArchiveFiles fallback: until a copy exists, the viewer falls back to
+# the original.
 EMBED = "'self' https://www.aod.rs"
 SITE_CSP = SITE_CSP.replace("form-action", f"object-src {EMBED}; frame-src {EMBED}; form-action")
 PDF_CSP = SITE_CSP.replace("frame-ancestors 'none'", "frame-ancestors 'self'")
-# Имена в /_astro/ содержат хэш содержимого, остальное (в том числе индекс поиска) меняется
-# без смены имени, и Cloudflare не должен держать его в кэше.
+# Names under /_astro/ contain a content hash; everything else (including the search index) changes
+# without a name change, and Cloudflare must not keep it in cache.
 IMMUTABLE = "public, max-age=31536000, immutable"
 REVALIDATE = "no-cache"
-# Копия документа AOD под своим именем не меняется (новая версия оригинала ложится рядом), но
-# манифест могут перевести на другую — поэтому сутки, а не immutable.
+# A copy of an AOD document under its own name does not change (a new version of the original lands beside
+# it), but
+# the manifest can be pointed at another one, hence a day, not immutable.
 ARCHIVE_CACHE = "public, max-age=86400"
 CONDITIONAL_HEADERS = {b"if-none-match", b"if-modified-since"}
 
 
 def without_conditionals_on_range(scope: Scope) -> Scope:
-    """Starlette на Range с If-None-Match отвечает 304 вместо 206, и pmtiles у повторного
-    посетителя падает («HTTP Byte Serving»): кусок файла всегда отдаём целиком (RFC 9110
-    разрешает игнорировать условные заголовки)."""
+    """Starlette answers a Range with If-None-Match by 304 instead of 206, and pmtiles fails
+    for a returning visitor ("HTTP Byte Serving"): always send the file slice in full (RFC 9110
+    allows ignoring conditional headers)."""
     headers = scope.get("headers", [])
     if not any(name == b"range" for name, _ in headers):
         return scope
@@ -54,14 +56,15 @@ class SiteFiles(StaticFiles):
         super().__init__(directory=directory, html=True, check_dir=False)
 
     async def check_config(self) -> None:
-        # До первого выката папки нет, и это не ошибка: сервис отвечает 404, а не 500.
+        # No folder before the first rollout, and that is not an error: the service answers 404, not 500.
         return
 
     async def get_response(self, path: str, scope: Scope):
         response = await super().get_response(path, without_conditionals_on_range(scope))
         if response.status_code == 307:
-            # Starlette шлёт 307 на адрес папки без слеша; это постоянное правило, и Google должен
-            # переносить сигналы на вариант со слешем, а не считать его временным.
+            # Starlette sends 307 for a folder address without a slash; this is a permanent rule, and
+            # Google should
+            # move signals to the slash variant rather than treat it as temporary.
             response.status_code = 308
         response.headers["Content-Security-Policy"] = PDF_CSP if path.endswith(".pdf") else SITE_CSP
         cache = IMMUTABLE if path.startswith("_astro/") and response.status_code == 200 else REVALIDATE
@@ -70,10 +73,10 @@ class SiteFiles(StaticFiles):
 
 
 class ArchiveFiles(StaticFiles):
-    """Публичные копии PDF с сайта AOD (/docs/aod/<name>), см. aod_archive.
+    """Public PDF copies from the AOD site (/docs/aod/<name>), see aod_archive.
 
-    Отдаём только то, что в манифесте помечено public: закрытые лежат в соседней папке,
-    куда этот обработчик не смотрит.
+    Serves only what the manifest marks public: closed ones are in a neighboring folder
+    this handler does not look at.
     """
 
     def __init__(self, directory: Path, manifest: dict[str, ArchivedPdf]) -> None:
@@ -92,7 +95,7 @@ class ArchiveFiles(StaticFiles):
         except HTTPException as e:
             if e.status_code != 404:
                 raise
-            # Копии ещё нет (первый прогон проверки не прошёл) — показываем оригинал.
+            # No copy yet (the first check run did not pass): show the original.
             return RedirectResponse(item.url, status_code=307)
         response.headers["Content-Security-Policy"] = PDF_CSP
         response.headers["Cache-Control"] = ARCHIVE_CACHE

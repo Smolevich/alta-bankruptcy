@@ -1,4 +1,4 @@
-// Текст в редакторе скрыт, поэтому нативный required не сработает: нужен либо текст, либо ссылка на документ.
+// The editor text is hidden, so native required will not work: either text or a document link is needed.
 (() => {
   const form = document.querySelector("form[data-body-required]");
   const text = document.getElementById("text");

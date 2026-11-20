@@ -1,9 +1,9 @@
-// Пријава потраживања физичког лица: текст образца AOD (potrazivanja.docx, 04.11.2026) слово в слово,
-// подсказки в скобках заменены значениями. Строка «телефон / мејл» — не из образца: её требует
-// инструкция AOD от 10.11.2026 (uputstvo.pdf, с. 1, п. 1), в образце от 04.11 такого поля нет. Документ собирается заново, а не накладывается на копию бланка:
-// введённый текст любой длины переносится по строкам, а не упирается в подчёркивания.
-// Шрифт — подмножество Liberation Serif: кириллица и č ć š ž đ. Знака ˮ (U+02EE) из оригинала в нём нет,
-// закрывающая кавычка печатается ” того же начертания.
+// Claim form of a natural person ("Пријава потраживања физичког лица"): the AOD sample text (potrazivanja.docx, 04.11.2026) word for word,
+// with hints in parentheses replaced by values. The "phone / email" row is not from the sample: it is required by the
+// AOD instruction of 10.11.2026 (uputstvo.pdf, p. 1, item 1), the 04.11 sample has no such field. The document is rebuilt rather than overlaid on a copy of the form:
+// entered text of any length wraps across lines instead of hitting the underscores.
+// The font is a Liberation Serif subset: Cyrillic and č ć š ž đ. The sign ˮ (U+02EE) from the original is not in it,
+// so the closing quote is printed as ” of the same style.
 import { PDFDocument, rgb, type PDFFont, type PDFPage } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
 
@@ -42,14 +42,14 @@ const SIZE = 11.5;
 const LEAD = SIZE * 1.45;
 const BLANK = '______________';
 
-// Пустое поле печатается подчёркиванием: бланк можно распечатать и дописать от руки.
+// An empty field is printed as an underline: the form can be printed and filled in by hand.
 const v = (s: string, blank = BLANK): Run => ({ t: s.trim() || blank, b: true });
 
-// В образце после даты стоит точка («од ____ . године»): у сербской даты она своя, вторую не добавляем.
+// In the sample a period follows the date ("од ____ . године"): the Serbian date has its own, so we do not add a second.
 const dated = (s: string, blank = `${BLANK}.`): Run => v(s.trim() && !s.trim().endsWith('.') ? `${s.trim()}.` : s, blank);
 
-// Слово без пробелов шире строки (длинный номер счёта, склеенное название) иначе вылезло бы за поле:
-// режем его по символам на куски, каждый из которых помещается в строку.
+// A word with no spaces wider than the line (a long account number, a glued name) would otherwise overflow the field:
+// split it by characters into chunks that each fit a line.
 function splitLong(t: string, f: PDFFont, width: number): { t: string; f: PDFFont }[] {
 	if (/^\s+$/.test(t) || f.widthOfTextAtSize(t, SIZE) <= width) return [{ t, f }];
 	const parts: { t: string; f: PDFFont }[] = [];
@@ -88,7 +88,7 @@ class Writer {
 		this.y -= h;
 	}
 
-	// Перенос по словам с сохранением жирного у значений: каждое слово меряется своим шрифтом.
+	// Word wrapping that keeps the bold of values: each word is measured with its own font.
 	para(runs: Run[], opts: { center?: boolean; indent?: number } = {}) {
 		const width = PAGE[0] - 2 * MARGIN - (opts.indent ?? 0);
 		const words: { t: string; f: PDFFont }[] = [];
@@ -123,7 +123,7 @@ class Writer {
 		}
 	}
 
-	// Пустой список печатается столькими же строками «*», сколько их в образце.
+	// An empty list is printed as as many "*" lines as the sample has.
 	bullets(items: string[], blankRows: number) {
 		const list = items.map((s) => s.trim()).filter(Boolean);
 		for (const item of list.length ? list : Array(blankRows).fill('')) this.para([{ t: '* ' }, v(item)], { indent: 14 });
@@ -191,8 +191,8 @@ export async function buildPrijava(d: PrijavaData, fontBytes: { regular: ArrayBu
 	w.para([{ t: 'У Т В Р Д И', b: true }], { center: true });
 	w.para([{ t: 'П О Т Р А Ж И В А Њ Е', b: true }], { center: true });
 	w.gap(LEAD / 2);
-	// «матични број» у физлица — это ЈМБГ (јединствени матични број грађана); «(ПИБ …)» в образце общий
-	// для всех кредиторов, у физлица его нет, и строка остаётся чертой, как в бланке.
+	// "матични број" for a natural person is the JMBG (јединствени матични број грађана); "(ПИБ …)" in the sample is shared
+	// by all creditors, a natural person has none, and the line stays a dash as in the form.
 	w.para([
 		{ t: 'Стечајном повериоцу ' }, v(d.name), { t: ' из ' }, v(d.address), { t: ' матични број ' }, v(d.jmbg),
 		{ t: ', (ПИБ ' }, v(''), { t: ') рачун број ' }, v(d.account), { t: ' у ' }, v(d.bank), { t: ' банци' },

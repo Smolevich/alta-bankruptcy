@@ -1,4 +1,4 @@
-"""Страницы называют то же число мест выплаты и городов, что и src/data/postanska-branches.json."""
+"""Pages name the same number of payout places and cities as src/data/postanska-branches.json."""
 
 import json
 import re
@@ -23,7 +23,7 @@ CITIES = {
 
 
 def city_of(naziv: str) -> str:
-    """Город из названия, как в PostanskaBranches.astro: «EKSPOZITURA NOVI SAD 3» → «NOVI SAD»."""
+    """City from the name, as in PostanskaBranches.astro: "EKSPOZITURA NOVI SAD 3" -> "NOVI SAD"."""
     name = re.sub(r"^(EKSPOZITURA|Samostalni šalter) ", "", naziv)
     return re.sub(r" \d+.*$", "", name).upper()
 

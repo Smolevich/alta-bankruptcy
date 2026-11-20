@@ -29,7 +29,7 @@ MANIFEST = {p.name: p for p in (PUBLIC, PRIVATE)}
 
 @pytest.fixture
 def origin(monkeypatch):
-    """Сайт AOD: url -> тело ответа; None — сайт не отвечает."""
+    """AOD site: url -> response body; None means the site does not respond."""
     pages: dict[str, bytes | None] = {}
 
     def fake_urlopen(request, timeout):

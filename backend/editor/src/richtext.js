@@ -1,5 +1,5 @@
-// Редактор текста предложения: Tiptap поверх <textarea>. Без JS остаётся обычное поле с простым текстом.
-// Сервер всё равно чистит HTML (richtext.py), здесь только удобство: те же теги, что он пропускает.
+// Proposal text editor: Tiptap over a <textarea>. Without JS the plain field with simple text remains.
+// The server cleans the HTML anyway (richtext.py); this is only convenience: the same tags it allows.
 import { Editor } from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
 
@@ -32,7 +32,7 @@ function escapeHtml(text) {
   return text.replace(/[&<>"]/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[ch]);
 }
 
-// Простой текст из поля без JS → абзацы; пустая строка разделяет абзацы, перевод строки — <br>.
+// Plain text from a field without JS -> paragraphs; an empty line separates paragraphs, a newline is <br>.
 export function plainToHtml(text) {
   return text
     .replace(/\r\n?/g, "\n")
@@ -105,8 +105,8 @@ function extensions() {
   ];
 }
 
-// Заменяет textarea редактором. format: "html" — в поле уже HTML, иначе простой текст.
-// Возвращает редактор; при каждом изменении textarea получает его HTML, а hidden text_format = html.
+// Replaces a textarea with the editor. format: "html" means the field already holds HTML, otherwise plain text.
+// Returns the editor; on every change the textarea gets its HTML, and the hidden text_format = html.
 export function mount(textarea, { format = "plain", onChange } = {}) {
   const box = document.createElement("div");
   box.className = "rt";
@@ -132,7 +132,7 @@ export function mount(textarea, { format = "plain", onChange } = {}) {
   return editor;
 }
 
-// Поле формы предложения: textarea[data-richtext] → редактор и скрытое text_format=html.
+// Proposal form field: textarea[data-richtext] -> editor and a hidden text_format=html.
 function enhanceForms() {
   for (const textarea of document.querySelectorAll("textarea[data-richtext]")) {
     const format = document.createElement("input");

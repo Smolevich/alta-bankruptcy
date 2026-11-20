@@ -5,7 +5,7 @@ import pytest
 from alta_feedback import queues
 from alta_feedback.queues import Closed, closed_until
 
-# 759 BEOGRAD 31 - ĐERAM: будни 8.00h - 17.00h, суббота 8.00h - 13.00h. 11.11.2026 — среда.
+# 759 BEOGRAD 31 - ĐERAM: weekdays 8.00h - 17.00h, Saturday 8.00h - 13.00h. 11.11.2026 is a Wednesday.
 BRANCH = "759"
 
 

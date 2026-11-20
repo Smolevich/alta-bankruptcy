@@ -1,19 +1,19 @@
-// Расчёт страховой выплаты ALTA — повторяет таблицу «ALTA: расчёт страховой выплаты (до 50 000 €)»
-// формула в формулу, чтобы цифры на сайте и в таблице совпадали до цента.
-// Основа: Закон о страховании вкладов ст. 2 п. 7, ст. 16, ст. 17; процедура AOD, разд. V.
+// ALTA insurance payout calculation: repeats the table "ALTA: insurance payout calculation (up to 50 000 €)"
+// formula for formula, so the numbers on the site and in the table match to the cent.
+// Basis: Deposit Insurance Law art. 2 para. 7, art. 16, art. 17; AOD procedure, section V.
 
-export const RATE = 117.5698; // средний курс НБС на 03.11.2026, курсовой лист № 210
+export const RATE = 117.5698; // average NBS rate on 03.11.2026, exchange list no. 210
 export const LIMIT = 50000;
 
 const round = (x, digits) => {
 	const k = 10 ** digits;
-	// EPSILON: 0.005 в двоичной записи чуть меньше, и без поправки округлялось бы вниз, не как в таблице.
+	// EPSILON: 0.005 in binary is slightly less, and without the correction it would round down, unlike the table.
 	return Math.round((x + Math.sign(x) * Number.EPSILON * Math.abs(x)) * k) / k;
 };
 
 /**
- * @param {{ eur?: number, rsd?: number, other?: number }} input — остатки на 03.11.2026 с процентами;
- *   other — прочие валюты, уже переведённые в евро; прибавляются к евро, как в таблице.
+ * @param {{ eur?: number, rsd?: number, other?: number }} input — balances on 03.11.2026 with interest;
+ *   other — other currencies already converted to euros; added to euros, as in the table.
  */
 export function payout({ eur = 0, rsd = 0, other = 0 }, rate = RATE, limit = LIMIT) {
 	const eurAll = eur + other;
@@ -36,7 +36,7 @@ export function payout({ eur = 0, rsd = 0, other = 0 }, rate = RATE, limit = LIM
 		payRsd,
 		claimEur: round(eurAll - payEur, 2),
 		claimRsd: round(rsd - payRsd, 2),
-		// Процедура AOD округляет доли до 6 знаков; расхождение — центы или несколько динаров.
+		// The AOD procedure rounds shares to 6 digits; the difference is cents or a few dinars.
 		aodEur: round(insured * round(eurShare, 6), 2),
 		aodRsd: round(insured * round(rsdShare, 6) * rate, 2),
 	};
@@ -45,10 +45,10 @@ export function payout({ eur = 0, rsd = 0, other = 0 }, rate = RATE, limit = LIM
 const AMOUNT = /^(\d{1,3}(?:[.,]\d{3})+|\d+)(?:[.,](\d{1,2}))?$/;
 
 /**
- * Разбирает сумму так, как её пишут в Сербии, России и по-английски: «60.000», «60,000», «50.000,50», «60 000».
- * Точка или запятая перед группой ровно из трёх цифр — разделитель тысяч, перед 1–2 последними цифрами — десятичная.
+ * Parses an amount the way it is written in Serbia, Russia and in English: "60.000", "60,000", "50.000,50", "60 000".
+ * A dot or comma before a group of exactly three digits is a thousands separator, before the last 1-2 digits a decimal one.
  * @param {string} s
- * @returns {number | null} null — строка не похожа на сумму (в том числе пустая): считать её нулём нельзя.
+ * @returns {number | null} null if the string does not look like an amount (including empty): do not count it as zero.
  */
 export function parseAmount(s) {
 	const m = AMOUNT.exec(String(s).replace(/[\s  ']/g, ''));

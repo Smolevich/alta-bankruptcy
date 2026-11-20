@@ -1,7 +1,7 @@
-"""Фото и PDF к кейсам: тип по содержимому, перекодирование без EXIF, хранение рядом с базой.
+"""Photos and PDFs for cases: type by content, re-encoding without EXIF, storage next to the database.
 
-Картинку всегда пересобираем через Pillow: так уходят EXIF (геометка, модель телефона), XMP и всё,
-что могли дописать в хвост файла, а HEIC становится JPEG, который откроет любой браузер.
+An image is always rebuilt through Pillow: this drops EXIF (geotag, phone model), XMP and anything
+that could have been appended to the file tail, and HEIC becomes JPEG that any browser opens.
 """
 
 import io
@@ -25,12 +25,12 @@ MAX_FILES = 10
 FILE_MAX = 10 * 1024 * 1024
 TOTAL_MAX = 40 * 1024 * 1024
 MAX_SIDE = 2560
-# Защита от «бомбы»: маленький файл, который распаковывается в гигапиксели.
+# Protection against a "bomb": a small file that decompresses into gigapixels.
 MAX_PIXELS = 60_000_000
 JPEG_QUALITY = 85
-# Сколько файлов принимаем с одного хэша IP в час — отдельно от лимита на сами кейсы.
+# How many files we accept per IP hash per hour, separate from the limit on the cases themselves.
 FILES_PER_HOUR = 30
-# Место: ниже этого свободного остатка на диске загрузки не принимаем, база и бэкапы важнее.
+# Space: below this free remainder on disk we do not accept uploads, the database and backups matter more.
 MIN_FREE_BYTES = 3 * 1024**3
 STORE_MAX_BYTES = 5 * 1024**3
 FILES_DIR = "case-files"
@@ -41,7 +41,7 @@ Image.MAX_IMAGE_PIXELS = MAX_PIXELS
 
 
 class UploadError(ValueError):
-    """Файл не принят; код — ключ текста ошибки на языке страницы."""
+    """File rejected; code is the key of the error text in the page language."""
 
     def __init__(self, code: str) -> None:
         super().__init__(code)
@@ -59,7 +59,7 @@ class CleanFile:
 
 
 def sniff(head: bytes) -> str | None:
-    """Тип по первым байтам, а не по имени и не по Content-Type от браузера."""
+    """Type by the first bytes, not by name or the browser's Content-Type."""
     if head.startswith(b"\xff\xd8\xff"):
         return "jpeg"
     if head.startswith(b"\x89PNG\r\n\x1a\n"):
@@ -72,7 +72,7 @@ def sniff(head: bytes) -> str | None:
 
 
 def reencode(data: bytes, kind: str) -> CleanFile:
-    """Открывает картинку, поворачивает по EXIF и сохраняет заново — уже без метаданных."""
+    """Opens an image, rotates it by EXIF and saves it again, now without metadata."""
     try:
         with Image.open(io.BytesIO(data)) as img:
             if img.width * img.height > MAX_PIXELS:
@@ -99,7 +99,7 @@ def clean_pdf(data: bytes) -> CleanFile:
 
 
 def clean_upload(data: bytes) -> CleanFile:
-    """Один файл формы → безопасная копия; тип, размер и целостность проверяются здесь."""
+    """One form file -> a safe copy; type, size and integrity are checked here."""
     if len(data) > FILE_MAX:
         raise UploadError("file_big")
     kind = sniff(data[:16])
@@ -117,14 +117,14 @@ def stored_bytes(root: Path) -> int:
 
 
 def has_room(root: Path, incoming: int, min_free: int = MIN_FREE_BYTES, quota: int = STORE_MAX_BYTES) -> bool:
-    """Хватит ли места: и свободного на диске, и в отведённой кейсам квоте."""
+    """Is there enough space: both free on disk and within the quota allotted to cases."""
     root.mkdir(parents=True, exist_ok=True)
     free = shutil.disk_usage(root).free
     return free - incoming >= min_free and stored_bytes(root) + incoming <= quota
 
 
 def save(root: Path, item: CleanFile) -> str:
-    """Пишет файл под случайным именем (его нельзя угадать перебором) и возвращает имя."""
+    """Writes a file under a random name (it cannot be guessed by brute force) and returns the name."""
     root.mkdir(parents=True, exist_ok=True)
     name = f"{secrets.token_hex(12)}.{item.ext}"
     tmp = root / f".{name}.tmp"
@@ -134,7 +134,7 @@ def save(root: Path, item: CleanFile) -> str:
 
 
 def path_of(root: Path, name: str) -> Path | None:
-    """Путь к файлу по имени из базы; всё, что не похоже на наше имя, — None."""
+    """Path to a file by a name from the database; anything that does not look like our name gives None."""
     if not NAME_RE.match(name):
         return None
     path = root / name
@@ -153,7 +153,7 @@ def media_type(name: str) -> str:
 
 
 def main() -> int:
-    """Бэкап папки файлов к ночным бэкапам ботов: запускается тем же таймером, что архив AOD."""
+    """Backup of the files folder for the nightly bot backups: runs on the same timer as the AOD archive."""
     data_dir = Path(os.environ.get("DATA_DIR", "data"))
     backup_dir = os.environ.get("CASES_BACKUP_DIR")
     root = files_root(data_dir)
@@ -161,7 +161,7 @@ def main() -> int:
         print("CASES_BACKUP_DIR не задан — бэкап файлов кейсов пропущен")
         return 0
     root.mkdir(parents=True, exist_ok=True)
-    # Файлы лежат плоско: добавление и удаление меняют время самой папки, и бэкап это заметит.
+    # Files lie flat: adding and deleting change the folder's mtime, and the backup will notice.
     out = backup(root, Path(backup_dir), datetime.now(UTC).date().isoformat(), files=[root])
     print(f"case files: {stored_bytes(root)} bytes → {out}")
     return 0

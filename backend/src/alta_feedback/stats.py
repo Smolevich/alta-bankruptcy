@@ -1,4 +1,4 @@
-"""Сводка проверенных отчётов о счетах для публичной страницы статистики."""
+"""Summary of verified account reports for the public stats page."""
 
 from collections import Counter
 from collections.abc import Mapping
@@ -9,14 +9,15 @@ from alta_feedback.accounts import ACCOUNT_TYPES, BANKS, CITIES, DOCUMENTS, RESI
 
 PAGE_SIZE = 20
 NO_RESIDENCY = "Не указан"
-# Отделение показываем, только если о нём минимум два ответа: по одному ответу человека легко узнать.
+# A branch is shown only if there are at least two answers about it: from a single answer a person is easy
+# to identify.
 BRANCH_MIN = 2
 OTHER_BRANCHES = "Другие отделения"
 
 
 @dataclass
 class Tally:
-    """Итоги по одной группе: банку, городу или статусу."""
+    """Totals for one group: bank, city or status."""
 
     name: str
     results: Counter = field(default_factory=Counter)
@@ -28,11 +29,11 @@ class Tally:
         return sum(self.results.values())
 
     def with_type(self, code: str) -> int:
-        """Ответов с этим счётом: «оба сразу» входят и в личные, и в ИП."""
+        """Answers with this account: "both" counts in both personal and sole-proprietor."""
         return self.types[code] + self.types["both"]
 
     def share(self, result: str) -> int:
-        """Доля результата в процентах — ширина полоски."""
+        """Share of the result in percent, the bar width."""
         return round(100 * self.results[result] / self.total) if self.total else 0
 
 
@@ -55,7 +56,7 @@ class AccountStats:
 
 @dataclass(frozen=True)
 class AnswerFilter:
-    """Фильтр ответов на странице статистики: коды справочников и даты визита ISO."""
+    """Filter of answers on the stats page: directory codes and ISO visit dates."""
 
     bank: str | None = None
     city: str | None = None
@@ -68,7 +69,7 @@ class AnswerFilter:
         return any(self.query().values())
 
     def equals(self) -> dict[str, str]:
-        """Колонка → значение, как оно лежит в базе: банк и город хранятся подписями."""
+        """Column -> value as stored in the database: bank and city are stored as labels."""
         pairs = {
             "bank": BANKS.get(self.bank or ""),
             "city": CITIES.get(self.city or ""),
@@ -77,7 +78,7 @@ class AnswerFilter:
         return {column: value for column, value in pairs.items() if value}
 
     def query(self) -> dict[str, str]:
-        """Параметры для ссылок, чтобы листание не сбрасывало фильтр."""
+        """Parameters for links so paging does not reset the filter."""
         pairs = {
             "bank": self.bank, "city": self.city, "result": self.result,
             "from": self.date_from, "to": self.date_to,
@@ -103,7 +104,7 @@ def iso_date(raw: str | None) -> str | None:
 
 
 def parse_filter(params: Mapping[str, str]) -> AnswerFilter:
-    """Фильтр из GET-параметров; значение не из справочника или не дата — просто не применяется."""
+    """Filter from GET parameters; a value not from the directory or not a date is simply not applied."""
     return AnswerFilter(
         bank=pick(params.get("bank"), BANKS),
         city=pick(params.get("city"), CITIES),
@@ -114,7 +115,7 @@ def parse_filter(params: Mapping[str, str]) -> AnswerFilter:
 
 
 def parse_cursor(raw: str | None) -> tuple[str, int] | None:
-    """Курсор `<visit_date>_<id>` — последний показанный ответ; битый — None, то есть с начала."""
+    """Cursor `<visit_date>_<id>` is the last shown answer; a broken one is None, i.e. from the start."""
     visit_date, _, item_id = (raw or "").rpartition("_")
     if not item_id.isdigit() or iso_date(visit_date) != visit_date:
         return None
@@ -126,20 +127,21 @@ def cursor_of(item: dict) -> str:
 
 
 def answer_page(rows: list[dict], size: int) -> AnswerPage:
-    """Страница из size + 1 строк: лишняя строка значит, что есть следующая страница."""
+    """A page of size + 1 rows: the extra row means there is a next page."""
     items = rows[:size]
     return AnswerPage(items, cursor_of(items[-1]) if len(rows) > size and items else None)
 
 
 def shown_before(items: list[dict], cursor: tuple[str, int] | None) -> int:
-    """Сколько ответов из items показано до курсора включительно: номер первой строки минус один."""
+    """How many answers of items are shown up to and including the cursor: the first row's number minus
+    one."""
     if cursor is None:
         return 0
     return sum(1 for item in items if (item["visit_date"], item["id"]) >= cursor)
 
 
 def tally_by(items: list[dict], key: str, names: dict[str, str] | None = None) -> list[Tally]:
-    """Группы по полю отчёта, крупные сверху; коды заменяются подписями."""
+    """Groups by a report field, large on top; codes are replaced with labels."""
     groups: dict[str, Tally] = {}
     for item in items:
         raw = item[key] or ""
@@ -155,10 +157,10 @@ def branch_counts(items: list[dict]) -> Counter:
 
 
 def hide_rare_branches(items: list[dict], counts: Counter | None = None) -> list[dict]:
-    """Отделение остаётся в записи, только если о нём в этом банке не меньше BRANCH_MIN ответов.
+    """A branch stays in a record only if this bank has at least BRANCH_MIN answers about it.
 
-    counts — число ответов по (банк, отделение) среди всех принятых: страница или фильтр видят
-    лишь часть записей, а прятать отделение надо по полному числу.
+    counts: the number of answers per (bank, branch) among all accepted: a page or filter sees
+    only part of the records, but a branch must be hidden by the full count.
     """
     counts = branch_counts(items) if counts is None else counts
 
@@ -170,9 +172,9 @@ def hide_rare_branches(items: list[dict], counts: Counter | None = None) -> list
 
 
 def branch_tallies(bank_items: list[dict], counts: Counter | None = None) -> list[Tally]:
-    """Разбивка одного банка по отделениям; редкие и не указанные — одной строкой в конце.
+    """Breakdown of one bank by branch; rare and unspecified ones in one line at the end.
 
-    Пусто, если ни одно отделение не набрало BRANCH_MIN ответов: одна строка «другие» ничего не говорит.
+    Empty if no branch reached BRANCH_MIN answers: a single "other" line says nothing.
     """
     groups: dict[str, Tally] = {}
     for item in hide_rare_branches(bank_items, counts):
@@ -195,7 +197,7 @@ def count_documents(items: list[dict]) -> list[DocumentCount]:
 
 
 def readable(item: dict) -> dict:
-    """Запись для карточки: коды заменены словами."""
+    """Record for a card: codes replaced with words."""
     return {
         **item,
         "account_type": ACCOUNT_TYPES.get(item["account_type"], item["account_type"]),
@@ -210,7 +212,7 @@ def answer_cards(items: list[dict], counts: Counter | None = None) -> list[dict]
 
 
 def account_stats(items: list[dict], counts: Counter | None = None) -> AccountStats:
-    """Сводка по принятым отчётам; counts — отделения по всем принятым, см. hide_rare_branches."""
+    """Summary over accepted reports; counts: branches over all accepted, see hide_rare_branches."""
     banks = tally_by(items, "bank")
     for tally in banks:
         tally.branches = branch_tallies([item for item in items if item["bank"] == tally.name], counts)
@@ -232,7 +234,7 @@ DISCLAIMER = (
 
 @dataclass(frozen=True)
 class Summary:
-    """Короткий ответ в начале страницы: те же числа, что в блоках «Всего» и «По банкам»."""
+    """Short answer at the top of the page: the same numbers as in the "Total" and "By bank" blocks."""
 
     total: int
     results: Counter
@@ -247,7 +249,7 @@ def top_banks(banks: list[Tally], result: str, size: int = TOP_BANKS) -> list[tu
 
 
 def summarize(items: list[dict]) -> Summary:
-    """Сводка по всем принятым ответам; банки считаются так же, как в блоке «По банкам»."""
+    """Summary over all accepted answers; banks are counted as in the "By bank" block."""
     banks = tally_by(items, "bank")
     return Summary(
         total=len(items),
@@ -258,7 +260,7 @@ def summarize(items: list[dict]) -> Summary:
 
 
 def checked_answers(n: int) -> str:
-    """«1 проверенный ответ», «3 проверенных ответа», «12 проверенных ответов»."""
+    """Russian plural form of "verified answer": 1, 3 and 12 take different endings."""
     if n % 10 == 1 and n % 100 != 11:
         return f"{n} проверенный ответ"
     if n % 10 in (2, 3, 4) and n % 100 not in (12, 13, 14):
@@ -275,7 +277,7 @@ def bank_list(pairs: list[tuple[str, int]]) -> str:
 
 
 def summary_lines(summary: Summary) -> list[str]:
-    """Предложения после даты: итог и банки; без ответов — пусто."""
+    """Sentences after the date: the total and banks; empty if there are no answers."""
     if not summary.total:
         return []
     results = summary.results
@@ -291,7 +293,7 @@ def summary_lines(summary: Summary) -> list[str]:
 
 
 def meta_description(summary: Summary, today: date) -> str:
-    """Описание для поисковиков и ИИ-ассистентов: дата и главные числа."""
+    """Description for search engines and AI assistants: date and main numbers."""
     lead = "Где вкладчикам ALTA открывают счета в банках Сербии"
     if not summary.total:
         return f"{lead}: ответы самих вкладчиков после проверки модератором. Не рейтинг и не правила банков."

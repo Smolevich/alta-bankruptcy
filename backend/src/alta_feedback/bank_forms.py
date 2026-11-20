@@ -1,7 +1,8 @@
-"""Бланки банков на открытие счёта и что банк спрашивает (data/bank_forms.json).
+"""Bank account-opening forms and what the bank asks (data/bank_forms.json).
 
-Копии PDF лежат в public/docs/banks сайта и открываются по /docs/banks/<file>. Бланки двух видов:
-пустые, которые вкладчики принесли из отделения, и официальные с сайта банка (у них ссылка на оригинал).
+PDF copies live in the site's public/docs/banks and open at /docs/banks/<file>. Forms are of two kinds:
+blank ones that depositors brought from a branch, and official ones from the bank's website (with a link
+to the original).
 """
 
 import json
@@ -71,7 +72,7 @@ def parse_note(raw: dict) -> Note:
 
 
 def parse_catalog(data: dict) -> tuple[BankForms, ...]:
-    """Банки в порядке файла; банк без бланков и пояснений в список не попадает."""
+    """Banks in file order; a bank with no forms and no notes is left out of the list."""
     banks = (
         BankForms(
             code=code,
@@ -91,12 +92,12 @@ def catalog() -> tuple[BankForms, ...]:
 
 
 def for_page(banks: tuple[BankForms, ...], bank_filter: str | None) -> tuple[BankForms, ...]:
-    """Что показать на странице: все банки с бланками или только выбранный в фильтре."""
+    """What to show on the page: all banks with forms, or only the one selected in the filter."""
     if bank_filter is None:
         return banks
     return tuple(bank for bank in banks if bank.code == bank_filter)
 
 
 def codes_by_name(banks: tuple[BankForms, ...]) -> dict[str, str]:
-    """Название банка в сводке → код, чтобы у группы банка поставить ссылку на его бланки."""
+    """Bank name in the summary -> code, to link the bank's group to its forms."""
     return {bank.name: bank.code for bank in banks}

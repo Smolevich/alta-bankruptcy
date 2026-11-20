@@ -1,5 +1,5 @@
-// Плагин rehype: в тексте страниц внешние ссылки и ссылки на PDF открываются в новой вкладке,
-// а PDF — в просмотре на сайте (data-pdf, см. PdfDialog.astro).
+// rehype plugin: in page text, external links and PDF links open in a new tab,
+// and a PDF opens in the on-site viewer (data-pdf, see PdfDialog.astro).
 import { opensInNewTab } from './links.ts';
 import { isPdf, viewerSrc } from './data/pdfs.ts';
 
@@ -9,7 +9,7 @@ function walk(node) {
 		if (typeof href === 'string' && opensInNewTab(href)) {
 			node.properties.target = '_blank';
 			node.properties.rel = ['noopener'];
-			// Ссылка в тексте на Word-бланк AOD — это скачивание, просмотр PDF у неё отдельной ссылкой.
+			// A text link to an AOD Word form is a download; its PDF viewer is a separate link.
 			const view = isPdf(href) ? viewerSrc(href) : null;
 			if (view) node.properties.dataPdf = view;
 		}

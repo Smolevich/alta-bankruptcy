@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Где открывают счета после ALTA: ответы вкладчиков | Вкладчики ALTA: что дальше{% endblock %}
-{# Единственная страница сервиса, которую стоит находить поиском: остальные формы — noindex. #}
+{# The only service page worth finding via search: the other forms are noindex. #}
 {% block robots %}index, follow{% endblock %}
 {% block head %}
 <meta name="description" content="{{ description }}">
@@ -140,7 +140,7 @@
     display: block; margin: 0 0 6px; font-size: 12px; font-weight: 700; line-height: 1.3;
     letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted);
   }
-  /* Общий вид поля; select и date без скрипта выглядят так же, только со стрелкой браузера внутри. */
+  /* Common field look; select and date without the script look the same, just with the browser arrow inside. */
   .filters select, .filters input[type=date], .date {
     display: block; width: 100%; min-width: 0; max-width: 100%; margin: 0; height: 48px;
     font: inherit; font-size: 16px; font-weight: 400; line-height: 1.2; color: var(--ink); background-color: #fff;

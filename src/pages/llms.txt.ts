@@ -2,7 +2,7 @@ import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
 import { LANGS, type Lang } from '../i18n';
 
-// Страница статистики открытия счетов отдаётся backend, в коллекции docs её нет.
+// The account-opening statistics page is served by the backend, it is not in the docs collection.
 const ACCOUNT_STATS: Partial<Record<Lang, string>> = {
 	ru: '- [Опыт вкладчиков: где открывают счета](%s/account/stats): в каких банках Сербии вкладчикам ALTA открыли или не открыли счёт и что просили. Ответы самих вкладчиков, проверенные модератором; это не рейтинг и не правила банков. Обновляется с каждым ответом.',
 };
@@ -15,7 +15,7 @@ const HEADINGS: Record<Lang, [string, string]> = {
 
 const LANG_ID = /^(en|sr)(\/|$)/;
 
-// Собирается из контента при каждой сборке, поэтому не отстаёт от страниц.
+// Built from content on every build, so it does not lag behind the pages.
 export const GET: APIRoute = async ({ site }) => {
 	const base = site!.origin;
 	const docs = await getCollection('docs');
@@ -28,7 +28,7 @@ export const GET: APIRoute = async ({ site }) => {
 	for (const lang of LANGS) {
 		const prefix = lang === 'ru' ? '' : `${lang}/`;
 		const pages = docs
-			// Главные en и sr имеют id 'en' и 'sr', без слеша.
+			// The main en and sr pages have ids 'en' and 'sr', without a slash.
 			.filter((d) => (lang === 'ru' ? !LANG_ID.test(d.id) : d.id === lang || d.id.startsWith(prefix)))
 			.sort((a, b) => a.id.localeCompare(b.id));
 		const items = news

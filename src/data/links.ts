@@ -1,5 +1,5 @@
-// Ссылки собраны из закрепа чата @Altadef50k (01.11.2026). Частные инициативы мы не проверяем: kind = unverified.
-// Ники организаторов сюда не переносим: у карточек ссылка на пост, где они указаны.
+// Links were collected from the pinned post of the @Altadef50k chat (01.11.2026). We do not verify private initiatives: kind = unverified.
+// Organizers' nicknames are not carried over: the cards link to the post where they are named.
 import type { Lang } from '../i18n';
 
 type Text = Record<Lang, string>;
@@ -9,7 +9,7 @@ export type LinkCard = {
 	title: Text;
 	what: Text;
 	kind: 'official' | 'unverified';
-	/** Подпись к ссылке: адрес или название. */
+	/** Link label: an address or a name. */
 	url: string;
 	label: string;
 	extra?: { url: string; label: Text };

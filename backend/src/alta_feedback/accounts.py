@@ -1,4 +1,4 @@
-"""Анонимные отчёты «где мне открыли счёт»: справочники, разбор формы, вычистка личных данных."""
+"""Anonymous "where did they open my account" reports: directories, form parsing, personal-data scrubbing."""
 
 import re
 from dataclasses import dataclass
@@ -6,7 +6,7 @@ from datetime import date, timedelta
 
 from alta_feedback.branches import BRANCH_MAX, NOT_SURE, Branch, Directory, fold, match_branch
 
-# Действующие банки по реестру NBS на 01.11.2026 (без ALTA), сначала самые частые у иностранцев.
+# Active banks per the NBS register as of 01.11.2026 (excluding ALTA), most common among foreigners first.
 BANKS: dict[str, str] = {
     "intesa": "Banca Intesa",
     "otp": "OTP banka",
@@ -34,12 +34,13 @@ CITIES: dict[str, str] = {
     "kragujevac": "Крагуевац",
     "subotica": "Суботица",
 }
-# «Оба сразу» — один визит, две заявки: в сводке такой ответ считается и среди личных, и среди ИП.
+# "Both" is one visit, two applications: in the summary such an answer counts among both personal and
+# sole-proprietor ones.
 ACCOUNT_TYPES: dict[str, str] = {
     "personal": "Личный", "entrepreneur": "ИП (preduzetnik)", "both": "Личный и ИП сразу",
 }
 RESULTS: dict[str, str] = {"opened": "Открыли", "refused": "Отказали", "pending": "Ещё в процессе"}
-# Временный и постоянный ВНЖ для банков одно и то же — одним чипом.
+# Temporary and permanent residence permits are the same for banks, so one chip.
 RESIDENCIES: dict[str, str] = {
     "boravak": "ВНЖ / ПМЖ (боравак)",
     "white_card": "Только белый картон",
@@ -64,14 +65,14 @@ VISIT_DAYS_BACK = 400
 ACCOUNT_STATUSES = frozenset({"new", "accepted", "rejected", "test", "spam"})
 
 MASK = "[скрыто]"
-# Порядок важен: сначала длинные номера счетов, потом 13 цифр JMBG, потом всё остальное длинное.
+# Order matters: long account numbers first, then 13-digit JMBG, then everything else that is long.
 PII_PATTERNS = (
     re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)+"),
     re.compile(r"\bRS\s?\d{2}(?:[\s-]?\d){18}\b", re.IGNORECASE),
     re.compile(r"(?<!\d)\d{3}[\s-]?\d{13}[\s-]?\d{2}(?!\d)"),
     re.compile(r"(?<!\d)\d{13}(?!\d)"),
-    # Телефоны, паспорта, короткая запись счёта: 9+ цифр с пробелами, дефисами, скобками, слэшами.
-    # Точку не считаем разделителем, чтобы не съедать даты вида 08.10.2026.
+    # Phones, passports, short account notation: 9+ digits with spaces, hyphens, parentheses, slashes.
+    # A dot is not treated as a separator so dates like 08.10.2026 are not eaten.
     re.compile(r"(?<![\w])\+?\d(?:[\s()/-]{0,2}\d){8,}(?!\d)"),
 )
 
@@ -90,7 +91,7 @@ class AccountReport:
 
 
 def scrub_pii(text: str) -> str:
-    """Заменяет похожее на email, JMBG, номер счёта, телефон или паспорт на «[скрыто]»."""
+    """Replaces anything that looks like an email, JMBG, account number, phone or passport with MASK."""
     for pattern in PII_PATTERNS:
         text = pattern.sub(MASK, text)
     return text
@@ -101,7 +102,7 @@ def free_text(raw: str) -> str:
 
 
 def match_label(raw: str, names: dict[str, str]) -> str | None:
-    """Код справочника по коду или по подписи без учёта регистра; None — значения в справочнике нет."""
+    """Directory code by code or by label, case-insensitive; None means the value is not in the directory."""
     value = " ".join(raw.split())
     if value in names:
         return value
@@ -110,25 +111,25 @@ def match_label(raw: str, names: dict[str, str]) -> str | None:
 
 
 def pick_name(raw: str, names: dict[str, str]) -> str:
-    """Название из справочника или своё значение человека, очищенное от личных данных."""
+    """Directory name or the person's own value, scrubbed of personal data."""
     code = match_label(raw, names)
     return names[code] if code else free_text(raw)
 
 
 def pick_code(raw: str, names: dict[str, str]) -> str:
-    """Код справочника или своё значение человека, очищенное от личных данных."""
+    """Directory code or the person's own value, scrubbed of personal data."""
     return match_label(raw, names) or free_text(raw)
 
 
 def pick_documents(values: list[str]) -> tuple[str, ...]:
-    """Коды документов из справочника и свои значения, без пустых и повторов."""
+    """Directory document codes and own values, without empties and duplicates."""
     picked = [pick_code(value, DOCUMENTS) for value in values]
     unique = [value for value in dict.fromkeys(picked) if value]
     return tuple(unique[:DOCUMENTS_MAX])
 
 
 def pick_branch(raw: str, branches: tuple[Branch, ...]) -> str | None:
-    """Отделение из справочника банка или своё название, очищенное от личных данных; None — не указано."""
+    """Branch from the bank directory or its own name, scrubbed of personal data; None means not given."""
     value = " ".join(raw.split())
     if not value or fold(value) == fold(NOT_SURE):
         return None
@@ -136,7 +137,7 @@ def pick_branch(raw: str, branches: tuple[Branch, ...]) -> str | None:
 
 
 def parse_visit_date(raw: str, today: date) -> str | None:
-    """Дата визита ISO; будущее (кроме завтра — часовые пояса) и слишком старое не принимаем."""
+    """Visit date in ISO; the future (except tomorrow, for time zones) and too old are rejected."""
     try:
         visit = date.fromisoformat(raw.strip())
     except ValueError:
@@ -149,10 +150,10 @@ def parse_visit_date(raw: str, today: date) -> str | None:
 def parse_account_form(
     form: dict[str, str], documents: list[str], today: date, directory: Directory | None = None
 ) -> tuple[AccountReport, list[str]]:
-    """Собирает отчёт из полей формы; возвращает его и список ошибок для человека.
+    """Builds a report from form fields; returns it and a list of errors for the person.
 
-    Банк, город, статус, документы и отделение приходят текстом из полей с подсказками: название
-    из списка превращается в справочное значение, своё сохраняется как есть после вычистки.
+    Bank, city, status, documents and branch arrive as text from fields with suggestions: a name
+    from the list is turned into a directory value, a custom one is saved as is after scrubbing.
     """
     bank_code = match_label(form.get("bank", ""), BANKS)
     bank = pick_name(form.get("bank", ""), BANKS)
@@ -190,7 +191,7 @@ def parse_account_form(
 
 
 def labels() -> dict[str, dict[str, str]]:
-    """Подписи кодов для тех, кто строит таблицу из публичного JSON."""
+    """Code labels for those who build a table from the public JSON."""
     return {
         "account_type": ACCOUNT_TYPES,
         "result": RESULTS,

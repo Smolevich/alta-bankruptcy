@@ -6,8 +6,8 @@
 <meta name="robots" content="{% block robots %}noindex{% endblock %}">
 <title>{% block title %}Предложить правку{% endblock %}</title>
 <style>
-  /* Та же схема, что у справочника на Starlight (src/styles/custom.css): бумага, чернила, бордо;
-     шрифты системные — CSP не пускает чужие. */
+  /* Same scheme as the reference on Starlight (src/styles/custom.css): paper, ink, burgundy;
+     system fonts, since CSP blocks foreign ones. */
   :root {
     --serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Charter, Georgia, serif;
     --bg: #f6f2e8; --surface: #fffdf7; --nav: #fbf8f0; --ink: #1b2430; --muted: #5a5448;
@@ -15,7 +15,7 @@
     --danger: #9b2c22; --danger-bg: #f3dcd7; --ok: #2d6a4f; --ok-bg: #e3efe8;
   }
   * { box-sizing: border-box; }
-  /* Все select на сайте одного вида (как в src/styles/custom.css): без системной стрелки, своя SVG, 48 px, радиус 12. */
+  /* All selects on the site look the same (as in src/styles/custom.css): no system arrow, own SVG, 48 px, radius 12. */
   select {
     -webkit-appearance: none; appearance: none; box-sizing: border-box; max-width: 100%; min-height: 48px; margin: 0;
     padding: 0 44px 0 14px; border: 1px solid var(--line); border-radius: 12px; color: var(--ink);
@@ -24,7 +24,7 @@
   }
   select:hover { border-color: #b9b09a; }
   select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-  /* Выпадающий список вместо системного (static/select-combo.js); тот же вид в src/styles/custom.css. */
+  /* Dropdown instead of the system one (static/select-combo.js); same look in src/styles/custom.css. */
   .combo-native { display: none !important; }
   .combo-select { position: relative; min-width: 0; max-width: 100%; }
   .combo-select[hidden] { display: none; }

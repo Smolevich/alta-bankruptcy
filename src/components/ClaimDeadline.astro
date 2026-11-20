@@ -1,6 +1,6 @@
 ---
-// Панель срока подачи требования: день 0 = публикация в «Службени гласник».
-// Пока publicationDate в src/data/status.json пустой, даты не показываем совсем.
+// Claim deadline panel: day 0 = publication in the Službeni glasnik.
+// While publicationDate in src/data/status.json is empty, no dates are shown at all.
 import { getEntry } from 'astro:content';
 import { formatDate, type Lang } from '../i18n';
 import { claimWindows, parsePublicationDate } from '../lib/claim-deadline';

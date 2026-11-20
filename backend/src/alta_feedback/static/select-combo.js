@@ -1,9 +1,9 @@
-// Единый выпадающий список сайта и форм вместо системного <select>: системный список у каждого
-// браузера свой и стилям не поддаётся. Подключается к <select data-combo> (data-combo="search" —
-// с поиском). Сам <select> остаётся в форме и хранит значение: без скрипта всё работает на нём,
-// а код страниц читает и меняет select.value как раньше.
+// A single dropdown for the site and forms instead of the system <select>: every browser's system list
+// is different and cannot be styled. Attaches to <select data-combo> (data-combo="search" means
+// with search). The <select> itself stays in the form and holds the value: without the script everything works on it,
+// and page code reads and sets select.value as before.
 (() => {
-  // Кириллицу сводим к латинице по-сербски: тогда «бел», «bel», «ниш» и «niš» находят свои города.
+  // Cyrillic is folded to Latin the Serbian way: then "бел", "bel", "ниш" and "niš" find their cities.
   const LATIN = {
     а: "a", б: "b", в: "v", г: "g", д: "d", ђ: "dj", е: "e", ж: "z", з: "z", и: "i", ј: "j",
     к: "k", л: "l", љ: "lj", м: "m", н: "n", њ: "nj", о: "o", п: "p", р: "r", с: "s", т: "t",
@@ -11,14 +11,14 @@
     ь: "", э: "e", ю: "ju", я: "ja",
   };
 
-  /** Строка для сравнения: без регистра, диакритики, пробелов и дефисов, кириллица — латиницей. */
+  /** Comparison string: no case, diacritics, spaces or hyphens, Cyrillic as Latin. */
   const fold = (text) =>
     [...text.toLocaleLowerCase("ru").replaceAll("đ", "dj").normalize("NFD").replace(/\p{M}/gu, "")]
       .map((char) => LATIN[char] ?? char)
       .join("")
       .replace(/[^\p{L}\p{N}]+/gu, "");
 
-  /** Варианты, где запрос встречается в подписи или в коде; пустой запрос — все варианты. */
+  /** Options where the query appears in the label or in the code; an empty query gives all options. */
   const filterOptions = (options, query) => {
     const needle = fold(query);
     if (!needle) return options;
@@ -44,14 +44,14 @@
   const make = (tag, className, props = {}) => Object.assign(document.createElement(tag), { className, ...props });
   const attrs = (element, values) => Object.entries(values).forEach(([name, value]) => element.setAttribute(name, value));
 
-  // Видимая часть экрана: на телефоне её съедает клавиатура, а сверху — липкая шапка сайта.
+  // Visible part of the screen: on a phone the keyboard eats it, and the sticky site header takes the top.
   const visibleArea = () => {
     const view = window.visualViewport;
     const top = view ? view.offsetTop : 0;
     return { top: top + 64, bottom: top + (view ? view.height : window.innerHeight) };
   };
 
-  // Подсветка набранного в подписи, если оно там есть буквально (иначе совпадение через транслит).
+  // Highlight of what was typed in the label if it is there literally (otherwise the match came through transliteration).
   const labelWithMatch = (label, query) => {
     const at = query ? label.toLocaleLowerCase("ru").indexOf(query.trim().toLocaleLowerCase("ru")) : -1;
     if (at < 0 || !query.trim()) return [label];
@@ -59,7 +59,7 @@
     return [label.slice(0, at), make("mark", "", { textContent: label.slice(at, end) }), label.slice(end)];
   };
 
-  // Код страниц ставит select.value напрямую, без события change, — поле должно это увидеть.
+  // Page code sets select.value directly, without a change event, so the field must notice it.
   const watchValue = (select, onSet) => {
     for (const prop of ["value", "selectedIndex"]) {
       const native = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, prop);
@@ -83,7 +83,7 @@
     const everythingOf = (options) => options.find((option) => !option.value);
 
     const box = make("div", `combo combo-select${searchable ? "" : " combo-pick"}`);
-    // С поиском — поле ввода; без поиска — кнопка-поле: на телефоне не выскакивает клавиатура.
+    // With search: an input field; without search: a button-field, so the keyboard does not pop up on a phone.
     const face = searchable
       ? make("input", "combo-input", { type: "text", autocomplete: "off", spellcheck: false })
       : make("div", "combo-face", { tabIndex: 0 });
@@ -91,13 +91,13 @@
     if (searchable) attrs(face, { "aria-autocomplete": "list", autocapitalize: "off", enterkeyhint: "done" });
     const labels = select.id ? [...document.querySelectorAll(`label[for="${select.id}"]`)] : [];
     if (select.closest("label")) labels.push(select.closest("label"));
-    // Поле с поиском забирает id, чтобы <label for> ставил курсор в него. Без поиска id остаётся
-    // у <select>: код страниц находит его по id и читает value.
+    // The search field takes the id so <label for> puts the cursor in it. Without search the id stays
+    // on the <select>: page code finds it by id and reads value.
     if (searchable && select.id) {
       face.id = select.id;
       select.removeAttribute("id");
     }
-    // Имя поля — текст подписи без самого списка: подпись-обёртка содержит и <select> с вариантами.
+    // The field name is the label text without the list itself: a wrapping label also contains the <select> with options.
     const labelText = (label) => {
       const copy = label.cloneNode(true);
       copy.querySelectorAll("select, .combo-select").forEach((node) => node.remove());
@@ -167,7 +167,7 @@
         item.setAttribute("aria-selected", String(option.value === select.value));
         item.append(...labelWithMatch(option.label, query));
         if (!option.value) item.classList.add("all");
-        // preventDefault: внутри <label> клик иначе дошёл бы до поля и открыл список заново.
+        // preventDefault: inside a <label> the click would otherwise reach the field and open the list again.
         item.addEventListener("click", (event) => { event.preventDefault(); pick(option); });
         return item;
       });
@@ -197,7 +197,7 @@
       active = -1;
     };
 
-    // Ушёл, не выбрав: в поле возвращается то, что реально выбрано, а не набранный обрывок.
+    // Left without choosing: the field gets back what is actually selected, not the typed fragment.
     const dismiss = () => {
       close();
       showCurrent();
@@ -219,7 +219,7 @@
       if (shown.length) highlight((active + step + shown.length) % shown.length);
     };
 
-    // Без поиска: первая буква переводит на подходящий вариант, как в системном списке.
+    // Without search: the first letter jumps to a matching option, as in the system list.
     let typed = "";
     let typedAt = 0;
     const typeAhead = (char) => {
@@ -263,7 +263,7 @@
 
     if (searchable) {
       face.addEventListener("focus", () => {
-        // На телефоне поднимаем поле к шапке, чтобы список поместился над клавиатурой.
+        // On a phone raise the field to the header so the list fits above the keyboard.
         if (window.matchMedia("(max-width: 719px)").matches) (box.closest(".field") || box).scrollIntoView({ block: "start" });
         open();
         face.select();
@@ -277,7 +277,7 @@
         else dismiss();
       });
     }
-    // Список не забирает фокус у поля, иначе на компьютере клик по варианту закрыл бы его раньше выбора.
+    // The list does not take focus from the field, otherwise on desktop a click on an option would close it before the choice.
     list.addEventListener("mousedown", (event) => event.preventDefault());
     clear.addEventListener("mousedown", (event) => event.preventDefault());
     clear.addEventListener("click", (event) => {
@@ -286,7 +286,7 @@
       if (everything) pick(everything);
       face.focus();
     });
-    // Подпись поля: клик по ней ставит фокус на наше поле, а не на спрятанный <select>.
+    // Field label: clicking it focuses our field, not the hidden <select>.
     labels.forEach((label) => label.addEventListener("click", (event) => {
       if (box.contains(event.target)) return;
       event.preventDefault();
@@ -302,7 +302,7 @@
     window.addEventListener("pageshow", showCurrent);
     select.addEventListener("change", showCurrent);
     select.form?.addEventListener("reset", () => setTimeout(showCurrent));
-    // Страница прячет и показывает сам <select> атрибутом hidden — поле следует за ним.
+    // The page hides and shows the <select> itself with the hidden attribute; the field follows it.
     new MutationObserver(() => { box.hidden = select.hidden; }).observe(select, { attributes: true, attributeFilter: ["hidden"] });
     watchValue(select, showCurrent);
     showCurrent();
@@ -315,7 +315,7 @@
 
   window.AltaSelectCombo = { enhance, enhanceAll };
   enhanceAll(document);
-  // Строки админки и списки, которые страница дорисовывает скриптом, получают то же поле.
+  // Admin rows and lists that the page adds with script get the same field.
   new MutationObserver((records) => {
     for (const record of records) record.addedNodes.forEach((node) => { if (node.nodeType === 1) enhanceAll(node); });
   }).observe(document.documentElement, { childList: true, subtree: true });

@@ -1,16 +1,16 @@
-// Каждый PDF-источник открывается в просмотре на сайте (PdfDialog), рядом ссылка на оригинал.
-// CSP сайта (backend, site.py) пускает во встроенный просмотр только свой домен,
-// поэтому PDF с других сайтов показываем из своей копии: мелкие лежат в public/docs,
-// документы AOD — в архиве бэкенда (/docs/aod/<name>). Список один на сайт и сервер.
+// Every PDF source opens in the on-site viewer (PdfDialog), with a link to the original beside it.
+// The site CSP (backend, site.py) allows only its own domain in the embedded viewer,
+// so PDFs from other sites are shown from our copy: small ones live in public/docs,
+// AOD documents in the backend archive (/docs/aod/<name>). One list for the site and the server.
 import AOD_ARCHIVE from '../../backend/src/alta_feedback/data/aod_archive.json';
 import { AOD_FORMS } from './aod-forms';
 import { DOCS } from './documents';
 
-/** Копия PDF с сайта AOD (запись backend/src/alta_feedback/data/aod_archive.json). */
+/** A PDF copy from the AOD site (the entry of backend/src/alta_feedback/data/aod_archive.json). */
 export type ArchivedPdf = {
 	name: string;
 	url: string;
-	/** false — в документе имена частных лиц: копия только в закрытом архиве, на сайте внешняя ссылка. */
+	/** false: the document has private persons' names: the copy is only in the closed archive, the site has an external link. */
 	public: boolean;
 	sha256: string;
 	bytes: number;
@@ -75,8 +75,8 @@ const EXTRA_COPIES: Record<string, string> = {
 		'postanska-2025-pregled-naknada-devizni-tekuci-racun-rezidenta.pdf',
 };
 
-// AOD выложил бланки только в Word: в просмотре показываем нашу PDF-копию,
-// а ссылка «Оригинал» в просмотре ведёт на Word-файл AOD.
+// AOD published forms only in Word: the viewer shows our PDF copy,
+// and the "Original" link in the viewer leads to the AOD Word file.
 const WORD_AS_PDF: Record<string, string> = Object.fromEntries(
 	Object.values(AOD_FORMS).map((f) => [f.sourceUrl, `/docs/${f.file}.pdf`]),
 );
@@ -87,12 +87,12 @@ const LOCAL_COPY: Record<string, string> = {
 	...Object.fromEntries(ARCHIVE.filter((a) => a.public).map((a) => [a.url, `/docs/aod/${a.name}`])),
 };
 
-/** В документе имена частных лиц: копию не показываем, остаётся только внешняя ссылка. */
+/** The document has private persons' names: we do not show the copy, only the external link remains. */
 export const NO_COPY = new Set(ARCHIVE.filter((a) => !a.public).map((a) => a.url));
 
 export const isPdf = (url: string) => /\.pdf($|[?#])/i.test(url);
 
-/** Адрес для просмотра на сайте; null — не PDF или документ из NO_COPY. Неизвестный PDF валит сборку. */
+/** Address for on-site viewing; null if not a PDF or a document from NO_COPY. An unknown PDF fails the build. */
 export function viewerSrc(url: string): string | null {
 	const [base, hash] = url.split('#');
 	if (WORD_AS_PDF[base]) return WORD_AS_PDF[base];

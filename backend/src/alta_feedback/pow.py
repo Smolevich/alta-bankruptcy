@@ -1,8 +1,9 @@
-"""Proof-of-work против ботов в формате ALTCHA: задача подписана HMAC, решение ищет браузер.
+"""Proof-of-work against bots in ALTCHA format: the challenge is signed with HMAC, the browser searches
+for the solution.
 
-Сервер загадывает число n и отдаёт sha256(salt + n), соль и подпись. Браузер перебирает
-числа до совпадения. Состояния нет: всё нужное для проверки — в подписанной задаче,
-повторное использование ловит хранилище по самой задаче.
+The server picks a number n and returns sha256(salt + n), the salt and a signature. The browser tries
+numbers until one matches. No state: everything needed for verification is in the signed challenge,
+reuse is caught by the store keyed on the challenge itself.
 """
 
 import base64
@@ -34,7 +35,7 @@ class Solved:
 
 
 def derive_key(secret: str) -> bytes:
-    """Ключ подписи из уже существующего секрета, чтобы не заводить новый в Vault."""
+    """Signing key derived from an existing secret, so no new one has to be created in Vault."""
     return hashlib.sha256(f"altcha-pow:{secret}".encode()).digest()
 
 
@@ -47,7 +48,7 @@ def sign(key: bytes, challenge: str) -> str:
 
 
 def create_challenge(key: bytes, now: datetime, maxnumber: int, number: int | None = None) -> Challenge:
-    """Новая задача; срок годности зашит в соль и поэтому тоже под подписью."""
+    """New challenge; the expiry is baked into the salt and so is also signed."""
     expires = int((now + CHALLENGE_TTL).timestamp())
     salt = f"{secrets.token_hex(12)}?expires={expires}"
     secret_number = secrets.randbelow(maxnumber + 1) if number is None else number
@@ -56,7 +57,7 @@ def create_challenge(key: bytes, now: datetime, maxnumber: int, number: int | No
 
 
 def solve(challenge: Challenge) -> int | None:
-    """Перебор, как в браузере; нужен тестам."""
+    """Brute force as in the browser; needed by tests."""
     for number in range(challenge.maxnumber + 1):
         if sha256_hex(f"{challenge.salt}{number}") == challenge.challenge:
             return number
@@ -81,7 +82,7 @@ def expires_at(salt: str) -> int | None:
 
 
 def verify_payload(key: bytes, payload: str, now: datetime) -> Solved | None:
-    """Проверяет решение; возвращает задачу и её срок (для учёта повторов) или None."""
+    """Verifies the solution; returns the challenge and its expiry (for replay tracking) or None."""
     try:
         data = json.loads(base64.b64decode(payload, validate=True))
         algorithm, challenge, salt = data["algorithm"], data["challenge"], data["salt"]

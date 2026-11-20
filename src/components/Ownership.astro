@@ -1,7 +1,7 @@
 ---
-// Схема «кто кем владеет» на странице банка: дерево сверху вниз, статус каждого звена — цветом
-// по легенде; на телефоне дочки банка уходят на вертикальную «рельсу», без прокрутки вбок. Каждый факт — с номером источника из списка под схемой;
-// в схеме только реестры, документы банка и сообщения Нацбанка.
+// "Who owns whom" diagram on a bank page: a tree top to bottom, each link's status shown by color
+// per the legend; on a phone the bank's subsidiaries move to a vertical "rail", no sideways scroll. Every fact carries a source number from the list under the diagram;
+// the diagram uses only registries, bank documents and National Bank notices.
 import type { Lang } from '../i18n';
 import { bindPercent } from '../rehype-nbsp-percent.mjs';
 
@@ -9,7 +9,7 @@ const { lang = 'ru' } = Astro.props as { lang?: Lang };
 
 const PDF_2025 = '/docs/alta-2025-izvestaj-revizora.pdf';
 
-// Порядок = номер в схеме. Ссылки одинаковые во всех языках, подписи переведены.
+// Order = number in the diagram. Links are the same in all languages, labels are translated.
 const SOURCES = [
 	{
 		url: 'https://pretraga.apr.gov.rs/',
@@ -189,7 +189,7 @@ const T = {
 const id = `own-src-${lang}`;
 const ref = (n: number) => `#${id}-${n}`;
 
-// Иконки инлайном, без <use>: на странице может оказаться больше одной схемы, id не должны совпасть.
+// Icons inline, without <use>: a page may have more than one diagram, and ids must not collide.
 const ICON = {
 	person: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4.5 4.4-7 8-7s7 2.5 8 7"/></svg>',
 	office: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="11" height="18"/><path d="M15 9h5v12h-5M7.5 7h1M10.5 7h1M7.5 11h1M10.5 11h1M7.5 15h1M10.5 15h1M9 21v-3"/></svg>',

@@ -1,4 +1,4 @@
-// Поиск в выпадающих списках (select-combo.js) и даты фильтров сводки (filters.js):
+// Search in dropdowns (select-combo.js) and summary filter dates (filters.js):
 // node --test tests/js/filters.test.js
 const assert = require("node:assert/strict");
 const test = require("node:test");

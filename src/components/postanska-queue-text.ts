@@ -1,5 +1,5 @@
-// Тексты карты очередей Poštanska (PostanskaBranches.astro) на трёх языках, одни и те же ключи.
-// Подстановки: %n — число с формой слова, %m — минуты, %s — готовая строка, %t — время чч:мм, %d — день недели.
+// Texts of the Poštanska queue map (PostanskaBranches.astro) in three languages, with the same keys.
+// Substitutions: %n is a number with a word form, %m is minutes, %s is a ready string, %t is time hh:mm, %d is weekday.
 const ru = {
 	title: 'Очереди в отделениях Poštanska', tabMap: 'Карта', tabList: 'Список', city: 'Город',
 	report: 'Я в очереди — найти моё отделение', reportHint: 'Сколько людей перед вами — поможет другим понять, стоит ли ехать.', closedAll: 'Сейчас все отделения закрыты — отметить очередь пока нельзя. Можно будет с %t, отделения откроются %s.', finding: 'Ищем ближайшее отделение…',

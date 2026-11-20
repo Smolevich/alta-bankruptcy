@@ -1,4 +1,4 @@
-// Строки интерфейса трёх языков. Тексты страниц лежат в src/content, здесь только оболочка.
+// Interface strings in three languages. Page texts live in src/content, here only the shell.
 export type Lang = 'ru' | 'en' | 'sr';
 
 export const LANGS: Lang[] = ['ru', 'en', 'sr'];
@@ -9,7 +9,7 @@ export function langOf(starlightLang: string | undefined): Lang {
 	return 'ru';
 }
 
-/** Русский — корень сайта, остальные под префиксом. */
+/** Russian is the site root, the others are under a prefix. */
 export function href(lang: Lang, path: string): string {
 	const p = path.startsWith('/') ? path : `/${path}`;
 	return lang === 'ru' ? p : `/${lang}${p}`;
@@ -17,7 +17,7 @@ export function href(lang: Lang, path: string): string {
 
 export const LOCALE_TAG: Record<Lang, string> = { ru: 'ru-RU', en: 'en-GB', sr: 'sr-Latn-RS' };
 
-// В en месяц словом: «03/11/2026» американский читатель прочтёт как 11 марта.
+// In en the month is a word: an American reader would take "03/11/2026" as March 11.
 const DATE_OPTS: Record<Lang, Intl.DateTimeFormatOptions> = {
 	ru: {},
 	en: { day: 'numeric', month: 'short', year: 'numeric' },

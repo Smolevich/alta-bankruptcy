@@ -1,10 +1,10 @@
 ---
-// Карточки бланков AOD: превью первой страницы и «Открыть» ведут в просмотр PDF на сайте (PdfDialog),
-// «Word» скачивает файл AOD. Данные — src/data/aod-forms.ts; одни и те же карточки на страницах и в новостях.
+// AOD form cards: the first-page preview and "Open" lead to the on-site PDF viewer (PdfDialog),
+// "Word" downloads the AOD file. Data is in src/data/aod-forms.ts; the same cards appear on pages and in news.
 import { AOD_FORMS, AOD_FORMS_PAGE, type FormKey } from '../data/aod-forms';
 import { UI, type Lang } from '../i18n';
 
-// fill: на странице есть редактор DocEditor бланка (#fill-in), у бланка требования появляется кнопка к ней.
+// fill: the page has a DocEditor for the form (#fill-in); the claim form gets a button leading to it.
 const { forms, lang = 'ru', fields = true, fill = false } = Astro.props as { forms: FormKey[]; lang?: Lang; fields?: boolean; fill?: boolean };
 const t = UI[lang];
 ---

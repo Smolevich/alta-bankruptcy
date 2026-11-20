@@ -1,5 +1,5 @@
-// Бланки AOD для вкладчиков ALTA (04.11.2026). AOD выложил их только в Word, поэтому у каждого
-// есть наша PDF-копия для просмотра на сайте и копия Word-файла (байт в байт как у AOD).
+// AOD forms for ALTA depositors (04.11.2026). AOD published them only in Word, so each
+// has our PDF copy for on-site viewing and a copy of the Word file (byte for byte as AOD's).
 import type { Lang } from '../i18n';
 
 type Text = Record<Lang, string>;
@@ -7,19 +7,19 @@ type Text = Record<Lang, string>;
 export type FormKey = 'prijava' | 'fizicka' | 'pravna';
 
 export type AodForm = {
-	/** Название по-сербски, как в самом бланке (кириллица). */
+	/** Name in Serbian, as in the form itself (Cyrillic). */
 	original: string;
 	title: Text;
-	/** Для чего бланк и кто его подаёт — одна строка. */
+	/** What the form is for and who files it: one line. */
 	purpose: Text;
 	fields: Record<Lang, string[]>;
-	/** Word-файл на сайте AOD. */
+	/** Word file on the AOD site. */
 	sourceUrl: string;
-	/** Имя без расширения в public/docs (PDF и Word) и public/img/forms (превью). */
+	/** Name without extension in public/docs (PDF and Word) and public/img/forms (preview). */
 	file: string;
 	word: 'doc' | 'docx';
 	pages: number;
-	/** Высота превью первой страницы при ширине 360 (A4 и Letter различаются). */
+	/** Height of the first-page preview at width 360 (A4 and Letter differ). */
 	thumbHeight: number;
 };
 

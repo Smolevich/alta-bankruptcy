@@ -1,8 +1,8 @@
-"""Подложка карты отделений: /map/serbia.pmtiles отдаём из бакета R2, а не из git.
+"""Branch map base layer: /map/serbia.pmtiles is served from an R2 bucket, not from git.
 
-Файл весит ~50 МБ и не должен жить в репозитории. Сервис ходит в R2 по S3 API (подпись SigV4,
-только стандартная библиотека) и пробрасывает Range, потому что pmtiles в браузере читает
-файл кусками. Ключи приходят из окружения (.env, который деплой собирает из Vault).
+The file weighs ~50 MB and must not live in the repository. The service reaches R2 over the S3 API
+(SigV4 signature, standard library only) and forwards Range, because pmtiles in the browser reads
+the file in chunks. Keys come from the environment (.env, which the deploy builds from Vault).
 """
 
 import datetime as dt
@@ -19,8 +19,8 @@ from starlette.concurrency import iterate_in_threadpool, run_in_threadpool
 from starlette.requests import Request
 from starlette.responses import PlainTextResponse, Response, StreamingResponse
 
-# Cloudflare кэширует по расширению файла, а .pmtiles в его списке нет: без правила кэша на
-# зоне заголовок ничего не даст. Сутки: подмена файла под тем же именем потребует purge.
+# Cloudflare caches by file extension and .pmtiles is not on its list: without a cache rule on
+# the zone the header does nothing. A day: replacing the file under the same name requires a purge.
 TILES_CACHE = "public, max-age=86400"
 CHUNK = 256 * 1024
 R2_ENV = (
@@ -63,7 +63,7 @@ def _sign(key: bytes, msg: str) -> bytes:
 
 
 def signed_headers(cfg: R2Config, method: str, now: dt.datetime) -> dict[str, str]:
-    """SigV4 для GET/HEAD без тела: подписываем только host и x-amz-*."""
+    """SigV4 for GET/HEAD without a body: sign only host and x-amz-*."""
     stamp = now.strftime("%Y%m%dT%H%M%SZ")
     day = stamp[:8]
     payload_hash = hashlib.sha256(b"").hexdigest()
@@ -100,7 +100,7 @@ class R2Source:
         try:
             resp = urllib.request.urlopen(req, timeout=30)
         except urllib.error.HTTPError as e:
-            # 416 и 404 отдаём как есть, остальное (403 и т. п.) — наша поломка, а не клиента.
+            # 416 and 404 are passed through as is; anything else (403 etc.) is our fault, not the client's.
             if e.code in (404, 416):
                 return TilesObject(e.code, {}, iter(()))
             raise
@@ -114,7 +114,7 @@ def tiles_endpoint(source: TilesSource | None):
         if source is None:
             return PlainTextResponse("map tiles storage is not configured", status_code=503)
         head = request.method == "HEAD"
-        # Условные заголовки не пробрасываем: 304 вместо 206 ломает pmtiles (см. site.py).
+        # Conditional headers are not forwarded: 304 instead of 206 breaks pmtiles (see site.py).
         obj = await run_in_threadpool(source.fetch, request.headers.get("range"), head)
         if obj.status in (404, 416):
             text = "not found" if obj.status == 404 else "range not satisfiable"

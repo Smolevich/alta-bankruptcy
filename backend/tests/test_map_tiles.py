@@ -10,7 +10,7 @@ DATA = bytes(range(256))
 
 
 class FakeBucket:
-    """Граница с R2: ведёт себя как S3 — 200 на целый файл, 206 на Range, 416 за краем."""
+    """R2 boundary: behaves like S3: 200 for the whole file, 206 for Range, 416 past the end."""
 
     def __init__(self) -> None:
         self.ranges: list[str | None] = []
@@ -61,7 +61,7 @@ def test_full_request_streams_whole_file_and_is_cacheable(client):
 
 
 def test_range_with_if_none_match_still_gets_206(client):
-    # pmtiles у повторного посетителя шлёт If-None-Match вместе с Range; 304 ломает чтение.
+    # For a returning visitor pmtiles sends If-None-Match along with Range; 304 breaks reading.
     response = client.get("/map/serbia.pmtiles", headers={"Range": "bytes=0-3", "If-None-Match": '"abc"'})
     assert response.status_code == 206
     assert response.content == DATA[:4]
@@ -86,7 +86,8 @@ def test_without_storage_config_answers_503_not_a_wrong_map(tmp_path, monkeypatc
 
 
 def test_signature_depends_on_secret_and_has_sigv4_shape():
-    # Подлинность подписи проверяет только сам R2 (см. PR), здесь — форма и зависимость от секрета.
+    # Signature authenticity is checked only by R2 itself; here we check the form and dependence on the
+    # secret.
     cfg = R2Config("acc", "AKID", "secret", "bkt", "k.pmtiles")
     now = dt.datetime(2026, 11, 7, 12, 0, 0, tzinfo=dt.UTC)
     a = signed_headers(cfg, "GET", now)

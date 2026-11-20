@@ -1,5 +1,5 @@
-// Плагин rehype: ставит заголовкам h2–h6 id из src/heading-ids.mjs вместо слагов из текста.
-// Слаг из текста на ru/sr даёт кириллицу и %D0%… в ссылке, и на трёх языках якоря разные.
+// rehype plugin: gives h2–h6 headings ids from src/heading-ids.mjs instead of slugs from the text.
+// A slug from the text gives Cyrillic and %D0%… in the link on ru/sr, and anchors differ across the three languages.
 import { HEADING_IDS } from './heading-ids.mjs';
 
 const HEADING = new Set(['h2', 'h3', 'h4', 'h5', 'h6']);

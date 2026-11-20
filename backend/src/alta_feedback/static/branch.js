@@ -1,5 +1,5 @@
-// Подсказки поля «Отделение»: когда выбраны банк и город, берём отделения этого банка в этом
-// городе из справочника на сервере. Без скрипта поле — обычный ввод текста.
+// Suggestions for the "Branch" field: once a bank and city are chosen, we take that bank's branches in that
+// city from the server directory. Without the script the field is plain text input.
 (() => {
   const bank = document.getElementById("bank");
   const city = document.getElementById("city");
@@ -30,7 +30,7 @@
       if (!response.ok || key !== asked) return;
       fill((await response.json()).branches);
     } catch {
-      // Нет сети — остаётся свободный ввод.
+      // No network: free input remains.
     }
   };
 

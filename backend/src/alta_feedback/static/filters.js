@@ -1,5 +1,5 @@
-// Фильтры сводки: поля дат в стиле страницы; списки с поиском даёт select-combo.js (data-combo).
-// Без скрипта форма работает на тех же <select> и <input type=date> с теми же name.
+// Stats filters: date fields in the page style; searchable lists come from select-combo.js (data-combo).
+// Without the script the form works on the same <select> and <input type=date> with the same names.
 (() => {
   const make = (tag, className, props = {}) => Object.assign(document.createElement(tag), { className, ...props });
 
@@ -8,13 +8,13 @@
     'fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M2.5 8h15M6.5 2v4M13.5 2v4" stroke="currentColor" ' +
     'stroke-width="1.6" stroke-linecap="round"/></svg>';
 
-  /** 2026-10-12 → 12.10.2026; пусто или не дата — пустая строка. */
+  /** 2026-10-12 -> 12.10.2026; empty or not a date gives an empty string. */
   const russianDate = (iso) => {
     const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || "");
     return match ? `${match[3]}.${match[2]}.${match[1]}` : "";
   };
 
-  // Системный выбор даты на телефоне удобен, поэтому оставляем его, но прячем под поле в стиле страницы.
+  // The system date picker on a phone is convenient, so we keep it but hide it under a field in the page style.
   const enhanceDate = (input) => {
     const box = make("div", "date");
     const face = make("span", "date-face");
@@ -33,7 +33,7 @@
       clear.hidden = !text;
     };
     input.addEventListener("click", () => {
-      try { input.showPicker(); } catch { /* старый браузер откроет выбор сам */ }
+      try { input.showPicker(); } catch { /* an old browser opens the picker itself */ }
     });
     input.addEventListener("input", show);
     input.addEventListener("change", show);
@@ -53,7 +53,7 @@
   const form = document.querySelector("form.filters");
   if (!form) return;
   form.querySelectorAll("input[type=date]").forEach(enhanceDate);
-  // Пустые поля не отправляем: ссылка на фильтр короче, её проще переслать.
+  // Empty fields are not sent: the filter link is shorter and easier to forward.
   const named = () => [...form.querySelectorAll("select[name], input[name]")];
   form.addEventListener("submit", () => named().forEach((field) => { field.disabled = !field.value; }));
   window.addEventListener("pageshow", () => named().forEach((field) => { field.disabled = false; }));

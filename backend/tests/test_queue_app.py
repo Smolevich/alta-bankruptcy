@@ -13,7 +13,7 @@ from alta_feedback.validate import hash_ip
 TOKEN = "admin-secret"
 AUTH = {"Authorization": f"Bearer {TOKEN}"}
 SITE_LIST = Path(__file__).parents[2] / "src/data/postanska-branches.json"
-# Среда 11.11.2026, 10:00 по Белграду: отделения открыты, отметки принимаются.
+# Wednesday 11.11.2026, 10:00 Belgrade time: branches are open, marks are accepted.
 OPEN_NOW = datetime(2026, 11, 11, 9, tzinfo=UTC)
 
 
@@ -95,7 +95,7 @@ def test_same_device_marking_same_branch_again_is_refused(client):
 
 
 def fill_hour(client: TestClient, count: int, ip: str = "203.0.113.5") -> None:
-    """Отметки с одного адреса 20–50 минут назад: старше запрета на то же отделение, внутри часа."""
+    """Marks from one address 20-50 minutes ago: past the same-branch cooldown, but within the hour."""
     store = client.app.state.store
     ip_hash = hash_ip(ip, "salt")
     ids = sorted(queues.branch_ids() - {"715"})
@@ -175,7 +175,7 @@ def test_branch_hours_copy_matches_site_list():
 
 
 def test_closed_branch_refuses_mark_and_stores_nothing(tmp_path):
-    closed_at = datetime(2026, 11, 7, 17, 30, tzinfo=UTC)  # суббота 18:30 по Белграду
+    closed_at = datetime(2026, 11, 7, 17, 30, tzinfo=UTC)  # Saturday 18:30 Belgrade time
     client = TestClient(create_app(
         data_dir=tmp_path, admin_token=TOKEN, ip_salt="salt", pow_max_number=50, clock=lambda: closed_at
     ))

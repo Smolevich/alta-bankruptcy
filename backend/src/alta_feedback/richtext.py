@@ -1,12 +1,14 @@
-"""Текст предложения с разметкой: строгий allowlist поверх stdlib html.parser.
+"""Proposal text with markup: a strict allowlist over stdlib html.parser.
 
-Почему не nh3: новая зависимость меняет pyproject.toml и uv.lock, а они под ревью CODEOWNERS.
-Точка входа одна — `sanitize`; заменить её на nh3.clean с теми же тегами можно, не трогая остальное.
+Why not nh3: a new dependency changes pyproject.toml and uv.lock, and those are under CODEOWNERS review.
+There is one entry point, `sanitize`; it can be replaced with nh3.clean with the same tags without
+touching the rest.
 
-Что пропускаем: p, br, strong, em, h2, h3, ul, ol, li, blockquote и a с href только http(s);
-rel у ссылки ставим сами. Остальные теги выкидываем, их текст оставляем экранированным; содержимое
-script, style, iframe, template, svg, math и подобных выкидываем целиком. Атрибуты, кроме href у a,
-выкидываем. Выход всегда сбалансирован: незакрытое закрываем, лишние закрывающие игнорируем.
+What passes: p, br, strong, em, h2, h3, ul, ol, li, blockquote and a with an http(s) href only;
+we set the link's rel ourselves. Other tags are dropped and their text is kept escaped; the contents
+of script, style, iframe, template, svg, math and the like are dropped entirely. Attributes other than
+the href of a are dropped. The output is always balanced: unclosed tags are closed, extra closing
+ones are ignored.
 """
 
 import html
@@ -15,19 +17,20 @@ from urllib.parse import urlsplit
 
 ALLOWED = frozenset({"p", "br", "strong", "em", "h2", "h3", "ul", "ol", "li", "a", "blockquote"})
 VOID = frozenset({"br"})
-# Синонимы, которые даёт вставка из Word/Google Docs: смысл тот же, тег — из списка.
+# Synonyms produced by pasting from Word/Google Docs: same meaning, the tag is from the list.
 ALIASES = {"b": "strong", "i": "em", "h1": "h2", "h4": "h3", "h5": "h3", "h6": "h3", "div": "p"}
 DROP_CONTENT = frozenset({
     "script", "style", "iframe", "template", "svg", "math", "object", "embed", "noscript", "noembed",
     "noframes", "frameset", "frame", "xmp", "plaintext", "textarea", "select", "title", "head", "applet",
 })
 LINK_REL = "noopener nofollow"
-# Невидимые символы, которыми прячут схему: «\u200bjavascript:». Управляющие и пробелы ловит проверка ниже.
+# Invisible characters used to hide the scheme: "​javascript:". Control characters and spaces are caught
+# by the check below.
 INVISIBLE = frozenset({0x7F, 0x200B, 0x200C, 0x200D, 0x2060, 0xFEFF})
 
 
 def safe_href(raw: str | None) -> str | None:
-    """Ссылка http(s) с хостом; javascript:, data:, относительные и с мусором внутри — None."""
+    """An http(s) link with a host; javascript:, data:, relative and with junk inside gives None."""
     url = (raw or "").strip()
     if not url or any(c.isspace() or ord(c) < 0x20 or ord(c) in INVISIBLE for c in url):
         return None
@@ -99,7 +102,7 @@ class Cleaner(HTMLParser):
 
 
 def sanitize(raw: str) -> str:
-    """HTML из редактора → безопасный HTML из разрешённых тегов."""
+    """Editor HTML -> safe HTML from the allowed tags."""
     cleaner = Cleaner()
     cleaner.feed(raw)
     return cleaner.result()
@@ -115,7 +118,7 @@ class TextOnly(HTMLParser):
 
 
 def visible_text(clean: str) -> str:
-    """Текст без разметки — по нему считается лимит длины."""
+    """Text without markup: the length limit is counted on it."""
     parser = TextOnly()
     parser.feed(clean)
     parser.close()
@@ -123,7 +126,7 @@ def visible_text(clean: str) -> str:
 
 
 def plain_to_html(text: str) -> str:
-    """Простой текст (поле без JS, старые предложения) → абзацы; одиночный перевод строки — <br>."""
+    """Plain text (field without JS, old proposals) -> paragraphs; a single newline becomes <br>."""
     paragraphs = [p.strip() for p in text.replace("\r\n", "\n").replace("\r", "\n").split("\n\n")]
     return "".join(
         f"<p>{html.escape(p, quote=False).replace(chr(10), '<br>')}</p>" for p in paragraphs if p
