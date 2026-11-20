@@ -42,7 +42,7 @@ A list response is `{"count": N, "items": [...]}`, ascending by `id`, up to 500 
 - Report: `{id, created_at, bank, city, account_type, result, visit_date, residency,
   documents, comment, ip_hash, user_agent_short, status, branch}`. `account_type` is `personal`, `entrepreneur`
   or `both` (applied for both in one visit; the stats count it as personal and as ИП). `branch` is `null` for
-  reports sent before the field existed and when the person left it empty or chose
+  older reports without the field and when the person left it empty or chose
   «Не помню / не важно».
 
 Only reports with status `accepted` make it into the stats and the public JSON.
@@ -190,8 +190,7 @@ are rotated.
 `GET /api/accounts/public` — no token, `accepted` only, most recent visits first, up to
 2000. Optional `limit` (1–2000) and `cursor` page through the rest: with either of them the
 response also has `next_cursor` (`<visit_date>_<id>` of the last item, `null` on the last page),
-passed back as `cursor`. A broken cursor starts from the top. Without them the response is the
-same as before:
+passed back as `cursor`. A broken cursor starts from the top. Without them the response is:
 
 ```json
 {"count": 1,
@@ -253,8 +252,8 @@ framework) from our own copy, so they stay readable if AOD takes them down. The 
 `ADMIN_TOKEN` and `IP_SALT` from Vault (AppRole; paths in the repository variables `VAULT_*`) and
 writes them to `.env` next to the app; if the read fails, the previous values are kept. The Access
 settings have defaults in the code (`cf_access.DEFAULTS`).
-The move from `Smolevich/alta-feedback`, the traffic switch and the rollback are in `docs/deploy.md`
-at the repository root.
+Rollback and the old `alta-feedback.service` fallback are in `docs/deploy.md` at the repository root.
+What the forms store and for how long: `docs/privacy.md`.
 
 - **Do not change the salt without a reason:** every IP hash changes with it and the rate
   limit resets.

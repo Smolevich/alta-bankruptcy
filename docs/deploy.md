@@ -1,46 +1,34 @@
-# Деплой
+# Deploy
 
-`alta.smolevich.com` целиком отдаёт сервис из `backend/` (Starlette): собранный здесь справочник
-на «/» со строгим CSP, формы `/` (правки) и `/account`, `/account/stats`, `/api`, `/admin`,
-архив PDF AOD на `/docs/aod/<name>`. Трафик приходит через туннель Cloudflare `telegram-bot`
-(ingress в репо `infra`, `fleet/hardening/cloudflared/config.yml`) на `127.0.0.1:<порт>`.
+`alta.smolevich.com` is served entirely by the service in `backend/` (Starlette): the reference site
+built here at `/` with a strict CSP, the forms at `/` (corrections) and `/account`, `/account/stats`,
+`/api`, `/admin`, and the AOD PDF archive at `/docs/aod/<name>`. Traffic comes through the Cloudflare
+tunnel `telegram-bot` (ingress in the `infra` repo, `fleet/hardening/cloudflared/config.yml`) to
+`127.0.0.1:8102`.
 
-Два воркфлоу, оба только из `main`, секреты — в environment `production`:
+Two workflows, both from `main` only, secrets in the `production` environment:
 
-| Воркфлоу | Что | Когда |
+| Workflow | What | When |
 |---|---|---|
-| `deploy.yml` | `check:i18n` + сборка Astro → подмена папки `/var/www/alta-bankruptcy` → проверка через сервис | `src/`, `public/`, конфиг сборки, манифест AOD |
-| `deploy-backend.yml` | тесты бэкенда → `/opt/alta-bankruptcy` → `uv sync` → `.env` из Vault → рестарт `alta-bankruptcy.service` (`127.0.0.1:8102`) и таймера `alta-aod-check` → проверка | `backend/` |
+| `deploy.yml` | `check:i18n` + Astro build → swap `/var/www/alta-bankruptcy` → check through the service | `src/`, `public/`, build config, AOD manifest |
+| `deploy-backend.yml` | backend tests → `/opt/alta-bankruptcy` → `uv sync` → `.env` from Vault → restart `alta-bankruptcy.service` (`127.0.0.1:8102`) and the `alta-aod-check` timer → check | `backend/` |
 
-- Справочник сервис читает с диска на каждый запрос: деплой сайта бэкенд не перезапускает.
-- Секреты приложения (`ADMIN_TOKEN`, `IP_SALT`) деплой читает из Vault по AppRole; пути — в
-  переменных репозитория `VAULT_*`. Секреты деплоя — `TS_OAUTH_*`, `VDS_*` (значения — по
-  `docs/hetzner-ci-deploy-standard.md` в pet-projects).
-- Бэкап базы: `feedback.db` входит в ночной бэкап ботов (`infra`, `bots_backup.py`, 04:15 UTC → R2).
+- The service reads the site from disk on every request, so a site deploy does not restart the backend.
+- App secrets (`ADMIN_TOKEN`, `IP_SALT`) are read by the deploy from Vault via AppRole; the paths are
+  in the repository variables `VAULT_*`. Deploy secrets are `TS_OAUTH_*` and `VDS_*` (values per
+  `docs/hetzner-ci-deploy-standard.md` in pet-projects).
+- The database and the AOD archive live in `/opt/alta-feedback/data` (`DATA_MODE: live` in
+  `deploy-backend.yml`); the `alta-aod-check` timer (03:20 UTC) runs code and venv from
+  `/opt/alta-bankruptcy` against that directory.
+- Backup: `feedback.db` is part of the nightly bot backup (`infra`, `bots_backup.py`, 04:15 UTC → R2).
 
-## Переезд из alta-feedback (ноябрь 2026)
+## Rollback
 
-Раньше бэкенд жил в репо `Smolevich/alta-feedback` и выкатывался им как `alta-feedback.service`
-на `127.0.0.1:8101` из `/opt/alta-feedback`. Его код перенесён сюда с историей (тег
-`alta-feedback-history`). Переезд идёт по шагам, чтобы сайт ни разу не лёг:
+Code of the site or the backend: revert in `main`, or run the workflow manually on the right commit.
 
-1. Новый сервис `alta-bankruptcy.service` на `8102` рядом со старым. `DATA_MODE: preview` в
-   `deploy-backend.yml`: каждый деплой снимает копию живой базы в `/opt/alta-bankruptcy/preview-data`
-   (архив AOD — ссылкой), и писать сервис может только туда — живую базу ему закрывает systemd
-   (`ReadWritePaths` из drop-in `data.conf`). Два процесса в одну базу не пишут.
-2. Переключение (сделано 03.11.2026): свежий бэкап базы → `DATA_MODE: live` (сервис на `/opt/alta-feedback/data`) →
-   ingress туннеля `alta.smolevich.com` с `8101` на `8102`. Старый сервис остаётся запущенным на
-   той же базе без трафика: всё, что запишет новый, видно и ему.
-3. Через сутки, после подтверждения Стаса, — финальный шаг ниже.
-
-Таймер проверки архива `alta-aod-check` (03:20 UTC) выкатывает этот репо: код и venv из
-`/opt/alta-bankruptcy`, архив — в живой базе `/opt/alta-feedback/data/aod`. Репо `alta-feedback`
-заархивирован 03.11.2026 и больше ничего на сервер не катит.
-
-## Откат
-
-Пока старый сервис запущен, откат трафика — вернуть ingress на `8101` и перезапустить туннель
-(одна команда с мака, конфиг берётся из `infra` на коммите до переключения):
+Traffic: the previous service `alta-feedback.service` (`backend/deploy/alta-feedback.service`) still
+runs on `127.0.0.1:8101` over the same database, without traffic. To switch back, point the tunnel
+ingress to `8101` and restart cloudflared, using the `infra` config from before the switch:
 
 ```bash
 git -C ~/pet-projects/infra fetch -q origin && \
@@ -48,30 +36,26 @@ git -C ~/pet-projects/infra show ea66818:fleet/hardening/cloudflared/config.yml 
   | ssh -o ClearAllForwardings=yes bot-server 'cat > /etc/cloudflared/config.yml && systemctl restart cloudflared'
 ```
 
-`ea66818` — последний коммит `infra` до переключения (Smolevich/infra#82, 03.11.2026 07:59 UTC).
-После отката — revert Smolevich/infra#82,
-чтобы эталон снова совпал с сервером. Данные не теряются: оба сервиса работают с одной базой.
+`ea66818` is the last `infra` commit before the switch. Afterwards revert Smolevich/infra#82 so the
+reference config matches the server again. No data is lost: both services use one database.
 
-Откат кода сайта или бэкенда — revert в `main` (или ручной запуск воркфлоу на нужном коммите).
+## Retiring the old service
 
-## Финальный шаг: выключить старый и заархивировать
+Once the old service is no longer needed as a fallback, with the repository owner's approval:
 
-Только после подтверждения Стаса, когда новый сервис отработал сутки:
+1. `systemctl disable --now alta-feedback.service` on the server (from a workflow script, not by
+   hand) and remove its unit and `backend/deploy/alta-feedback.service`. Do not touch
+   `/opt/alta-feedback/data`: it holds the live database and the AOD archive; moving it to
+   `/opt/alta-bankruptcy/data` is a separate step with a backup.
+2. Drop port `8101` from the check in `deploy.yml`, update `infra` (`docs/server-facts.md`,
+   `fleet/hardening/cloudflared.md`) and remove the rollback section above.
 
-1. ~~Перенести таймер проверки архива сюда~~ — сделано 03.11.2026.
-2. `systemctl disable --now alta-feedback.service` на сервере (скриптом из воркфлоу, не руками),
-   удалить его юнит; `/opt/alta-feedback/data` не трогать — там живая база и архив AOD
-   (переезд данных в `/opt/alta-bankruptcy/data` — отдельным шагом с бэкапом).
-3. Убрать порт `8101` из проверки в `deploy.yml`, обновить `infra` (`docs/server-facts.md`,
-   `fleet/hardening/cloudflared.md`).
-4. ~~Заархивировать `Smolevich/alta-feedback`~~ — сделано 03.11.2026; его environment `production`
-   и переменные `VAULT_*` ничего не делают (Actions у архива не запускаются).
+## Map tiles (R2)
 
-## Подложка карты (R2)
-
-`/map/serbia.pmtiles` (50 МБ) сервис отдаёт из бакета R2 `alta-map` по S3 API с пробросом Range
-(`backend/src/alta_feedback/map_tiles.py`), в git файла нет. Ключи бакета (токен только на этот бакет,
-Object Read & Write) лежат в Vault `secret/alta-feedback/r2_map`; деплой бэкенда кладёт их в `.env` как
-`R2_MAP_*` (путь — переменная репозитория `VAULT_R2_MAP_PATH`). Без ключей маршрут отвечает 503.
-Cloudflare не кэширует `.pmtiles` по расширению: нужно правило кэша на зоне для этого пути
-(Eligible for cache, Edge TTL — по заголовкам origin). Заменили файл в бакете — сбросить кэш этого URL.
+The service serves `/map/serbia.pmtiles` (50 MB) from the R2 bucket `alta-map` over the S3 API,
+passing Range through (`backend/src/alta_feedback/map_tiles.py`); the file is not in git. The bucket
+keys (a token for this bucket only, Object Read & Write) are in Vault `secret/alta-feedback/r2_map`;
+the backend deploy writes them to `.env` as `R2_MAP_*` (path in the repository variable
+`VAULT_R2_MAP_PATH`). Without the keys the route answers 503. Cloudflare does not cache `.pmtiles` by
+extension, so the zone needs a cache rule for this path (Eligible for cache, Edge TTL from origin
+headers). After replacing the file in the bucket, purge the cache for that URL.
