@@ -1,11 +1,11 @@
-# Ревью владельца кода обязательно там, где правка меняет деплой, его секреты или сборку сайта;
-# контент в src/ ведут мейнтейнеры сами.
+# Code owner review is required wherever an edit changes the deploy, its secrets or the site build;
+# content in src/ is run by the maintainers themselves.
 /.github/ @Smolevich @ivankoriakovskii
 /package.json @Smolevich @ivankoriakovskii
 /package-lock.json @Smolevich @ivankoriakovskii
 /astro.config.mjs @Smolevich @ivankoriakovskii
 /scripts/ @Smolevich @ivankoriakovskii
-# Реестр доверенных доменов: без ревью новый домен пришёл бы в том же PR, что и ссылка на него.
+# Registry of trusted domains: without review a new domain would arrive in the same PR as the link to it.
 /src/data/trusted-domains.yaml @Smolevich @ivankoriakovskii
 /backend/deploy/ @Smolevich @ivankoriakovskii
 /backend/pyproject.toml @Smolevich @ivankoriakovskii

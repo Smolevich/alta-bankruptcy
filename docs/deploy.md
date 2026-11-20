@@ -59,3 +59,12 @@ the backend deploy writes them to `.env` as `R2_MAP_*` (path in the repository v
 `VAULT_R2_MAP_PATH`). Without the keys the route answers 503. Cloudflare does not cache `.pmtiles` by
 extension, so the zone needs a cache rule for this path (Eligible for cache, Edge TTL from origin
 headers). After replacing the file in the bucket, purge the cache for that URL.
+
+## Dependency security
+
+Repository settings: Dependabot alerts and security updates, secret scanning with push protection,
+CodeQL default setup (actions, JavaScript/TypeScript, Python), private vulnerability reporting.
+`.github/dependabot.yml` opens weekly grouped minor/patch PRs for GitHub Actions, npm (root and
+`backend/editor`) and uv (`backend`). CI runs `npm audit --audit-level=high` for both lockfiles and
+`pip-audit` for the locked backend dependencies. On an alert: merge the Dependabot security PR after
+CI is green, or bump the package by hand; never dismiss an alert without a written reason.

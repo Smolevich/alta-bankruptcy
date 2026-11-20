@@ -54,6 +54,10 @@ Code rules and tests: `docs/coding-standards.md`. Deploy: `docs/deploy.md`. Data
   filled-in forms. The repo is public; a leak means rotating and reporting. Official contacts of
   organisations are fine.
 - No secrets or server addresses in the repo. Deploy only through CI; never edit the server by hand.
+- Dependency security: Dependabot alerts and security updates, secret scanning with push protection,
+  CodeQL (default setup) and private vulnerability reporting are on; CI fails on high/critical npm
+  advisories and on any known Python advisory. A security alert is fixed first: merge the Dependabot
+  PR once CI is green, or bump the package by hand; a major bump goes through a normal reviewed PR.
 - Light theme only. No third-party scripts or fonts; the only external script is Cloudflare Web
   Analytics, allowed by the CSP in `backend/src/alta_feedback/site.py`.
 - Everything outside site content and UI strings is in English: docs, code comments, commits, PRs.

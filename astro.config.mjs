@@ -14,18 +14,18 @@ const SITE = 'https://alta.smolevich.com';
 const LASTMOD = lastmodByPath('./src/content/docs', './src/content/news');
 const NOINDEX = noindexPaths('./src/content/docs');
 
-// Сайт живёт в корне alta.smolevich.com: статику отдаёт сервис из backend/
-// (см. docs/deploy.md), поэтому base не задаём.
+// The site lives at the root of alta.smolevich.com: the static files are served by the service from backend/
+// (see docs/deploy.md), so base is not set.
 export default defineConfig({
 	site: SITE,
 	markdown: { processor: unified({ rehypePlugins: [rehypeNewTab, rehypeHeadingIds, rehypeNbspPercent] }) },
 	integrations: [
-		// Свой экземпляр вместо встроенного в Starlight: тот не умеет lastmod и страниц backend.
-		// i18n — как у Starlight, иначе пропадут hreflang в карте сайта.
+		// Our own instance instead of the one built into Starlight: that one knows neither lastmod nor the backend pages.
+		// i18n as in Starlight, otherwise hreflang disappears from the sitemap.
 		sitemap({
 			i18n: { defaultLocale: 'root', locales: { root: 'ru', en: 'en', sr: 'sr-Latn' } },
-			// Страницу отдаёт backend, в сборке Astro её нет; форма /account закрыта noindex и в карту не идёт.
-			// Дату не ставим: данные меняются с каждым ответом.
+			// The page is served by the backend and is not in the Astro build; the /account form is noindex and stays out of the sitemap.
+			// No date is set: the data changes with every answer.
 			customPages: [`${SITE}/account/stats`],
 			filter: (page) => !NOINDEX.has(new URL(page).pathname),
 			serialize(item) {
@@ -38,13 +38,13 @@ export default defineConfig({
 			description:
 				'Справочник для вкладчиков банка ALTA (Сербия), у которых на счетах больше 50 000 €: стадия процедуры, сроки, требование в банкротстве, официальные новости.',
 			head: [
-				// Подтверждение владения для Bing Webmaster Tools: без тега подтверждение слетит.
+				// Ownership verification for Bing Webmaster Tools: without the tag the verification lapses.
 				{ tag: 'meta', attrs: { name: 'msvalidate.01', content: 'F904AA02101BD3884A4A984CD73C8E57' } },
 				{ tag: 'link', attrs: { rel: 'icon', href: '/favicon.ico', sizes: '32x32' } },
 				{ tag: 'link', attrs: { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' } },
-				// Разосланные старые якоря ведут на новые английские (см. src/heading-ids.mjs).
+				// Previously sent anchors lead to the new English ones (see src/heading-ids.mjs).
 				{ tag: 'script', attrs: { src: '/anchor-redirect.js', defer: true } },
-				// Счётчик Cloudflare Web Analytics; токен публичный. CSP разрешает его в backend (site.py).
+				// Cloudflare Web Analytics counter; the token is public. CSP allows it in the backend (site.py).
 				{
 					tag: 'script',
 					attrs: {
@@ -54,11 +54,11 @@ export default defineConfig({
 					},
 				},
 			],
-			// Правка в два клика через веб-редактор GitHub, без клона репозитория.
+			// Edit in two clicks through the GitHub web editor, without cloning the repository.
 			editLink: { baseUrl: 'https://github.com/Smolevich/alta-bankruptcy/edit/main/' },
 			social: [
 				{ icon: 'github', label: 'GitHub', href: 'https://github.com/Smolevich/alta-bankruptcy' },
-				// Подписи на языке страницы подставляет src/components/SocialIcons.astro.
+				// Labels in the page language are supplied by src/components/SocialIcons.astro.
 				{ icon: 'telegram', label: 'Telegram-канал', href: TELEGRAM_CHANNEL_URL },
 				{ icon: 'telegram', label: 'Telegram-чат', href: TELEGRAM_CHAT_URL },
 				...(INSTAGRAM_URL ? [{ icon: 'instagram', label: 'Instagram', href: INSTAGRAM_URL }] : []),
@@ -69,20 +69,20 @@ export default defineConfig({
 				en: { label: 'English', lang: 'en' },
 				sr: { label: 'Srpski', lang: 'sr-Latn' },
 			},
-			// «Назад/Далее» внизу страницы идут в порядке бокового меню, как плитки на главной.
+			// "Back/Next" at the page bottom follow the sidebar order, like the tiles on the home page.
 			pagination: true,
 			customCss: ['./src/styles/custom.css'],
 			routeMiddleware: './src/route-data.ts',
 			components: {
 				Footer: './src/components/Footer.astro',
 				SocialIcons: './src/components/SocialIcons.astro',
-				// Только светлая тема: так написано на всех скриншотах и в брифе.
+				// Light theme only: that is how all screenshots and the brief are made.
 				ThemeProvider: './src/components/ThemeProvider.astro',
 				ThemeSelect: './src/components/Empty.astro',
 			},
-			plugins: [// /account отдаёт сервис из backend/, в сборке Astro его страниц нет.
+			plugins: [// /account is served by the backend, its pages are not in the Astro build.
 				starlightLinksValidator({ errorOnRelativeLinks: false, exclude: ['/account', '/account/**'] })],
-			// Сверху действия, справка — в свёрнутых группах; «Как помочь» (/pomoch/) живёт в подвале.
+			// Actions on top, reference material in collapsed groups; "How to help" (/pomoch/) lives in the footer.
 			sidebar: [
 				{ label: 'Что сейчас', slug: 'index', translations: { en: 'What is happening now', 'sr-Latn': 'Šta se sada dešava' } },
 				{
@@ -92,8 +92,8 @@ export default defineConfig({
 					items: [
 						{ label: 'Получить до 50 000 €', slug: 'vyplata', translations: { en: 'Get up to €50,000', 'sr-Latn': 'Preuzmite do 50.000 €' } },
 						{ label: 'Подать требование сверх 50 000 €', slug: 'trebovanie', translations: { en: 'File a claim above €50,000', 'sr-Latn': 'Prijavite potraživanje iznad 50.000 €' } },
-						// Страница отдаётся сервисом формы и есть только по-русски: полный адрес, иначе Starlight
-						// приклеит /en/ или /sr/ и ссылка уйдёт в 404.
+						// The page is served by the form service and exists only in Russian: a full address, otherwise Starlight
+						// would prepend /en/ or /sr/ and the link would 404.
 						{ label: 'Опыт вкладчиков: где открывают счета', link: 'https://alta.smolevich.com/account/stats', translations: { en: 'Depositors’ experience: where accounts get opened', 'sr-Latn': 'Iskustva deponenata: gde se otvaraju računi' } },
 						{ label: 'Банк отказал в счёте: куда жаловаться', slug: 'otkaz-scheta', translations: { en: 'Account refused: where to complain', 'sr-Latn': 'Odbijen račun: gde se žaliti' } },
 						{ label: 'Какие документы сохранить', slug: 'vypiski', translations: { en: 'Which documents to keep', 'sr-Latn': 'Koja dokumenta sačuvati' } },

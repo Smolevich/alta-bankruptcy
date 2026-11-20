@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { belgradeParts, clockOffset } from '../src/lib/server-clock.mjs';
 
-// Среда 11.11.2026, 10:00 по Белграду.
+// Wednesday 11.11.2026, 10:00 Belgrade time.
 const SERVER = Date.parse('2026-11-11T09:00:00Z');
 
 test('phone clock three hours ahead still gives Belgrade time from the server', () => {

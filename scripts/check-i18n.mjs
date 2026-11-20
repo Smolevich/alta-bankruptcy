@@ -1,5 +1,5 @@
-// Проверка переводов: у каждой страницы и новости есть ru/en/sr, а источники и ссылки в версиях совпадают.
-// Запуск: npm run check:i18n (в CI — отдельным шагом до сборки).
+// Translation check: every page and news item has ru/en/sr, and sources and links match across versions.
+// Run: npm run check:i18n (in CI as a separate step before the build).
 import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { parse } from 'yaml';
@@ -47,7 +47,7 @@ function compare(group, files) {
 	}
 }
 
-// Страницы: ru лежит в корне, en/ и sr/ — в подпапках.
+// Pages: ru is in the root, en/ and sr/ are in subfolders.
 const docs = {};
 for (const file of walk(DOCS)) {
 	const rel = relative(DOCS, file);
@@ -57,7 +57,7 @@ for (const file of walk(DOCS)) {
 }
 for (const [slug, files] of Object.entries(docs)) compare(`docs/${slug}`, files);
 
-// Новости: src/content/news/<lang>/<файл>.
+// News: src/content/news/<lang>/<file>.
 const news = {};
 for (const lang of LANGS) {
 	if (!existsSync(join(NEWS, lang))) continue;
@@ -65,7 +65,7 @@ for (const lang of LANGS) {
 }
 for (const [name, files] of Object.entries(news)) compare(`news/${name}`, files);
 
-// Перевода интерфейса Starlight для sr-Latn нет в комплекте: без своего файла /sr/ показывает меню по-русски.
+// The Starlight interface translation for sr-Latn is not bundled: without its own file /sr/ shows the menu in Russian.
 if (!existsSync('src/content/i18n/sr-Latn.json')) errors.push('нет src/content/i18n/sr-Latn.json: интерфейс /sr/ будет по-русски');
 
 if (errors.length) {

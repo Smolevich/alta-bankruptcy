@@ -1,7 +1,7 @@
 name: Deploy to Hetzner
 
-# Сайт отдаёт сервис из backend/ (alta.smolevich.com) из папки /var/www/alta-bankruptcy:
-# CI собирает статику и подменяет папку целиком. Сервис не перезапускается. См. docs/deploy.md.
+# The site is served by the backend service (alta.smolevich.com) from the folder /var/www/alta-bankruptcy:
+# CI builds the static files and swaps the whole folder. The service is not restarted. See docs/deploy.md.
 on:
   push:
     branches: [main]
@@ -24,8 +24,8 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # Код репозитория (npm-скрипты, конфиг Astro, фронтматтер страниц) исполняется только здесь,
-  # где секретов нет: иначе правка с правом записи могла бы вытащить ключи из памяти раннера.
+  # Repository code (npm scripts, Astro config, page frontmatter) runs only here,
+  # where there are no secrets: otherwise an edit by a writer could pull keys out of the runner memory.
   build:
     runs-on: ubuntu-latest
     steps:
@@ -51,8 +51,8 @@ jobs:
           retention-days: 1
           if-no-files-found: error
 
-  # Секреты деплоя лежат в environment production, который пускает только main: workflow
-  # из чужой ветки их не получит, а в main попадают только через PR с ревью CODEOWNERS.
+  # Deploy secrets live in the production environment, which admits only main: a workflow
+  # from another branch does not get them, and main is reached only through a PR with CODEOWNERS review.
   deploy:
     needs: build
     environment: production
@@ -70,8 +70,8 @@ jobs:
           oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
           tags: tag:gha-runner
 
-      # Хост сверяется с known_hosts из секрета: подменённый сервер не получит ни сайт, ни
-      # подпись ключа. HostKeyAlias отвязывает проверку от того, IP или имя лежит в VDS_HOST.
+      # The host is checked against known_hosts from a secret: a spoofed server gets neither the site nor the
+      # key signature. HostKeyAlias decouples the check from whether VDS_HOST holds an IP or a name.
       - name: Set up SSH
         env:
           SSH_KEY: ${{ secrets.VDS_SSH_KEY }}
@@ -121,7 +121,7 @@ jobs:
           sudo rm -rf "$WEB.new" "$WEB.old"
           sudo cp -a "$STAGE/dist" "$WEB.new"
           rm -rf "$STAGE"
-          # Root umask на хосте иногда оставляет 700, а сервис читает от своего пользователя.
+          # Root umask on the host sometimes leaves 700, while the service reads as its own user.
           sudo chown -R root:root "$WEB.new"
           sudo find "$WEB.new" -type d -exec chmod 755 {} +
           sudo find "$WEB.new" -type f -exec chmod 644 {} +
@@ -129,8 +129,8 @@ jobs:
           [ -d "$WEB" ] && sudo mv "$WEB" "$WEB.old"
           sudo mv "$WEB.new" "$WEB"
 
-          # Проверка через сервис на петле. Если «/» отдаёт не справочник (например, сервис
-          # ещё без раздачи статики), возвращаем прежнюю папку и валим деплой.
+          # Check through the service on loopback. If "/" does not serve the reference (for example the service
+          # has no static serving yet), restore the previous folder and fail the deploy.
           ok=1
           curl -fsS http://127.0.0.1:8102/ | grep -q 'hreflang="sr-Latn"' || ok=0
           curl -fsS http://127.0.0.1:8102/en/ | grep -q '<html lang="en"' || ok=0
@@ -151,8 +151,8 @@ jobs:
         if: always()
         run: ssh-agent -k > /dev/null 2>&1 || true
 
-      # IndexNow: сообщает Bing/Yandex о страницах сразу после выкладки. Ключ публичный по
-      # стандарту (файл лежит в public/). Не валим деплой, если сервис недоступен.
+      # IndexNow: tells Bing/Yandex about pages right after rollout. The key is public by
+      # standard (the file is in public/). We do not fail the deploy if the service is unavailable.
       - name: Ping IndexNow
         continue-on-error: true
         run: |

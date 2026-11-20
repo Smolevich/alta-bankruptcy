@@ -23,7 +23,7 @@ test('friday evening opens on saturday morning', () => {
 	assert.equal(branchStatus(WD, SAT, 5, at(20)).nextDay, 6);
 });
 
-// Регрессия 07.11: в сб 15:20 карточка писала «Сегодня, сб: 8:00–13:00» рядом с «Закрыто».
+// Regression: on Saturday 15:20 the card said "Today, Sat: 8:00–13:00" next to "Closed".
 test('saturday after 13:00 is closed for the day and opens on monday', () => {
 	assert.deepEqual(branchStatus(WD, SAT, 6, at(15, 20)), { state: 'closed', closedAt: at(13), nextDay: 1, opensAt: at(8), tomorrow: false });
 });
