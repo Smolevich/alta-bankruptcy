@@ -1,7 +1,6 @@
 # Architecture Decision Records
 
 Short records of decisions already in force, reconstructed from merged PRs, workflows and docs.
-"Accepted" means the reason is not recorded in the repository and the maintainers should confirm it.
 
 | # | Decision | Status | Date |
 |---|---|---|---|
