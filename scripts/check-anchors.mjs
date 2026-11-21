@@ -46,7 +46,7 @@ function main(dist) {
 		console.error(problems.join('\n'));
 		process.exit(1);
 	}
-	console.log(`Якоря в порядке: ${idsByPage.size} страниц.`);
+	console.log(`anchors ok: ${idsByPage.size} pages`);
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) main(process.argv[2] ?? 'dist');

@@ -16,7 +16,7 @@ from starlette.applications import Starlette
 from starlette.concurrency import run_in_threadpool
 from starlette.datastructures import UploadFile
 from starlette.middleware import Middleware
-from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.requests import Request
 from starlette.responses import (
     FileResponse,
@@ -184,7 +184,7 @@ templates = Environment(
 
 
 class SecurityHeaders(BaseHTTPMiddleware):
-    async def dispatch(self, request: Request, call_next) -> Response:
+    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
         declared = request.headers.get("content-length", "0")
         if declared.isdigit() and int(declared) > body_limit(request.url.path):
             response: Response = PlainTextResponse("Слишком большой запрос", status_code=413)
@@ -208,7 +208,7 @@ def client_ip(request: Request) -> str:
 
 
 def render(
-    name: str, status_code: int = 200, headers: dict[str, str] | None = None, **context
+    name: str, status_code: int = 200, headers: dict[str, str] | None = None, **context: object
 ) -> HTMLResponse:
     context.setdefault("return_url", os.environ.get("RETURN_URL", DEFAULT_RETURN_URL))
     context.setdefault("text_max", TEXT_MAX)
@@ -998,7 +998,7 @@ def create_app(
     app.state.admin_token = admin_token if admin_token is not None else os.environ.get("ADMIN_TOKEN", "")
     app.state.ip_salt = ip_salt if ip_salt is not None else os.environ.get("IP_SALT", "")
     if not app.state.ip_salt:
-        raise RuntimeError("IP_SALT не задан: без соли хэш IP подбирается перебором")
+        raise RuntimeError("IP_SALT is not set: an unsalted IP hash can be brute-forced")
     app.state.pow_key = derive_key(app.state.ip_salt)
     # Clock for the queue-mark acceptance window: replaced in tests so they do not depend on the run time.
     app.state.clock = clock or (lambda: datetime.now(UTC))

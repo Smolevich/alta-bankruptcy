@@ -59,7 +59,7 @@ class SiteFiles(StaticFiles):
         # No folder before the first rollout, and that is not an error: the service answers 404, not 500.
         return
 
-    async def get_response(self, path: str, scope: Scope):
+    async def get_response(self, path: str, scope: Scope) -> Response:
         response = await super().get_response(path, without_conditionals_on_range(scope))
         if response.status_code == 307:
             # Starlette sends 307 for a folder address without a slash; this is a permanent rule, and

@@ -39,23 +39,23 @@ def page(lang: str, name: str) -> str:
     return (DOCS / ("" if lang == "ru" else lang) / name).read_text("utf-8")
 
 
-def test_list_counts_new_cities_from_the_11_11_list():
+def test_list_counts_new_cities_from_the_11_11_list() -> None:
     assert list_counts() == (57, 15)
 
 
-def test_city_of_handles_renamed_nis_counter():
+def test_city_of_handles_renamed_nis_counter() -> None:
     assert city_of("Samostalni šalter Niš 1") == "NIŠ"
 
 
 @pytest.mark.parametrize("lang", ["ru", "en", "sr"])
 @pytest.mark.parametrize("name", PAGES)
-def test_page_states_place_count_of_the_list(lang: str, name: str):
+def test_page_states_place_count_of_the_list(lang: str, name: str) -> None:
     found = {int(n) for n in PLACES[lang].findall(page(lang, name))}
     assert found == {list_counts()[0]}
 
 
 @pytest.mark.parametrize("lang", ["ru", "en", "sr"])
 @pytest.mark.parametrize("name", ("vyplata.mdx", "index.mdx", "voprosy.mdx"))
-def test_page_states_city_count_of_the_list(lang: str, name: str):
+def test_page_states_city_count_of_the_list(lang: str, name: str) -> None:
     found = {int(n) for n in CITIES[lang].findall(page(lang, name))}
     assert found == {list_counts()[1]}

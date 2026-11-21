@@ -28,87 +28,87 @@ def parse(docs: list[str] | None = None, **fields):
         "ivan.testov@example.com",
     ],
 )
-def test_scrub_hides_personal_numbers(secret):
+def test_scrub_hides_personal_numbers(secret) -> None:
     assert secret not in scrub_pii(f"мой номер {secret}, спасибо")
 
 
-def test_scrub_keeps_ordinary_text_and_dates():
+def test_scrub_keeps_ordinary_text_and_dates() -> None:
     text = "Просили паспорт и боравак, ждал 2 недели, визит 08.10.2026, сумма 500 000 динар"
     assert scrub_pii(text) == text
 
 
-def test_minimal_form_is_accepted():
+def test_minimal_form_is_accepted() -> None:
     _, errors = parse()
     assert errors == []
 
 
-def test_bank_code_becomes_bank_name():
+def test_bank_code_becomes_bank_name() -> None:
     report, _ = parse()
     assert report.bank == "Banca Intesa"
 
 
-def test_bank_label_typed_in_any_case_becomes_bank_name():
+def test_bank_label_typed_in_any_case_becomes_bank_name() -> None:
     report, _ = parse(bank="  otp BANKA ")
     assert report.bank == "OTP banka"
 
 
-def test_own_bank_text_is_kept():
+def test_own_bank_text_is_kept() -> None:
     report, _ = parse(bank="  Nova   banka ")
     assert report.bank == "Nova banka"
 
 
-def test_own_city_is_scrubbed():
+def test_own_city_is_scrubbed() -> None:
     report, _ = parse(city="Zrenjanin 0631234567")
     assert "0631234567" not in report.city
 
 
-def test_empty_bank_is_rejected():
+def test_empty_bank_is_rejected() -> None:
     _, errors = parse(bank=" ")
     assert errors
 
 
 @pytest.mark.parametrize("field", ["account_type", "result"])
-def test_required_choice_must_be_known(field):
+def test_required_choice_must_be_known(field) -> None:
     _, errors = parse(**{field: "whatever"})
     assert errors
 
 
 @pytest.mark.parametrize("visit", ["2026-11-05", "2024-01-01", "вчера"])
-def test_future_old_or_garbage_visit_date_is_rejected(visit):
+def test_future_old_or_garbage_visit_date_is_rejected(visit) -> None:
     _, errors = parse(visit_date=visit)
     assert errors
 
 
-def test_document_labels_become_codes_and_own_text_is_kept():
+def test_document_labels_become_codes_and_own_text_is_kept() -> None:
     report, _ = parse(docs=["Паспорт", "apr", "Справка из налоговой"])
     assert report.documents == ("passport", "apr", "Справка из налоговой")
 
 
-def test_documents_drop_blanks_and_repeats():
+def test_documents_drop_blanks_and_repeats() -> None:
     report, _ = parse(docs=["Паспорт", " ", "passport", "паспорт"])
     assert report.documents == ("passport",)
 
 
-def test_own_document_text_is_scrubbed():
+def test_own_document_text_is_scrubbed() -> None:
     report, _ = parse(docs=["выписка по счёту 160-0000000123456-78"])
     assert "0000000123456" not in report.documents[0]
 
 
-def test_residency_label_becomes_code():
+def test_residency_label_becomes_code() -> None:
     report, _ = parse(residency="Только белый картон")
     assert report.residency == "white_card"
 
 
-def test_own_residency_text_is_kept():
+def test_own_residency_text_is_kept() -> None:
     report, _ = parse(residency="Виза D")
     assert report.residency == "Виза D"
 
 
-def test_empty_residency_stays_empty():
+def test_empty_residency_stays_empty() -> None:
     report, _ = parse(residency="")
     assert report.residency == ""
 
 
-def test_comment_is_scrubbed():
+def test_comment_is_scrubbed() -> None:
     report, _ = parse(comment="JMBG 0101990710006 не спрашивали")
     assert "0101990710006" not in report.comment

@@ -43,7 +43,7 @@ def client(tmp_path, bucket) -> TestClient:
     return TestClient(app)
 
 
-def test_range_request_gets_206_with_exact_bytes(client, bucket):
+def test_range_request_gets_206_with_exact_bytes(client, bucket) -> None:
     response = client.get("/map/serbia.pmtiles", headers={"Range": "bytes=10-19"})
     assert response.status_code == 206
     assert response.content == DATA[10:20]
@@ -52,7 +52,7 @@ def test_range_request_gets_206_with_exact_bytes(client, bucket):
     assert bucket.ranges == ["bytes=10-19"]
 
 
-def test_full_request_streams_whole_file_and_is_cacheable(client):
+def test_full_request_streams_whole_file_and_is_cacheable(client) -> None:
     response = client.get("/map/serbia.pmtiles")
     assert response.status_code == 200
     assert response.content == DATA
@@ -60,32 +60,32 @@ def test_full_request_streams_whole_file_and_is_cacheable(client):
     assert response.headers["etag"] == '"abc"'
 
 
-def test_range_with_if_none_match_still_gets_206(client):
+def test_range_with_if_none_match_still_gets_206(client) -> None:
     # For a returning visitor pmtiles sends If-None-Match along with Range; 304 breaks reading.
     response = client.get("/map/serbia.pmtiles", headers={"Range": "bytes=0-3", "If-None-Match": '"abc"'})
     assert response.status_code == 206
     assert response.content == DATA[:4]
 
 
-def test_range_past_the_end_is_416(client):
+def test_range_past_the_end_is_416(client) -> None:
     assert client.get("/map/serbia.pmtiles", headers={"Range": "bytes=999-1000"}).status_code == 416
 
 
-def test_head_has_headers_and_no_body(client):
+def test_head_has_headers_and_no_body(client) -> None:
     response = client.head("/map/serbia.pmtiles")
     assert response.status_code == 200
     assert response.content == b""
     assert response.headers["accept-ranges"] == "bytes"
 
 
-def test_without_storage_config_answers_503_not_a_wrong_map(tmp_path, monkeypatch):
+def test_without_storage_config_answers_503_not_a_wrong_map(tmp_path, monkeypatch) -> None:
     for name in R2_ENV:
         monkeypatch.delenv(name, raising=False)
     app = create_app(data_dir=tmp_path / "data", admin_token="t", ip_salt="salt", site_dir=tmp_path)
     assert TestClient(app).get("/map/serbia.pmtiles").status_code == 503
 
 
-def test_signature_depends_on_secret_and_has_sigv4_shape():
+def test_signature_depends_on_secret_and_has_sigv4_shape() -> None:
     # Signature authenticity is checked only by R2 itself; here we check the form and dependence on the
     # secret.
     cfg = R2Config("acc", "AKID", "secret", "bkt", "k.pmtiles")

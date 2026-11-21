@@ -13,48 +13,48 @@ def at(day: int, hour: int, minute: int = 0) -> datetime:
     return datetime(2026, 11, day, hour, minute)
 
 
-def test_open_branch_accepts_marks():
+def test_open_branch_accepts_marks() -> None:
     assert closed_until(BRANCH, at(11, 12)) is None
 
 
-def test_marks_open_an_hour_before_opening():
+def test_marks_open_an_hour_before_opening() -> None:
     assert closed_until(BRANCH, at(11, 7)) is None
 
 
-def test_one_minute_earlier_is_refused_until_seven_today():
+def test_one_minute_earlier_is_refused_until_seven_today() -> None:
     assert closed_until(BRANCH, at(11, 6, 59)) == Closed("7:00", 0, 2)
 
 
-def test_last_minute_before_closing_is_accepted():
+def test_last_minute_before_closing_is_accepted() -> None:
     assert closed_until(BRANCH, at(11, 16, 59)) is None
 
 
-def test_hour_after_closing_is_still_accepted():
+def test_hour_after_closing_is_still_accepted() -> None:
     assert closed_until(BRANCH, at(11, 17)) is None
     assert closed_until(BRANCH, at(11, 17, 59)) is None
 
 
-def test_an_hour_after_closing_is_refused_until_tomorrow():
+def test_an_hour_after_closing_is_refused_until_tomorrow() -> None:
     assert closed_until(BRANCH, at(11, 18)) == Closed("7:00", 1, 3)
 
 
-def test_saturday_hour_after_one_is_accepted():
+def test_saturday_hour_after_one_is_accepted() -> None:
     assert closed_until(BRANCH, at(7, 13, 59)) is None
 
 
-def test_saturday_after_one_waits_for_monday():
+def test_saturday_after_one_waits_for_monday() -> None:
     assert closed_until(BRANCH, at(7, 15, 20)) == Closed("7:00", 2, 0)
 
 
-def test_sunday_waits_for_monday():
+def test_sunday_waits_for_monday() -> None:
     assert closed_until(BRANCH, at(8, 10)) == Closed("7:00", 1, 0)
 
 
-def test_branch_without_hours_is_not_blocked(monkeypatch):
+def test_branch_without_hours_is_not_blocked(monkeypatch) -> None:
     monkeypatch.setattr(queues, "branch_hours", lambda: {"x": (None, None)})
     assert closed_until("x", at(8, 3)) is None
 
 
 @pytest.mark.parametrize("text", ["08:00-15:00", "8.00h - 15.00h"])
-def test_both_pdf_hour_formats_parse(text):
+def test_both_pdf_hour_formats_parse(text) -> None:
     assert queues.parse_hours(text) == (480, 900)

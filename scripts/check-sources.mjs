@@ -327,17 +327,17 @@ function main() {
 	}
 	const src = checkSourceTree(registry);
 	let errors = src.errors;
-	let what = `${src.count} источников и ссылки в src/`;
+	let what = `${src.count} sources and links in src/`;
 	if (process.argv.includes('--dist')) {
 		const dist = checkDist(registry, src.verifiedCopies);
 		errors = dist.errors;
-		what = `${dist.files} html-файлов в dist/`;
+		what = `${dist.files} html files in dist/`;
 	}
 	if (errors.length) {
-		console.error(`Ссылки не прошли проверку по реестру доменов (${errors.length}):\n` + errors.join('\n'));
+		console.error(`Links failed the trusted domain registry check (${errors.length}):\n` + errors.join('\n'));
 		process.exit(1);
 	}
-	console.log(`check-sources: ok — ${what}, реестр ${registry.length} доменов`);
+	console.log(`check-sources: ok: ${what}, registry of ${registry.length} domains`);
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) main();

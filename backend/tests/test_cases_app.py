@@ -80,200 +80,200 @@ def first_file_name(client: TestClient) -> str:
     return admin_cases(client)[0]["files"][0]["name"]
 
 
-def test_case_form_opens_without_login(client):
+def test_case_form_opens_without_login(client) -> None:
     assert client.get(FORM).status_code == 200
 
 
-def test_case_form_links_account_opening_to_its_own_form(client):
+def test_case_form_links_account_opening_to_its_own_form(client) -> None:
     assert 'href="/account/stats"' in client.get(FORM).text
 
 
-def test_case_form_page_may_fetch_fresh_bot_check(client):
+def test_case_form_page_may_fetch_fresh_bot_check(client) -> None:
     csp = client.get(FORM).headers["content-security-policy"]
     assert "connect-src 'self'" in csp
 
 
-def test_case_with_two_photos_reaches_admin_with_both(client):
+def test_case_with_two_photos_reaches_admin_with_both(client) -> None:
     send_case(client, [("a.jpg", photo()), ("b.jpg", photo("red"))])
     assert len(admin_cases(client)[0]["files"]) == 2
 
 
-def test_case_redirects_back_to_case_tab_with_its_number(client):
+def test_case_redirects_back_to_case_tab_with_its_number(client) -> None:
     assert send_case(client).headers["location"] == "/predlozheniya/?type=case&case_sent=1"
 
 
-def test_case_without_sources_is_accepted(client):
+def test_case_without_sources_is_accepted(client) -> None:
     assert send_case(client, sources="").status_code == 303
 
 
-def test_case_without_bot_check_is_not_stored(client):
+def test_case_without_bot_check_is_not_stored(client) -> None:
     send_case(client, altcha="")
     assert admin_cases(client) == []
 
 
-def test_honeypot_case_is_not_stored(client):
+def test_honeypot_case_is_not_stored(client) -> None:
     send_case(client, website="http://spam.example")
     assert admin_cases(client) == []
 
 
-def test_case_without_result_is_rejected(client):
+def test_case_without_result_is_rejected(client) -> None:
     assert send_case(client, result=" ").status_code == 400
 
 
-def test_future_date_is_rejected(client):
+def test_future_date_is_rejected(client) -> None:
     assert send_case(client, event_date=date(2099, 1, 1).isoformat()).status_code == 400
 
 
-def test_own_page_link_must_be_http(client):
+def test_own_page_link_must_be_http(client) -> None:
     assert send_case(client, own_url="javascript:alert(1)").status_code == 400
 
 
-def test_phone_in_summary_is_not_stored(client):
+def test_phone_in_summary_is_not_stored(client) -> None:
     send_case(client, summary="Звоните мне +381 64 123 4567, расскажу")
     assert "123 4567" not in admin_cases(client)[0]["summary"]
 
 
-def test_eleven_files_are_rejected(client):
+def test_eleven_files_are_rejected(client) -> None:
     files = [(f"{n}.jpg", photo()) for n in range(uploads.MAX_FILES + 1)]
     assert send_case(client, files).status_code == 400
 
 
-def test_file_disguised_as_jpeg_is_rejected(client):
+def test_file_disguised_as_jpeg_is_rejected(client) -> None:
     send_case(client, [("cat.jpg", b"<html><script>alert(1)</script></html>")])
     assert admin_cases(client) == []
 
 
-def test_file_type_error_names_the_file(client):
+def test_file_type_error_names_the_file(client) -> None:
     response = send_case(client, [("cat.jpg", b"<html></html>")])
     assert "cat.jpg" in response.text
 
 
-def test_errors_follow_page_language(client):
+def test_errors_follow_page_language(client) -> None:
     response = send_case(client, path="/en/predlozheniya/case", result="")
     assert "Write the result" in response.text
 
 
-def test_stored_photo_has_no_location(client):
+def test_stored_photo_has_no_location(client) -> None:
     send_case(client, [("a.jpg", photo())])
     body = client.get(f"/admin/proposals/cases/files/{first_file_name(client)}", headers=AUTH).content
     assert not Image.open(io.BytesIO(body)).getexif()
 
 
-def test_sixth_case_in_hour_is_limited(client):
+def test_sixth_case_in_hour_is_limited(client) -> None:
     for _ in range(5):
         send_case(client)
     assert send_case(client).status_code == 429
 
 
-def test_upload_limit_counts_files_not_cases(client, monkeypatch):
+def test_upload_limit_counts_files_not_cases(client, monkeypatch) -> None:
     monkeypatch.setattr(uploads, "FILES_PER_HOUR", 3)
     send_case(client, [("a.jpg", photo()), ("b.jpg", photo())])
     assert send_case(client, [("c.jpg", photo()), ("d.jpg", photo())]).status_code == 429
 
 
-def test_upload_limit_does_not_block_case_without_files(client, monkeypatch):
+def test_upload_limit_does_not_block_case_without_files(client, monkeypatch) -> None:
     monkeypatch.setattr(uploads, "FILES_PER_HOUR", 1)
     send_case(client, [("a.jpg", photo())])
     assert send_case(client).status_code == 303
 
 
-def test_body_over_limit_is_refused_before_reading(client):
+def test_body_over_limit_is_refused_before_reading(client) -> None:
     headers = {"Content-Length": str(uploads.TOTAL_MAX + 5 * 1024 * 1024)}
     assert client.post(POST, content=b"x", headers=headers).status_code == 413
 
 
-def test_new_case_file_is_not_public(client):
+def test_new_case_file_is_not_public(client) -> None:
     send_case(client, [("a.jpg", photo())])
     assert client.get(f"/api/cases/files/{first_file_name(client)}").status_code == 404
 
 
-def test_accepted_but_unpublished_file_is_not_public(client):
+def test_accepted_but_unpublished_file_is_not_public(client) -> None:
     send_case(client, [("a.jpg", photo())])
     set_case(client, 1, status="accepted", files_published=True)
     assert client.get(f"/api/cases/files/{first_file_name(client)}").status_code == 404
 
 
-def test_published_case_keeps_files_private_without_their_flag(client):
+def test_published_case_keeps_files_private_without_their_flag(client) -> None:
     send_case(client, [("a.jpg", photo())])
     set_case(client, 1, status="accepted", published=True)
     assert client.get(f"/api/cases/files/{first_file_name(client)}").status_code == 404
 
 
-def test_published_file_is_served(client):
+def test_published_file_is_served(client) -> None:
     send_case(client, [("a.jpg", photo())])
     publish_all(client)
     assert client.get(f"/api/cases/files/{first_file_name(client)}").status_code == 200
 
 
-def test_unpublished_again_file_is_hidden(client):
+def test_unpublished_again_file_is_hidden(client) -> None:
     send_case(client, [("a.jpg", photo())])
     publish_all(client)
     set_case(client, 1, published=False)
     assert client.get(f"/api/cases/files/{first_file_name(client)}").status_code == 404
 
 
-def test_admin_file_requires_token(client):
+def test_admin_file_requires_token(client) -> None:
     send_case(client, [("a.jpg", photo())])
     assert client.get(f"/admin/proposals/cases/files/{first_file_name(client)}").status_code == 401
 
 
-def test_admin_list_requires_token(client):
+def test_admin_list_requires_token(client) -> None:
     assert client.get("/admin/proposals/cases").status_code == 401
 
 
-def test_public_feed_hides_new_case(client):
+def test_public_feed_hides_new_case(client) -> None:
     send_case(client)
     assert client.get("/api/cases/public").json()["items"] == []
 
 
-def test_public_feed_shows_published_case(client):
+def test_public_feed_shows_published_case(client) -> None:
     send_case(client)
     set_case(client, 1, status="accepted", published=True)
     assert client.get("/api/cases/public").json()["count"] == 1
 
 
-def test_public_feed_hides_test_case_even_if_flagged(client):
+def test_public_feed_hides_test_case_even_if_flagged(client) -> None:
     send_case(client)
     set_case(client, 1, status="test", published=True)
     assert client.get("/api/cases/public").json()["items"] == []
 
 
-def test_public_feed_has_no_contact_or_traces(client):
+def test_public_feed_has_no_contact_or_traces(client) -> None:
     send_case(client)
     set_case(client, 1, status="accepted", published=True, comment="внутреннее")
     item = client.get("/api/cases/public").json()["items"][0]
     assert not {"contact", "ip_hash", "user_agent_short", "comment"} & item.keys()
 
 
-def test_public_feed_lists_files_only_when_allowed(client):
+def test_public_feed_lists_files_only_when_allowed(client) -> None:
     send_case(client, [("a.jpg", photo())])
     set_case(client, 1, status="accepted", published=True)
     assert client.get("/api/cases/public").json()["items"][0]["files"] == []
 
 
-def test_case_with_link_source_is_marked_confirmed(client):
+def test_case_with_link_source_is_marked_confirmed(client) -> None:
     send_case(client, sources="Решение суда\nhttps://www.aod.rs/")
     set_case(client, 1, status="accepted", published=True)
     assert client.get("/api/cases/public").json()["items"][0]["source_url"] == "https://www.aod.rs/"
 
 
-def test_flags_must_be_boolean(client):
+def test_flags_must_be_boolean(client) -> None:
     send_case(client)
     assert set_case(client, 1, published="yes").status_code == 400
 
 
-def test_unknown_case_status_is_rejected(client):
+def test_unknown_case_status_is_rejected(client) -> None:
     send_case(client)
     assert set_case(client, 1, status="published").status_code == 400
 
 
-def test_deleting_case_removes_its_files(client, tmp_path):
+def test_deleting_case_removes_its_files(client, tmp_path) -> None:
     send_case(client, [("a.jpg", photo())])
     name = first_file_name(client)
     client.delete("/admin/proposals/cases/1", headers=AUTH)
     assert not (uploads.files_root(tmp_path) / name).exists()
 
 
-def test_cases_are_not_listed_with_material_proposals(client):
+def test_cases_are_not_listed_with_material_proposals(client) -> None:
     send_case(client, summary="Уникальная история про ипотеку")
     assert "Уникальная история" not in client.get("/predlozheniya/").text

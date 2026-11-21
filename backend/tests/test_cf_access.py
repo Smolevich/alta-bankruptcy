@@ -102,58 +102,58 @@ def keys_from(raw: bytes, clock=lambda: NOW) -> AccessKeys:
     return AccessKeys(CONFIG.certs_url, fetch=lambda url: raw, clock=clock)
 
 
-def test_valid_token_gives_admin_email():
+def test_valid_token_gives_admin_email() -> None:
     assert admin_email(make_token(), CONFIG, keys_from(jwks(k1=KEY)), NOW) == ADMIN
 
 
-def test_token_signed_by_foreign_key_is_rejected():
+def test_token_signed_by_foreign_key_is_rejected() -> None:
     forged = make_token(key=OTHER_KEY, secret=OTHER_SECRET)
     assert admin_email(forged, CONFIG, keys_from(jwks(k1=KEY)), NOW) is None
 
 
-def test_tampered_payload_is_rejected():
+def test_tampered_payload_is_rejected() -> None:
     head, _, signature = make_token().split(".")
     payload = b64(json.dumps({"aud": [AUD], "iss": f"https://{TEAM}", "email": "x@example.com",
                               "exp": NOW + 600}).encode())
     assert admin_email(f"{head}.{payload}.{signature}", CONFIG, keys_from(jwks(k1=KEY)), NOW) is None
 
 
-def test_token_of_another_access_app_is_rejected():
+def test_token_of_another_access_app_is_rejected() -> None:
     token = make_token(aud=["aud-of-some-other-app"])
     assert admin_email(token, CONFIG, keys_from(jwks(k1=KEY)), NOW) is None
 
 
-def test_token_from_another_team_is_rejected():
+def test_token_from_another_team_is_rejected() -> None:
     token = make_token(iss="https://other-team.cloudflareaccess.com")
     assert admin_email(token, CONFIG, keys_from(jwks(k1=KEY)), NOW) is None
 
 
-def test_expired_token_is_rejected():
+def test_expired_token_is_rejected() -> None:
     assert admin_email(make_token(exp=NOW - 3600), CONFIG, keys_from(jwks(k1=KEY)), NOW) is None
 
 
-def test_unsigned_token_is_rejected():
+def test_unsigned_token_is_rejected() -> None:
     head = b64(json.dumps({"alg": "none", "kid": "k1"}).encode())
     payload = make_token().split(".")[1]
     assert admin_email(f"{head}.{payload}.", CONFIG, keys_from(jwks(k1=KEY)), NOW) is None
 
 
-def test_valid_token_of_non_admin_is_rejected():
+def test_valid_token_of_non_admin_is_rejected() -> None:
     token = make_token(email="stranger@example.com")
     assert admin_email(token, CONFIG, keys_from(jwks(k1=KEY)), NOW) is None
 
 
-def test_email_is_compared_case_insensitively():
+def test_email_is_compared_case_insensitively() -> None:
     token = make_token(email="Admin@Example.com")
     assert admin_email(token, CONFIG, keys_from(jwks(k1=KEY)), NOW) == ADMIN
 
 
 @pytest.mark.parametrize("token", ["", "abc", "a.b.c", "....", "e30.e30.!!"])
-def test_garbage_token_is_rejected(token):
+def test_garbage_token_is_rejected(token) -> None:
     assert admin_email(token, CONFIG, keys_from(jwks(k1=KEY)), NOW) is None
 
 
-def test_rotated_key_is_picked_up_without_waiting_for_cache_expiry():
+def test_rotated_key_is_picked_up_without_waiting_for_cache_expiry() -> None:
     served = [jwks(k1=KEY)]
     clock = [NOW]
     keys = AccessKeys(CONFIG.certs_url, fetch=lambda url: served[0], clock=lambda: clock[0])
@@ -164,7 +164,7 @@ def test_rotated_key_is_picked_up_without_waiting_for_cache_expiry():
     assert admin_email(token, CONFIG, keys, clock[0]) == ADMIN
 
 
-def test_unreachable_certs_keep_previous_keys():
+def test_unreachable_certs_keep_previous_keys() -> None:
     calls = []
 
     def fetch(url: str) -> bytes:
@@ -180,29 +180,29 @@ def test_unreachable_certs_keep_previous_keys():
     assert admin_email(make_token(exp=NOW + 9000), CONFIG, keys, clock[0]) == ADMIN
 
 
-def test_verify_token_needs_known_kid():
+def test_verify_token_needs_known_kid() -> None:
     with pytest.raises(Exception, match="unknown_kid"):
         verify_token(make_token(kid="nope"), {"k1": KEY}, CONFIG, NOW)
 
 
 @pytest.mark.parametrize("missing", ["CF_ACCESS_TEAM_DOMAIN", "CF_ACCESS_AUD", "ADMIN_EMAILS"])
-def test_empty_env_value_turns_access_off(missing):
+def test_empty_env_value_turns_access_off(missing) -> None:
     env = {"CF_ACCESS_TEAM_DOMAIN": TEAM, "CF_ACCESS_AUD": AUD, "ADMIN_EMAILS": ADMIN}
     assert config_from_env({**env, missing: ""}) is None
 
 
-def test_access_works_from_defaults_without_env():
+def test_access_works_from_defaults_without_env() -> None:
     """Deploy does not put Access settings into .env: without defaults the admin would have no login."""
     assert config_from_env({}) is not None
 
 
-def test_env_overrides_default():
+def test_env_overrides_default() -> None:
     defaults = {"CF_ACCESS_TEAM_DOMAIN": TEAM, "CF_ACCESS_AUD": AUD, "ADMIN_EMAILS": ADMIN}
     config = config_from_env({"ADMIN_EMAILS": "other@example.com"}, defaults)
     assert config == AccessConfig(TEAM, AUD, frozenset({"other@example.com"}))
 
 
-def test_admin_list_from_env_is_split_and_lowercased():
+def test_admin_list_from_env_is_split_and_lowercased() -> None:
     env = {"CF_ACCESS_TEAM_DOMAIN": f"https://{TEAM}/", "CF_ACCESS_AUD": AUD,
            "ADMIN_EMAILS": " A@example.com, b@example.com ,"}
     assert config_from_env(env) == AccessConfig(TEAM, AUD, frozenset({"a@example.com", "b@example.com"}))
@@ -219,59 +219,59 @@ def access(token: str) -> dict[str, str]:
     return {"Cf-Access-Jwt-Assertion": token}
 
 
-def test_access_session_opens_proposals_list(client):
+def test_access_session_opens_proposals_list(client) -> None:
     assert client.get("/admin/proposals", headers=access(make_token())).status_code == 200
 
 
-def test_access_session_can_edit_proposal(client):
+def test_access_session_can_edit_proposal(client) -> None:
     response = client.post("/admin/proposals/1", json={"status": "rejected"}, headers=access(make_token()))
     assert response.status_code == 404
 
 
-def test_forged_access_token_gets_401(client):
+def test_forged_access_token_gets_401(client) -> None:
     forged = make_token(key=OTHER_KEY, secret=OTHER_SECRET)
     assert client.get("/admin/proposals", headers=access(forged)).status_code == 401
 
 
-def test_non_admin_access_session_gets_401(client):
+def test_non_admin_access_session_gets_401(client) -> None:
     token = make_token(email="stranger@example.com")
     assert client.get("/admin/proposals", headers=access(token)).status_code == 401
 
 
-def test_bearer_still_opens_proposals(client):
+def test_bearer_still_opens_proposals(client) -> None:
     assert client.get("/admin/proposals", headers=AUTH).status_code == 200
 
 
-def test_monitor_lists_new_account_reports_by_bearer(client):
+def test_monitor_lists_new_account_reports_by_bearer(client) -> None:
     assert client.get("/admin/accounts", params={"status": "new"}, headers=AUTH).status_code == 200
 
 
-def test_monitor_sets_account_status_by_bearer(client):
+def test_monitor_sets_account_status_by_bearer(client) -> None:
     response = client.post("/admin/accounts/999/status", json={"status": "accepted"}, headers=AUTH)
     assert response.status_code == 404
 
 
-def test_access_token_does_not_open_account_reports(client):
+def test_access_token_does_not_open_account_reports(client) -> None:
     """Access sits only in front of the proposals admin; account reports are still Bearer only."""
     assert client.get("/admin/accounts", headers=access(make_token())).status_code == 401
 
 
-def test_without_access_config_jwt_is_ignored(tmp_path, monkeypatch):
+def test_without_access_config_jwt_is_ignored(tmp_path, monkeypatch) -> None:
     monkeypatch.setenv("CF_ACCESS_AUD", "")
     client = TestClient(create_app(data_dir=tmp_path, admin_token=TOKEN, ip_salt="salt"))
     assert client.get("/admin/proposals", headers=access(make_token())).status_code == 401
 
 
-def test_admin_page_has_no_token_field_by_default(tmp_path):
+def test_admin_page_has_no_token_field_by_default(tmp_path) -> None:
     client = TestClient(create_app(data_dir=tmp_path, admin_token=TOKEN, ip_salt="salt"))
     assert 'type="password"' not in client.get("/predlozheniya/admin/").text
 
 
-def test_admin_page_has_no_token_field_behind_access(client):
+def test_admin_page_has_no_token_field_behind_access(client) -> None:
     assert 'type="password"' not in client.get("/predlozheniya/admin/").text
 
 
-def test_admin_page_shows_token_field_when_access_is_off(tmp_path, monkeypatch):
+def test_admin_page_shows_token_field_when_access_is_off(tmp_path, monkeypatch) -> None:
     """With Access disabled and no token field, the admin could not be entered."""
     monkeypatch.setenv("CF_ACCESS_AUD", "")
     client = TestClient(create_app(data_dir=tmp_path, admin_token=TOKEN, ip_salt="salt"))

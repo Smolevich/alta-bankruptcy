@@ -20,72 +20,72 @@ def client(tmp_path) -> TestClient:
     return TestClient(create_app(data_dir=tmp_path, admin_token="t", ip_salt="salt", pow_max_number=50))
 
 
-def test_bank_without_forms_or_notes_is_not_listed():
+def test_bank_without_forms_or_notes_is_not_listed() -> None:
     banks = parse_catalog({"banks": {"otp": {"forms": [], "notes": []}, "nlb": {"forms": [FORM]}}})
     assert [bank.code for bank in banks] == ["nlb"]
 
 
-def test_official_form_without_https_original_is_rejected():
+def test_official_form_without_https_original_is_rejected() -> None:
     with pytest.raises(ValueError):
         parse_catalog({"banks": {"nlb": {"forms": [{**FORM, "origin": "official"}]}}})
 
 
-def test_bank_filter_keeps_only_that_bank():
+def test_bank_filter_keeps_only_that_bank() -> None:
     banks = parse_catalog({"banks": {"nlb": {"forms": [FORM]}, "erste": {"forms": [FORM]}}})
     assert [bank.code for bank in for_page(banks, "erste")] == ["erste"]
 
 
-def test_every_listed_form_has_a_copy_on_the_site():
+def test_every_listed_form_has_a_copy_on_the_site() -> None:
     listed = [Path(f.url).name for bank in catalog() for f in bank.forms]
     missing = [name for name in listed if not (SITE_COPIES / name).is_file()]
     assert missing == []
 
 
-def test_every_copy_on_the_site_is_listed():
+def test_every_copy_on_the_site_is_listed() -> None:
     listed = {Path(f.url).name for bank in catalog() for f in bank.forms}
     assert {path.name for path in SITE_COPIES.glob("*.pdf")} == listed
 
 
-def test_stats_page_lists_forms_even_without_answers(client):
+def test_stats_page_lists_forms_even_without_answers(client) -> None:
     page = client.get("/account/stats").text
     assert 'id="forms-procredit"' in page
 
 
-def test_form_opens_in_on_site_viewer(client):
+def test_form_opens_in_on_site_viewer(client) -> None:
     page = client.get("/account/stats").text
     url = "/docs/banks/unicredit-upitnik-pravna-lica.pdf"
     assert f'href="{url}" data-pdf="{url}"' in page
 
 
-def test_official_form_links_to_bank_original(client):
+def test_official_form_links_to_bank_original(client) -> None:
     page = client.get("/account/stats").text
     assert 'href="https://www.adriaticbank.rs/pdf/Dokumenti/Form8054.pdf"' in page
 
 
-def test_unicredit_shows_what_the_instruction_asks(client):
+def test_unicredit_shows_what_the_instruction_asks(client) -> None:
     page = client.get("/account/stats", params={"bank": "unicredit"}).text
     assert "инструкции UniCredit, сфотографированной вкладчиком 03.11.2026" in page
 
 
-def test_bank_without_forms_hides_the_block(client):
+def test_bank_without_forms_hides_the_block(client) -> None:
     page = client.get("/account/stats", params={"bank": "otp"}).text
     assert 'id="forms"' not in page
 
 
-def test_bank_filter_shows_only_that_banks_forms_opened(client):
+def test_bank_filter_shows_only_that_banks_forms_opened(client) -> None:
     page = client.get("/account/stats", params={"bank": "procredit"}).text
     assert ('id="forms-procredit" open' in page, 'id="forms-unicredit"' in page) == (True, False)
 
 
-def test_bank_group_links_to_its_forms(client):
+def test_bank_group_links_to_its_forms(client) -> None:
     seed(client, 1, bank="UniCredit")
     assert 'href="#forms-unicredit"' in client.get("/account/stats").text
 
 
-def test_bank_group_without_forms_has_no_link(client):
+def test_bank_group_without_forms_has_no_link(client) -> None:
     seed(client, 1)
     assert 'class="forms-link"' not in client.get("/account/stats").text.split('id="forms"')[0]
 
 
-def test_pdf_view_script_is_served(client):
+def test_pdf_view_script_is_served(client) -> None:
     assert client.get("/static/pdfview.js").status_code == 200

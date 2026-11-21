@@ -117,21 +117,21 @@ def download(url: str, dest: Path) -> str:
 def check_one(root: Path, item: ArchivedPdf, day: str) -> CheckResult:
     copy = copy_path(root, item)
     copy.parent.mkdir(parents=True, exist_ok=True)
-    tmp = root / f".{item.name}.part"
+    part_path = root / f".{item.name}.part"
     try:
-        sha = download(item.url, tmp)
+        sha = download(item.url, part_path)
     except OSError as e:
-        tmp.unlink(missing_ok=True)
+        part_path.unlink(missing_ok=True)
         return CheckResult(item.name, "unavailable", detail=str(e)[:200])
     status = classify(copy.is_file(), sha, known_hashes(root, item))
     if status == "seeded":
-        tmp.replace(copy)
+        part_path.replace(copy)
     elif status == "changed":
         target = version_path(root, item, day)
         target.parent.mkdir(parents=True, exist_ok=True)
-        tmp.replace(target)
+        part_path.replace(target)
     else:
-        tmp.unlink()
+        part_path.unlink()
     detail = "differs from manifest" if status == "seeded" and sha != item.sha256 else ""
     return CheckResult(item.name, status, sha, detail)
 
@@ -154,11 +154,11 @@ def backup(root: Path, backup_dir: Path, day: str, files: list[Path] | None = No
         previous.touch()
         return previous
     out = backup_dir / f"{day}.tar.gz"
-    tmp = out.with_suffix(".tmp")
-    with tarfile.open(tmp, "w:gz", compresslevel=1) as tar:
+    part_path = out.with_suffix(".tmp")
+    with tarfile.open(part_path, "w:gz", compresslevel=1) as tar:
         for path in files:
             tar.add(path, arcname=str(path.relative_to(root.parent)))
-    tmp.replace(out)
+    part_path.replace(out)
     return out
 
 

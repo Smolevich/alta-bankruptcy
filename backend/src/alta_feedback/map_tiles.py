@@ -11,7 +11,7 @@ import hmac
 import os
 import urllib.error
 import urllib.request
-from collections.abc import Iterator
+from collections.abc import Awaitable, Callable, Iterator
 from dataclasses import dataclass
 from typing import Protocol
 
@@ -58,7 +58,7 @@ class TilesSource(Protocol):
     def fetch(self, range_header: str | None, head: bool) -> TilesObject: ...
 
 
-def _sign(key: bytes, msg: str) -> bytes:
+def hmac_sha256(key: bytes, msg: str) -> bytes:
     return hmac.new(key, msg.encode(), hashlib.sha256).digest()
 
 
@@ -75,9 +75,9 @@ def signed_headers(cfg: R2Config, method: str, now: dt.datetime) -> dict[str, st
     )
     scope = f"{day}/auto/s3/aws4_request"
     to_sign = "\n".join(["AWS4-HMAC-SHA256", stamp, scope, hashlib.sha256(canonical.encode()).hexdigest()])
-    k = _sign(f"AWS4{cfg.secret_access_key}".encode(), day)
+    k = hmac_sha256(f"AWS4{cfg.secret_access_key}".encode(), day)
     for part in ("auto", "s3", "aws4_request"):
-        k = _sign(k, part)
+        k = hmac_sha256(k, part)
     signature = hmac.new(k, to_sign.encode(), hashlib.sha256).hexdigest()
     headers["authorization"] = (
         f"AWS4-HMAC-SHA256 Credential={cfg.access_key_id}/{scope}, "
@@ -109,7 +109,7 @@ class R2Source:
         return TilesObject(resp.status, kept, body)
 
 
-def tiles_endpoint(source: TilesSource | None):
+def tiles_endpoint(source: TilesSource | None) -> Callable[[Request], Awaitable[Response]]:
     async def endpoint(request: Request) -> Response:
         if source is None:
             return PlainTextResponse("map tiles storage is not configured", status_code=503)
