@@ -88,9 +88,9 @@ export const AOD_FORMS: Record<FormKey, AodForm> = {
 			sr: 'Ovlašćenje za fizička lica',
 		},
 		purpose: {
-			ru: 'Чтобы другой человек получил за вас страховку до 50 000 € в Banka Poštanska štedionica. Доверенность заверяет нотариус, дата — не раньше дня отзыва лицензии (30.10.2026); доверенности, выданные до отзыва лицензии, использовать нельзя.',
-			en: 'Lets another person collect your insured amount up to €50,000 at Banka Poštanska štedionica. It is certified by a notary and dated no earlier than the day the licence was revoked (30.10.2026); authorisations issued before the revocation cannot be used.',
-			sr: 'Da drugo lice umesto vas preuzme osigurani iznos do 50.000 € u Banci Poštanska štedionica. Overava ga javni beležnik, sa datumom ne starijim od dana oduzimanja dozvole (30.10.2026); ovlašćenja izdata pre oduzimanja dozvole ne mogu se koristiti.',
+			ru: 'Чтобы другой человек получил за вас страховку до 50 000 € в Banka Poštanska štedionica. Доверенность выдают после наступления страхового случая (03.11.2026, по Poštanska), заверяет её нотариус, дата — не раньше дня отзыва лицензии (30.10.2026); доверенности, выданные до отзыва лицензии, использовать нельзя.',
+			en: 'Lets another person collect your insured amount up to €50,000 at Banka Poštanska štedionica. It is given after the insured event (03.11.2026, per Poštanska), certified by a notary and dated no earlier than the day the licence was revoked (30.10.2026); authorisations issued before the revocation cannot be used.',
+			sr: 'Da drugo lice umesto vas preuzme osigurani iznos do 50.000 € u Banci Poštanska štedionica. Daje se posle nastupanja osiguranog slučaja (03.11.2026, prema Poštanskoj štedionici), overava ga javni beležnik, sa datumom ne starijim od dana oduzimanja dozvole (30.10.2026); ovlašćenja izdata pre oduzimanja dozvole ne mogu se koristiti.',
 		},
 		fields: {
 			ru: [

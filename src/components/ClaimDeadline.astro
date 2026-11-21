@@ -4,6 +4,7 @@
 import { getEntry } from 'astro:content';
 import { formatDate, type Lang } from '../i18n';
 import { claimWindows, parsePublicationDate } from '../lib/claim-deadline';
+import { viewerSrc } from '../data/pdfs';
 
 const { lang = 'ru' } = Astro.props as { lang?: Lang };
 const status = (await getEntry('status', 'current'))!.data;
@@ -12,7 +13,8 @@ const w = pub ? claimWindows(pub) : null;
 const fmt = (d: Date) => formatDate(d, lang).replace(/\.$/, '');
 
 const L = {
-	COURT: 'http://www.bg.pr.sud.rs/docs/dokument_03112026_104425437.pdf',
+	// The court took the original down (404), so the link goes to our copy.
+	COURT: viewerSrc('http://www.bg.pr.sud.rs/docs/dokument_03112026_104425437.pdf')!,
 	BANK7: 'https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2015/14/3/reg',
 	STE111: 'https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2009/104/25/reg',
 	ZPP103: 'https://pravno-informacioni-sistem.rs/eli/rep/sgrs/skupstina/zakon/2011/72/1/reg',
@@ -142,6 +144,6 @@ const T = {
 	</ol>
 	{w && <p class="cd-note">{T.rule}</p>}
 	<p class="cd-note">
-		{T.src}: <a href={L.COURT}>{T.court}</a>; <a href={L.BANK7}>{T.bank}</a>; <a href={L.STE111}>{T.ste}</a>; <a href={L.ZPP103}>{T.zpp}</a>.
+		{T.src}: <a href={L.COURT} target="_blank" rel="noopener" data-pdf={L.COURT}>{T.court}</a>; <a href={L.BANK7}>{T.bank}</a>; <a href={L.STE111}>{T.ste}</a>; <a href={L.ZPP103}>{T.zpp}</a>.
 	</p>
 </section>

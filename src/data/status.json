@@ -12,9 +12,9 @@
       {
         "lead": { "ru": "До 50 000 €", "en": "Up to €50,000", "sr": "Do 50.000 €" },
         "text": {
-          "ru": "с 13.11 в отделениях Poštanska; онлайн-запись открыта (кнопка на странице банка с вечера 11.11.2026). С собой: документ личности и оригинал документа о вкладе.",
-          "en": "from 13.11 at Poštanska branches; online booking is open (button on the bank's page since the evening of 11.11.2026). Bring an identity document and the original deposit document.",
-          "sr": "od 13.11. u ekspoziturama Poštanske štedionice; onlajn zakazivanje je otvoreno (dugme na stranici banke od večeri 11.11.2026). Ponesite ispravu o identitetu i original isprave o depozitu."
+          "ru": "с 13.11 в отделениях Poštanska, только по записи: онлайн (кнопка на странице банка с вечера 11.11.2026), по телефону 011 20 20 292 или в отделении. С собой: документ личности и оригинал документа о вкладе.",
+          "en": "from 13.11 at Poštanska branches, by appointment only: online (button on the bank's page since the evening of 11.11.2026), by phone at 011 20 20 292 or at a branch. Bring an identity document and the original deposit document.",
+          "sr": "od 13.11. u ekspoziturama Poštanske štedionice, isključivo uz zakazan termin: onlajn (dugme na stranici banke od večeri 11.11.2026), pozivom na 011 20 20 292 ili u ekspozituri. Ponesite ispravu o identitetu i original isprave o depozitu."
         },
         "link": { "ru": "Чек-лист: что взять", "en": "Checklist: what to bring", "sr": "Kontrolna lista: šta poneti" },
         "href": "/vyplata/#what-to-bring"
