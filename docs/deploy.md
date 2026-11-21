@@ -22,6 +22,28 @@ Two workflows, both from `main` only, secrets in the `production` environment:
   `/opt/alta-bankruptcy` against that directory.
 - Backup: `feedback.db` is part of the nightly bot backup (`infra`, `bots_backup.py`, 04:15 UTC → R2).
 
+## Edge cache (Cloudflare)
+
+Built pages are cached at the Cloudflare edge, and every deploy purges them, so nobody clears the cache
+by hand.
+
+- The backend adds `Cloudflare-CDN-Cache-Control: max-age=86400` to every `200` from the built site
+  (`site.py`, and `/` in `main.py`). Cloudflare alone reads it and does not pass it on; browsers get
+  `Cache-Control: no-cache` and revalidate against the edge on every visit. Forms, `/account*`,
+  `/predlozheniya/`, `/api/`, `/admin/` do not get it and send `no-store`, so they are never cached;
+  404s do not get it either.
+- HTML is cached only because a host-scoped cache rule in the `infra` repo
+  (`cloudflare/waf/cache.tf`) makes it eligible and respects these headers. The rule skips the service
+  paths above as a second guard. Zone-wide settings are not touched: the zone serves other sites.
+- `deploy.yml` and `deploy-backend.yml` purge the host after a deploy (`{"hosts":["alta.smolevich.com"]}`,
+  never `purge_everything`), then `deploy.yml` checks through Cloudflare that `/`, `/en/`, `/sr/`
+  carry `<meta name="alta-build">` with the deployed commit and come back `HIT`, and that
+  `/account`, `/account/stats`, `/predlozheniya/` are not `HIT`. A stale page fails the job.
+- Token: environment secret `CF_CACHE_PURGE_TOKEN` (needs Zone Cache Purge on the zone); zone id:
+  repository variable `CF_ZONE_ID`.
+- Turn the cache off: disable the rule in `infra` (`cloudflare/waf/cache.tf`) and apply; the pages go
+  back to `DYNAMIC` at once.
+
 ## Rollback
 
 Code of the site or the backend: revert in `main`, or run the workflow manually on the right commit.
@@ -58,7 +80,8 @@ keys (a token for this bucket only, Object Read & Write) are in Vault `secret/al
 the backend deploy writes them to `.env` as `R2_MAP_*` (path in the repository variable
 `VAULT_R2_MAP_PATH`). Without the keys the route answers 503. Cloudflare does not cache `.pmtiles` by
 extension, so the zone needs a cache rule for this path (Eligible for cache, Edge TTL from origin
-headers). After replacing the file in the bucket, purge the cache for that URL.
+headers). After replacing the file in the bucket, purge the cache for that URL (or run any deploy:
+it purges the whole host).
 
 ## Dependency security
 

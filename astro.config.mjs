@@ -40,6 +40,8 @@ export default defineConfig({
 			head: [
 				// Ownership verification for Bing Webmaster Tools: without the tag the verification lapses.
 				{ tag: 'meta', attrs: { name: 'msvalidate.01', content: 'F904AA02101BD3884A4A984CD73C8E57' } },
+				// Commit of the build: the deploy checks through Cloudflare that the edge serves this build, not a cached one.
+				{ tag: 'meta', attrs: { name: 'alta-build', content: process.env.GITHUB_SHA ?? 'dev' } },
 				{ tag: 'link', attrs: { rel: 'icon', href: '/favicon.ico', sizes: '32x32' } },
 				{ tag: 'link', attrs: { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' } },
 				// Previously sent anchors lead to the new English ones (see src/heading-ids.mjs).

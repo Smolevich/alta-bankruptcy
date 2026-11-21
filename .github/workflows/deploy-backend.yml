@@ -265,3 +265,24 @@ jobs:
       - name: Stop ssh-agent
         if: always()
         run: ssh-agent -k > /dev/null 2>&1 || true
+
+      # Pages cached at the edge carry the headers of the previous backend (CSP, cache), so the host is
+      # purged after a restart too. Same request as in deploy.yml.
+      - name: Purge Cloudflare cache for the host
+        env:
+          CF_TOKEN: ${{ secrets.CF_CACHE_PURGE_TOKEN }}
+          CF_ZONE_ID: ${{ vars.CF_ZONE_ID }}
+        run: |
+          for attempt in 1 2 3 4 5; do
+            result=$(curl -sS -X POST "https://api.cloudflare.com/client/v4/zones/$CF_ZONE_ID/purge_cache" \
+              -H "Authorization: Bearer $CF_TOKEN" -H 'Content-Type: application/json' \
+              --data '{"hosts":["alta.smolevich.com"]}' || true)
+            if printf '%s' "$result" | jq -e '.success == true' > /dev/null 2>&1; then
+              echo "purged alta.smolevich.com"
+              exit 0
+            fi
+            echo "::warning::purge attempt $attempt failed: $(printf '%s' "$result" | jq -c '.errors' 2>/dev/null)"
+            sleep 15
+          done
+          echo "::error::Cloudflare purge failed, the edge may serve pages with the previous headers" >&2
+          exit 1
