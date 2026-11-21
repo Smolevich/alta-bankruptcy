@@ -59,7 +59,7 @@ def public_items(client: TestClient) -> list[dict]:
     return client.get("/api/accounts/public").json()["items"]
 
 
-def test_form_defaults_visit_date_to_today(client):
+def test_form_defaults_visit_date_to_today(client) -> None:
     assert f'value="{TODAY}"' in client.get("/account").text
 
 
@@ -69,100 +69,100 @@ def script_sources(client: TestClient, path: str) -> list[str]:
     return next(tokens[1:] for tokens in directives if tokens[0] == "script-src")
 
 
-def test_form_allows_only_own_script(client):
+def test_form_allows_only_own_script(client) -> None:
     assert sorted(script_sources(client, "/account")) == ["'self'", "https://static.cloudflareinsights.com"]
 
 
-def test_suggestion_form_still_has_no_scripts(client):
+def test_suggestion_form_still_has_no_scripts(client) -> None:
     assert script_sources(client, "/") == ["https://static.cloudflareinsights.com"]
 
 
-def test_voice_script_is_served(client):
+def test_voice_script_is_served(client) -> None:
     assert "SpeechRecognition" in client.get("/static/voice.js").text
 
 
-def test_combo_script_is_served(client):
+def test_combo_script_is_served(client) -> None:
     assert client.get("/static/combo.js").status_code == 200
 
 
-def test_unknown_static_file_is_404(client):
+def test_unknown_static_file_is_404(client) -> None:
     assert client.get("/static/..%2Fmain.py").status_code == 404
 
 
-def test_documents_typed_without_script_are_split_by_comma(client):
+def test_documents_typed_without_script_are_split_by_comma(client) -> None:
     report(client, docs=[], docs_text="Паспорт, справка из налоговой")
     assert admin_items(client)[0]["documents"] == ["passport", "справка из налоговой"]
 
 
-def test_submit_redirects_to_thanks(client):
+def test_submit_redirects_to_thanks(client) -> None:
     assert report(client).headers["location"] == "/account/spasibo"
 
 
-def test_submitted_report_reaches_admin_as_new(client):
+def test_submitted_report_reaches_admin_as_new(client) -> None:
     report(client)
     item = admin_items(client)[0]
     assert (item["bank"], item["documents"], item["status"]) == ("OTP banka", ["passport", "apr"], "new")
 
 
-def test_missing_choice_returns_form_with_error(client):
+def test_missing_choice_returns_form_with_error(client) -> None:
     assert report(client, result="").status_code == 400
 
 
-def test_failed_submit_keeps_chosen_documents(client):
+def test_failed_submit_keeps_chosen_documents(client) -> None:
     page = report(client, result="", docs=["Справка из налоговой"]).text
     assert 'name="docs" value="Справка из налоговой"' in page
 
 
-def test_comment_personal_numbers_are_not_stored(client):
+def test_comment_personal_numbers_are_not_stored(client) -> None:
     report(client, comment="мой JMBG 0101990710006, тел +381 63 123 4567, счёт 160-0000000123456-78")
     stored = str(admin_items(client))
     assert not any(n in stored for n in ("0101990710006", "123 4567", "0000000123456"))
 
 
-def test_raw_ip_is_not_stored(client):
+def test_raw_ip_is_not_stored(client) -> None:
     report(client, ip="198.51.100.77")
     assert "198.51.100.77" not in str(admin_items(client))
 
 
-def test_honeypot_report_is_not_stored(client):
+def test_honeypot_report_is_not_stored(client) -> None:
     report(client, website="http://spam.example")
     assert admin_items(client) == []
 
 
-def test_sixth_report_in_hour_is_limited(client):
+def test_sixth_report_in_hour_is_limited(client) -> None:
     codes = [report(client).status_code for _ in range(6)]
     assert codes == [303] * 5 + [429]
 
 
-def test_report_limit_is_separate_from_suggestions(client):
+def test_report_limit_is_separate_from_suggestions(client) -> None:
     for _ in range(5):
         client.post("/", data={"text": "правка"}, headers={"CF-Connecting-IP": "203.0.113.5"})
     assert report(client).status_code == 303
 
 
-def test_admin_accounts_requires_token(client):
+def test_admin_accounts_requires_token(client) -> None:
     assert client.get("/admin/accounts").status_code == 401
 
 
-def test_public_json_hides_new_reports(client):
+def test_public_json_hides_new_reports(client) -> None:
     report(client)
     assert public_items(client) == []
 
 
-def test_public_json_shows_accepted_report(client):
+def test_public_json_shows_accepted_report(client) -> None:
     report(client)
     accept_all(client)
     assert public_items(client)[0]["city"] == "Нови-Сад"
 
 
-def test_public_json_has_no_service_fields(client):
+def test_public_json_has_no_service_fields(client) -> None:
     report(client)
     accept_all(client)
     leaked = {"ip_hash", "user_agent_short", "status", "created_at"} & set(public_items(client)[0])
     assert leaked == set()
 
 
-def test_public_json_hides_rejected_and_spam(client):
+def test_public_json_hides_rejected_and_spam(client) -> None:
     report(client)
     report(client)
     first, second = admin_items(client)
@@ -171,68 +171,68 @@ def test_public_json_hides_rejected_and_spam(client):
     assert public_items(client) == []
 
 
-def test_public_json_carries_labels_for_codes(client):
+def test_public_json_carries_labels_for_codes(client) -> None:
     labels = client.get("/api/accounts/public").json()["labels"]
     assert labels["account_type"]["entrepreneur"].startswith("ИП")
 
 
-def test_unknown_account_status_is_rejected(client):
+def test_unknown_account_status_is_rejected(client) -> None:
     report(client)
     item_id = admin_items(client)[0]["id"]
     response = client.post(f"/admin/accounts/{item_id}/status", json={"status": "x"}, headers=AUTH)
     assert response.status_code == 400
 
 
-def test_report_without_proof_of_work_is_rejected(client):
+def test_report_without_proof_of_work_is_rejected(client) -> None:
     assert report(client, altcha="").status_code == 400
 
 
-def test_report_without_proof_of_work_is_not_stored(client):
+def test_report_without_proof_of_work_is_not_stored(client) -> None:
     report(client, altcha="")
     assert admin_items(client) == []
 
 
-def test_wrong_number_is_rejected(client):
+def test_wrong_number_is_rejected(client) -> None:
     challenge = challenge_from_page(client.get("/account").text)
     wrong = (solve(challenge) + 1) % (challenge.maxnumber + 1)
     assert report(client, altcha=encode_payload(challenge, wrong)).status_code == 400
 
 
-def test_same_solution_cannot_be_used_twice(client):
+def test_same_solution_cannot_be_used_twice(client) -> None:
     payload = solved_pow(client)
     report(client, altcha=payload)
     assert report(client, altcha=payload).status_code == 400
 
 
-def test_robot_checkbox_starts_unchecked(client):
+def test_robot_checkbox_starts_unchecked(client) -> None:
     page = client.get("/account").text
     assert re.search(r'role="checkbox" aria-checked="false"', page)
 
 
-def test_page_does_not_carry_a_solution(client):
+def test_page_does_not_carry_a_solution(client) -> None:
     assert 'name="altcha" value=""' in client.get("/account").text
 
 
-def test_fresh_challenge_solution_is_accepted(client):
+def test_fresh_challenge_solution_is_accepted(client) -> None:
     challenge = Challenge(**{
         key: value for key, value in client.get("/account/challenge").json().items() if key != "ttl"
     })
     assert report(client, altcha=encode_payload(challenge, solve(challenge))).status_code == 303
 
 
-def test_fresh_challenge_is_not_cached(client):
+def test_fresh_challenge_is_not_cached(client) -> None:
     assert client.get("/account/challenge").headers["cache-control"] == "no-store"
 
 
-def test_account_page_may_fetch_only_own_origin(client):
+def test_account_page_may_fetch_only_own_origin(client) -> None:
     assert "connect-src 'self'" in client.get("/account").headers["content-security-policy"]
 
 
-def test_stats_page_shows_empty_state(client):
+def test_stats_page_shows_empty_state(client) -> None:
     assert "Пока нет проверенных ответов" in client.get("/account/stats").text
 
 
-def test_stats_page_counts_only_accepted(client):
+def test_stats_page_counts_only_accepted(client) -> None:
     report(client, bank="raiffeisen")
     report(client, bank="intesa")
     raiffeisen = admin_items(client)[0]
@@ -247,64 +247,64 @@ def csp_directives(csp: str) -> dict[str, str]:
     return dict(part.strip().partition(" ")[::2] for part in csp.split(";") if part.strip())
 
 
-def test_stats_page_allows_own_filter_script(client):
+def test_stats_page_allows_own_filter_script(client) -> None:
     csp = client.get("/account/stats").headers["content-security-policy"]
     assert csp_directives(csp)["script-src"] == "'self' https://static.cloudflareinsights.com"
 
 
-def test_stats_page_csp_is_strict_apart_from_own_script_and_pdf_view(client):
+def test_stats_page_csp_is_strict_apart_from_own_script_and_pdf_view(client) -> None:
     stats = csp_directives(client.get("/account/stats").headers["content-security-policy"])
     strict = csp_directives(client.get("/spasibo").headers["content-security-policy"])
     loosened = {"script-src": None, "object-src": None, "frame-src": None}
     assert {**stats, **loosened} == {**strict, **loosened}
 
 
-def test_stats_page_embeds_pdf_only_from_own_site(client):
+def test_stats_page_embeds_pdf_only_from_own_site(client) -> None:
     csp = client.get("/account/stats").headers["content-security-policy"]
     directives = csp_directives(csp)
     assert (directives["object-src"], directives["frame-src"]) == ("'self'", "'self'")
 
 
-def test_stats_page_loads_filter_script(client):
+def test_stats_page_loads_filter_script(client) -> None:
     seed(client, 1)
     assert '<script src="/static/filters.js" defer></script>' in client.get("/account/stats").text
 
 
-def test_stats_filters_work_without_script(client):
+def test_stats_filters_work_without_script(client) -> None:
     seed(client, 1)
     page = client.get("/account/stats").text
     names = ("bank", "city", "result")
     assert all(f'<select id="f-{name}" name="{name}" data-combo="search">' in page for name in names)
 
 
-def test_stats_selects_get_the_site_dropdown(client):
+def test_stats_selects_get_the_site_dropdown(client) -> None:
     seed(client, 1)
     page = client.get("/account/stats").text
     assert '<script src="/static/select-combo.js" defer></script>' in page
     assert all(f'<select id="c-{name}" name="{name}" data-combo>' in page for name in ("case", "vnzh"))
 
 
-def test_dropdown_script_is_served_as_javascript(client):
+def test_dropdown_script_is_served_as_javascript(client) -> None:
     response = client.get("/static/select-combo.js")
     assert (response.status_code, response.headers["content-type"]) == (200, "text/javascript; charset=utf-8")
 
 
-def test_filters_script_is_served_as_javascript(client):
+def test_filters_script_is_served_as_javascript(client) -> None:
     response = client.get("/static/filters.js")
     assert (response.status_code, response.headers["content-type"]) == (200, "text/javascript; charset=utf-8")
 
 
-def test_form_links_to_stats(client):
+def test_form_links_to_stats(client) -> None:
     assert 'href="/account/stats"' in client.get("/account").text
 
 
-def test_stats_page_escapes_comment_html(client):
+def test_stats_page_escapes_comment_html(client) -> None:
     report(client, comment="<img src=x onerror=alert(1)>")
     accept_all(client)
     assert "<img src=x" not in client.get("/account/stats").text
 
 
-def test_traces_older_than_month_are_forgotten(client):
+def test_traces_older_than_month_are_forgotten(client) -> None:
     report(client)
     store = client.app.state.store
     store.forget_old_traces(datetime.now(LOCAL_TZ) + timedelta(days=1))
@@ -312,71 +312,71 @@ def test_traces_older_than_month_are_forgotten(client):
     assert (item["ip_hash"], item["user_agent_short"]) == ("", "")
 
 
-def test_fresh_traces_are_kept(client):
+def test_fresh_traces_are_kept(client) -> None:
     report(client)
     client.app.state.store.forget_old_traces(datetime.now(LOCAL_TZ) - timedelta(days=30))
     assert admin_items(client)[0]["ip_hash"] != ""
 
 
-def test_form_has_optional_branch_field(client):
+def test_form_has_optional_branch_field(client) -> None:
     page = client.get("/account").text
     assert re.search(r'<input[^>]*name="branch"(?![^>]*required)[^>]*>', page)
 
 
-def test_branch_script_is_served(client):
+def test_branch_script_is_served(client) -> None:
     assert "/account/branches" in client.get("/static/branch.js").text
 
 
-def test_report_without_branch_is_accepted(client):
+def test_report_without_branch_is_accepted(client) -> None:
     assert report(client).status_code == 303
 
 
-def test_report_without_branch_stores_none(client):
+def test_report_without_branch_stores_none(client) -> None:
     report(client)
     assert admin_items(client)[0]["branch"] is None
 
 
-def test_report_with_branch_shows_it_to_admin(client):
+def test_report_with_branch_shows_it_to_admin(client) -> None:
     report(client, branch="Ekspozitura kod Slavije")
     assert admin_items(client)[0]["branch"] == "Ekspozitura kod Slavije"
 
 
-def test_branch_personal_numbers_are_not_stored(client):
+def test_branch_personal_numbers_are_not_stored(client) -> None:
     report(client, branch="Филиал, менеджер +381 63 123 4567")
     assert "123 4567" not in str(admin_items(client))
 
 
-def test_failed_submit_keeps_branch(client):
+def test_failed_submit_keeps_branch(client) -> None:
     page = report(client, result="", branch="Ekspozitura kod Slavije").text
     assert 'value="Ekspozitura kod Slavije"' in page
 
 
-def test_branch_hints_for_bank_and_city(client):
+def test_branch_hints_for_bank_and_city(client) -> None:
     params = {"bank": "UniCredit", "city": "Белград"}
     branches = client.get("/account/branches", params=params).json()["branches"]
     assert branches[0] == "Не помню / не важно" and len(branches) > 1
 
 
-def test_unknown_bank_gets_only_not_sure_hint(client):
+def test_unknown_bank_gets_only_not_sure_hint(client) -> None:
     params = {"bank": "Мой банк", "city": "Белград"}
     branches = client.get("/account/branches", params=params).json()["branches"]
     assert branches == ["Не помню / не важно"]
 
 
-def test_public_json_hides_branch_of_single_report(client):
+def test_public_json_hides_branch_of_single_report(client) -> None:
     report(client, branch="Ekspozitura kod Slavije")
     accept_all(client)
     assert public_items(client)[0]["branch"] is None
 
 
-def test_stats_page_shows_branch_with_two_reports(client):
+def test_stats_page_shows_branch_with_two_reports(client) -> None:
     report(client, branch="Ekspozitura kod Slavije")
     report(client, branch="Ekspozitura kod Slavije")
     accept_all(client)
     assert "Ekspozitura kod Slavije" in client.get("/account/stats").text
 
 
-def test_stats_page_hides_branch_with_one_report(client):
+def test_stats_page_hides_branch_with_one_report(client) -> None:
     report(client, branch="Ekspozitura kod Slavije")
     accept_all(client)
     assert "Ekspozitura kod Slavije" not in client.get("/account/stats").text
@@ -391,7 +391,7 @@ def nbs_bank_names(page: str) -> list[str]:
     return [row.split("</i> ")[1].split("<")[0] for row in rows]
 
 
-def test_stats_page_keeps_nbs_figures_out_of_answer_groups(client):
+def test_stats_page_keeps_nbs_figures_out_of_answer_groups(client) -> None:
     report(client, bank="unicredit")
     accept_all(client)
     page = client.get("/account/stats").text
@@ -399,28 +399,28 @@ def test_stats_page_keeps_nbs_figures_out_of_answer_groups(client):
     assert "nbs.rs" not in group
 
 
-def test_stats_page_puts_nbs_block_below_answers_collapsed(client):
+def test_stats_page_puts_nbs_block_below_answers_collapsed(client) -> None:
     report(client, bank="unicredit")
     accept_all(client)
     page = client.get("/account/stats").text
     assert page.index("Все ответы") < page.index('<details class="nbs" id="nbs">')
 
 
-def test_stats_page_lists_reported_banks_first_in_nbs_block(client):
+def test_stats_page_lists_reported_banks_first_in_nbs_block(client) -> None:
     report(client, bank="unicredit")
     accept_all(client)
     names = nbs_bank_names(client.get("/account/stats").text)
     assert names[:2] == ["UniCredit", "Banca Intesa"] and names.count("UniCredit") == 1
 
 
-def test_stats_page_nbs_row_links_every_figure_to_its_report(client):
+def test_stats_page_nbs_row_links_every_figure_to_its_report(client) -> None:
     report(client, bank="unicredit")
     accept_all(client)
     row = nbs_block(client.get("/account/stats").text).split('<details class="nbs-bank">')[1]
     assert "780,0" in row and "NationalCode=17324918" in row
 
 
-def test_stats_page_lists_largest_banks_even_without_answers(client):
+def test_stats_page_lists_largest_banks_even_without_answers(client) -> None:
     names = nbs_bank_names(client.get("/account/stats").text)
     assert names == ["Banca Intesa", "OTP banka", "Raiffeisen", "UniCredit", "NLB Banka", "AikBank",
                      "Poštanska štedionica", "Erste", "ALTA banka", "ProCredit"]
@@ -453,7 +453,7 @@ def next_link(page: str) -> str:
     return html.unescape(re.search(r'<a class="more" href="([^"]+)"', page).group(1))
 
 
-def test_stats_pages_cover_all_answers_without_overlap(client):
+def test_stats_pages_cover_all_answers_without_overlap(client) -> None:
     seed(client, 45)
     seen, url = [], "/account/stats"
     while url:
@@ -463,47 +463,47 @@ def test_stats_pages_cover_all_answers_without_overlap(client):
     assert seen == [str(n) for n in range(1, 46)]
 
 
-def test_stats_first_page_shows_twenty_newest(client):
+def test_stats_first_page_shows_twenty_newest(client) -> None:
     seed(client, 25)
     assert answer_ids(client.get("/account/stats").text) == [str(n) for n in range(1, 21)]
 
 
-def test_stats_page_says_which_answers_are_shown(client):
+def test_stats_page_says_which_answers_are_shown(client) -> None:
     seed(client, 25)
     page = client.get(next_link(client.get("/account/stats").text)).text
     assert "Показаны 21–25 из 25" in page
 
 
-def test_stats_later_page_links_back_to_start(client):
+def test_stats_later_page_links_back_to_start(client) -> None:
     seed(client, 25)
     page = client.get(next_link(client.get("/account/stats").text)).text
     assert 'class="start" href="/account/stats#answers"' in page
 
 
-def test_stats_broken_cursor_shows_first_page(client):
+def test_stats_broken_cursor_shows_first_page(client) -> None:
     seed(client, 3)
     response = client.get("/account/stats", params={"before": "2026-99-99_abc"})
     assert (response.status_code, answer_ids(response.text)) == (200, ["1", "2", "3"])
 
 
-def test_stats_filter_by_bank(client):
+def test_stats_filter_by_bank(client) -> None:
     seed(client, 2)
     seed(client, 1, bank="Erste")
     assert answer_ids(client.get("/account/stats", params={"bank": "erste"}).text) == ["3"]
 
 
-def test_stats_filter_by_visit_dates(client):
+def test_stats_filter_by_visit_dates(client) -> None:
     seed(client, 10)
     page = client.get("/account/stats", params={"from": "2026-10-25", "to": "2026-10-27"}).text
     assert answer_ids(page) == ["5", "6", "7"]
 
 
-def test_stats_unknown_filter_value_is_ignored(client):
+def test_stats_unknown_filter_value_is_ignored(client) -> None:
     seed(client, 2)
     assert answer_ids(client.get("/account/stats", params={"bank": "<script>"}).text) == ["1", "2"]
 
 
-def test_stats_aggregates_follow_filter(client):
+def test_stats_aggregates_follow_filter(client) -> None:
     seed(client, 2)
     seed(client, 1, bank="Erste")
     page = client.get("/account/stats", params={"bank": "erste"}).text
@@ -511,48 +511,48 @@ def test_stats_aggregates_follow_filter(client):
     assert tuple(head in page for head in heads) == (True, False)
 
 
-def test_stats_filtered_aggregates_are_labelled_and_resettable(client):
+def test_stats_filtered_aggregates_are_labelled_and_resettable(client) -> None:
     seed(client, 1)
     page = client.get("/account/stats", params={"result": "opened"}).text
     assert "с учётом фильтра" in page and 'class="reset" href="/account/stats"' in page
 
 
-def test_stats_filter_survives_paging(client):
+def test_stats_filter_survives_paging(client) -> None:
     seed(client, 25, bank="Erste")
     assert "bank=erste" in next_link(client.get("/account/stats", params={"bank": "erste"}).text)
 
 
-def test_stats_aggregates_count_answers_beyond_two_thousand(client):
+def test_stats_aggregates_count_answers_beyond_two_thousand(client) -> None:
     seed(client, 2001)
     assert "Всего 2001 ответ" in client.get("/account/stats").text
 
 
-def test_stats_empty_filter_result_offers_reset(client):
+def test_stats_empty_filter_result_offers_reset(client) -> None:
     seed(client, 1)
     assert "По этому фильтру ответов нет" in client.get("/account/stats", params={"bank": "erste"}).text
 
 
-def test_stats_hides_rare_branch_when_filtered(client):
+def test_stats_hides_rare_branch_when_filtered(client) -> None:
     seed(client, 1, branch="Ekspozitura kod Slavije")
     seed(client, 1, start=date(2026, 9, 1))
     page = client.get("/account/stats", params={"from": "2026-10-01"}).text
     assert "Ekspozitura kod Slavije" not in page
 
 
-def test_stats_branch_named_twice_overall_survives_filter_that_keeps_one(client):
+def test_stats_branch_named_twice_overall_survives_filter_that_keeps_one(client) -> None:
     seed(client, 1, branch="Ekspozitura kod Slavije")
     seed(client, 1, start=date(2026, 9, 1), branch="Ekspozitura kod Slavije")
     page = client.get("/account/stats", params={"from": "2026-10-01"}).text
     assert "Ekspozitura kod Slavije" in page
 
 
-def test_public_json_without_params_keeps_old_shape(client):
+def test_public_json_without_params_keeps_old_shape(client) -> None:
     seed(client, 3)
     body = client.get("/api/accounts/public").json()
     assert (set(body), body["count"]) == ({"count", "items", "labels"}, 3)
 
 
-def test_public_json_pages_by_cursor(client):
+def test_public_json_pages_by_cursor(client) -> None:
     seed(client, 5)
     first = client.get("/api/accounts/public", params={"limit": 3}).json()
     second = client.get("/api/accounts/public", params={"limit": 3, "cursor": first["next_cursor"]}).json()
@@ -560,77 +560,77 @@ def test_public_json_pages_by_cursor(client):
     assert (ids, second["next_cursor"]) == ([1, 2, 3, 4, 5], None)
 
 
-def test_public_json_limit_is_capped_at_two_thousand(client):
+def test_public_json_limit_is_capped_at_two_thousand(client) -> None:
     seed(client, 2001)
     assert client.get("/api/accounts/public", params={"limit": 999999}).json()["count"] == 2000
 
 
-def test_public_json_broken_cursor_starts_from_top(client):
+def test_public_json_broken_cursor_starts_from_top(client) -> None:
     seed(client, 2)
     body = client.get("/api/accounts/public", params={"cursor": "nonsense"}).json()
     assert [item["id"] for item in body["items"]] == [1, 2]
 
 
-def test_public_json_page_keeps_branch_named_twice_overall(client):
+def test_public_json_page_keeps_branch_named_twice_overall(client) -> None:
     seed(client, 1, branch="Ekspozitura kod Slavije")
     seed(client, 1, start=date(2026, 9, 1), branch="Ekspozitura kod Slavije")
     items = client.get("/api/accounts/public", params={"limit": 1}).json()["items"]
     assert items[0]["branch"] == "Ekspozitura kod Slavije"
 
 
-def test_stats_page_header_links_to_guide(client):
+def test_stats_page_header_links_to_guide(client) -> None:
     assert '<a class="site-title" href="/">' in client.get("/account/stats").text
 
 
-def test_stats_filter_note_shows_dates_in_russian(client):
+def test_stats_filter_note_shows_dates_in_russian(client) -> None:
     seed(client, 3)
     page = client.get("/account/stats", params={"from": "2026-10-05", "to": "2026-10-30"}).text
     assert "· с 05.10.2026 · по 30.10.2026" in page
 
 
-def test_both_accounts_at_once_is_accepted(client):
+def test_both_accounts_at_once_is_accepted(client) -> None:
     report(client, account_type="both")
     assert admin_items(client)[0]["account_type"] == "both"
 
 
-def test_form_offers_both_accounts_at_once(client):
+def test_form_offers_both_accounts_at_once(client) -> None:
     assert 'name="account_type" value="both"' in client.get("/account").text
 
 
-def test_both_at_once_counts_as_personal_and_entrepreneur(client):
+def test_both_at_once_counts_as_personal_and_entrepreneur(client) -> None:
     report(client, account_type="both")
     accept_all(client)
     assert "личный 1, ИП 1 (оба сразу — 1)" in client.get("/account/stats").text
 
 
-def test_my_case_shows_bank_answered_in_that_case(client):
+def test_my_case_shows_bank_answered_in_that_case(client) -> None:
     report(client, account_type="both", bank="halkbank")
     accept_all(client)
     page = client.get("/account/stats", params={"case": "entrepreneur", "vnzh": "yes"}).text
     assert re.search(r'class="case-bank"[^>]*>\s*<summary><b>Halkbank</b><span>1 чел\.', page)
 
 
-def test_my_case_says_no_data_when_nobody_answered(client):
+def test_my_case_says_no_data_when_nobody_answered(client) -> None:
     report(client, account_type="personal")
     accept_all(client)
     page = client.get("/account/stats", params={"case": "entrepreneur"}).text
     assert "ответов пока нет — нет данных" in page
 
 
-def test_my_case_shows_official_rules_with_link(client):
+def test_my_case_shows_official_rules_with_link(client) -> None:
     report(client)
     accept_all(client)
     assert "https://www.yettelbank.rs/obavestenje-o-otvaranju" in client.get("/account/stats").text
 
 
-def test_stats_page_never_shows_ip_hash(client):
+def test_stats_page_never_shows_ip_hash(client) -> None:
     report(client)
     accept_all(client)
     ip_hash = admin_items(client)[0]["ip_hash"]
     assert ip_hash not in client.get("/account/stats").text
 
 
-def test_answer_pages_keep_my_case(client):
+def test_answer_pages_keep_my_case(client) -> None:
     for n in range(21):
         report(client, ip=f"203.0.113.{n + 1}")
     accept_all(client)
@@ -638,25 +638,25 @@ def test_answer_pages_keep_my_case(client):
     assert "case=personal" in re.search(r'class="more" href="([^"]+)"', page).group(1)
 
 
-def test_form_has_site_header_linking_home(client):
+def test_form_has_site_header_linking_home(client) -> None:
     assert '<a class="site-title" href="/">Вкладчики ALTA: что дальше</a>' in client.get("/account").text
 
 
-def test_thanks_page_has_site_header(client):
+def test_thanks_page_has_site_header(client) -> None:
     assert 'class="site-header"' in client.get("/account/spasibo").text
 
 
-def test_form_uses_site_accent_not_old_blue(client):
+def test_form_uses_site_accent_not_old_blue(client) -> None:
     page = client.get("/account").text
     assert ("--accent: #9b2c22" in page, "#1f5f8b" in page) == (True, False)
 
 
-def test_stats_page_has_exactly_one_site_header(client):
+def test_stats_page_has_exactly_one_site_header(client) -> None:
     assert client.get("/account/stats").text.count('class="site-header"') == 1
 
 
 @pytest.mark.parametrize("path", ["/account", "/account/stats", "/account/spasibo", "/fix", "/spasibo"])
-def test_page_opens_with_and_without_trailing_slash(client, path):
+def test_page_opens_with_and_without_trailing_slash(client, path) -> None:
     bare = client.get(path)
     slashed = client.get(f"{path}/")
 
@@ -666,7 +666,7 @@ def test_page_opens_with_and_without_trailing_slash(client, path):
     assert str(slashed.url).endswith(path)
 
 
-def test_trailing_slash_redirect_keeps_query(client):
+def test_trailing_slash_redirect_keeps_query(client) -> None:
     response = client.get("/account/stats/?bank=x", follow_redirects=False)
 
     assert response.status_code == 308
@@ -689,65 +689,65 @@ def three_answers(client: TestClient) -> None:
 
 
 @pytest.mark.parametrize("path", ["/account/stats", "/en/account/stats", "/sr/account/stats"])
-def test_stats_page_answers_in_every_language(client, path):
+def test_stats_page_answers_in_every_language(client, path) -> None:
     assert client.get(path).status_code == 200
 
 
-def test_en_and_sr_stats_lead_to_russian_page_until_translated(client):
+def test_en_and_sr_stats_lead_to_russian_page_until_translated(client) -> None:
     response = client.get("/sr/account/stats?bank=otp", follow_redirects=False)
     assert (response.status_code, response.headers["location"]) == (302, "/account/stats?bank=otp")
 
 
-def test_stats_answer_matches_tiles_below(client):
+def test_stats_answer_matches_tiles_below(client) -> None:
     three_answers(client)
     page = client.get("/account/stats").text
     expected = f"счёт открыли — {tile(page, 'opened')}, отказали — {tile(page, 'refused')}"
     assert expected in answer_block(page)
 
 
-def test_stats_answer_names_banks_where_accounts_were_opened(client):
+def test_stats_answer_names_banks_where_accounts_were_opened(client) -> None:
     three_answers(client)
     assert "Чаще всего открывали: Banca Intesa (1)." in answer_block(client.get("/account/stats").text)
 
 
-def test_stats_answer_names_banks_that_refused(client):
+def test_stats_answer_names_banks_that_refused(client) -> None:
     three_answers(client)
     assert "Чаще всего отказывали: OTP banka (2)." in answer_block(client.get("/account/stats").text)
 
 
-def test_stats_answer_ignores_filter(client):
+def test_stats_answer_ignores_filter(client) -> None:
     three_answers(client)
     answer = answer_block(client.get("/account/stats?bank=intesa").text)
     assert "3 проверенных ответа" in answer
 
 
-def test_stats_answer_is_dated_with_last_accepted_answer(client):
+def test_stats_answer_is_dated_with_last_accepted_answer(client) -> None:
     three_answers(client)
     page = client.get("/account/stats").text
     assert f'Последний принятый ответ — <time datetime="{TODAY}">' in page
 
 
-def test_stats_page_without_answers_still_answers(client):
+def test_stats_page_without_answers_still_answers(client) -> None:
     assert "проверенных ответов вкладчиков пока нет" in answer_block(client.get("/account/stats").text)
 
 
-def test_stats_page_is_indexable(client):
+def test_stats_page_is_indexable(client) -> None:
     assert '<meta name="robots" content="index, follow">' in client.get("/account/stats").text
 
 
-def test_filtered_stats_page_points_to_one_canonical_address(client):
+def test_filtered_stats_page_points_to_one_canonical_address(client) -> None:
     page = client.get("/account/stats?bank=otp&before=2026-11-01_5").text
     assert '<link rel="canonical" href="https://alta.smolevich.com/account/stats">' in page
 
 
-def test_stats_description_counts_answers(client):
+def test_stats_description_counts_answers(client) -> None:
     three_answers(client)
     page = client.get("/account/stats").text
     description = re.search(r'<meta name="description" content="([^"]*)"', page).group(1)
     assert "3 проверенных ответа, открыли 1, отказали 2" in description
 
 
-def test_stats_answer_escapes_custom_bank_name(client):
+def test_stats_answer_escapes_custom_bank_name(client) -> None:
     report(client, ip="203.0.113.9", bank="<script>alert(1)</script>Bank", result="opened")
     accept_all(client)
     page = client.get("/account/stats").text

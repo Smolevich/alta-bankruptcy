@@ -72,4 +72,4 @@ if (errors.length) {
 	console.error(errors.map((e) => `✗ ${e}`).join('\n'));
 	process.exit(1);
 }
-console.log(`i18n ok: ${Object.keys(docs).length} страниц, ${Object.keys(news).length} новостей × ${LANGS.length} языка`);
+console.log(`i18n ok: ${Object.keys(docs).length} pages, ${Object.keys(news).length} news × ${LANGS.length} languages`);

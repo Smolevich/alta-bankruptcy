@@ -24,59 +24,59 @@ def client(tmp_path, site) -> TestClient:
     return TestClient(app)
 
 
-def test_root_serves_the_site(client):
+def test_root_serves_the_site(client) -> None:
     assert "Справочник" in client.get("/").text
 
 
-def test_site_page_by_clean_url(client):
+def test_site_page_by_clean_url(client) -> None:
     assert "Требование" in client.get("/trebovanie/").text
 
 
-def test_edit_link_from_old_write_up_still_opens_the_form(client):
+def test_edit_link_from_old_write_up_still_opens_the_form(client) -> None:
     page = client.get("/", params={"s": "f1", "t": "Цифры"}).text
     assert 'value="Цифры"' in page
 
 
-def test_form_is_also_available_at_fix(client):
+def test_form_is_also_available_at_fix(client) -> None:
     assert "<form" in client.get("/fix").text
 
 
 @pytest.mark.parametrize("path", ["/account", "/account/stats", "/healthz", "/api/accounts/public"])
-def test_service_routes_are_not_shadowed_by_the_site(client, path):
+def test_service_routes_are_not_shadowed_by_the_site(client, path) -> None:
     assert client.get(path).status_code == 200
 
 
-def test_admin_stays_closed_without_token(client):
+def test_admin_stays_closed_without_token(client) -> None:
     assert client.get("/admin/suggestions").status_code == 401
 
 
-def test_unknown_path_gets_the_site_404_page(client):
+def test_unknown_path_gets_the_site_404_page(client) -> None:
     response = client.get("/nope/")
     assert response.status_code == 404
     assert "Нет такой страницы" in response.text
 
 
-def test_site_csp_allows_own_scripts_and_wasm_search(client):
+def test_site_csp_allows_own_scripts_and_wasm_search(client) -> None:
     csp = client.get("/").headers["content-security-policy"]
     assert "script-src 'self'" in csp and "wasm-unsafe-eval" in csp
 
 
-def test_form_csp_is_not_loosened_by_the_site(client):
+def test_form_csp_is_not_loosened_by_the_site(client) -> None:
     assert "unsafe-inline" not in client.get("/fix").headers["content-security-policy"].split("style-src")[0]
 
 
-def test_hashed_assets_are_cached_and_pages_are_not(client):
+def test_hashed_assets_are_cached_and_pages_are_not(client) -> None:
     assert "immutable" in client.get("/_astro/app.abc123.js").headers["cache-control"]
     assert client.get("/").headers["cache-control"] == "no-cache"
     assert client.get("/trebovanie/").headers["cache-control"] == "no-cache"
 
 
-def test_without_a_built_site_root_falls_back_to_the_form(tmp_path):
+def test_without_a_built_site_root_falls_back_to_the_form(tmp_path) -> None:
     app = create_app(data_dir=tmp_path, admin_token="t", ip_salt="salt", site_dir=tmp_path / "missing")
     assert "<form" in TestClient(app).get("/").text
 
 
-def test_pdf_may_be_embedded_by_the_same_origin_only(client, site):
+def test_pdf_may_be_embedded_by_the_same_origin_only(client, site) -> None:
     (site / "docs").mkdir()
     (site / "docs" / "a.pdf").write_bytes(b"%PDF-1.4")
     pdf = client.get("/docs/a.pdf").headers["content-security-policy"]
@@ -85,29 +85,29 @@ def test_pdf_may_be_embedded_by_the_same_origin_only(client, site):
     assert "frame-ancestors 'none'" in page and "object-src 'self'" in page
 
 
-def test_site_may_embed_pdfs_from_aod(client):
+def test_site_may_embed_pdfs_from_aod(client) -> None:
     csp = client.get("/").headers["content-security-policy"]
     assert "object-src 'self' https://www.aod.rs" in csp and "frame-src 'self' https://www.aod.rs" in csp
 
 
-def test_site_csp_allows_map_worker_from_own_origin(client):
+def test_site_csp_allows_map_worker_from_own_origin(client) -> None:
     csp = client.get("/").headers["content-security-policy"]
     assert "worker-src 'self' blob:" in csp and "https://tile." not in csp
 
 
-def test_range_request_from_revalidating_browser_gets_partial_content(client):
+def test_range_request_from_revalidating_browser_gets_partial_content(client) -> None:
     # Regression: Range with If-None-Match got 304 and the map stayed gray.
     etag = client.get("/map/tiles.pmtiles").headers["etag"]
     response = client.get("/map/tiles.pmtiles", headers={"Range": "bytes=0-9", "If-None-Match": etag})
     assert (response.status_code, response.content) == (206, bytes(range(10)))
 
 
-def test_plain_revalidation_still_gets_not_modified(client):
+def test_plain_revalidation_still_gets_not_modified(client) -> None:
     etag = client.get("/map/tiles.pmtiles").headers["etag"]
     assert client.get("/map/tiles.pmtiles", headers={"If-None-Match": etag}).status_code == 304
 
 
-def test_page_without_trailing_slash_redirects_permanently(client):
+def test_page_without_trailing_slash_redirects_permanently(client) -> None:
     response = client.get("/trebovanie", follow_redirects=False)
 
     assert (response.status_code, response.headers["location"]) == (308, "http://testserver/trebovanie/")

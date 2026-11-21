@@ -54,17 +54,17 @@ def edit(client: TestClient, item_id: int, **fields):
     return client.post(f"/admin/proposals/{item_id}", json=fields, headers=AUTH)
 
 
-def test_submission_redirects_to_its_card_in_the_list(client):
+def test_submission_redirects_to_its_card_in_the_list(client) -> None:
     location = propose(client).headers["location"]
     assert re.fullmatch(r"/predlozheniya/\?sent=1#p1", location)
 
 
-def test_submitted_proposal_is_listed_on_the_page(client):
+def test_submitted_proposal_is_listed_on_the_page(client) -> None:
     propose(client, title="Как подать требование")
     assert "Как подать требование" in client.get(PAGE).text
 
 
-def test_admin_sees_full_proposal_with_contact_and_sources(client):
+def test_admin_sees_full_proposal_with_contact_and_sources(client) -> None:
     propose(client)
     item = admin_items(client)[0]
     assert (item["contact"], item["sources"], item["status"]) == (
@@ -72,104 +72,104 @@ def test_admin_sees_full_proposal_with_contact_and_sources(client):
     )
 
 
-def test_public_list_hides_author_contact(client):
+def test_public_list_hides_author_contact(client) -> None:
     propose(client)
     assert "@ivan_secret" not in client.get(PAGE).text
 
 
-def test_proposal_without_sources_is_accepted(client):
+def test_proposal_without_sources_is_accepted(client) -> None:
     assert propose(client, sources=" \n  ").status_code == 303
 
 
-def test_proposal_without_title_gets_start_of_text(client):
+def test_proposal_without_title_gets_start_of_text(client) -> None:
     propose(client, title="", text="Как подать требование в стечай без адвоката")
     assert admin_items(client)[0]["title"] == "Как подать требование в стечай без адвоката"
 
 
-def test_link_pasted_without_https_is_accepted(client):
+def test_link_pasted_without_https_is_accepted(client) -> None:
     propose(client, text="", doc_url="docs.google.com/document/d/x")
     assert admin_items(client)[0]["doc_url"] == "https://docs.google.com/document/d/x"
 
 
-def test_proposal_without_text_and_link_is_rejected(client):
+def test_proposal_without_text_and_link_is_rejected(client) -> None:
     assert propose(client, text="", doc_url="").status_code == 400
 
 
-def test_link_alone_is_enough_without_text(client):
+def test_link_alone_is_enough_without_text(client) -> None:
     assert propose(client, text="", doc_url="https://docs.google.com/document/d/x").status_code == 303
 
 
-def test_document_link_must_be_http(client):
+def test_document_link_must_be_http(client) -> None:
     assert propose(client, doc_url="javascript:alert(1)").status_code == 400
 
 
-def test_proposal_without_target_goes_to_site_and_channel(client):
+def test_proposal_without_target_goes_to_site_and_channel(client) -> None:
     propose(client, target="")
     assert admin_items(client)[0]["target"] == "both"
 
 
-def test_rejected_form_keeps_what_was_typed(client):
+def test_rejected_form_keeps_what_was_typed(client) -> None:
     page = propose(client, sources="x" * 20_001, text="Длинный черновик текста").text
     assert "Длинный черновик текста" in page
 
 
-def test_text_of_fifty_thousand_cyrillic_characters_is_accepted(client):
+def test_text_of_fifty_thousand_cyrillic_characters_is_accepted(client) -> None:
     assert propose(client, text="ж" * 50_000).status_code == 303
 
 
-def test_long_article_with_markup_and_sources_fits_into_request(client):
+def test_long_article_with_markup_and_sources_fits_into_request(client) -> None:
     article = "<p><strong>" + "ж" * 1000 + "</strong></p>"
     assert propose(client, text_format="html", text=article * 50, sources="ж" * 20_000).status_code == 303
 
 
-def test_text_over_limit_is_rejected(client):
+def test_text_over_limit_is_rejected(client) -> None:
     assert propose(client, text="x" * 50_001).status_code == 400
 
 
-def test_honeypot_submission_is_not_stored(client):
+def test_honeypot_submission_is_not_stored(client) -> None:
     propose(client, website="http://spam.example")
     assert admin_items(client) == []
 
 
-def test_sixth_proposal_in_hour_is_limited(client):
+def test_sixth_proposal_in_hour_is_limited(client) -> None:
     codes = [propose(client).status_code for _ in range(6)]
     assert codes == [303] * 5 + [429]
 
 
-def test_proposal_limit_is_per_ip(client):
+def test_proposal_limit_is_per_ip(client) -> None:
     for _ in range(5):
         propose(client, ip="203.0.113.1")
     assert propose(client, ip="203.0.113.2").status_code == 303
 
 
-def test_stored_ip_is_hashed_not_raw(client):
+def test_stored_ip_is_hashed_not_raw(client) -> None:
     propose(client, ip="198.51.100.77")
     assert "198.51.100.77" not in str(admin_items(client))
 
 
-def test_page_is_not_indexed(client):
+def test_page_is_not_indexed(client) -> None:
     response = client.get(PAGE)
     assert response.headers["x-robots-tag"] == "noindex, nofollow"
     assert '<meta name="robots" content="noindex, nofollow">' in response.text
 
 
-def test_page_without_slash_redirects(client):
+def test_page_without_slash_redirects(client) -> None:
     assert client.get("/predlozheniya", follow_redirects=False).headers["location"] == PAGE
 
 
 @pytest.mark.parametrize(("path", "title"), [("/en/predlozheniya/", "Suggest material"),
                                              ("/sr/predlozheniya/", "Predložite materijal")])
-def test_translated_pages_have_title_and_form(client, path, title):
+def test_translated_pages_have_title_and_form(client, path, title) -> None:
     page = client.get(path).text
     assert f"<h1>{title}</h1>" in page and f'action="{path}"' in page
 
 
-def test_english_form_reports_errors_in_english(client):
+def test_english_form_reports_errors_in_english(client) -> None:
     page = propose(client, path="/en/predlozheniya/", text="", doc_url="").text
     assert "Add a text or a link to a document." in page
 
 
-def test_editor_status_comment_and_links_show_in_list(client):
+def test_editor_status_comment_and_links_show_in_list(client) -> None:
     propose(client)
     edit(client, 1, status="needs_changes", review_url="https://docs.google.com/document/d/r",
          comment="Нужна ссылка на закон")
@@ -178,7 +178,7 @@ def test_editor_status_comment_and_links_show_in_list(client):
     assert "Нужна ссылка на закон" in page
 
 
-def test_editor_update_changes_only_given_fields(client):
+def test_editor_update_changes_only_given_fields(client) -> None:
     propose(client)
     edit(client, 1, comment="тест")
     edit(client, 1, status="rejected")
@@ -186,34 +186,34 @@ def test_editor_update_changes_only_given_fields(client):
     assert (item["status"], item["comment"]) == ("rejected", "тест")
 
 
-def test_admin_filters_by_status(client):
+def test_admin_filters_by_status(client) -> None:
     propose(client)
     propose(client, title="Второе")
     edit(client, 2, status="published", published_url="https://t.me/altabank_closed/1")
     assert [item["title"] for item in admin_items(client, status="published")] == ["Второе"]
 
 
-def test_unknown_status_is_rejected(client):
+def test_unknown_status_is_rejected(client) -> None:
     propose(client)
     assert edit(client, 1, status="done").status_code == 400
 
 
-def test_editor_link_must_be_http(client):
+def test_editor_link_must_be_http(client) -> None:
     propose(client)
     assert edit(client, 1, published_url="ftp://x").status_code == 400
 
 
-def test_update_of_missing_proposal_is_404(client):
+def test_update_of_missing_proposal_is_404(client) -> None:
     assert edit(client, 99, status="rejected").status_code == 404
 
 
-def test_spam_is_hidden_from_public_list(client):
+def test_spam_is_hidden_from_public_list(client) -> None:
     propose(client, title="Купите крипту")
     edit(client, 1, status="spam")
     assert "Купите крипту" not in client.get(PAGE).text
 
 
-def test_deleted_proposal_disappears(client):
+def test_deleted_proposal_disappears(client) -> None:
     propose(client)
     client.delete("/admin/proposals/1", headers=AUTH)
     assert admin_items(client) == []
@@ -221,27 +221,27 @@ def test_deleted_proposal_disappears(client):
 
 @pytest.mark.parametrize(("method", "path"), [("GET", "/admin/proposals"), ("POST", "/admin/proposals/1"),
                                               ("DELETE", "/admin/proposals/1")])
-def test_admin_api_requires_token(client, method, path):
+def test_admin_api_requires_token(client, method, path) -> None:
     propose(client)
     assert client.request(method, path, json={"status": "rejected"}).status_code == 401
 
 
-def test_admin_page_carries_no_data_and_is_not_indexed(client):
+def test_admin_page_carries_no_data_and_is_not_indexed(client) -> None:
     propose(client)
     response = client.get("/predlozheniya/admin/")
     assert "@ivan_secret" not in response.text and response.headers["x-robots-tag"] == "noindex, nofollow"
 
 
-def test_admin_page_loads_only_own_script(client):
+def test_admin_page_loads_only_own_script(client) -> None:
     csp = client.get("/predlozheniya/admin/").headers["content-security-policy"]
     assert "script-src 'self';" in csp and "connect-src 'self';" in csp
 
 
-def test_admin_script_is_served(client):
+def test_admin_script_is_served(client) -> None:
     assert client.get("/static/proposals-admin.js").status_code == 200
 
 
-def test_admin_selects_get_the_site_dropdown(client):
+def test_admin_selects_get_the_site_dropdown(client) -> None:
     page = client.get("/predlozheniya/admin/").text
     assert '<script src="/static/select-combo.js"></script>' in page
     assert '<select name="status">' not in page and page.count('<select name="status" data-combo>') == 2
@@ -254,7 +254,7 @@ def test_admin_selects_get_the_site_dropdown(client):
         ("/sr/predlozheniya/", '<a class="site-title" href="/sr/">Štediše ALTA banke: šta dalje</a>'),
     ],
 )
-def test_site_header_follows_page_language(client, path, header):
+def test_site_header_follows_page_language(client, path, header) -> None:
     assert header in client.get(path).text
 
 
@@ -264,7 +264,7 @@ def public_body(client: TestClient, item_id: int = 1) -> str:
     return card.split('<div class="body rich">')[1].split("</div>")[0]
 
 
-def test_editor_html_is_published_cleaned(client):
+def test_editor_html_is_published_cleaned(client) -> None:
     propose(client, text_format="html",
             text='<h2>Сроки</h2><p onclick="x()"><strong>30 дней</strong><script>alert(1)</script></p>')
     body = public_body(client)
@@ -278,38 +278,38 @@ def test_editor_html_is_published_cleaned(client):
      '<p style="x:expression(alert(1))">текст</p>',
      '<a href="data:text/html,<script>alert(1)</script>">текст</a>'],
 )
-def test_public_page_never_renders_active_markup(client, dirty):
+def test_public_page_never_renders_active_markup(client, dirty) -> None:
     propose(client, text_format="html", text=dirty)
     body = public_body(client)
     bad = ("onerror", "onload", "javascript:", "<svg", "<iframe", "style=", "data:")
     assert not any(marker in body for marker in bad)
 
 
-def test_plain_text_without_js_is_shown_as_text(client):
+def test_plain_text_without_js_is_shown_as_text(client) -> None:
     propose(client, text="Строка <b>не тег</b>\nвторая")
     assert "Строка &lt;b&gt;не тег&lt;/b&gt;<br>вторая" in public_body(client)
 
 
-def test_text_limit_counts_visible_characters_not_tags(client):
+def test_text_limit_counts_visible_characters_not_tags(client) -> None:
     text = "<p><strong>" + "а" * 100 + "</strong></p>"
     assert propose(client, text_format="html", text=text * 150).status_code == 303
 
 
-def test_editor_text_over_limit_is_rejected_on_submit(client):
+def test_editor_text_over_limit_is_rejected_on_submit(client) -> None:
     assert propose(client, text_format="html", text="<p>" + "а" * 50_001 + "</p>").status_code == 400
 
 
-def test_markup_without_text_counts_as_empty(client):
+def test_markup_without_text_counts_as_empty(client) -> None:
     response = propose(client, text_format="html", text="<p><br></p><script>x</script>")
     assert response.status_code == 400
 
 
-def test_rejected_form_returns_cleaned_html_to_editor(client):
+def test_rejected_form_returns_cleaned_html_to_editor(client) -> None:
     response = propose(client, title="", text_format="html", text="<p>ok<script>alert(1)</script></p>")
     assert "alert(1)" not in response.text
 
 
-def test_editor_text_is_published_and_author_original_kept(client):
+def test_editor_text_is_published_and_author_original_kept(client) -> None:
     propose(client, text_format="html", text="<p>Текст автора</p>")
     edit(client, 1, edited_text="<p>Текст <em>редактора</em></p>")
     assert "Текст <em>редактора</em>" in public_body(client)
@@ -317,43 +317,43 @@ def test_editor_text_is_published_and_author_original_kept(client):
     assert item["text"] == "<p>Текст автора</p>" and item["text_html"] == "<p>Текст автора</p>"
 
 
-def test_editor_text_is_cleaned(client):
+def test_editor_text_is_cleaned(client) -> None:
     propose(client)
     edit(client, 1, edited_text='<p>ok</p><img src=x onerror=alert(1)><a href="javascript:x">y</a>')
     assert admin_items(client)[0]["edited_text"] == "<p>ok</p>y"
 
 
-def test_clearing_editor_text_brings_back_author_text(client):
+def test_clearing_editor_text_brings_back_author_text(client) -> None:
     propose(client, text="Текст автора")
     edit(client, 1, edited_text="<p>Правка</p>")
     edit(client, 1, edited_text="")
     assert "Текст автора" in public_body(client)
 
 
-def test_editor_text_at_limit_fits_into_request(client):
+def test_editor_text_at_limit_fits_into_request(client) -> None:
     """Cyrillic in JSON is 2 bytes per character: a long text must not hit the overall 16 KB body limit."""
     propose(client)
     assert edit(client, 1, edited_text="<p>" + "а" * 50_000 + "</p>").status_code == 200
 
 
-def test_editor_text_over_limit_is_rejected(client):
+def test_editor_text_over_limit_is_rejected(client) -> None:
     propose(client)
     assert edit(client, 1, edited_text="<p>" + "а" * 50_001 + "</p>").status_code == 400
 
 
-def test_old_plain_text_proposal_is_escaped(client, tmp_path):
+def test_old_plain_text_proposal_is_escaped(client, tmp_path) -> None:
     propose(client)
     with sqlite3.connect(tmp_path / "feedback.db") as db:
         db.execute("UPDATE proposals SET text = '<script>alert(1)</script>', text_format = NULL")
     assert "&lt;script&gt;alert(1)&lt;/script&gt;" in public_body(client)
 
 
-def test_proposal_page_loads_own_editor_script(client):
+def test_proposal_page_loads_own_editor_script(client) -> None:
     csp = client.get(PAGE).headers["content-security-policy"]
     assert "script-src 'self'" in csp and "unsafe-eval" not in csp
 
 
-def test_editor_script_is_served(client):
+def test_editor_script_is_served(client) -> None:
     assert client.get("/static/richtext.js").status_code == 200
 
 
@@ -363,28 +363,28 @@ UTM_LINK = "https://www.paragraf.rs/propisi/zakon_o_stecaju.html?utm_source=goog
 @pytest.mark.parametrize(
     "separator", [", ", "; ", ",", " "], ids=["comma", "semicolon", "bare-comma", "space"],
 )
-def test_links_on_one_line_are_not_rejected_as_one_long_source(client, separator):
+def test_links_on_one_line_are_not_rejected_as_one_long_source(client, separator) -> None:
     sources = separator.join(f"{UTM_LINK}&n={n}" for n in range(12))
     assert propose(client, sources=sources).status_code == 303
 
 
-def test_links_on_one_line_count_as_separate_sources():
+def test_links_on_one_line_count_as_separate_sources() -> None:
     sources = proposals.split_sources(f"Закон о стечају: {UTM_LINK}, Одлука НБС: https://nbs.rs/a.pdf")
     assert sources == (f"Закон о стечају: {UTM_LINK}", "Одлука НБС: https://nbs.rs/a.pdf")
 
 
-def test_word_paste_with_crlf_blank_lines_and_numbering_is_accepted(client):
+def test_word_paste_with_crlf_blank_lines_and_numbering_is_accepted(client) -> None:
     sources = "\r\n\r\n".join(f"{n}. {UTM_LINK}&n={n}" for n in range(1, 16))
     assert propose(client, sources=sources).status_code == 303
 
 
-def test_source_with_comma_inside_stays_one_source():
+def test_source_with_comma_inside_stays_one_source() -> None:
     assert proposals.split_sources("Закон о стечају, чл. 54, https://nbs.rs/a.pdf") == (
         "Закон о стечају, чл. 54, https://nbs.rs/a.pdf",
     )
 
 
-def test_any_number_of_sources_of_any_length_is_accepted(client):
+def test_any_number_of_sources_of_any_length_is_accepted(client) -> None:
     long_ones = [f"{'Очень длинное название документа ' * 40} {UTM_LINK}&n={n}" for n in range(10)]
     sources = ", ".join(long_ones + [f"https://www.aod.rs/{n}" for n in range(41)])
     assert propose(client, sources=sources).status_code == 303
@@ -395,7 +395,7 @@ def test_any_number_of_sources_of_any_length_is_accepted(client):
     ("/en/predlozheniya/", "The Sources field is longer than 20 000 characters"),
     ("/sr/predlozheniya/", "Polje „Izvori“ ima više od 20 000 znakova"),
 ])
-def test_sources_field_over_limit_says_so(client, path, message):
+def test_sources_field_over_limit_says_so(client, path, message) -> None:
     response = propose(client, path=path, sources="ж" * 20_001)
     assert response.status_code == 400 and message in response.text
 
@@ -405,25 +405,25 @@ def test_sources_field_over_limit_says_so(client, path, message):
     ("/en/predlozheniya/", "Optional. Links and document names"),
     ("/sr/predlozheniya/", "Nije obavezno. Linkovi i nazivi dokumenata"),
 ])
-def test_form_says_sources_are_optional(client, path, hint):
+def test_form_says_sources_are_optional(client, path, hint) -> None:
     assert hint in client.get(path).text
 
 
-def test_proposal_without_bot_check_is_rejected_and_not_stored(client):
+def test_proposal_without_bot_check_is_rejected_and_not_stored(client) -> None:
     assert propose(client, altcha="").status_code == 400
     assert admin_items(client) == []
 
 
-def test_proposal_with_forged_bot_check_is_rejected(client):
+def test_proposal_with_forged_bot_check_is_rejected(client) -> None:
     assert propose(client, altcha="bm90LWEtdG9rZW4=").status_code == 400
 
 
-def test_proposal_reusing_a_solved_bot_check_is_rejected(client):
+def test_proposal_reusing_a_solved_bot_check_is_rejected(client) -> None:
     token = solved_pow(client)
     assert propose(client, altcha=token).status_code == 303
     assert propose(client, altcha=token).status_code == 400
 
 
-def test_proposal_form_shows_bot_check_in_every_language(client):
+def test_proposal_form_shows_bot_check_in_every_language(client) -> None:
     for path in ("/predlozheniya/", "/en/predlozheniya/", "/sr/predlozheniya/"):
         assert 'id="pow"' in client.get(path).text

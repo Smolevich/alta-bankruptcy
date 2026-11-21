@@ -42,7 +42,7 @@ LINK = 'rel="noopener nofollow"'
         "<video><source onerror=alert(1)></video>",
     ],
 )
-def test_no_script_survives(dirty):
+def test_no_script_survives(dirty) -> None:
     clean = sanitize(dirty)
     assert not re.search(r"<(?!/?(p|br|strong|em|h2|h3|ul|ol|li|a|blockquote)\b)", clean), clean
     assert not re.search(r"on\w+\s*=|javascript:|<script|<svg|<iframe|style=", clean, re.I), clean
@@ -75,25 +75,25 @@ def test_no_script_survives(dirty):
         "",
     ],
 )
-def test_link_without_http_scheme_loses_href(href):
+def test_link_without_http_scheme_loses_href(href) -> None:
     assert "<a" not in sanitize(f'<a href="{href}">x</a>')
 
 
-def test_link_text_stays_when_href_is_dropped():
+def test_link_text_stays_when_href_is_dropped() -> None:
     assert sanitize('<a href="javascript:alert(1)">read</a>') == "read"
 
 
-def test_http_link_gets_our_rel_and_nothing_else():
+def test_http_link_gets_our_rel_and_nothing_else() -> None:
     clean = sanitize('<a href="https://example.com/a?b=1&c=2" target="_blank" rel="opener" class="x">y</a>')
     assert clean == f'<a href="https://example.com/a?b=1&amp;c=2" {LINK}>y</a>'
 
 
-def test_quote_in_href_cannot_break_out_of_attribute():
+def test_quote_in_href_cannot_break_out_of_attribute() -> None:
     clean = sanitize('<a href="https://example.com/&quot; onmouseover=&quot;alert(1)">y</a>')
     assert "onmouseover" not in clean
 
 
-def test_nested_links_are_flattened():
+def test_nested_links_are_flattened() -> None:
     clean = sanitize('<a href="https://a.example">1<a href="https://b.example">2</a></a>')
     assert clean.count("<a ") == 1
 
@@ -112,7 +112,7 @@ def test_nested_links_are_flattened():
         ("<img src=https://example.com/a.png>", ""),
     ],
 )
-def test_structure(dirty, clean):
+def test_structure(dirty, clean) -> None:
     assert sanitize(dirty) == clean
 
 
@@ -120,30 +120,30 @@ def test_structure(dirty, clean):
     "dirty",
     ["&lt;script&gt;alert(1)&lt;/script&gt;", "＜script＞alert(1)＜/script＞", "1 < 2 && 3 > 2", "‮gnp.exe"],
 )
-def test_text_that_looks_like_markup_stays_inert(dirty):
+def test_text_that_looks_like_markup_stays_inert(dirty) -> None:
     assert "<script" not in sanitize(dirty)
 
 
-def test_text_is_escaped():
+def test_text_is_escaped() -> None:
     assert sanitize("<p>1 < 2 & 3 > 2</p>") == "<p>1 &lt; 2 &amp; 3 &gt; 2</p>"
 
 
-def test_null_bytes_are_removed():
+def test_null_bytes_are_removed() -> None:
     assert "\x00" not in sanitize("<p>a\x00b</p>")
 
 
-def test_sanitize_is_idempotent():
+def test_sanitize_is_idempotent() -> None:
     once = sanitize('<p>a <b>b</b> <a href="https://example.com">c</a></p><ul><li>d</li></ul>')
     assert sanitize(once) == once
 
 
-def test_visible_text_ignores_tags():
+def test_visible_text_ignores_tags() -> None:
     assert visible_text("<p><strong>ab</strong></p><ul><li>c</li></ul>") == "abc"
 
 
-def test_plain_text_becomes_paragraphs_and_line_breaks():
+def test_plain_text_becomes_paragraphs_and_line_breaks() -> None:
     assert plain_to_html("one\ntwo\n\n<three>") == "<p>one<br>two</p><p>&lt;three&gt;</p>"
 
 
-def test_safe_href_keeps_https():
+def test_safe_href_keeps_https() -> None:
     assert safe_href(" https://example.com/x ") == "https://example.com/x"

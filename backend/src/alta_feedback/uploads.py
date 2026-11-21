@@ -127,9 +127,9 @@ def save(root: Path, item: CleanFile) -> str:
     """Writes a file under a random name (it cannot be guessed by brute force) and returns the name."""
     root.mkdir(parents=True, exist_ok=True)
     name = f"{secrets.token_hex(12)}.{item.ext}"
-    tmp = root / f".{name}.tmp"
-    tmp.write_bytes(item.data)
-    tmp.replace(root / name)
+    part_path = root / f".{name}.tmp"
+    part_path.write_bytes(item.data)
+    part_path.replace(root / name)
     return name
 
 
@@ -158,7 +158,7 @@ def main() -> int:
     backup_dir = os.environ.get("CASES_BACKUP_DIR")
     root = files_root(data_dir)
     if not backup_dir:
-        print("CASES_BACKUP_DIR не задан — бэкап файлов кейсов пропущен")
+        print("CASES_BACKUP_DIR is not set: case files backup skipped")
         return 0
     root.mkdir(parents=True, exist_ok=True)
     # Files lie flat: adding and deleting change the folder's mtime, and the backup will notice.

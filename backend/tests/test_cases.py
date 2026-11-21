@@ -38,22 +38,22 @@ def names(cards) -> list[str]:
     return [card.name for card in cards if card.people]
 
 
-def test_personal_case_includes_both_at_once():
+def test_personal_case_includes_both_at_once() -> None:
     cards = case_banks([item(account_type="both")], CaseFilter(case="personal"), {})
     assert names(cards) == ["OTP banka"]
 
 
-def test_entrepreneur_case_includes_both_at_once():
+def test_entrepreneur_case_includes_both_at_once() -> None:
     cards = case_banks([item(account_type="both")], CaseFilter(case="entrepreneur"), {})
     assert names(cards) == ["OTP banka"]
 
 
-def test_both_case_skips_single_applications():
+def test_both_case_skips_single_applications() -> None:
     cards = case_banks([item(account_type="personal")], CaseFilter(case="both"), {})
     assert names(cards) == []
 
 
-def test_no_vnzh_case_keeps_white_card_and_tourist_only():
+def test_no_vnzh_case_keeps_white_card_and_tourist_only() -> None:
     items = [
         item(1, residency="boravak"), item(2, "Erste", residency="white_card"),
         item(3, "NLB Banka", residency="tourist"),
@@ -61,27 +61,27 @@ def test_no_vnzh_case_keeps_white_card_and_tourist_only():
     assert names(case_banks(items, CaseFilter(vnzh="no"), {})) == ["Erste", "NLB Banka"]
 
 
-def test_people_are_counted_once_per_person_not_per_answer():
+def test_people_are_counted_once_per_person_not_per_answer() -> None:
     items = [item(1, person="p1"), item(2, person="p1"), item(3, person="p2")]
     assert case_banks(items, CaseFilter(), {})[0].people == 2
 
 
-def test_answers_with_wiped_hash_count_as_separate_people():
+def test_answers_with_wiped_hash_count_as_separate_people() -> None:
     items = [item(1, person=""), item(2, person=None)]
     assert case_banks(items, CaseFilter(), {})[0].people == 2
 
 
-def test_document_named_by_three_people_is_confirmed():
+def test_document_named_by_three_people_is_confirmed() -> None:
     items = [item(n, person=f"p{n}") for n in (1, 2, 3)]
     assert case_banks(items, CaseFilter(), {})[0].documents == (Mark("Паспорт", 3),)
 
 
 @pytest.mark.parametrize(("people", "level"), [(1, "one"), (2, "two"), (3, "confirmed"), (7, "confirmed")])
-def test_mark_level_follows_number_of_people(people, level):
+def test_mark_level_follows_number_of_people(people, level) -> None:
     assert Mark("Паспорт", people).level == level
 
 
-def test_split_shows_documents_of_opened_and_refused_separately():
+def test_split_shows_documents_of_opened_and_refused_separately() -> None:
     items = [
         item(1, result="opened", documents=("passport", "apr"), person="p1"),
         item(2, result="refused", documents=("passport",), person="p2"),
@@ -90,39 +90,39 @@ def test_split_shows_documents_of_opened_and_refused_separately():
     assert [mark.name for mark in split.opened_docs] == ["PIB и решение APR (ИП)", "Паспорт"]
 
 
-def test_no_split_when_all_answers_agree():
+def test_no_split_when_all_answers_agree() -> None:
     items = [item(1, result="refused", person="p1"), item(2, result="refused", person="p2")]
     assert case_banks(items, CaseFilter(), {})[0].split is None
 
 
-def test_bank_with_rules_but_no_answers_is_listed_after_banks_with_answers():
+def test_bank_with_rules_but_no_answers_is_listed_after_banks_with_answers() -> None:
     cards = case_banks([item()], CaseFilter(), CRITERIA)
     assert [card.name for card in cards] == ["OTP banka", "Yettel Bank"]
 
 
-def test_chat_criteria_follow_vnzh_choice():
+def test_chat_criteria_follow_vnzh_choice() -> None:
     card = case_banks([], CaseFilter(case="personal", vnzh="no"), CRITERIA)[0]
     assert card.chat == ("Без ВНЖ просят покупку жилья",)
 
 
-def test_chat_criteria_marked_any_fit_every_vnzh():
+def test_chat_criteria_marked_any_fit_every_vnzh() -> None:
     card = case_banks([], CaseFilter(case="entrepreneur", vnzh="no"), CRITERIA)[0]
     assert card.chat == ("Для ИП — решение APR",)
 
 
-def test_personal_rules_are_hidden_in_entrepreneur_case():
+def test_personal_rules_are_hidden_in_entrepreneur_case() -> None:
     card = case_banks([], CaseFilter(case="entrepreneur"), CRITERIA)[0]
     assert card.official == ()
 
 
-def test_unknown_case_and_vnzh_are_ignored():
+def test_unknown_case_and_vnzh_are_ignored() -> None:
     assert parse_case_filter({"case": "company", "vnzh": "maybe"}) == CaseFilter()
 
 
-def test_criteria_file_names_only_known_banks_and_https_rules():
+def test_criteria_file_names_only_known_banks_and_https_rules() -> None:
     rules = [rule for raw in criteria().values() for rule in raw.get("official", [])]
     assert rules and all(rule["url"].startswith("https://") for rule in rules)
 
 
-def test_criteria_date_is_shown_day_first():
+def test_criteria_date_is_shown_day_first() -> None:
     assert criteria_checked() == "04.11.2026"
