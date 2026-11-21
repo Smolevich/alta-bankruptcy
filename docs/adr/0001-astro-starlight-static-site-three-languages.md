@@ -1,6 +1,6 @@
 # 1. Static Astro + Starlight site in three languages with a translation check
 
-- Status: Proposed (reason for choosing Astro/Starlight is not recorded)
+- Status: Accepted
 - Date: 2026-11-01
 
 ## Context
@@ -8,6 +8,11 @@
 The site is a reference for depositors of ALTA banka, written in Russian (default), English and
 Serbian (Latin). Content is edited by maintainers and outside contributors, partly through the GitHub
 web editor (`CONTRIBUTING.md`).
+
+## Rationale (owner, 21.11.2026)
+
+- Astro + Starlight: the owner had already built sites with it and found it flexible and convenient.
+- Three languages: traffic shows that Serbians search for this too, and some people search in English; Russian stays primary because most depositors in the community are Russian-speaking.
 
 ## Decision
 

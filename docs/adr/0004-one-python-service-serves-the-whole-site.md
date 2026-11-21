@@ -1,12 +1,17 @@
 # 4. One Python service in `backend/` serves the built site and the forms
 
-- Status: Proposed (reason for merging the form service and the site is not recorded)
+- Status: Accepted
 - Date: 2026-11-03
 
 ## Context
 
 Before 03.11.2026 the forms backend lived in a separate repository (`alta-feedback`) and ran as
 `alta-feedback.service` on port 8101. The PR descriptions for the move do not state a reason.
+
+## Rationale (owner, 21.11.2026)
+
+- The form backend was merged into this repository because the owner does not want to keep one project split across several repositories.
+- The site is served by its own service on the Hetzner server because every service there is published through a Cloudflare Tunnel; this keeps one uniform way to run and expose services.
 
 ## Decision
 

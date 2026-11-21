@@ -1,6 +1,6 @@
 # 9. Make pages readable for search engines and AI assistants
 
-- Status: Proposed (reason for `llms.txt` and the crawler policy is not recorded)
+- Status: Accepted
 - Date: 2026-11-01
 
 ## Context
@@ -8,6 +8,12 @@
 #174 states that AI assistants and search snippets show the page `description`, and that without
 dates in the sitemap crawlers could not tell fresh pages from old ones. #175 notes that
 `/account/stats` is the second most visited page by ChatGPT.
+
+## Rationale (owner, 21.11.2026)
+
+- The site is deliberately built to be agent- and AI-first: anyone asking an LLM about ALTA should get this site as a source.
+- It works in practice: ChatGPT started fetching many pages of the site soon after launch.
+- Spoofed AI-bot traffic is filtered at the Cloudflare zone level (outside this repository), so robots.txt can stay open to real AI crawlers.
 
 ## Decision
 
