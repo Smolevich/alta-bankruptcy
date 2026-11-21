@@ -55,6 +55,8 @@ from alta_feedback.nbs import ASSETS, METRICS, SOURCE_URL, snapshot
 from alta_feedback.pow import CHALLENGE_TTL, Challenge, create_challenge, derive_key, verify_payload
 from alta_feedback.site import (
     DEFAULT_SITE_DIR,
+    EDGE_CACHE,
+    EDGE_HEADER,
     REVALIDATE,
     SITE_CSP,
     ArchiveFiles,
@@ -226,9 +228,8 @@ async def home(request: Request) -> Response:
     index = index_file(request.app.state.site_dir)
     if index is None or request.query_params.keys() & {"s", "t"}:
         return await form_page(request)
-    return FileResponse(
-        index, headers={"Content-Security-Policy": SITE_CSP, "Cache-Control": REVALIDATE}
-    )
+    headers = {"Content-Security-Policy": SITE_CSP, "Cache-Control": REVALIDATE, EDGE_HEADER: EDGE_CACHE}
+    return FileResponse(index, headers=headers)
 
 
 async def form_page(request: Request) -> HTMLResponse:

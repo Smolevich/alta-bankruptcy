@@ -151,6 +151,63 @@ jobs:
         if: always()
         run: ssh-agent -k > /dev/null 2>&1 || true
 
+      # Cloudflare keeps built pages at the edge for a day (Cloudflare-CDN-Cache-Control from the backend,
+      # cache rule in the infra repo), so every deploy drops the whole host from the cache. Only this host:
+      # the zone serves other sites.
+      - name: Purge Cloudflare cache for the host
+        env:
+          CF_TOKEN: ${{ secrets.CF_CACHE_PURGE_TOKEN }}
+          CF_ZONE_ID: ${{ vars.CF_ZONE_ID }}
+        run: |
+          for attempt in 1 2 3 4 5; do
+            result=$(curl -sS -X POST "https://api.cloudflare.com/client/v4/zones/$CF_ZONE_ID/purge_cache" \
+              -H "Authorization: Bearer $CF_TOKEN" -H 'Content-Type: application/json' \
+              --data '{"hosts":["alta.smolevich.com"]}' || true)
+            if printf '%s' "$result" | jq -e '.success == true' > /dev/null 2>&1; then
+              echo "purged alta.smolevich.com"
+              exit 0
+            fi
+            # Free plan: 5 host purges a minute per account, shared with other deploys.
+            echo "::warning::purge attempt $attempt failed: $(printf '%s' "$result" | jq -c '.errors' 2>/dev/null)"
+            sleep 15
+          done
+          echo "::error::Cloudflare purge failed, the edge may serve the previous build" >&2
+          exit 1
+
+      # Through Cloudflare, as a visitor sees it: the pages carry this commit and the edge caches them again.
+      - name: Check the edge serves the new build
+        run: |
+          SITE=https://alta.smolevich.com
+          status() { curl -sS -o /dev/null -w '%header{cf-cache-status}' "$SITE$1"; }
+          fail=0
+          for path in / /en/ /sr/; do
+            fresh=0
+            for _ in $(seq 1 12); do
+              # Body first, then grep: with pipefail an early grep -q exit fails curl on SIGPIPE.
+              body=$(curl -fsS "$SITE$path" || true)
+              if grep -q "name=\"alta-build\" content=\"$GITHUB_SHA\"" <<< "$body"; then
+                fresh=1
+                break
+              fi
+              sleep 5
+            done
+            [ "$fresh" = 1 ] || { echo "::error::$path does not serve build $GITHUB_SHA"; fail=1; continue; }
+            hit=0
+            for _ in 1 2 3 4 5; do
+              [ "$(status "$path")" = HIT ] && { hit=1; break; }
+              sleep 2
+            done
+            [ "$hit" = 1 ] && echo "$path: build $GITHUB_SHA, HIT" || { echo "::error::$path is not cached at the edge"; fail=1; }
+          done
+          # Forms and service pages must never come from the cache.
+          for path in /account /account/stats /predlozheniya/; do
+            status "$path" > /dev/null
+            s=$(status "$path")
+            echo "$path: $s"
+            [ "$s" != HIT ] || { echo "::error::$path is served from the edge cache"; fail=1; }
+          done
+          exit "$fail"
+
       # IndexNow: tells Bing/Yandex about pages right after rollout. The key is public by
       # standard (the file is in public/). We do not fail the deploy if the service is unavailable.
       - name: Ping IndexNow

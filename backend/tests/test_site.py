@@ -71,6 +71,25 @@ def test_hashed_assets_are_cached_and_pages_are_not(client) -> None:
     assert client.get("/trebovanie/").headers["cache-control"] == "no-cache"
 
 
+EDGE = "cloudflare-cdn-cache-control"
+
+
+@pytest.mark.parametrize("path", ["/", "/trebovanie/", "/map/tiles.pmtiles"])
+def test_built_files_are_kept_at_the_edge(client, path) -> None:
+    assert client.get(path).headers[EDGE] == "max-age=86400"
+
+
+@pytest.mark.parametrize(
+    "path", ["/?s=f1", "/fix", "/account", "/account/stats", "/healthz", "/api/accounts/public", "/nope/"]
+)
+def test_forms_service_routes_and_misses_are_not_kept_at_the_edge(client, path) -> None:
+    assert EDGE not in client.get(path).headers
+
+
+def test_hashed_assets_keep_their_year_long_cache_at_the_edge(client) -> None:
+    assert EDGE not in client.get("/_astro/app.abc123.js").headers
+
+
 def test_without_a_built_site_root_falls_back_to_the_form(tmp_path) -> None:
     app = create_app(data_dir=tmp_path, admin_token="t", ip_salt="salt", site_dir=tmp_path / "missing")
     assert "<form" in TestClient(app).get("/").text

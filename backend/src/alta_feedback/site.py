@@ -33,6 +33,10 @@ PDF_CSP = SITE_CSP.replace("frame-ancestors 'none'", "frame-ancestors 'self'")
 # without a name change, and Cloudflare must not keep it in cache.
 IMMUTABLE = "public, max-age=31536000, immutable"
 REVALIDATE = "no-cache"
+# Only Cloudflare reads this header and it is not passed to the browser: the edge keeps a built page for a
+# day, browsers still revalidate on every visit. The files change only on deploy, which purges the host.
+EDGE_HEADER = "Cloudflare-CDN-Cache-Control"
+EDGE_CACHE = "max-age=86400"
 # A copy of an AOD document under its own name does not change (a new version of the original lands beside
 # it), but
 # the manifest can be pointed at another one, hence a day, not immutable.
@@ -67,8 +71,11 @@ class SiteFiles(StaticFiles):
             # move signals to the slash variant rather than treat it as temporary.
             response.status_code = 308
         response.headers["Content-Security-Policy"] = PDF_CSP if path.endswith(".pdf") else SITE_CSP
-        cache = IMMUTABLE if path.startswith("_astro/") and response.status_code == 200 else REVALIDATE
+        hashed = path.startswith("_astro/")
+        cache = IMMUTABLE if hashed and response.status_code == 200 else REVALIDATE
         response.headers["Cache-Control"] = cache
+        if response.status_code == 200 and not hashed:
+            response.headers[EDGE_HEADER] = EDGE_CACHE
         return response
 
 
