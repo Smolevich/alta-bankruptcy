@@ -22,8 +22,8 @@ reach the production server, so they need more review than content (#19, #31).
 ## Consequences
 
 - Contributors without owner rights can change content but not the pipeline.
-- Two maintainers: the owner (primary) and a second code owner. Contributions from anyone are welcome via PR.
-- License: the code and texts are open (MIT) so everyone can see the sources and contribute.
+- Two code owners can review each other; everyone else contributes through a PR.
+- Code and texts are open under MIT, so anyone can read the sources.
 
 ## Links
 

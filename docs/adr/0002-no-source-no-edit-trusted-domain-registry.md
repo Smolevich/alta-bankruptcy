@@ -15,7 +15,8 @@ page; a reviewer cannot be expected to spot one wrong letter by eye.
   the build fails without them. Kinds: `official`, `reference`, `own`, `reliable_media`, `unverified`.
   A claim without an official source appears only with a visible mark; guesses never.
 - External links may only go to domains listed in `src/data/trusted-domains.yaml`, each with `name`
-  and `proof`; https only, no shorteners, punycode, ports or `user@`. CI checks sources and the built
+  and `proof`; https only (one court site without https is listed as an exception), no shorteners,
+  punycode, ports or `user@`. CI checks sources and the built
   `dist` (`npm run check:sources`, with `--dist`).
 - Source kind is limited by domain category: `official` only for government bodies, courts, banks;
   `reference` and `reliable_media` only on matching categories (#128).

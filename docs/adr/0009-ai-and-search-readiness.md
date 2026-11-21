@@ -29,7 +29,8 @@ dates in the sitemap crawlers could not tell fresh pages from old ones. #175 not
 ## Consequences
 
 - A page whose `checked` date is not updated looks stale to crawlers.
-- No rule about fake or spoofed bots was found in the repository.
+- Filtering of spoofed bots is not in this repository (see Rationale), so `robots.txt` cannot be read as
+  the only access policy.
 
 ## Links
 

@@ -13,9 +13,11 @@ payout branches. The repository and the site are public. Reasons are given in `d
 
 - No accounts, no own cookies, no ads (`docs/privacy.md`). The optional `contact` field is never
   published.
-- Free text passes through `scrub_pii` (email, phone, JMBG, account and passport numbers replaced).
-- Account reports, proposals and cases are published only after moderator acceptance; a branch appears
-  in public output only from two reports (one answer from a small branch could identify the person).
+- Free text of account reports, queue marks and cases passes through `scrub_pii` (email, phone, JMBG,
+  account and passport numbers replaced). Correction and proposal texts are stored as typed.
+- Account reports and cases are published only after moderator acceptance. Proposals appear in a public
+  list with a status (spam is hidden); their `contact` stays private. A branch appears in public output
+  only from two reports (one answer from a small branch could identify the person).
 - `/account/stats` shows aggregated counts and a «not a rating, not bank rules» disclaimer.
 - Rate limit and spam protection without third-party services: salted `ip_hash` and short
   `user_agent_short`, wiped after 30 days; own proof-of-work check ("I'm not a robot" box) instead of
@@ -27,8 +29,9 @@ payout branches. The repository and the site are public. Reasons are given in `d
 ## Consequences
 
 - Public statistics are less detailed than raw reports.
-- Moderation is manual, through the token-protected admin (signed in via Cloudflare Access, #71).
+- Moderation is manual: the token-protected admin API, and admin pages for proposals and cases behind
+  Cloudflare Access (#71).
 
 ## Links
 
-- #36, #44, #60, #67, #71, #82, #121, #126, #137, #138, #156; `docs/privacy.md`.
+- #36, #60, #67, #71, #82, #121, #126, #137, #138, #156; `docs/privacy.md`.
