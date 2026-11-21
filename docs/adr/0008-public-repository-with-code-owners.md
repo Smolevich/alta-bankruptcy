@@ -22,7 +22,7 @@ reach the production server, so they need more review than content (#19, #31).
 ## Consequences
 
 - Contributors without owner rights can change content but not the pipeline.
-- Maintainers: the owner started the project and is the primary maintainer; a second code owner was added. Contributions from anyone are welcome via PR.
+- Two maintainers: the owner (primary) and a second code owner. Contributions from anyone are welcome via PR.
 - License: the code and texts are open (MIT) so everyone can see the sources and contribute.
 
 ## Links
