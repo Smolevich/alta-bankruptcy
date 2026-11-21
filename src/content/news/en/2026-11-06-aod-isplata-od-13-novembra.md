@@ -6,6 +6,11 @@ order: 5
 forms: [pravna]
 summary: >-
   On 06.11.2026 AOD announced that the payout of insured ALTA deposits starts on 13.11.2026 through Banka Poštanska štedionica: up to €50,000 per depositor. Dinar deposits are paid in dinars, foreign-currency deposits in euros at the middle rate of 03.11.2026. Apply at the 54 Poštanska branches on AOD’s list (published the same day) during normal working hours; addresses are on the payout page, section “Poštanska branches”. Bring an ID and the original deposit document; sole traders and companies also the OP form and, if not the registered representative, an authorisation on letterhead. Someone else may go for an individual with an authorisation certified by a notary no earlier than the day the licence was revoked (30.10.2026); older ones cannot be used. Deadline: 03.11.2029. Quote: «…исплата осигураних износа депозита почиње дана 13.11.2026. године преко Банке Поштанска штедионица…»
+outdated:
+  note: "On 11.11.2026 AOD replaced the list: it now has 57 payout locations in 15 cities. The payout is by prior appointment only (Poštanska, 18.11.2026). A power of attorney is given after the insured event, which Poštanska dates 03.11.2026."
+  links:
+    - { label: "Current list of payout locations →", href: "/en/vyplata/#postanska-branches" }
+    - { label: "Power of attorney →", href: "/en/vyplata/#power-of-attorney" }
 sources:
   - { title: "AOD: list of Banka Poštanska štedionica branches for collecting the insured amount, 06.11.2026 (PDF)", url: "https://www.aod.rs/uploads/dokumenti/altabanka/Spisak.pdf", kind: official, date: 2026-11-06 }
   - { title: "AOD: forms for ALTA depositors (Serbian)", url: "https://www.aod.rs/clan/altabanka/obrasci_altabanka", kind: official, date: 2026-11-04 }
