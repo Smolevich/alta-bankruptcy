@@ -44,8 +44,8 @@ export const prijava = {
 			fields: [
 				{ name: 'caseNo', sr: 'Ст.', value: '275/2026' },
 				{ name: 'decisionDate', sr: 'Решењем од', value: '03.11.2026.' },
-				{ name: 'gazetteNo', sr: '„Службени гласник” бр.' },
-				{ name: 'gazetteDate', sr: 'од' },
+				{ name: 'gazetteNo', sr: '„Службени гласник” бр.', value: '109' },
+				{ name: 'gazetteDate', sr: 'од', value: '06.11.2026.' },
 				{ name: 'days', sr: 'у року од … дана', value: '90' },
 				{ name: 'debtor', sr: 'стечајни дужник', value: 'ALTA BANKA AD BEOGRAD – U STEČAJU' },
 				{ name: 'debtorSeat', sr: 'из', value: 'Београда' },
