@@ -73,6 +73,20 @@ const formId = `de-form-${doc.id}`;
 						</fieldset>
 					))
 				}
+				{
+					doc.blocks && (
+						<fieldset class="de-blocks" data-blocks={JSON.stringify({ edit: e.blockEdit, done: e.blockDone, reset: e.blockReset, remove: e.blockRemove, restore: e.blockRestore, add: e.blockAdd, removed: e.blockRemoved, edited: e.blockEdited, placeholder: e.blockPlaceholder })}>
+							<legend>{e.blocksTitle}</legend>
+							<p>{e.blocksHint}</p>
+							<div class="de-blocks-warn" hidden>
+								<p>{e.blocksWarn}</p>
+								<ul>{e.blocksWarnItems.map((i: string) => <li>{i}</li>)}</ul>
+							</div>
+							<input type="hidden" name="_edits" value="" />
+							<ol class="de-blocks-list" />
+						</fieldset>
+					)
+				}
 				<p class="de-status" role="status" data-building={e.building} data-done={e.done} data-open={e.openPdf} data-failed={e.failed}></p>
 				<p class="de-local">{e.local}</p>
 			</form>
@@ -127,6 +141,15 @@ const formId = `de-form-${doc.id}`;
 		font: inherit; padding: 0.55rem 0.65rem; border: 1px solid var(--sl-color-gray-4);
 		border-radius: 0.4rem; background: var(--sl-color-bg); color: var(--sl-color-text); width: 100%;
 	}
+	.de-blocks-warn { background: var(--sl-color-accent-low); padding: 0.6rem 0.8rem; border-radius: 0.4rem; }
+	.de-blocks-warn ul { margin: 0.3rem 0 0; padding-left: 1.2rem; }
+	.de-blocks-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; }
+	.de-blocks-list :global(li) { display: grid; gap: 0.35rem; padding: 0.55rem 0.65rem; border: 1px solid var(--sl-color-gray-5); border-radius: 0.4rem; }
+	.de-blocks-list :global(li[data-removed]) { opacity: 0.6; }
+	.de-blocks-list :global(.de-bt) { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 0.92rem; }
+	.de-blocks-list :global(.de-bm) { color: var(--sl-color-gray-3); font-size: 0.85rem; }
+	.de-blocks-list :global(.de-ba) { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+	.de-blocks-list :global(.de-ba button) { padding: 0.35rem 0.6rem; border: 1px solid var(--sl-color-gray-4); background: transparent; color: var(--sl-color-text); font-weight: 500; font-size: 0.85rem; }
 	.de-note { background: var(--sl-color-accent-low); padding: 0.6rem 0.8rem; border-radius: 0.4rem; }
 	.de-local { font-size: 0.9rem; color: var(--sl-color-gray-3); }
 	.de-preview { background: var(--sl-color-gray-6); }

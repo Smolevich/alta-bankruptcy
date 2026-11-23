@@ -19,6 +19,8 @@ export type DocSpec = {
 	fileName: string;
 	fonts: { regular: string; bold: string };
 	groups: { key: string; fields: DocField[] }[];
+	// The builder yields editable blocks (blockLists in builders.ts): the form shows a "Document text" section.
+	blocks?: boolean;
 };
 
 export type DocValues = Record<string, string | string[]>;
