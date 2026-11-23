@@ -2,6 +2,7 @@
 // are built by one builder from the same data, so the downloaded PDF matches what is shown.
 import workerSrc from 'pdfjs-dist/legacy/build/pdf.worker.min.mjs?url';
 import { builders } from './builders';
+import { blocksEnter } from './enter.mjs';
 import type { DocFonts, DocValues } from './spec';
 
 type Pdfjs = typeof import('pdfjs-dist/legacy/build/pdf.mjs');
@@ -127,6 +128,8 @@ function initEditor(root: HTMLElement) {
 		render();
 	};
 
+	// Enter in a one-line field would submit the form and download the PDF mid-typing.
+	form.addEventListener('keydown', (e) => blocksEnter(e) && e.preventDefault());
 	form.addEventListener('input', schedule);
 	form.addEventListener('submit', (e) => {
 		e.preventDefault();
