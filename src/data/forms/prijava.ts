@@ -15,19 +15,19 @@ export const prijava = {
 			key: 'creditor',
 			fields: [
 				{ name: 'name', sr: 'име и презиме' },
-				{ name: 'address', sr: 'адреса' },
+				{ name: 'address', sr: 'адреса', type: 'lines' },
 				{ name: 'jmbg', sr: 'ЈМБГ' },
 				{ name: 'phone', sr: 'телефон' },
 				{ name: 'email', sr: 'мејл' },
-				{ name: 'account', sr: 'рачун бр.' },
-				{ name: 'bank', sr: 'назив банке' },
+				{ name: 'account', sr: 'рачун бр.', type: 'lines' },
+				{ name: 'bank', sr: 'назив банке', type: 'lines' },
 				{ name: 'bankSeat', sr: 'седиште банке' },
 			],
 		},
 		{
 			key: 'claim',
 			fields: [
-				{ name: 'amount', sr: 'укупан износ' },
+				{ name: 'amount', sr: 'укупан износ', type: 'lines' },
 				{ name: 'basis', sr: 'по основу', type: 'lines' },
 				{ name: 'evidence', sr: 'докази', type: 'lines' },
 			],

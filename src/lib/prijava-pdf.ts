@@ -6,16 +6,17 @@
 // so the closing quote is printed as ” of the same style.
 import { PDFDocument, rgb, type PDFFont, type PDFPage } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
+import { joinLines } from './doc-editor/join-lines.mjs';
 
 export type PrijavaData = {
 	caseNo: string;
 	name: string;
-	address: string;
+	address: string | string[];
 	jmbg: string;
 	phone: string;
 	email: string;
-	account: string;
-	bank: string;
+	account: string | string[];
+	bank: string | string[];
 	bankSeat: string;
 	debtor: string;
 	debtorSeat: string;
@@ -26,7 +27,7 @@ export type PrijavaData = {
 	gazetteNo: string;
 	gazetteDate: string;
 	days: string;
-	amount: string;
+	amount: string | string[];
 	basis: string[];
 	evidence: string[];
 	place: string;
@@ -150,8 +151,8 @@ export async function buildPrijava(d: PrijavaData, fontBytes: { regular: ArrayBu
 	w.para([{ t: 'Стечајни поверилац:', b: true }]);
 	w.para([{ t: 'физичко лице', b: true }]);
 	w.para([
-		v(d.name), { t: ' из ' }, v(d.address), { t: ' ЈМБГ: ' }, v(d.jmbg), { t: ' рачун бр. ' }, v(d.account),
-		{ t: ' у ' }, v(d.bank), { t: ' банци а. д. ' }, v(d.bankSeat),
+		v(d.name), { t: ' из ' }, v(joinLines(d.address, ', ')), { t: ' ЈМБГ: ' }, v(d.jmbg), { t: ' рачун бр. ' }, v(joinLines(d.account, ' и ')),
+		{ t: ' у ' }, v(joinLines(d.bank, ' и ')), { t: ' банци а. д. ' }, v(d.bankSeat),
 	]);
 	w.para([{ t: 'телефон: ' }, v(d.phone), { t: ' мејл: ' }, v(d.email)]);
 	w.gap(LEAD / 2);
@@ -178,7 +179,7 @@ export async function buildPrijava(d: PrijavaData, fontBytes: { regular: ArrayBu
 	w.gap(LEAD / 2);
 	w.para([
 		{ t: 'Поверилац благовремено пријављује потраживање према стечајном дужнику у укупном износу од ' },
-		v(d.amount),
+		v(joinLines(d.amount, ' и ')),
 		{ t: ', са стањем на дан отварања стечајног поступка, и то на основу чињеница, обрачуна и доказа наведених у наставку и то по основу:' },
 	]);
 	w.bullets(d.basis, 3);
@@ -186,7 +187,7 @@ export async function buildPrijava(d: PrijavaData, fontBytes: { regular: ArrayBu
 	w.para([{ t: 'Докази који се прилажу уз пријаву:' }]);
 	w.bullets(d.evidence, 4);
 	w.gap(LEAD / 2);
-	w.para([{ t: 'Поверилац подноси пријаву потраживања у укупном износу дуга од ' }, v(d.amount), { t: ', са предлогом да се' }]);
+	w.para([{ t: 'Поверилац подноси пријаву потраживања у укупном износу дуга од ' }, v(joinLines(d.amount, ' и ')), { t: ', са предлогом да се' }]);
 	w.gap(LEAD / 2);
 	w.para([{ t: 'У Т В Р Д И', b: true }], { center: true });
 	w.para([{ t: 'П О Т Р А Ж И В А Њ Е', b: true }], { center: true });
@@ -194,10 +195,10 @@ export async function buildPrijava(d: PrijavaData, fontBytes: { regular: ArrayBu
 	// "матични број" for a natural person is the JMBG (јединствени матични број грађана); "(ПИБ …)" in the sample is shared
 	// by all creditors, a natural person has none, and the line stays a dash as in the form.
 	w.para([
-		{ t: 'Стечајном повериоцу ' }, v(d.name), { t: ' из ' }, v(d.address), { t: ' матични број ' }, v(d.jmbg),
-		{ t: ', (ПИБ ' }, v(''), { t: ') рачун број ' }, v(d.account), { t: ' у ' }, v(d.bank), { t: ' банци' },
+		{ t: 'Стечајном повериоцу ' }, v(d.name), { t: ' из ' }, v(joinLines(d.address, ', ')), { t: ' матични број ' }, v(d.jmbg),
+		{ t: ', (ПИБ ' }, v(''), { t: ') рачун број ' }, v(joinLines(d.account, ' и ')), { t: ' у ' }, v(joinLines(d.bank, ' и ')), { t: ' банци' },
 	]);
-	w.para([{ t: 'потраживање у укупном износу од ' }, v(d.amount)]);
+	w.para([{ t: 'потраживање у укупном износу од ' }, v(joinLines(d.amount, ' и '))]);
 	w.gap(LEAD * 1.5);
 	w.para([{ t: 'У ' }, v(d.place), { t: ' дана ' }, dated(d.date, BLANK), { t: ' године' }]);
 	w.gap(LEAD * 2);
