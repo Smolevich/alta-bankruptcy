@@ -10,6 +10,7 @@ export const prijava = {
 	text: 'prijava',
 	fileName: 'prijava-potrazivanja.pdf',
 	fonts: { regular: regularUrl, bold: boldUrl },
+	blocks: true,
 	groups: [
 		{
 			key: 'creditor',
@@ -17,19 +18,32 @@ export const prijava = {
 				{ name: 'name', sr: 'име и презиме' },
 				{ name: 'address', sr: 'адреса', type: 'lines' },
 				{ name: 'jmbg', sr: 'ЈМБГ' },
+				{ name: 'passport', sr: 'пасош' },
 				{ name: 'phone', sr: 'телефон' },
 				{ name: 'email', sr: 'мејл' },
 				{ name: 'account', sr: 'рачун бр.', type: 'lines' },
 				{ name: 'bank', sr: 'назив банке', type: 'lines' },
 				{ name: 'bankSeat', sr: 'седиште банке' },
+				{ name: 'deliveryAddress', sr: 'адреса за достављање' },
+				{ name: 'deliveryEmail', sr: 'адреса електронске поште' },
 			],
 		},
 		{
 			key: 'claim',
 			fields: [
 				{ name: 'amount', sr: 'укупан износ', type: 'lines' },
+				{ name: 'contracts', sr: 'уговори', type: 'lines' },
+				{ name: 'funds', sr: 'средства на дан отварања', type: 'lines' },
+				{ name: 'received', sr: 'примљено по осигурању', type: 'lines' },
+				{ name: 'remaining', sr: 'остатак потраживања', type: 'lines' },
+				{ name: 'rate', sr: 'курс НБС', value: '117,5698' },
 				{ name: 'basis', sr: 'по основу', type: 'lines' },
-				{ name: 'evidence', sr: 'докази', type: 'lines' },
+				{
+					name: 'evidence',
+					sr: 'докази',
+					type: 'lines',
+					value: 'Преглед података о депозитима и нереализованим чековима\nУговори о текућим рачунима и платним картицама\nКопија личног документа',
+				},
 			],
 		},
 		{

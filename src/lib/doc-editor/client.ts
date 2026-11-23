@@ -1,7 +1,8 @@
 // DocEditor client: modal, live preview (pdf.js) and download. Preview and download
 // are built by one builder from the same data, so the downloaded PDF matches what is shown.
 import workerSrc from 'pdfjs-dist/legacy/build/pdf.worker.min.mjs?url';
-import { builders } from './builders';
+import { blockLists, builders } from './builders';
+import { blockText, emptyEdits, hasEdits, parseEdits } from './blocks.mjs';
 import { blocksEnter } from './enter.mjs';
 import type { DocFonts, DocValues } from './spec';
 
@@ -87,6 +88,132 @@ function initEditor(root: HTMLElement) {
 		}
 	};
 
+	// "Document text": every template block can be edited, removed or restored, and the reader can add paragraphs.
+	// The edits sit in the hidden _edits field (so the PDF builder sees them) and in localStorage; nothing goes to a server.
+	let refreshBlocks = () => {};
+	const blocksEl = root.querySelector<HTMLElement>('.de-blocks');
+	if (blocksEl) {
+		const L = JSON.parse(blocksEl.dataset.blocks!) as Record<string, string>;
+		const listEl = blocksEl.querySelector<HTMLElement>('.de-blocks-list')!;
+		const warnEl = blocksEl.querySelector<HTMLElement>('.de-blocks-warn')!;
+		const hiddenEl = blocksEl.querySelector<HTMLInputElement>('input[name=_edits]')!;
+		const storeKey = `de-edits:${id}`;
+		let edits = emptyEdits();
+		try {
+			edits = parseEdits(localStorage.getItem(storeKey));
+		} catch {
+			// Storage is blocked (private window): the editor works, edits are just not kept.
+		}
+		const editing = new Set<string>();
+		let template: ((v: ReturnType<typeof readValues>) => { id: string }[]) | null = null;
+
+		const persist = () => {
+			hiddenEl.value = hasEdits(edits) ? JSON.stringify(edits) : '';
+			warnEl.hidden = !hasEdits(edits);
+			try {
+				localStorage.setItem(storeKey, hiddenEl.value);
+			} catch {
+				// see above
+			}
+		};
+		const changed = () => {
+			persist();
+			draw();
+			schedule();
+		};
+		const btn = (label: string, fn: () => void) => {
+			const b = document.createElement('button');
+			b.type = 'button';
+			b.textContent = label;
+			b.addEventListener('click', fn);
+			return b;
+		};
+		const li = (...kids: HTMLElement[]) => {
+			const n = document.createElement('li');
+			n.append(...kids);
+			return n;
+		};
+		const div = (cls: string, ...kids: (HTMLElement | string)[]) => {
+			const n = document.createElement('div');
+			n.className = cls;
+			n.append(...kids);
+			return n;
+		};
+		const area = (value: string, onInput: (v: string) => void, focus = false) => {
+			const t = document.createElement('textarea');
+			t.value = value;
+			t.rows = Math.min(10, Math.max(3, value.split('\n').length + 1));
+			t.placeholder = L.placeholder;
+			t.addEventListener('input', () => {
+				onInput(t.value);
+				persist();
+				schedule();
+			});
+			if (focus) queueMicrotask(() => t.focus());
+			return t;
+		};
+		const addAfter = (after: string, at: number | null) => {
+			const x = { id: `x${Date.now().toString(36)}${Math.random().toString(36).slice(2, 5)}`, after, text: '' };
+			edits.extra.splice(at ?? edits.extra.length, 0, x);
+			editing.add(x.id);
+			draw();
+		};
+		const extraItem = (x: (typeof edits.extra)[number]) =>
+			li(
+				area(x.text, (v) => (x.text = v), editing.delete(x.id)),
+				div(
+					'de-ba',
+					btn(L.add, () => addAfter(x.after ?? '', edits.extra.indexOf(x) + 1)),
+					btn(L.remove, () => {
+						edits.extra = edits.extra.filter((e) => e !== x);
+						changed();
+					}),
+				),
+			);
+
+		function draw() {
+			const blocks = template ? (template(readValues(form)) as unknown as Parameters<typeof blockText>[0][]) : [];
+			const ids = new Set(blocks.map((b: { id: string }) => b.id));
+			const rows: HTMLElement[] = [];
+			for (const b of blocks) {
+				const bid = b.id;
+				const removed = edits.removed.includes(bid);
+				const isEdited = edits.edited[bid] !== undefined;
+				const text = edits.edited[bid] ?? blockText(b);
+				const row = li();
+				if (removed) row.dataset.removed = '';
+				const actions = div('de-ba');
+				if (editing.has(bid) && !removed) {
+					row.append(area(text, (v) => (v === blockText(b) ? delete edits.edited[bid] : (edits.edited[bid] = v)), true));
+					actions.append(btn(L.done, () => (editing.delete(bid), draw())));
+				} else {
+					const shown = document.createElement('div');
+					shown.className = 'de-bt';
+					shown.textContent = text;
+					row.append(shown);
+					if (removed) actions.append(btn(L.restore, () => ((edits.removed = edits.removed.filter((r) => r !== bid)), changed())));
+					else actions.append(btn(L.edit, () => (editing.add(bid), draw())));
+				}
+				if (isEdited && !removed) {
+					actions.append(btn(L.reset, () => (delete edits.edited[bid], editing.delete(bid), changed())));
+				}
+				if (!removed) actions.append(btn(L.remove, () => (edits.removed.push(bid), editing.delete(bid), changed())));
+				actions.append(btn(L.add, () => addAfter(bid, edits.extra.findIndex((x) => x.after === bid) < 0 ? null : edits.extra.findIndex((x) => x.after === bid))));
+				if (isEdited || removed) row.append(div('de-bm', removed ? L.removed : L.edited));
+				row.append(actions);
+				rows.push(row, ...edits.extra.filter((x) => x.after === bid).map(extraItem));
+			}
+			rows.push(...edits.extra.filter((x) => !ids.has(x.after ?? '')).map(extraItem));
+			listEl.replaceChildren(...rows);
+		}
+
+		refreshBlocks = async () => {
+			template ??= (await blockLists[id!]()) as typeof template;
+			draw();
+		};
+		persist();
+	}
+
 	const schedule = () => {
 		updating.hidden = false;
 		clearTimeout(timer);
@@ -125,12 +252,17 @@ function initEditor(root: HTMLElement) {
 	const open = () => {
 		if (!dlg.open) dlg.showModal();
 		document.documentElement.style.overflow = 'hidden';
+		refreshBlocks();
 		render();
 	};
 
 	// Enter in a one-line field would submit the form and download the PDF mid-typing.
 	form.addEventListener('keydown', (e) => blocksEnter(e) && e.preventDefault());
-	form.addEventListener('input', schedule);
+	form.addEventListener('input', (e) => {
+		// Typing inside a block must not redraw the list under the cursor.
+		if (!(e.target as Element).closest('.de-blocks')) refreshBlocks();
+		schedule();
+	});
 	form.addEventListener('submit', (e) => {
 		e.preventDefault();
 		download();
