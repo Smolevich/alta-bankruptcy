@@ -8,11 +8,15 @@ export type LinkCard = {
 	group: 'chats' | 'help' | 'official' | 'guides' | 'tools';
 	title: Text;
 	what: Text;
-	kind: 'official' | 'unverified';
+	/** 'author': someone else's authored material; it gets no verification badge, only the author line. */
+	kind: 'official' | 'unverified' | 'author';
+	author?: Text;
+	/** Full text of the main link; replaces the default caption. */
+	cta?: Text;
 	/** Link label: an address or a name. */
 	url: string;
 	label: string;
-	extra?: { url: string; label: Text };
+	extra?: { url: string; label: Text; full?: boolean };
 };
 
 const same = (s: string): Text => ({ ru: s, en: s, sr: s });
@@ -137,10 +141,12 @@ export const LINKS: LinkCard[] = [
 			en: 'A guide for individuals by the author of the “Сербский рандом” channel: sample application and complaint to a bank, NBS documents, bank addresses.',
 			sr: 'Uputstvo za fizička lica autora kanala „Сербский рандом“: obrasci zahteva i prigovora banci, dokumenti NBS, adrese banaka.',
 		},
-		kind: 'unverified',
+		kind: 'author',
+		author: { ru: 'Автор: канал «Сербский рандом»', en: 'Author: «Сербский рандом» channel', sr: 'Autor: kanal «Сербский рандом»' },
+		cta: { ru: 'Открыть инструкцию', en: 'Open the guide', sr: 'Otvori uputstvo' },
 		url: 'https://publicimage.bitdocs.ai/share/d/If2FGftIw3R8gCcu',
 		label: 'publicimage.bitdocs.ai',
-		extra: { url: 'https://t.me/serbski_random', label: { ru: 'Канал', en: 'Channel', sr: 'Kanal' } },
+		extra: { url: 'https://t.me/serbski_random', label: { ru: 'Канал в Telegram', en: 'Telegram channel', sr: 'Telegram kanal' }, full: true },
 	},
 	{
 		group: 'tools',

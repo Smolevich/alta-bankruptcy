@@ -21,18 +21,24 @@ const caption = (url: string) => (opensInNewTab(url) ? t.lbl.site : t.lbl.inner)
 						<dl class="doc-meta">
 							<dt>{t.docs.source}</dt>
 							<dd>
-								<span class={`kind kind-${l.kind}`}>{l.kind === 'official' ? t.official : t.unverified}</span> {l.label}
+								{l.kind === 'author' ? (
+									l.author?.[lang]
+								) : (
+									<>
+										<span class={`kind kind-${l.kind}`}>{l.kind === 'official' ? t.official : t.unverified}</span> {l.label}
+									</>
+								)}
 							</dd>
 						</dl>
 					)}
 					<span class="doc-go">
 						<a href={l.url} target={opensInNewTab(l.url) ? '_blank' : undefined} rel="noopener">
-							{caption(l.url)}
+							{l.cta ? l.cta[lang] : caption(l.url)}
 							{opensInNewTab(l.url) && <span class="sr-only">({t.newTab})</span>}
 						</a>
 						{l.extra && (
 							<a href={l.extra.url} target={opensInNewTab(l.extra.url) ? '_blank' : undefined} rel="noopener">
-								{l.extra.label[lang]}: {caption(l.extra.url)}
+								{l.extra.full ? l.extra.label[lang] : `${l.extra.label[lang]}: ${caption(l.extra.url)}`}
 								{opensInNewTab(l.extra.url) && <span class="sr-only">({t.newTab})</span>}
 							</a>
 						)}
