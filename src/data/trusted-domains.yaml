@@ -235,7 +235,14 @@
   category: social
   proof: "Общеизвестный домен коротких ссылок Telegram (https://telegram.org)"
   hosts: [t.me]
-  paths: [/Altadef50k, /altabank_closed, /srb_guide, /volonteri_common, /dcloza]
+  paths: [/Altadef50k, /altabank_closed, /srb_guide, /volonteri_common, /dcloza, /serbski_random]
+
+- domain: bitdocs.ai
+  name: "Bit.ai (bitdocs.ai) — сервис публикации документов; разрешена только инструкция канала «Сербский рандом»"
+  category: social
+  proof: "Ссылку опубликовал автор в своём канале: t.me/serbski_random/4 (закреп) и /6; сертификат *.bitdocs.ai (GlobalSign), проверено 25.11.2026"
+  hosts: [publicimage.bitdocs.ai]
+  paths: [/share/d/If2FGftIw3R8gCcu]
 
 - domain: telegra.ph
   name: "Telegraph — платформа публикаций Telegram; разрешена только инструкция вкладчика"

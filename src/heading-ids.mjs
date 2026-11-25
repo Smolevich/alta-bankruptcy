@@ -13,7 +13,7 @@ export const HEADING_IDS = {
 	'obrazcy-trebovaniya': ['how-to-file'],
 	pomoch: ['rule', 'source-levels', 'how-to-correct', 'three-languages', 'news-item', 'report-account'],
 	procedura: ['licence-revoked', 'bankruptcy-opened', 'paying-bank', 'payout-up-to-50000', 'claim-above-50000', 'claims-verified', 'payouts-above-50000'],
-	ssylki: ['chats', 'food-help', 'official-contacts', 'our-tools'],
+	ssylki: ['chats', 'food-help', 'official-contacts', 'guides', 'our-tools'],
 	trebovanie: ['who-files', 'where', 'deadline', 'gazette', 'what-to-prepare', 'payout-paperwork', 'authorisation', 'claim-form', 'claim-attachments', 'claim-no-contract', 'payment-ranks', 'common-mistakes'],
 	voprosy: ['now', 'payout-up-to-50000', 'companies-payout', 'claim-above-50000', 'class-action', 'loans-and-safes'],
 	vypiski: ['now', 'without-statements', 'statement-emails', 'what-to-save', 'how-to-export', 'sole-traders', 'corporate', 'officebanking', 'do-not-send'],

@@ -5,7 +5,7 @@ import type { Lang } from '../i18n';
 type Text = Record<Lang, string>;
 
 export type LinkCard = {
-	group: 'chats' | 'help' | 'official' | 'tools';
+	group: 'chats' | 'help' | 'official' | 'guides' | 'tools';
 	title: Text;
 	what: Text;
 	kind: 'official' | 'unverified';
@@ -128,6 +128,19 @@ export const LINKS: LinkCard[] = [
 		url: 'https://www.ubs-asb.com/en',
 		label: 'ubs-asb.com',
 		extra: { url: 'https://www.ubs-asb.com/en/about-us/asb-members', label: { ru: 'Список банков', en: 'List of banks', sr: 'Spisak banaka' } },
+	},
+	{
+		group: 'guides',
+		title: { ru: 'Как открыть счёт в сербском банке: инструкция канала «Сербский рандом»', en: 'How to open an account at a Serbian bank: a guide by the “Сербский рандом” channel (in Russian)', sr: 'Kako otvoriti račun u srpskoj banci: uputstvo kanala „Сербский рандом“ (na ruskom)' },
+		what: {
+			ru: 'Инструкция для физлиц от автора канала «Сербский рандом»: образцы заявления и претензии в банк, документы NBS, адреса банков.',
+			en: 'A guide for individuals by the author of the “Сербский рандом” channel: sample application and complaint to a bank, NBS documents, bank addresses.',
+			sr: 'Uputstvo za fizička lica autora kanala „Сербский рандом“: obrasci zahteva i prigovora banci, dokumenti NBS, adrese banaka.',
+		},
+		kind: 'unverified',
+		url: 'https://publicimage.bitdocs.ai/share/d/If2FGftIw3R8gCcu',
+		label: 'publicimage.bitdocs.ai',
+		extra: { url: 'https://t.me/serbski_random', label: { ru: 'Канал', en: 'Channel', sr: 'Kanal' } },
 	},
 	{
 		group: 'tools',
