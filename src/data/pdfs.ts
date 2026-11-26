@@ -49,6 +49,8 @@ const EXTRA_COPIES: Record<string, string> = {
 		'aod-2026-11-18-obavestenje-potvrde.pdf',
 	'https://www.aod.rs/uploads/dokumenti/altabanka/Uputstvo%20za%20podno%C5%A1enje%20reklamacija_CIR.pdf':
 		'aod-2026-11-18-uputstvo-reklamacije.pdf',
+	'https://www.aod.rs/uploads/dokumenti/altabanka/kontakti_alta.pdf':
+		'aod-2026-11-24-kontakti-alta.pdf',
 	'https://www.aod.rs/uploads/dokumenti/altabanka/Spisak.pdf':
 		'aod-2026-11-06-spisak-ekspozitura-postanska.pdf',
 	'https://www.aod.rs/uploads/dokumenti/altabanka/ekspoziture.pdf':
