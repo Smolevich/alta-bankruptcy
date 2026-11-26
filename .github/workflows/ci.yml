@@ -70,9 +70,13 @@ jobs:
           # The main /en/ and /sr/ pages must not land in the Russian section of llms.txt.
           test -z "$(awk '/^## English/{exit} /smolevich\.com\/(en|sr)\//' dist/llms.txt)"
           grep -q 'smolevich.com/account/stats)' dist/llms.txt
-          # The payout page weighed 650–700 KB because of prebuilt load-chart SVGs; this guards against their return.
-          # Threshold 420 000 bytes: leaves room for readability edits to the text.
-          for f in dist/vyplata/index.html dist/en/vyplata/index.html dist/sr/vyplata/index.html; do test "$(wc -c < "$f")" -lt 420000; done
+          # Until #176 the payout page shipped ~40 branch busyness charts prerendered as inline <svg class="hist-svg">
+          # (650–700 KB); now the client script draws them on expand, so built HTML must contain none.
+          # 600 000 bytes is only a backstop for some other bulk embed: the text itself grows a few KB a day.
+          for f in dist/vyplata/index.html dist/en/vyplata/index.html dist/sr/vyplata/index.html; do
+            if grep -q 'class="hist-svg"' "$f"; then echo "::error file=$f::prerendered busyness chart (hist-svg) is back"; exit 1; fi
+            test "$(wc -c < "$f")" -lt 600000 || { echo "::error file=$f::over 600000 bytes"; exit 1; }
+          done
 
   # Site service (backend/): tests, linter and the stats filter search test.
   backend:
