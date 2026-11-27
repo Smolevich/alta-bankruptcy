@@ -74,6 +74,8 @@ const EXTRA_COPIES: Record<string, string> = {
 		'uprava-za-javni-dug-2025-05-lista-ovlascenih-ucesnika.pdf',
 	'https://www.posted.co.rs/korisno/doc/Tarifa/Tarifa-naknada-za-usluge-u-radu-sa-fizickim-licima.pdf':
 		'postanska-2026-tarifa-fizicka-lica.pdf',
+	'https://www.posted.co.rs/o-nama/doc/Obavestenje-o-nacinu-podnosenja-prigovora.pdf':
+		'postanska-2026-obavestenje-prigovori.pdf',
 	'https://www.posted.co.rs/korisno/doc/PUN/PUN_Devizni_tekuci_racuni.pdf':
 		'postanska-2025-pregled-naknada-devizni-tekuci-racun-rezidenta.pdf',
 };
