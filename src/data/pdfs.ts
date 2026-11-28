@@ -22,6 +22,7 @@ const ARCHIVE = AOD_ARCHIVE as ArchivedPdf[];
 const EXTRA_COPIES: Record<string, string> = {
 	'https://www.aod.rs/uploads/dokumenti/oglas/245_1_oglas.pdf': 'aod-2026-11-20-resenje-likvidacija-alta-leasing.pdf',
 	'https://www.aod.rs/uploads/dokumenti/oglas/246_1_oglas.pdf': 'aod-2026-11-26-poziv-revizija-pocetni-bilans.pdf',
+	'https://www.aod.rs/uploads/dokumenti/altabanka/Obavestenje%20o%20sefovima%20CIR.pdf': 'aod-2026-11-27-obavestenje-sefovi.pdf',
 	'https://www.nbs.rs/export/sites/NBS_site/documents/propisi/zakoni/kpb_banke_preuzimanje.pdf':
 		'nbs-2012-zakon-preuzimanje-banaka.pdf',
 	'https://web.archive.org/web/20161116045606/http://aod.rs/pdf/godisnji_finansijski_izvestaj_za_2013.pdf':
